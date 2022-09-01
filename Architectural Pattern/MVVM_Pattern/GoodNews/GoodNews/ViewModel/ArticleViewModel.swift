@@ -22,6 +22,9 @@
         1) articles.count
         2) 특정 indexPath.row에서의 articles 데이터를 필요로 한다.
         3) 또 한가지가 있다면 몇개의 section으로 tableView가 구성되었는지 까지?
+ 
+ @Issue #1 이후
+ 3. ViewModel로 Cell을 채우려면 customCell이 필요하다. 그래야 atricle의 title과 description을 display할 수 있다.
  */
 struct ArticleListViewModel {
     let articles: [Article]

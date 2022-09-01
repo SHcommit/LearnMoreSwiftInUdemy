@@ -59,7 +59,7 @@ class Webservice{
                 }
                 
                 //요기서 데이터 성공적으로 파싱했는지 일단 테스트 가능
-                NSLog(jsonObject.description)
+                //NSLog(jsonObject.description)
                 guard let list = jsonObject["articles"] as? [NSDictionary] else
                 {
                     return
