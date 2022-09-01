@@ -17,7 +17,10 @@ class NewsListTableViewController : UITableViewController{
         return cell
     }
     private func setup(){
-        
+        let newsUrl = "https://newsapi.org/v2/top-headlines?country=us&apiKey=dc7c80a136c9497c9a0f04d113b500e6"
+        Webservice().getArticles(url: newsUrl){ _ in
+            
+        }
     }
 }
 
@@ -25,21 +28,16 @@ class NewsListTableViewController : UITableViewController{
 extension NewsListTableViewController{
     func setupNavigation(){
         //Navigation Title
-        let title           = UILabel()
-        title.text          = "GoodNews"
-        title.textColor     = .white
-        title.textAlignment = .center
-        title.font          = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight(rawValue: 0.35))
-        title.sizeToFit()
-        title.isOpaque      = true
-        self.navigationItem.titleView = title
+        self.navigationItem.title =  "GoodNews"
         
         //MARK: - appearance settings
         guard let navBar = self.navigationController?.navigationBar else{ return }
+        navBar.prefersLargeTitles   = true
         let appearance              = UINavigationBarAppearance()
         appearance.configureWithTransparentBackground()
         appearance.backgroundColor  = UIColor(displayP3Red: 47/255, green: 54/255, blue: 64/255, alpha: 1.0)
-        
+        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
+        appearance.titleTextAttributes = [.foregroundColor : UIColor.white]
         navBar.standardAppearance   = appearance
         navBar.scrollEdgeAppearance = appearance
     }
