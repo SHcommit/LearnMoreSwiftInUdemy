@@ -16,7 +16,7 @@
  
  */
 
-struct Article: Decodable{
+struct Article{
     let title      : String
     let description: String
 }
