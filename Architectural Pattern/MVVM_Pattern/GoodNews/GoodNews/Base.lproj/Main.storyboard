@@ -31,10 +31,32 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" id="3NN-dF-KBv"/>
+                    <connections>
+                        <segue destination="q8C-xY-OrT" kind="show" id="Eoj-qG-3nr"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="NuD-0G-p7b" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1065.217391304348" y="147.99107142857142"/>
+            <point key="canvasLocation" x="1189" y="148"/>
+        </scene>
+        <!--News Detail View Controller-->
+        <scene sceneID="Gm8-i8-GIS">
+            <objects>
+                <viewController storyboardIdentifier="detailVC" id="q8C-xY-OrT" customClass="NewsDetailViewController" customModule="GoodNews" customModuleProvider="target" sceneMemberID="viewController">
+                    <wkWebView key="view" contentMode="scaleToFill" id="ejH-Fl-VC6">
+                        <rect key="frame" x="0.0" y="0.0" width="428" height="926"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <wkWebViewConfiguration key="configuration">
+                            <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
+                            <wkPreferences key="preferences"/>
+                        </wkWebViewConfiguration>
+                    </wkWebView>
+                    <navigationItem key="navigationItem" id="krH-3G-yNF"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Ejq-NI-cS0" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1984" y="148"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="SaO-UK-wSU">

@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		1528A21428C0A18200545320 /* Article.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1528A21328C0A18200545320 /* Article.swift */; };
 		1528A21728C0CDDA00545320 /* ArticleViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1528A21628C0CDDA00545320 /* ArticleViewModel.swift */; };
-		1528A21A28C0D76E00545320 /* ArticleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1528A21928C0D76E00545320 /* ArticleTableViewCell.swift */; };
+		1528A21C28C0ECE400545320 /* NewsDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1528A21B28C0ECE400545320 /* NewsDetailViewController.swift */; };
 		1542A21F28BFE4E6000C2C84 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1542A21E28BFE4E6000C2C84 /* AppDelegate.swift */; };
 		1542A22128BFE4E6000C2C84 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1542A22028BFE4E6000C2C84 /* SceneDelegate.swift */; };
 		1542A22628BFE4E6000C2C84 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1542A22428BFE4E6000C2C84 /* Main.storyboard */; };
@@ -25,7 +25,7 @@
 		06EA7C1B81AE7D6800760CD3 /* Pods-GoodNews.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GoodNews.debug.xcconfig"; path = "Target Support Files/Pods-GoodNews/Pods-GoodNews.debug.xcconfig"; sourceTree = "<group>"; };
 		1528A21328C0A18200545320 /* Article.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Article.swift; sourceTree = "<group>"; };
 		1528A21628C0CDDA00545320 /* ArticleViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleViewModel.swift; sourceTree = "<group>"; };
-		1528A21928C0D76E00545320 /* ArticleTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleTableViewCell.swift; sourceTree = "<group>"; };
+		1528A21B28C0ECE400545320 /* NewsDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsDetailViewController.swift; sourceTree = "<group>"; };
 		1542A21B28BFE4E6000C2C84 /* GoodNews.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GoodNews.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1542A21E28BFE4E6000C2C84 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1542A22028BFE4E6000C2C84 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -68,14 +68,6 @@
 			path = ViewModel;
 			sourceTree = "<group>";
 		};
-		1528A21828C0D75100545320 /* Cell */ = {
-			isa = PBXGroup;
-			children = (
-				1528A21928C0D76E00545320 /* ArticleTableViewCell.swift */,
-			);
-			path = Cell;
-			sourceTree = "<group>";
-		};
 		1542A21228BFE4E6000C2C84 = {
 			isa = PBXGroup;
 			children = (
@@ -97,7 +89,6 @@
 		1542A21D28BFE4E6000C2C84 /* GoodNews */ = {
 			isa = PBXGroup;
 			children = (
-				1528A21828C0D75100545320 /* Cell */,
 				1528A21528C0CDAD00545320 /* ViewModel */,
 				1528A21228C0A17000545320 /* Model */,
 				1542A23828C08D46000C2C84 /* Service */,
@@ -117,6 +108,7 @@
 			isa = PBXGroup;
 			children = (
 				1542A23628BFE54F000C2C84 /* NewsListTableViewController.swift */,
+				1528A21B28C0ECE400545320 /* NewsDetailViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -261,11 +253,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1528A21C28C0ECE400545320 /* NewsDetailViewController.swift in Sources */,
 				1542A23728BFE54F000C2C84 /* NewsListTableViewController.swift in Sources */,
 				1542A21F28BFE4E6000C2C84 /* AppDelegate.swift in Sources */,
 				1528A21428C0A18200545320 /* Article.swift in Sources */,
 				1542A22128BFE4E6000C2C84 /* SceneDelegate.swift in Sources */,
-				1528A21A28C0D76E00545320 /* ArticleTableViewCell.swift in Sources */,
 				1542A23A28C08D65000C2C84 /* Webservice.swift in Sources */,
 				1528A21728C0CDDA00545320 /* ArticleViewModel.swift in Sources */,
 				1542A22928BFE4E6000C2C84 /* GoodNews.xcdatamodeld in Sources */,

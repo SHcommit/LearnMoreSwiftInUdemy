@@ -64,4 +64,11 @@ extension NewsListTableViewController {
         cell.detailTextLabel?.numberOfLines = 0
         return cell
     }
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let vc = self.storyboard?.instantiateViewController(withIdentifier: "detailVC") as? NewsDetailViewController else {fatalError("Can't find identifier : detailVC")}
+        vc.url = self.articleListVM.articles[indexPath.row].url
+        //vc.modalPresentationStyle = .fullScreen
+        
+        present(vc, animated: true)
+    }
 }

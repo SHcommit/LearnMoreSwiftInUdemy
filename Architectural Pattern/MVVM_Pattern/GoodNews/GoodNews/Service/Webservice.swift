@@ -69,7 +69,8 @@ class Webservice{
                 for data in list {
                     let title       = data["title"] as? String ?? ""
                     let description = data["description"] as? String ?? ""
-                    articles.append(Article(title: title, description: description))
+                    let url         = data["url"] as? String ?? ""
+                    articles.append(Article(title: title, description: description,url: url))
                 }
                 completion(articles)
                 
