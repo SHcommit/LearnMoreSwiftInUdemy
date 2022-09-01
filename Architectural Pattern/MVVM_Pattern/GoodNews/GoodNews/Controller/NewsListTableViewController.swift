@@ -8,15 +8,6 @@ class NewsListTableViewController : UITableViewController{
         setupNavigation()
         setup()
     }
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return lists.count
-    }
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "newsCell") ?? UITableViewCell(style: .subtitle, reuseIdentifier: "newsCell")
-        cell.textLabel?.text = "\(lists[indexPath.row].title)"
-        cell.detailTextLabel?.text = "\(lists[indexPath.row].description)"
-        return cell
-    }
     private func setup(){
         let newsUrl = "https://newsapi.org/v2/top-headlines?country=kr&apiKey=dc7c80a136c9497c9a0f04d113b500e6"
         Webservice().getArticles(url: newsUrl){ temp in
@@ -45,4 +36,18 @@ extension NewsListTableViewController{
         navBar.standardAppearance   = appearance
         navBar.scrollEdgeAppearance = appearance
     }
+}
+
+//MARK: - tableViewDelegate handler
+extension NewsListTableViewController {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return lists.count
+    }
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "newsCell") ?? UITableViewCell(style: .subtitle, reuseIdentifier: "newsCell")
+        cell.textLabel?.text = "\(lists[indexPath.row].title)"
+        cell.detailTextLabel?.text = "\(lists[indexPath.row].description)"
+        return cell
+    }
+    
 }
