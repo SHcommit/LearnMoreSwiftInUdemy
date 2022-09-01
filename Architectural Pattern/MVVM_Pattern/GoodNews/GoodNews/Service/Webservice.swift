@@ -38,7 +38,7 @@ class Webservice{
      ```
      
      */
-    func getArticles(url: String, completion: @escaping ([Any]?)->()){
+    func getArticles(url: String, completion: @escaping ([Article]?)->()){
 
         let Articles = AF.request(
             url,
@@ -60,8 +60,19 @@ class Webservice{
                 
                 //요기서 데이터 성공적으로 파싱했는지 일단 테스트 가능
                 NSLog(jsonObject.description)
-                NSLog(resCode)
-                NSLog("\(totalRes)")
+                guard let list = jsonObject["articles"] as? [NSDictionary] else
+                {
+                    return
+                }
+                var articles = [Article]()
+                
+                for data in list {
+                    let title       = data["title"] as? String ?? ""
+                    let description = data["description"] as? String ?? ""
+                    articles.append(Article(title: title, description: description))
+                }
+                completion(articles)
+                
             }catch let e as NSError{
                 NSLog("An error found : \(e.localizedDescription)")
                 completion(nil)
