@@ -46,8 +46,13 @@ extension NewsListTableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "newsCell") ?? UITableViewCell(style: .subtitle, reuseIdentifier: "newsCell")
         cell.textLabel?.text = "\(lists[indexPath.row].title)"
+        cell.textLabel?.font = UIFont.boldSystemFont(ofSize: 17)
+        
         cell.detailTextLabel?.text = "\(lists[indexPath.row].description)"
+        cell.detailTextLabel?.numberOfLines = 3
         return cell
     }
-    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 80
+    }
 }
