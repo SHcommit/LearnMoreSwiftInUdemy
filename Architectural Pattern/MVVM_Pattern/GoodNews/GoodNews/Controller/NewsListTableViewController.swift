@@ -1,14 +1,14 @@
 import UIKit
 
 class NewsListTableViewController : UITableViewController{
-    var arr = [1,2,3,4,5,6,7,8,9,0,1,2,3,13,13,23,1,233,1,31,31,31,3,13,13,13,13,13,13,13,13,1,31,31,31,3,13,3,1]
+
     var lists = [Article]()
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNavigation()
-        setup()
+        setupDataParsing()
     }
-    private func setup(){
+    private func setupDataParsing(){
         let newsUrl = "https://newsapi.org/v2/top-headlines?country=kr&apiKey=dc7c80a136c9497c9a0f04d113b500e6"
         Webservice().getArticles(url: newsUrl){ temp in
             guard let list = temp else {return}
@@ -21,7 +21,7 @@ class NewsListTableViewController : UITableViewController{
 
 
 extension NewsListTableViewController{
-    func setupNavigation(){
+    private func setupNavigation(){
         //Navigation Title
         self.navigationItem.title =  "Daily 뉴스"
         
