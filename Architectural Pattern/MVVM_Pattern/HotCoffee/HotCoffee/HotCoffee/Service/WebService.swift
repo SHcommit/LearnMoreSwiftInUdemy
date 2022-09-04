@@ -56,7 +56,7 @@ class Webservice {
                     let orders = try decoder.decode([Order].self, from: data)
                     //completion(.success(orders))
                     orders.forEach{
-                        print("\($0.type!)\n\($0.name!)\n\($0.email)")
+                        print("\($0.type)\n\($0.name)\n\($0.email)")
                     }
                 }catch{
                     print(error.localizedDescription)
