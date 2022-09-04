@@ -8,16 +8,21 @@
 
 /* Begin PBXBuildFile section */
 		154CA77528C1F7DB009D5E21 /* AddOrderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154CA77428C1F7DB009D5E21 /* AddOrderViewController.swift */; };
+		154CA77828C351EB009D5E21 /* WebService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154CA77728C351EB009D5E21 /* WebService.swift */; };
+		15CB766D28C3655E0057D32B /* Order.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15CB766C28C3655E0057D32B /* Order.swift */; };
 		15E103A628C1EBA1009E7A1C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E103A528C1EBA1009E7A1C /* AppDelegate.swift */; };
 		15E103A828C1EBA1009E7A1C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E103A728C1EBA1009E7A1C /* SceneDelegate.swift */; };
 		15E103AD28C1EBA1009E7A1C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 15E103AB28C1EBA1009E7A1C /* Main.storyboard */; };
 		15E103AF28C1EBA1009E7A1C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 15E103AE28C1EBA1009E7A1C /* Assets.xcassets */; };
 		15E103B228C1EBA1009E7A1C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 15E103B028C1EBA1009E7A1C /* LaunchScreen.storyboard */; };
 		15E103BC28C1F2DC009E7A1C /* OrdersTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E103BB28C1F2DC009E7A1C /* OrdersTableViewController.swift */; };
+		A3BCCD31BCF5DC9577E528AF /* Pods_HotCoffee.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 71CB0E54D68CD985C01E7832 /* Pods_HotCoffee.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		154CA77428C1F7DB009D5E21 /* AddOrderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddOrderViewController.swift; sourceTree = "<group>"; };
+		154CA77728C351EB009D5E21 /* WebService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebService.swift; sourceTree = "<group>"; };
+		15CB766C28C3655E0057D32B /* Order.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Order.swift; sourceTree = "<group>"; };
 		15E103A228C1EBA1009E7A1C /* HotCoffee.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HotCoffee.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		15E103A528C1EBA1009E7A1C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		15E103A728C1EBA1009E7A1C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -26,6 +31,9 @@
 		15E103B128C1EBA1009E7A1C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		15E103B328C1EBA1009E7A1C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		15E103BB28C1F2DC009E7A1C /* OrdersTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrdersTableViewController.swift; sourceTree = "<group>"; };
+		71CB0E54D68CD985C01E7832 /* Pods_HotCoffee.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_HotCoffee.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		87822ED408420DCC6F08FFC2 /* Pods-HotCoffee.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HotCoffee.debug.xcconfig"; path = "Target Support Files/Pods-HotCoffee/Pods-HotCoffee.debug.xcconfig"; sourceTree = "<group>"; };
+		8D00EC7991C4AC148897D350 /* Pods-HotCoffee.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HotCoffee.release.xcconfig"; path = "Target Support Files/Pods-HotCoffee/Pods-HotCoffee.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -33,17 +41,36 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A3BCCD31BCF5DC9577E528AF /* Pods_HotCoffee.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		154CA77628C350C3009D5E21 /* Service */ = {
+			isa = PBXGroup;
+			children = (
+				154CA77728C351EB009D5E21 /* WebService.swift */,
+			);
+			path = Service;
+			sourceTree = "<group>";
+		};
+		15CB766B28C365330057D32B /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				15CB766C28C3655E0057D32B /* Order.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 		15E1039928C1EBA1009E7A1C = {
 			isa = PBXGroup;
 			children = (
 				15E103A428C1EBA1009E7A1C /* HotCoffee */,
 				15E103A328C1EBA1009E7A1C /* Products */,
+				2A9F3C4FDA6C23806E88AD94 /* Pods */,
+				DE41BB0388A051B56F5FD00B /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -58,6 +85,8 @@
 		15E103A428C1EBA1009E7A1C /* HotCoffee */ = {
 			isa = PBXGroup;
 			children = (
+				15CB766B28C365330057D32B /* Model */,
+				154CA77628C350C3009D5E21 /* Service */,
 				15E103BA28C1F2C2009E7A1C /* Controllers */,
 				15E103A528C1EBA1009E7A1C /* AppDelegate.swift */,
 				15E103A728C1EBA1009E7A1C /* SceneDelegate.swift */,
@@ -78,6 +107,23 @@
 			path = Controllers;
 			sourceTree = "<group>";
 		};
+		2A9F3C4FDA6C23806E88AD94 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				87822ED408420DCC6F08FFC2 /* Pods-HotCoffee.debug.xcconfig */,
+				8D00EC7991C4AC148897D350 /* Pods-HotCoffee.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		DE41BB0388A051B56F5FD00B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				71CB0E54D68CD985C01E7832 /* Pods_HotCoffee.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -85,9 +131,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 15E103B628C1EBA1009E7A1C /* Build configuration list for PBXNativeTarget "HotCoffee" */;
 			buildPhases = (
+				1FBB89C6A26C47BA3C701ED7 /* [CP] Check Pods Manifest.lock */,
 				15E1039E28C1EBA1009E7A1C /* Sources */,
 				15E1039F28C1EBA1009E7A1C /* Frameworks */,
 				15E103A028C1EBA1009E7A1C /* Resources */,
+				8452BD7D6601D3FC5DD80D8D /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -144,14 +192,58 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		1FBB89C6A26C47BA3C701ED7 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-HotCoffee-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		8452BD7D6601D3FC5DD80D8D /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-HotCoffee/Pods-HotCoffee-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-HotCoffee/Pods-HotCoffee-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-HotCoffee/Pods-HotCoffee-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		15E1039E28C1EBA1009E7A1C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				15CB766D28C3655E0057D32B /* Order.swift in Sources */,
 				15E103A628C1EBA1009E7A1C /* AppDelegate.swift in Sources */,
 				15E103A828C1EBA1009E7A1C /* SceneDelegate.swift in Sources */,
 				15E103BC28C1F2DC009E7A1C /* OrdersTableViewController.swift in Sources */,
+				154CA77828C351EB009D5E21 /* WebService.swift in Sources */,
 				154CA77528C1F7DB009D5E21 /* AddOrderViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -294,6 +386,7 @@
 		};
 		15E103B728C1EBA1009E7A1C /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 87822ED408420DCC6F08FFC2 /* Pods-HotCoffee.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -321,6 +414,7 @@
 		};
 		15E103B828C1EBA1009E7A1C /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8D00EC7991C4AC148897D350 /* Pods-HotCoffee.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
