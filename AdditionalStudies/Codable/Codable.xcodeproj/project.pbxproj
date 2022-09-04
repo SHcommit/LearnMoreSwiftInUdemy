@@ -13,6 +13,7 @@
 		1550DBA428C4B3A2009F3576 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1550DBA228C4B3A2009F3576 /* Main.storyboard */; };
 		1550DBA628C4B3A3009F3576 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1550DBA528C4B3A3009F3576 /* Assets.xcassets */; };
 		1550DBA928C4B3A3009F3576 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1550DBA728C4B3A3009F3576 /* LaunchScreen.storyboard */; };
+		8D619F3179BEEABB7800C0EB /* Pods_Codable.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8ABEB11EC81A8891C9601B1C /* Pods_Codable.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,9 @@
 		1550DBA528C4B3A3009F3576 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1550DBA828C4B3A3009F3576 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		1550DBAA28C4B3A3009F3576 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5623A87C86104B6A5F1B7456 /* Pods-Codable.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Codable.release.xcconfig"; path = "Target Support Files/Pods-Codable/Pods-Codable.release.xcconfig"; sourceTree = "<group>"; };
+		8ABEB11EC81A8891C9601B1C /* Pods_Codable.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Codable.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B7E2A25667CD57CCD6F6056E /* Pods-Codable.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Codable.debug.xcconfig"; path = "Target Support Files/Pods-Codable/Pods-Codable.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -31,6 +35,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8D619F3179BEEABB7800C0EB /* Pods_Codable.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -42,6 +47,8 @@
 			children = (
 				1550DB9B28C4B3A2009F3576 /* Codable */,
 				1550DB9A28C4B3A2009F3576 /* Products */,
+				26162682EC86FDF4FAC51F74 /* Pods */,
+				7A4C6DC58675196A8ED4A7EF /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -67,6 +74,24 @@
 			path = Codable;
 			sourceTree = "<group>";
 		};
+		26162682EC86FDF4FAC51F74 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				B7E2A25667CD57CCD6F6056E /* Pods-Codable.debug.xcconfig */,
+				5623A87C86104B6A5F1B7456 /* Pods-Codable.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		7A4C6DC58675196A8ED4A7EF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				8ABEB11EC81A8891C9601B1C /* Pods_Codable.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -74,9 +99,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1550DBAD28C4B3A3009F3576 /* Build configuration list for PBXNativeTarget "Codable" */;
 			buildPhases = (
+				E95089AF188D99823591F6A0 /* [CP] Check Pods Manifest.lock */,
 				1550DB9528C4B3A2009F3576 /* Sources */,
 				1550DB9628C4B3A2009F3576 /* Frameworks */,
 				1550DB9728C4B3A2009F3576 /* Resources */,
+				0668DA866A9BE468CF0CB6EC /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -132,6 +159,48 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		0668DA866A9BE468CF0CB6EC /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Codable/Pods-Codable-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Codable/Pods-Codable-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Codable/Pods-Codable-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E95089AF188D99823591F6A0 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Codable-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		1550DB9528C4B3A2009F3576 /* Sources */ = {
@@ -282,6 +351,7 @@
 		};
 		1550DBAE28C4B3A3009F3576 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B7E2A25667CD57CCD6F6056E /* Pods-Codable.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -309,6 +379,7 @@
 		};
 		1550DBAF28C4B3A3009F3576 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5623A87C86104B6A5F1B7456 /* Pods-Codable.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
