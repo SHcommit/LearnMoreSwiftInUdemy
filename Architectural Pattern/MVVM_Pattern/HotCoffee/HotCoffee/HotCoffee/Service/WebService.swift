@@ -15,57 +15,48 @@ enum NetworkError: Error {
     case urlError
 }
 struct Resource<T: Codable> {
-    let url       : URL
+    let url       : String
     var httpMethod: HTTPMethod = .get
     var body      : Data?
 }
 
 class Webservice {
-    func load<T>(resource: Resource<T>, completion: @escaping (Result<T, NetworkError>) -> Void) {
-        let call = AF.request("https://warp-wiry-rugby.glitch.me/orders",method: resource.httpMethod, parameters: nil)
+    func load<T>(resource: Resource<T>, completion: @escaping (Result<T,NetworkError>) -> Void) {
+        let call = AF.request(resource.url,method: .get)
         
-//        call.responseJSON{ response in
-//            switch response.result {
-//            case .success(let data):
-//                DispatchQueue.main.async {
-//                    if let JSON = response.value {
-//                        do{
-//                           let dataJson = try JSONSerialization.data(withJSONObject: JSON, options: [])
-//                            let getInstanceData = try JSONDecoder().decode(T.self, from: dataJson)
-//                            print(getInstanceData)
-//                            completion(.success(getInstanceData))
-//
-//                        }catch{
-//                            print(error)
-//                        }
+        call.responseDecodable(of:T.self){ response in
+            guard let data = response.value,response.error == nil else {
+                print("responseDecodable has error")
+                return
+            }
+            switch response.result{
+            case .success(_):
+                completion(.success(data))
+            case .failure(_):
+                completion(.failure(.decodingError))
+            }
+        }
+//        call.responseData{ res in
+//            switch res.result{
+//            case .success(_):
+//                guard let data = res.value else {print("not found data");return}
+//                let str = String(decoding: data, as: UTF8.self)
+//                print(str) // data is good
+//                let decoder = JSONDecoder()
+//                do{
+//                    let orders = try decoder.decode([Order].self, from: data)
+//                    //completion(.success(orders))
+//                    orders.forEach{
+//                        print("\($0.type)\n\($0.name)\n\($0.email)")
 //                    }
+//                }catch{
+//                    print(error.localizedDescription)
 //                }
 //            case .failure(_):
-//
-//                break
+//                print("fail")
 //            }
+//
 //        }
-        call.responseData{ res in
-            switch res.result{
-            case .success(_):
-                guard let data = res.value else {print("not found data");return}
-                let str = String(decoding: data, as: UTF8.self)
-                print(str) // data is good
-                let decoder = JSONDecoder()
-                do{
-                    let orders = try decoder.decode([Order].self, from: data)
-                    //completion(.success(orders))
-                    orders.forEach{
-                        print("\($0.type)\n\($0.name)\n\($0.email)")
-                    }
-                }catch{
-                    print(error.localizedDescription)
-                }
-            case .failure(_):
-                print("fail")
-            }
-         
-        }
     }
         
 }
