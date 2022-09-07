@@ -17,15 +17,17 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        //useURLSessionApplyCodable()
-        getDataUsingAlamoFire()
+        //useURLSessionNotApplyCodable()
+        useURLSessionApplyCodable()
+        //useAlamoFireDecodable()
+        //useAFData()
     }
 }
 
 extension ViewController {
 
     func useURLSessionNotApplyCodable() {
-        
+        // 1. set URLRequest Line-Header-body
         guard let url = URL(string: urlStr) else {
             return
         }
@@ -37,21 +39,43 @@ extension ViewController {
         request.httpMethod = "GET"
         request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
         
-        
+        // 2. url 객체로 구현된 Request를 통한 dataTask HTTP통신
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             guard let _data = data, error == nil else {
                 return
             }
-            print("data : \(_data)")
-            guard let json = try? JSONSerialization.jsonObject(with: _data, options: []) as? [String:Any] else{
-                print("can't parsing as NSDictionary")
+            
+            guard let json = try? JSONSerialization.jsonObject(with: _data, options: []) as? NSDictionary else{
+                print("can't parse as NSDictionary")
                 return
             }
-            print(json)
+            
+            let status = json["status"] as? String ?? ""
+            guard let results = json["results"] as? NSDictionary else {
+                print("results key value is nil")
+                return
+            }
+            let sunrise = results["sunrise"] as? String ?? ""
+            let sunset  = results["sunset"] as? String ?? ""
+            let solar_noon = results["solar_noon"] as? String ?? ""
+            let day_length = results["day_length"] as? Int ?? -1
+            let civil_twilight_begin = results["civil_twilight_begin"] as? String ?? ""
+            let civil_twilight_end   = results["civil_twilight_end"] as? String ?? ""
+            let nautical_twilight_begin = results["nautical_twilight_begin"] as? String ?? ""
+            let nautical_twilight_end   = results["nautical_twilight_end"] as? String ?? ""
+            let astronomical_twilight_begin = results["astronomical_twilight_begin"] as? String ?? ""
+            let astronomical_twilight_end = results["astronomical_twilight_end"] as? String ?? ""
+            
+            let _results = WeatherResponseDefault(sunrise: sunrise, sunset: sunset, solar_noon: solar_noon, day_length: day_length, civil_twilight_begin: civil_twilight_begin, civil_twilight_end: civil_twilight_end, nautical_twilight_begin: nautical_twilight_begin, nautical_twilight_end: nautical_twilight_end, astronomical_twilight_begin: astronomical_twilight_begin, astronomical_twilight_end: astronomical_twilight_end)
+            
+            let weatherInfo = APIResponseDefault(results: _results, status: status)
+            
         }
         task.resume()
     }
     func useURLSessionApplyCodable(){
+        
+        // 1. set URLRequest Line-Header-body
         guard let url = URL(string: urlStr) else {
             return
         }
@@ -63,34 +87,33 @@ extension ViewController {
         request.httpMethod = "GET"
         request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
         
-        
+        // 2. url 객체로 구현된 Request를 통한 dataTask HTTP통신
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            
             guard let _data = data, error == nil else {
                 return
             }
-            //1. decode 할 객체 선언
-            var res: APIResponse?
             
-            do{
-                res = try? JSONDecoder().decode(APIResponse.self, from: _data)
-                
-            }catch{
-                print("Failed to decode with error: \(error.localizedDescription)")
-            }
-            
-            guard let _res = res else{
+            guard let res = try? JSONDecoder().decode(APIResponse.self, from: _data) else {
+                print("Can't deocde")
                 return
             }
-            print(_res.results)
+            print(res)
         }
         task.resume()
 
     }
 
-    func getDataUsingAlamoFire(){
+    func useAlamoFireDecodable(){
+        //RESIful API에 데이터 요청
         let call = AF.request(urlStr, method: .get, encoding: JSONEncoding.default)
         
+        //Decode
         call.responseDecodable(of: APIResponse.self){ response in
+            guard response.error == nil else{
+                print("에러")
+                return
+            }
             switch response.result{
             case .success(_):
                 guard let _data = response.value else {
@@ -104,7 +127,34 @@ extension ViewController {
             }
         }
     }
-
+    func useAFData() {
+        let call = AF.request(urlStr, method: .get, encoding: JSONEncoding.default)
+        
+        call.responseData{ response in
+            guard response.error == nil else{
+                print("에러")
+                return
+            }
+            switch response.result {
+            case .success(_):
+                guard let _data = try? response.result.get() else {
+                    print("Faild binding response.result")
+                    return
+                }
+                print(_data)
+                
+                guard let res = try? JSONDecoder().decode(APIResponse.self, from: _data) else {
+                    print("Can't decode")
+                    return
+                }
+                print(res)
+                
+            case .failure(_):
+                break
+            }
+        }
+    }
+    
 }
 
 /**
@@ -146,7 +196,7 @@ struct APIResponse: Codable{
 }
 
 struct WeatherResponse: Codable{
-    let sunrise: String
+    var sunrise: String
     let sunset: String
     let solar_noon: String
     let day_length: Int
@@ -156,4 +206,24 @@ struct WeatherResponse: Codable{
     let nautical_twilight_end: String
     let astronomical_twilight_begin: String
     let astronomical_twilight_end: String
+}
+
+
+struct APIResponseDefault{
+    var results : WeatherResponseDefault
+    var status  : String
+}
+
+struct WeatherResponseDefault{
+    var sunrise: String
+    var sunset: String
+    var solar_noon: String
+    var day_length: Int
+    var civil_twilight_begin: String
+    var civil_twilight_end: String
+    var nautical_twilight_begin: String
+    var nautical_twilight_end: String
+    var astronomical_twilight_begin: String
+    var astronomical_twilight_end: String
+    
 }
