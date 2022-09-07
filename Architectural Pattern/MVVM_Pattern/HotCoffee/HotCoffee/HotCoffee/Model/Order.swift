@@ -8,9 +8,9 @@
 /**
  *decodeIfPresnt nil 반환 o
  *decode nil 반환 x
+ *CaseIterable타입은 반복해서 enum유형을 반환할수있다.
  */
-
-enum CoffeeType: String, Codable {
+enum CoffeeType: String, Codable ,CaseIterable {
     case cappuccino
     case latte
     case espressino
@@ -23,7 +23,7 @@ enum CoffeeType: String, Codable {
         self = CoffeeType(rawValue: lowercaseLabel) ?? .latte
     }
 }
-enum CoffeeSize: String, Codable {
+enum CoffeeSize: String, Codable, CaseIterable {
     case small
     case medium
     case large
@@ -47,5 +47,22 @@ struct Order: Codable {
         name  = try values.decodeIfPresent(String.self, forKey: .name)  ?? "Guest"
         size  = try values.decode(CoffeeSize.self, forKey: .size)
         type  = try values.decode(CoffeeType.self, forKey: .type)
+    }
+}
+
+
+extension Order {
+    init?(_ vm: AddCoffeeOrderViewModel) {
+        //type, size의 경우에는 단순히 string이 아니라 CoffeeType struct이기때문에 rawvalue로 인스턴스 생성해야함
+        guard let name = vm.name ,
+              let email = vm.email,
+              let selectedType = CoffeeType(rawValue: vm.selectedType!.lowercased()),
+              let selectedSize = CoffeeSize(rawValue: vm.selectedSize!.lowercased()) else {
+            return nil
+        }
+        self.name = name
+        self.email = email
+        self.type = selectedType
+        self.size = selectedSize
     }
 }
