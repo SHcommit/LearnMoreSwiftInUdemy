@@ -5,6 +5,8 @@
 //  Created by 양승현 on 2022/09/03.
 //
 
+import Foundation
+
 /**
  *decodeIfPresnt nil 반환 o
  *decode nil 반환 x
@@ -27,6 +29,12 @@ enum CoffeeSize: String, Codable, CaseIterable {
     case small
     case medium
     case large
+    init(from decoder: Decoder) throws {
+        let value = try decoder.singleValueContainer().decode(String.self)
+        let lowercaseLabel = value.lowercased()
+        self = CoffeeSize(rawValue: lowercaseLabel) ?? .small
+        
+    }
 }
 
 struct Order: Codable {
@@ -65,4 +73,28 @@ extension Order {
         self.type = selectedType
         self.size = selectedSize
     }
+}
+
+
+extension Order {
+    // 유저가 선택한 거 한 개 주문 POST로 전송
+    static func create(vm: AddCoffeeOrderViewModel) -> Resource<Order?> {
+        let url :String = "https://warp-wiry-rugby.glitch.me/orders"
+        let order = Order(vm)
+        
+        guard let data = try? JSONEncoder().encode(order) else {
+            fatalError("Error encoding order")
+        }
+        
+        var resource = Resource<Order?>(url: url)
+        resource.httpMethod = .post
+        resource.body = data
+        
+        return resource
+    }
+    
+    static var all: Resource<[Order]> = {
+        let url :String = "https://warp-wiry-rugby.glitch.me/orders"
+        return Resource<[Order]>(url: url)
+    }()
 }
