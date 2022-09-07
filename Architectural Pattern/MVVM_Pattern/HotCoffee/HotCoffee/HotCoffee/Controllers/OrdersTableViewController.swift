@@ -19,22 +19,16 @@ class OrdersTableViewController : UITableViewController{
     
     //웹서비스에 요청
     private func populateOrders() {
-        guard let coffeeOrdersURL = URL(string: "https://warp-wiry-rugby.glitch.me/orders") else {
-            fatalError("Incorrect URL in OrdersTableViewController.swift")
-        }
-        
+        let coffeeOrdersURL = "https://warp-wiry-rugby.glitch.me/orders"
         let resource = Resource<[Order]>(url: coffeeOrdersURL)
         Webservice().load(resource: resource) { result in
-
+            
             switch result {
             case .success(let orders):
                 print(orders)
-                print(orders[0].email)
-                print("haha")
             case .failure(let error):
-                print("\(error)")
+                print(error)
             }
-
         }
     }
 }
