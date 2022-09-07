@@ -5,6 +5,9 @@
 //  Created by 양승현 on 2022/09/02.
 //
 
+/*
+    데이터를 갖고있는거는 VM인데 ViewController에서 IB인스턴스들의 UI 같은걸 지정해준다.
+ */
 import UIKit
 
 class AddOrderNewController : UIViewController {
@@ -12,6 +15,7 @@ class AddOrderNewController : UIViewController {
     var segmentCtrl : UISegmentedControl!
     var emailTF     : UITextField!
     var personTF    : UITextField!
+    private var vm = AddCoffeeOrderViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,13 +26,23 @@ class AddOrderNewController : UIViewController {
 
 extension AddOrderNewController : UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        15
+        return self.vm.types.count
+        //4개
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell()
-        cell.textLabel?.text = "tempCell"
+        let cell = tableView.dequeueReusableCell(withIdentifier: "CoffeeTypeTableViewCell") ?? UITableViewCell(style: .default, reuseIdentifier: "CoffeeTypeTableViewCell")
+        cell.textLabel?.text = self.vm.types[indexPath.row]
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let cell = tableView.cellForRow(at: indexPath)
+        cell?.accessoryType = .checkmark
+    }
+    
+    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        tableView.cellForRow(at: indexPath)?.accessoryType = .none
     }
 }
 
@@ -113,6 +127,18 @@ extension AddOrderNewController {
 //MARK: - Event Handler
 extension AddOrderNewController {
     @objc func save(_ sender: Any) {
+        let name = self.personTF.text
+        let email = self.emailTF.text
+        let selectedSize = self.segmentCtrl.titleForSegment(at: self.segmentCtrl.selectedSegmentIndex)
+        guard let indexPath = self.tableView.indexPathForSelectedRow else {
+            print("Can't touch table cell")
+            return
+        }
+        self.vm.name = name
+        self.vm.email = email
+        self.vm.selectedSize = selectedSize
+        self.vm.selectedType = self.vm.types[indexPath.row]
         
+        //이제 이걸 인코딩해서 Codable타입으로 POST할거임
     }
 }
