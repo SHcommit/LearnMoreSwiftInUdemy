@@ -1,10 +1,3 @@
-//
-//  WebService.swift
-//  HotCoffee
-//
-//  Created by 양승현 on 2022/09/03.
-//
-
 import Foundation
 import Alamofire
 
@@ -14,50 +7,46 @@ enum NetworkError: Error {
     case domainError
     case urlError
 }
+
+enum HttpMethod: String {
+    case get = "GET"
+    case post = "POST"
+}
+
+ //요기엔 HTTP메서드의 헤더와 바디(data)가 있음.
 struct Resource<T: Codable> {
     let url       : String
     var httpMethod: HTTPMethod = .get
-    var body      : Data?
+    var body      : Data? = nil
 }
 
-class Webservice {
+extension Resource {
+    init(url: String) {
+        self.url = url
+    }
+}
+
+class Webservice<T> where T: Codable{
+    
     func load<T>(resource: Resource<T>, completion: @escaping (Result<T,NetworkError>) -> Void) {
         let call = AF.request(resource.url,method: .get)
-        
         call.responseDecodable(of:T.self){ response in
-            guard let data = response.value,response.error == nil else {
+            guard response.error == nil else {
                 print("responseDecodable has error")
                 return
             }
-            switch response.result{
-            case .success(_):
-                completion(.success(data))
-            case .failure(_):
-                completion(.failure(.decodingError))
-            }
+            self.loadResult(response: response, completion: completion)
         }
-//        call.responseData{ res in
-//            switch res.result{
-//            case .success(_):
-//                guard let data = res.value else {print("not found data");return}
-//                let str = String(decoding: data, as: UTF8.self)
-//                print(str) // data is good
-//                let decoder = JSONDecoder()
-//                do{
-//                    let orders = try decoder.decode([Order].self, from: data)
-//                    //completion(.success(orders))
-//                    orders.forEach{
-//                        print("\($0.type)\n\($0.name)\n\($0.email)")
-//                    }
-//                }catch{
-//                    print(error.localizedDescription)
-//                }
-//            case .failure(_):
-//                print("fail")
-//            }
-//
-//        }
     }
-        
+    
+    func loadResult<T>(response: DataResponse<T,AFError>,completion: @escaping (Result<T,NetworkError>)->Void){
+        switch response.result {
+        case .success(_):
+            guard let data = response.value else {return}
+            completion(.success(data))
+        case .failure(_):
+            completion(.failure(.decodingError))
+        }
+    }
 }
 
