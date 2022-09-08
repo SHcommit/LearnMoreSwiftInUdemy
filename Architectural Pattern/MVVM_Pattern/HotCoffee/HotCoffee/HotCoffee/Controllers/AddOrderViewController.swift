@@ -10,7 +10,13 @@
  */
 import UIKit
 
+protocol AddCoffeeOrderDelegate {
+    func addCoffeeOrderViewControlelrDidSave(order: Order, controller: UIViewController)
+    func addCoffeeOrderViewControllerDidClose(controller: UIViewController)
+}
+
 class AddOrderNewController : UIViewController {
+    var delegate    : AddCoffeeOrderDelegate?
     var tableView   : UITableView!
     var segmentCtrl : UISegmentedControl!
     var emailTF     : UITextField!
@@ -140,5 +146,21 @@ extension AddOrderNewController {
         self.vm.selectedType = self.vm.types[indexPath.row]
         
         //이제 이걸 인코딩해서 Codable타입으로 POST할거임
+        Webservice<[Order]>().send(resource: Order.create(vm: self.vm)) { result in
+            
+            switch result {
+            case .success(let order):
+                if let _order = order, let _delegate = self.delegate {
+                    DispatchQueue.main.async {
+                        _delegate.addCoffeeOrderViewControlelrDidSave(order: _order, controller: self)
+                    }
+                }
+            case .failure(_):
+                DispatchQueue.main.async {
+                    self.delegate?.addCoffeeOrderViewControllerDidClose(controller: self)
+                }
+            }
+        }
+        
     }
 }

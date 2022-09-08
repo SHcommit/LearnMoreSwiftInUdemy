@@ -5,29 +5,13 @@
 //  Created by 양승현 on 2022/09/03.
 //
 
+import Foundation
+
 /**
  *decodeIfPresnt nil 반환 o
  *decode nil 반환 x
  *CaseIterable타입은 반복해서 enum유형을 반환할수있다.
  */
-enum CoffeeType: String, Codable ,CaseIterable {
-    case cappuccino
-    case latte
-    case espressino
-    case cortado
-   
-    init(from decoder: Decoder) throws {
-        //싱글 벨류 컨테이너는 single value의 데이터를 디코딩할때 사용한다. 커스텀 format에서 디코딩 데이터는 자주 사용된다.
-        let label = try decoder.singleValueContainer().decode(String.self)
-        let lowercaseLabel = label.lowercased()
-        self = CoffeeType(rawValue: lowercaseLabel) ?? .latte
-    }
-}
-enum CoffeeSize: String, Codable, CaseIterable {
-    case small
-    case medium
-    case large
-}
 
 struct Order: Codable {
     let email: String
@@ -50,7 +34,6 @@ struct Order: Codable {
     }
 }
 
-
 extension Order {
     init?(_ vm: AddCoffeeOrderViewModel) {
         //type, size의 경우에는 단순히 string이 아니라 CoffeeType struct이기때문에 rawvalue로 인스턴스 생성해야함
@@ -64,5 +47,50 @@ extension Order {
         self.email = email
         self.type = selectedType
         self.size = selectedSize
+    }
+}
+
+
+extension Order {
+    static let url :String = "https://warp-wiry-rugby.glitch.me/orders"
+    // 유저가 선택한 거 한 개 주문 POST로 전송
+    static func create(vm: AddCoffeeOrderViewModel) -> Resource<Order?> {
+        guard let order = Order(vm) else {fatalError()}
+        guard let data = try? JSONEncoder().encode(order) else {
+            fatalError("Error encoding order")
+        }
+        var resource = Resource<Order?>(url: url)
+        resource.httpMethod = .post
+        resource.body = data
+        return resource
+    }
+    
+    static var all: Resource<[Order]> = {
+        return Resource<[Order]>(url: url)
+    }()
+}
+
+enum CoffeeType: String, Codable ,CaseIterable {
+    case cappuccino
+    case latte
+    case espressino
+    case cortado
+   
+    init(from decoder: Decoder) throws {
+        //싱글 벨류 컨테이너는 single value의 데이터를 디코딩할때 사용한다. 커스텀 format에서 디코딩 데이터는 자주 사용된다.
+        let label = try decoder.singleValueContainer().decode(String.self)
+        let lowercaseLabel = label.lowercased()
+        self = CoffeeType(rawValue: lowercaseLabel) ?? .latte
+    }
+}
+enum CoffeeSize: String, Codable, CaseIterable {
+    case small
+    case medium
+    case large
+    init(from decoder: Decoder) throws {
+        let value = try decoder.singleValueContainer().decode(String.self)
+        let lowercaseLabel = value.lowercased()
+        self = CoffeeSize(rawValue: lowercaseLabel) ?? .small
+        
     }
 }

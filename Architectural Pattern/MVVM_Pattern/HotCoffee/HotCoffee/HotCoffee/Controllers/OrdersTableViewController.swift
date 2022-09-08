@@ -8,18 +8,19 @@
 import UIKit
 import Alamofire
 class OrdersTableViewController : UITableViewController{
+    
     var orderListViewModel = OrderListViewModel()
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNavigationBar()
         populateOrders()
     }
-    
+    override func viewWillAppear(_ animated: Bool) {
+        self.tableView.reloadData()
+    }
     //웹서비스에 요청
     private func populateOrders() {
-        let coffeeOrdersURL = "https://warp-wiry-rugby.glitch.me/orders"
-        let resource = Resource<[Order]>(url: coffeeOrdersURL)
-        Webservice().load(resource: resource) { [weak self] result in
+        Webservice<[Order]>().load(resource: Order.all) { [weak self] result in
             
             switch result {
             case .success(let orders):
@@ -32,7 +33,7 @@ class OrdersTableViewController : UITableViewController{
     }
 }
 
-
+//MARK: - tableViewDelegate
 extension OrdersTableViewController {
     override func numberOfSections(in tableView: UITableView) -> Int {
         1
@@ -52,6 +53,22 @@ extension OrdersTableViewController {
         return cell
     }
 }
+
+//MARK: - addCoffeeOrderDelegate
+extension OrdersTableViewController: AddCoffeeOrderDelegate
+{
+    func addCoffeeOrderViewControlelrDidSave(order: Order, controller: UIViewController) {
+        let orderVM = OrderViewModel(order: order)
+        self.orderListViewModel.ordersViewModel.append(orderVM)
+        controller.navigationController?.popViewController(animated: true)
+    }
+    
+    func addCoffeeOrderViewControllerDidClose(controller: UIViewController) {
+        controller.navigationController?.popViewController(animated: true)
+    }
+    
+}
+
 //MARK: - setupUI
 extension OrdersTableViewController {
     //navigationBar
@@ -68,5 +85,12 @@ extension OrdersTableViewController {
 extension OrdersTableViewController {
     @objc func presentNewOrder(_ sender: Any){
         performSegue(withIdentifier: "addOrderSegue", sender: sender)
+    }
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard let vc = segue.destination as? UIViewController, let addCoffeeOrderVC = vc as? AddOrderNewController else {
+            fatalError("Error performing segue")
+            return
+        }
+        addCoffeeOrderVC.delegate = self
     }
 }
