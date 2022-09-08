@@ -59,20 +59,9 @@ extension Order {
         guard let data = try? JSONEncoder().encode(order) else {
             fatalError("Error encoding order")
         }
-//        let object = try? JSONSerialization.jsonObject(with: data)
-//        guard let json = object as? [String:Any] else {
-//            fatalError("Filure binding object as Dictionary")
-//        }
         var resource = Resource<Order?>(url: url)
         resource.httpMethod = .post
         resource.body = data
-        //resource.parameters = json
-//        resource.parameters = [
-//            "name" : "\(order.name)"
-//            "email" : "\(order.email)"
-//            "type" : "\(order.type)"
-//            "size" : "\(order.size)"
-//        ]
         return resource
     }
     
