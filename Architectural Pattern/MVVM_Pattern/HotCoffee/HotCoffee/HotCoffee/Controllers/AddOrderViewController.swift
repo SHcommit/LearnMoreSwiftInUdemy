@@ -11,11 +11,12 @@
 import UIKit
 
 protocol AddCoffeeOrderDelegate {
-    func addCoffeeOrderViewControlelrDidSave(order: Order, controller: UIView)
+    func addCoffeeOrderViewControlelrDidSave(order: Order, controller: UIViewController)
     func addCoffeeOrderViewControllerDidClose(controller: UIViewController)
 }
 
 class AddOrderNewController : UIViewController {
+    var delegate    : AddCoffeeOrderDelegate?
     var tableView   : UITableView!
     var segmentCtrl : UISegmentedControl!
     var emailTF     : UITextField!
@@ -149,11 +150,16 @@ extension AddOrderNewController {
             
             switch result {
             case .success(let order):
-                print(order)
-            case .failure(let error):
-                print(error)
+                if let _order = order, let _delegate = self.delegate {
+                    DispatchQueue.main.async {
+                        _delegate.addCoffeeOrderViewControlelrDidSave(order: _order, controller: self)
+                    }
+                }
+            case .failure(_):
+                DispatchQueue.main.async {
+                    self.delegate?.addCoffeeOrderViewControllerDidClose(controller: self)
+                }
             }
-            self.dismiss(animated: true)
         }
         
     }
