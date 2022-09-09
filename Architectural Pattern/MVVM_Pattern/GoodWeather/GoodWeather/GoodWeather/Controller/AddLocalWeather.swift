@@ -5,4 +5,21 @@
 //  Created by 양승현 on 2022/09/09.
 //
 
-import Foundation
+import UIKit
+
+class AddLocalWeather : UITableViewController {
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.navigationItem.title = "AddWeathers"
+        setupNavigationBackground()
+    }
+}
+
+extension AddLocalWeather {
+    func setupNavigationBackground() {
+        guard let navBar = self.navigationController?.navigationBar else {
+            return
+        }
+        self.setupNavigationAppearance(navBar: navBar)
+    }
+}
