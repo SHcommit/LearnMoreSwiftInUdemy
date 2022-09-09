@@ -13,6 +13,9 @@ class AddLocalWeather : UITableViewController {
         self.navigationItem.title = "AddWeathers"
         setupNavigationBackground()
     }
+    override func viewWillAppear(_ animated: Bool) {
+        setupNavigationBackground()
+    }
 }
 
 extension AddLocalWeather {

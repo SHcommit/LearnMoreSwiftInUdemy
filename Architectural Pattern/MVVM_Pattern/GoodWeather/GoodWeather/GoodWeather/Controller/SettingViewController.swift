@@ -13,6 +13,9 @@ class SettingViewController: UITableViewController {
         self.navigationItem.title = "Settings"
         setupNavigationBackground()
     }
+    override func viewWillAppear(_ animated: Bool) {
+        setupNavigationBackground()
+    }
     
 }
 
