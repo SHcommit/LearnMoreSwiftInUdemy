@@ -29,14 +29,7 @@ extension MainViewController {
         guard let navBar = self.navigationController?.navigationBar else {
             return
         }
-        let appearance = UINavigationBarAppearance()
-        appearance.configureWithTransparentBackground()
-        appearance.backgroundColor = .orange
-        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
-                appearance.titleTextAttributes = [.foregroundColor : UIColor.white]
-        navBar.prefersLargeTitles = true
-        navBar.standardAppearance = appearance
-        navBar.scrollEdgeAppearance = appearance
+        self.setupNavigationAppearance(navBar: navBar)
     }
     
     func settingBarButton() -> UIBarButtonItem{
