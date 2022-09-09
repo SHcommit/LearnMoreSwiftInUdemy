@@ -13,5 +13,22 @@
             </PersistentString>
          </PersistentStrings>
       </ContextState>
+      <ContextState
+         contextName = "UINavigationController.setupNavigationAppearance(title:):Extensions.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "navBar.title">
+            </PersistentString>
+            <PersistentString
+               value = "self.title">
+            </PersistentString>
+            <PersistentString
+               value = "self.navigationItem.title">
+            </PersistentString>
+            <PersistentString
+               value = "self.navigationBar">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
    </ContextStates>
 </VariablesViewState>
