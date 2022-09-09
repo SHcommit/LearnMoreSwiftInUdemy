@@ -10,9 +10,25 @@ import Lottie
 
 
 class MainViewController: UITableViewController {
+    var setting: AnimationView?
+    var addWeather: AnimationView?
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNavigationBar()
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        reloadAnimationView()
+    }
+    func reloadAnimationView() {
+        guard let _setting = setting, let _addWeather = addWeather else {
+            return
+        }
+        workLottie(_setting)
+        workLottie(_addWeather)
+    }
+    func workLottie(_ av: AnimationView) {
+        av.play()
+        av.loopMode = .loop
     }
 }
 
@@ -39,8 +55,8 @@ extension MainViewController {
         let av: AnimationView = .init(name:"set")
         av.frame = CGRect(x: 0, y: 0, width: width + 10, height: width + 10)
         av.contentMode = .scaleAspectFit
-        av.play()
-        av.loopMode = .loop
+        setting = av
+        workLottie(av)
         let tabGesture = UITapGestureRecognizer(target: self, action: #selector(setting(_:)))
         av.addGestureRecognizer(tabGesture)
         let settingBtn = UIBarButtonItem(customView: av)
@@ -53,8 +69,8 @@ extension MainViewController {
         }
         let av: AnimationView = .init(name: "map")
         av.contentMode = .scaleAspectFit
-        av.play()
-        av.loopMode = .loop
+        addWeather = av
+        workLottie(av)
         av.frame.origin = CGPoint(x: 0, y: 0)
         av.frame.size = CGSize(width: width, height: width)
         let tabGesture = UITapGestureRecognizer(target: self, action: #selector(addWeather(_:)))
