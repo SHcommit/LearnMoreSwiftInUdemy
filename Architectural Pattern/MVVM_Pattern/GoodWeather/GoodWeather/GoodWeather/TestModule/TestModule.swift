@@ -16,11 +16,9 @@ class TestModule {
     
 }
 
-
 class TestWebservice {
     func testCombineURL() {
-        var htt = HTTPResource()
-        print("Success http url combination: \(htt.combineURL(city: "Daejeon"))")
+        print("Success http url combination: \(HTTPResource().combineURL(city: "Daejeon"))")
     }
     func testDataParsing() {
         var resource = Resource(searchedCity: "Daejeon") { _ in
