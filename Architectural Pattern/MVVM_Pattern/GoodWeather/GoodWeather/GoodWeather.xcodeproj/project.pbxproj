@@ -15,6 +15,8 @@
 		154F316E28C9FAE400DD96DF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 154F316C28C9FAE400DD96DF /* Main.storyboard */; };
 		154F317028C9FAE500DD96DF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 154F316F28C9FAE500DD96DF /* Assets.xcassets */; };
 		154F317328C9FAE500DD96DF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 154F317128C9FAE500DD96DF /* LaunchScreen.storyboard */; };
+		1554C21028CC8E25003332F4 /* Webservice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1554C20F28CC8E25003332F4 /* Webservice.swift */; };
+		1554C21328CCC42D003332F4 /* TestModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1554C21228CCC42D003332F4 /* TestModule.swift */; };
 		15B124BA28CAEBBB00408C45 /* touch.json in Resources */ = {isa = PBXBuildFile; fileRef = 15B124B928CAEBBB00408C45 /* touch.json */; };
 		15B124C028CAF02700408C45 /* set.json in Resources */ = {isa = PBXBuildFile; fileRef = 15B124BF28CAF02700408C45 /* set.json */; };
 		15B124C428CAFAF900408C45 /* map.json in Resources */ = {isa = PBXBuildFile; fileRef = 15B124C328CAFAF900408C45 /* map.json */; };
@@ -33,6 +35,8 @@
 		154F316F28C9FAE500DD96DF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		154F317228C9FAE500DD96DF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		154F317428C9FAE500DD96DF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1554C20F28CC8E25003332F4 /* Webservice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Webservice.swift; sourceTree = "<group>"; };
+		1554C21228CCC42D003332F4 /* TestModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestModule.swift; sourceTree = "<group>"; };
 		15B124B928CAEBBB00408C45 /* touch.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = touch.json; path = ../../../../../../../Downloads/touch.json; sourceTree = "<group>"; };
 		15B124BF28CAF02700408C45 /* set.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = set.json; path = ../../../../../../../Downloads/set.json; sourceTree = "<group>"; };
 		15B124C328CAFAF900408C45 /* map.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = map.json; path = ../../../../../../../Downloads/map.json; sourceTree = "<group>"; };
@@ -85,7 +89,9 @@
 		154F316528C9FAE400DD96DF /* GoodWeather */ = {
 			isa = PBXGroup;
 			children = (
+				1554C21128CCC40A003332F4 /* TestModule */,
 				151D72EE28CA628000D7E508 /* Resources */,
+				1554C20E28CC8DF1003332F4 /* Services */,
 				15BAD02C28CA514A00DCC5FE /* Controller */,
 				154F316628C9FAE400DD96DF /* AppDelegate.swift */,
 				154F316828C9FAE400DD96DF /* SceneDelegate.swift */,
@@ -95,6 +101,22 @@
 				154F317428C9FAE500DD96DF /* Info.plist */,
 			);
 			path = GoodWeather;
+			sourceTree = "<group>";
+		};
+		1554C20E28CC8DF1003332F4 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				1554C20F28CC8E25003332F4 /* Webservice.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		1554C21128CCC40A003332F4 /* TestModule */ = {
+			isa = PBXGroup;
+			children = (
+				1554C21228CCC42D003332F4 /* TestModule.swift */,
+			);
+			path = TestModule;
 			sourceTree = "<group>";
 		};
 		15BAD02C28CA514A00DCC5FE /* Controller */ = {
@@ -244,6 +266,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				151362D728CB0F9000AFBF54 /* AddLocalWeather.swift in Sources */,
+				1554C21328CCC42D003332F4 /* TestModule.swift in Sources */,
+				1554C21028CC8E25003332F4 /* Webservice.swift in Sources */,
 				151362D528CB0D0E00AFBF54 /* Extensions.swift in Sources */,
 				154F316728C9FAE400DD96DF /* AppDelegate.swift in Sources */,
 				154F316928C9FAE400DD96DF /* SceneDelegate.swift in Sources */,
