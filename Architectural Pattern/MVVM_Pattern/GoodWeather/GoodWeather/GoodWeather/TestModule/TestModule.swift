@@ -10,9 +10,11 @@ import Foundation
 class TestModule {
     var testWebservice = TestWebservice()
     var testWeatherResponse = TestWeatherResponse()
-    func start() {
+    func testStartWebservice() {
         testWebservice.testCombineURL()
         testWebservice.testDataParsing()
+    }
+    func testStartWeatherResponse() {
         testWeatherResponse.testResponse()
     }
     
