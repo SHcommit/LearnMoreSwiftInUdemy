@@ -15,7 +15,6 @@
 		154F316E28C9FAE400DD96DF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 154F316C28C9FAE400DD96DF /* Main.storyboard */; };
 		154F317028C9FAE500DD96DF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 154F316F28C9FAE500DD96DF /* Assets.xcassets */; };
 		154F317328C9FAE500DD96DF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 154F317128C9FAE500DD96DF /* LaunchScreen.storyboard */; };
-		1554C21028CC8E25003332F4 /* Webservice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1554C20F28CC8E25003332F4 /* Webservice.swift */; };
 		1554C21328CCC42D003332F4 /* TestModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1554C21228CCC42D003332F4 /* TestModule.swift */; };
 		1554C21528CCCFA2003332F4 /* PrivateWebservice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1554C21428CCCFA2003332F4 /* PrivateWebservice.swift */; };
 		15B124BA28CAEBBB00408C45 /* touch.json in Resources */ = {isa = PBXBuildFile; fileRef = 15B124B928CAEBBB00408C45 /* touch.json */; };
@@ -36,7 +35,6 @@
 		154F316F28C9FAE500DD96DF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		154F317228C9FAE500DD96DF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		154F317428C9FAE500DD96DF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		1554C20F28CC8E25003332F4 /* Webservice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Webservice.swift; sourceTree = "<group>"; };
 		1554C21228CCC42D003332F4 /* TestModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestModule.swift; sourceTree = "<group>"; };
 		1554C21428CCCFA2003332F4 /* PrivateWebservice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateWebservice.swift; sourceTree = "<group>"; };
 		15B124B928CAEBBB00408C45 /* touch.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = touch.json; path = ../../../../../../../Downloads/touch.json; sourceTree = "<group>"; };
@@ -108,7 +106,6 @@
 		1554C20E28CC8DF1003332F4 /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				1554C20F28CC8E25003332F4 /* Webservice.swift */,
 				1554C21428CCCFA2003332F4 /* PrivateWebservice.swift */,
 			);
 			path = Services;
@@ -270,7 +267,6 @@
 			files = (
 				151362D728CB0F9000AFBF54 /* AddLocalWeather.swift in Sources */,
 				1554C21328CCC42D003332F4 /* TestModule.swift in Sources */,
-				1554C21028CC8E25003332F4 /* Webservice.swift in Sources */,
 				151362D528CB0D0E00AFBF54 /* Extensions.swift in Sources */,
 				1554C21528CCCFA2003332F4 /* PrivateWebservice.swift in Sources */,
 				154F316728C9FAE400DD96DF /* AppDelegate.swift in Sources */,
