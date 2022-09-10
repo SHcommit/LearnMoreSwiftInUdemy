@@ -17,6 +17,7 @@
 		154F317328C9FAE500DD96DF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 154F317128C9FAE500DD96DF /* LaunchScreen.storyboard */; };
 		1554C21328CCC42D003332F4 /* TestModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1554C21228CCC42D003332F4 /* TestModule.swift */; };
 		1554C21528CCCFA2003332F4 /* PrivateWebservice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1554C21428CCCFA2003332F4 /* PrivateWebservice.swift */; };
+		1554C21728CCDB6D003332F4 /* Webservice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1554C21628CCDB6D003332F4 /* Webservice.swift */; };
 		15B124BA28CAEBBB00408C45 /* touch.json in Resources */ = {isa = PBXBuildFile; fileRef = 15B124B928CAEBBB00408C45 /* touch.json */; };
 		15B124C028CAF02700408C45 /* set.json in Resources */ = {isa = PBXBuildFile; fileRef = 15B124BF28CAF02700408C45 /* set.json */; };
 		15B124C428CAFAF900408C45 /* map.json in Resources */ = {isa = PBXBuildFile; fileRef = 15B124C328CAFAF900408C45 /* map.json */; };
@@ -37,6 +38,7 @@
 		154F317428C9FAE500DD96DF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1554C21228CCC42D003332F4 /* TestModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestModule.swift; sourceTree = "<group>"; };
 		1554C21428CCCFA2003332F4 /* PrivateWebservice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateWebservice.swift; sourceTree = "<group>"; };
+		1554C21628CCDB6D003332F4 /* Webservice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Webservice.swift; sourceTree = "<group>"; };
 		15B124B928CAEBBB00408C45 /* touch.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = touch.json; path = ../../../../../../../Downloads/touch.json; sourceTree = "<group>"; };
 		15B124BF28CAF02700408C45 /* set.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = set.json; path = ../../../../../../../Downloads/set.json; sourceTree = "<group>"; };
 		15B124C328CAFAF900408C45 /* map.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = map.json; path = ../../../../../../../Downloads/map.json; sourceTree = "<group>"; };
@@ -107,6 +109,7 @@
 			isa = PBXGroup;
 			children = (
 				1554C21428CCCFA2003332F4 /* PrivateWebservice.swift */,
+				1554C21628CCDB6D003332F4 /* Webservice.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -273,6 +276,7 @@
 				154F316928C9FAE400DD96DF /* SceneDelegate.swift in Sources */,
 				15BAD02E28CA515800DCC5FE /* MainViewController.swift in Sources */,
 				151362D128CB01E000AFBF54 /* SettingViewController.swift in Sources */,
+				1554C21728CCDB6D003332F4 /* Webservice.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
