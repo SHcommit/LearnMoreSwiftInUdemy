@@ -32,6 +32,31 @@ class MainViewController: UITableViewController {
     }
 }
 
+//MARK: - tableView delegate methods
+extension MainViewController {
+    
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+    
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 5
+    }
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "WeatherCell") ?? UITableViewCell(style: .value1, reuseIdentifier: "WeatherCell")
+        cell.textLabel?.text = "Daejeon"
+        cell.textLabel?.font = UIFont.systemFont(ofSize: 22)
+        cell.detailTextLabel?.text = "33"
+        cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 25)
+        return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 100
+    }
+}
+
 //MARK: - setupUI
 extension MainViewController {
     func  setupNavigationBar() {
