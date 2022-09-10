@@ -1,8 +1,18 @@
-//
-//  WeatherResponse.swift
-//  GoodWeather
-//
-//  Created by 양승현 on 2022/09/11.
-//
+struct WeatherResponse: Codable {
+    let local: String
+    let sys: sys
+    let main: mainInfo
+    enum CodingKeys: String,CodingKey {
+        case local = "name"
+        case sys
+        case main
+    }
+}
+struct sys: Codable{
+    let country: String
+}
 
-import Foundation
+struct mainInfo: Codable{
+    let temp: Double
+    let humidity: Int
+}
