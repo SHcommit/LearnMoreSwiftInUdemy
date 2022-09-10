@@ -8,6 +8,27 @@
 import Foundation
 import Alamofire
 
+class HTTPResource {
+    var privateKey = PrivateWebservice().apiKey
+    var url: String = "https://api.openweathermap.org/data/2.5/weather?lang=kr"
+    
+    var city: String = ""
+    var options = "units=imperial"
+    var searchCity: String {
+        get {
+            return city.isEmpty ? "Seoul" : self.city
+        }
+        set(value) {
+            self.city = "q=\(value)"
+        }
+    }
+    func combineURL(city: String) -> String {
+        self.searchCity = city
+        return "\(url)&\(self.searchCity)&\(options)&\(privateKey)"
+    }
+}
+
+
 struct Resource<T> {
     var searchedCity = ""
     var url: String {
