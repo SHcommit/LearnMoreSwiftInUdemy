@@ -7,6 +7,28 @@
 
 import Foundation
 
-class TestModule() {
+class TestModule {
+    var testWebservice = TestWebservice()
+    func start() {
+        testWebservice.testCombineURL()
+        testWebservice.testDataParsing()
+    }
     
+}
+
+
+class TestWebservice {
+    func testCombineURL() {
+        var htt = HTTPResource()
+        print("Success http url combination: \(htt.combineURL(city: "Daejeon"))")
+    }
+    func testDataParsing() {
+        var resource = Resource(searchedCity: "Daejeon") { _ in
+        }
+        let weatherResource = Resource<Any>(searchedCity: "Daejeon") { data in
+            return data
+        }
+        Webservice().load(resource: weatherResource) { result in
+        }
+    }
 }
