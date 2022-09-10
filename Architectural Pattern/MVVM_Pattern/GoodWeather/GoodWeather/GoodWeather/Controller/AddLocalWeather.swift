@@ -7,13 +7,17 @@
 
 import UIKit
 
+protocol AddWeatherDelegate {
+    func addWeatherDidSave(vm: WeatherViewModel)
+}
+
 class AddLocalWeather : UIViewController {
     
     @IBOutlet weak var cityNameTextField: UITextField!
     
     @IBAction func saveCityButton(_ sender: Any) {
         if let city = cityNameTextField.text {
-            AddWeatherViewModel().addWeather(for: city) { vm in 
+            AddWeatherViewModel().addWeather(for: city) { vm in
                 
             }
         }
