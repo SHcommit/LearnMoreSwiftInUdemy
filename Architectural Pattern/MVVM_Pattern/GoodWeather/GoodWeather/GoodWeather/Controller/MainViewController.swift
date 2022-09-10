@@ -15,8 +15,6 @@ class MainViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNavigationBar()
-        //test
-        test().start()
     }
     override func viewWillAppear(_ animated: Bool) {
         reloadAnimationView()
@@ -117,20 +115,5 @@ extension MainViewController {
     
     @objc func addWeather(_ sender: Any) {
         self.performSegue(withIdentifier: "AddWeatherSegue", sender: sender)
-    }
-}
-
-//MARK: - tset
-extension MainViewController {
-    class test {
-        
-        func start() {
-            testCombineURL()
-        }
-        
-        func testCombineURL() {
-            var htt = HttpResource()
-            print("Success http url combination: \(htt.combineURL(city: "Daejeon"))")
-        }
     }
 }
