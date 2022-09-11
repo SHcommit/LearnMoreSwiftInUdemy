@@ -10,8 +10,10 @@ import Lottie
 
 
 class MainViewController: UITableViewController {
+    var testModule = TestModule()
     var setting: AnimationView?
     var addWeather: AnimationView?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNavigationBar()
@@ -57,15 +59,40 @@ extension MainViewController {
     }
 }
 
+//MARK: AddWeatherDelegate
+extension MainViewController: AddLocalWeatherDelegate{
+    
+    func addLocalWeatherDidSave(vm: WeatherViewModel) {
+        print("Success delegate protocol call result :\(vm)")
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard segue.identifier == "AddWeatherSegue" else {
+            print("Failure find identifier in segue")
+            return
+        }
+    }
+    
+    func prepareSegueForAddLocalWeatherViewController(segue: UIStoryboardSegue) {
+        guard let addLocalWeatherVC = segue.destination as? AddLocalWeather else {
+            print("Failure to bind destination in seuge")
+            return
+        }
+        addLocalWeatherVC.delegate = self
+        
+    }
+}
+
 //MARK: - setupUI
 extension MainViewController {
+    
     func  setupNavigationBar() {
         self.navigationItem.leftBarButtonItem  = settingBarButton()
         self.navigationItem.rightBarButtonItem = addWeatherBarButton()
         setupNavigationBackground()
         self.navigationItem.title = "GoodWeather"
-        
     }
+    
     func setupNavigationBackground() {
         guard let navBar = self.navigationController?.navigationBar else {
             return
@@ -88,6 +115,7 @@ extension MainViewController {
         
         return settingBtn
     }
+    
     func addWeatherBarButton() -> UIBarButtonItem{
         guard let width = self.navigationController?.navigationBar.frame.height else {
             fatalError("Failure bind navigationBar's frame")
