@@ -10,8 +10,11 @@
 
 ---
 
-- <a href="https://github.com/SHcommit/LearnMoreSwiftInUdemy/tree/master/Architectural%20Pattern/MVVM_Pattern/GoodNews">GoodNews 구현하면서 마주한 상황들</a>
+- <a href="https://github.com/SHcommit/LearnMoreSwiftInUdemy/tree/master/Architectural%20Pattern/MVVM_Pattern/GoodNews">GoodNews 구현하면서 마주한 상황, 느낀점, 새로 배운 개념</a>
 - - <a href="https://github.com/SHcommit/LearnMoreSwiftInUdemy/tree/master/Architectural%20Pattern/MVVM_Pattern/GoodNews/GoodNews/GoodNews">source code</a>
  
-- <a href="https://github.com/SHcommit/LearnMoreSwiftInUdemy/tree/master/Architectural%20Pattern/MVVM_Pattern/HotCoffee">HotCoffee 구현하면서 마주한 상황들</a>
+- <a href="https://github.com/SHcommit/LearnMoreSwiftInUdemy/tree/master/Architectural%20Pattern/MVVM_Pattern/HotCoffee">HotCoffee 구현하면서 마주한 상황, 느낀점, 새로 배운 개념</a>
 - - <a href="https://github.com/SHcommit/LearnMoreSwiftInUdemy/tree/master/Architectural%20Pattern/MVVM_Pattern/HotCoffee/HotCoffee/HotCoffee">source code</a>
+
+- <a href="https://github.com/SHcommit/LearnMoreSwiftInUdemy/tree/master/Architectural%20Pattern/MVVM_Pattern/GoodWeather">GoodWeather 구현하면서 마주한 상황, 느낀점, 새로 배운 개념</a>
+- - <a href="https://github.com/SHcommit/LearnMoreSwiftInUdemy/tree/master/Architectural%20Pattern/MVVM_Pattern/GoodWeather/GoodWeather/GoodWeather">source code</a>
