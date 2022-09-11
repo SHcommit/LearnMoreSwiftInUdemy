@@ -27,7 +27,6 @@ class BindingTextField: UITextField {
     }
     
     //MARK: - common logics
-    //이건 UI -> VM으로 바인딩될때 이 함수로 확인 가능
     func bind(callback: @escaping (String) -> Void) {
         self.textChanged = callback
     }

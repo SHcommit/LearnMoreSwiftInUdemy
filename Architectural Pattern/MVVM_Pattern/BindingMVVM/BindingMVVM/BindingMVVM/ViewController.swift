@@ -65,6 +65,7 @@ extension ViewController {
     
     @objc func login() {
         print("username: \(loginVM.username)\n password: \(loginVM.password)")
+        print()
     }
     
 }
