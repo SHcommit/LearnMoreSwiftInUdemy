@@ -22,6 +22,7 @@
 		1554C21D28CCE7D2003332F4 /* AddWeatherViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1554C21C28CCE7D2003332F4 /* AddWeatherViewModel.swift */; };
 		1554C22028CCE88A003332F4 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1554C21F28CCE88A003332F4 /* String.swift */; };
 		1554C22328CCEC35003332F4 /* WeatherListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1554C22228CCEC35003332F4 /* WeatherListViewModel.swift */; };
+		1554C22528CDF572003332F4 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1554C22428CDF572003332F4 /* SettingsViewModel.swift */; };
 		15B124BA28CAEBBB00408C45 /* touch.json in Resources */ = {isa = PBXBuildFile; fileRef = 15B124B928CAEBBB00408C45 /* touch.json */; };
 		15B124C028CAF02700408C45 /* set.json in Resources */ = {isa = PBXBuildFile; fileRef = 15B124BF28CAF02700408C45 /* set.json */; };
 		15B124C428CAFAF900408C45 /* map.json in Resources */ = {isa = PBXBuildFile; fileRef = 15B124C328CAFAF900408C45 /* map.json */; };
@@ -47,6 +48,7 @@
 		1554C21C28CCE7D2003332F4 /* AddWeatherViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWeatherViewModel.swift; sourceTree = "<group>"; };
 		1554C21F28CCE88A003332F4 /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 		1554C22228CCEC35003332F4 /* WeatherListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherListViewModel.swift; sourceTree = "<group>"; };
+		1554C22428CDF572003332F4 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		15B124B928CAEBBB00408C45 /* touch.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = touch.json; path = ../../../../../../../Downloads/touch.json; sourceTree = "<group>"; };
 		15B124BF28CAF02700408C45 /* set.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = set.json; path = ../../../../../../../Downloads/set.json; sourceTree = "<group>"; };
 		15B124C328CAFAF900408C45 /* map.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = map.json; path = ../../../../../../../Downloads/map.json; sourceTree = "<group>"; };
@@ -146,6 +148,7 @@
 			children = (
 				1554C21C28CCE7D2003332F4 /* AddWeatherViewModel.swift */,
 				1554C22228CCEC35003332F4 /* WeatherListViewModel.swift */,
+				1554C22428CDF572003332F4 /* SettingsViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -317,6 +320,7 @@
 				151362D128CB01E000AFBF54 /* SettingViewController.swift in Sources */,
 				1554C22328CCEC35003332F4 /* WeatherListViewModel.swift in Sources */,
 				1554C21728CCDB6D003332F4 /* Webservice.swift in Sources */,
+				1554C22528CDF572003332F4 /* SettingsViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

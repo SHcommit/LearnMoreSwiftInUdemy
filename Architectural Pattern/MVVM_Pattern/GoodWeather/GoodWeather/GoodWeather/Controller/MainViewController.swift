@@ -10,14 +10,17 @@ import Lottie
 
 
 class MainViewController: UITableViewController {
+    
     var testModule = TestModule()
     var setting: AnimationView?
     var addWeather: AnimationView?
     private var weatherListViewModel = WeatherListViewModel()
+    private var lastUnitSelection : Unit!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNavigationBar()
+        setupLastUnitSelection()
     }
     override func viewWillAppear(_ animated: Bool) {
         reloadAnimationView()
@@ -33,6 +36,13 @@ class MainViewController: UITableViewController {
     func workLottie(_ av: AnimationView) {
         av.play()
         av.loopMode = .loop
+    }
+    
+    func setupLastUnitSelection() {
+        let ud = UserDefaults.standard
+        if let value = ud.value(forKey: "unit") as? String {
+            self.lastUnitSelection = Unit(rawValue: value)!
+        }
     }
 }
 
@@ -65,15 +75,7 @@ extension MainViewController: AddLocalWeatherDelegate{
         print("Success delegate protocol call result :\(vm)")
         weatherListViewModel.addWeatherViewModel(vm)
     }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        guard segue.identifier == "AddWeatherSegue" else {
-            print("Failure find identifier in segue")
-            return
-        }
-        prepareSegueForAddLocalWeatherViewController(segue: segue)
-    }
-    
+        
     func prepareSegueForAddLocalWeatherViewController(segue: UIStoryboardSegue) {
         guard let addLocalWeatherVC = segue.destination as? AddLocalWeather else {
             print("Failure to bind destination in seuge")
@@ -82,6 +84,44 @@ extension MainViewController: AddLocalWeatherDelegate{
         addLocalWeatherVC.delegate = self
         
     }
+}
+
+//MARK: - SettingDelegate
+extension MainViewController: SettingDelegate {
+    func saveUnit(value: SettingViewModel) {
+        print("Success get SettingVM value")
+        if lastUnitSelection.rawValue != value.selectedUnit.rawValue {
+            weatherListViewModel.updateUnit(to: value.selectedUnit)
+            tableView.reloadData()
+            lastUnitSelection = Unit(rawValue: value.selectedUnit.rawValue)!
+        }
+    }
+    
+    func prepareSegueForSettingViewController(segue: UIStoryboardSegue) {
+        guard let settingVC = segue.destination as? SettingViewController else {
+            print("Failure to bind destination in segue")
+            return
+        }
+        settingVC.delegate = self
+    }
+}
+
+//MARK: - segue's call method
+extension MainViewController {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        switch segue.identifier {
+        case "AddWeatherSegue":
+            prepareSegueForAddLocalWeatherViewController(segue: segue)
+            break
+        case "MetricSegue":
+            prepareSegueForSettingViewController(segue: segue)
+            break
+        default:
+            break
+        }
+        
+    }
+
 }
 
 //MARK: - setupUI
