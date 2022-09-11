@@ -73,7 +73,7 @@
         <!--Add Local Weather-->
         <scene sceneID="FOH-OV-BgR">
             <objects>
-                <viewController id="8h9-UA-b43" customClass="AddLocalWeather" customModule="GoodWeather" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="AddLocalWeather" id="8h9-UA-b43" customClass="AddLocalWeather" customModule="GoodWeather" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Ko6-oE-Bb3">
                         <rect key="frame" x="0.0" y="0.0" width="428" height="926"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
