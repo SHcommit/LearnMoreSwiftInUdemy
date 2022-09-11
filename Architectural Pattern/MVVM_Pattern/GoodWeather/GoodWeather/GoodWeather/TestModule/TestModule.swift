@@ -6,16 +6,21 @@
 //
 
 import Foundation
+import UIKit
 
 class TestModule {
     var testWebservice = TestWebservice()
     var testWeatherResponse = TestWeatherResponse()
+    var testWeatherDelegate = TestWeatherDelegate()
     func testStartWebservice() {
         testWebservice.testCombineURL()
         testWebservice.testDataParsing()
     }
     func testStartWeatherResponse() {
         testWeatherResponse.testResponse()
+    }
+    func testStartWeatherDelegate(segue: UIStoryboardSegue) {
+        testWeatherDelegate.testSelectWeatherDelegate(segue: segue)
     }
     
 }
@@ -48,4 +53,20 @@ class TestWeatherResponse {
             print("Success decoding :\(_weatherResponse)")
         }
     }
+}
+
+struct TestWeatherDelegate : AddLocalWeatherDelegate {
+    func addLocalWeatherDidSave(vm: WeatherViewModel) {
+        print("\(vm)")
+    }
+    
+    func testSelectWeatherDelegate(segue: UIStoryboardSegue) {
+        guard let vc = segue.destination as? AddLocalWeather else {
+            print("Fail")
+            return
+        }
+        
+        vc.delegate = self
+    }
+    
 }
