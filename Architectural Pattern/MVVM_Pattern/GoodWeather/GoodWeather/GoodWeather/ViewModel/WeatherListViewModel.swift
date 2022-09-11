@@ -8,7 +8,7 @@ class WeatherListViewModel {
 }
 
 class WeatherViewModel {
-    let weather: WeatherResponse
+    private let weather: WeatherResponse
     init(weather: WeatherResponse) {
         self.weather = weather
     }

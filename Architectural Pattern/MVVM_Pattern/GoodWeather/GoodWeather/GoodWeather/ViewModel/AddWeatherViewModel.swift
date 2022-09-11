@@ -17,6 +17,7 @@ class AddWeatherViewModel {
         
         Webservice().load(resource: weatherResource) { result in 
             guard let weatherResource = result else {
+                print("Not Working load func")
                 return
             }
             let vm = WeatherViewModel(weather: weatherResource)

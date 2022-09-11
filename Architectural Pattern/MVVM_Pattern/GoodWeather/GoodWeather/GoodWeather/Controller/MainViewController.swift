@@ -13,6 +13,7 @@ class MainViewController: UITableViewController {
     var testModule = TestModule()
     var setting: AnimationView?
     var addWeather: AnimationView?
+    private var weatherListViewModel = WeatherListViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,6 +21,7 @@ class MainViewController: UITableViewController {
     }
     override func viewWillAppear(_ animated: Bool) {
         reloadAnimationView()
+        self.tableView.reloadData()
     }
     func reloadAnimationView() {
         guard let _setting = setting, let _addWeather = addWeather else {
@@ -42,14 +44,16 @@ extension MainViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 5
+        return weatherListViewModel.numberOfRows(section)
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "WeatherCell") ?? UITableViewCell(style: .value1, reuseIdentifier: "WeatherCell")
-        cell.textLabel?.text = "Daejeon"
+        
+        let data = weatherListViewModel.modelAt(indexPath.row)
+        cell.textLabel?.text = data.city
         cell.textLabel?.font = UIFont.systemFont(ofSize: 22)
-        cell.detailTextLabel?.text = "33"
+        cell.detailTextLabel?.text = "\(data.temperature)"
         cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 25)
         return cell
     }
@@ -64,6 +68,7 @@ extension MainViewController: AddLocalWeatherDelegate{
     
     func addLocalWeatherDidSave(vm: WeatherViewModel) {
         print("Success delegate protocol call result :\(vm)")
+        weatherListViewModel.addWeatherViewModel(vm)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -71,6 +76,7 @@ extension MainViewController: AddLocalWeatherDelegate{
             print("Failure find identifier in segue")
             return
         }
+        prepareSegueForAddLocalWeatherViewController(segue: segue)
     }
     
     func prepareSegueForAddLocalWeatherViewController(segue: UIStoryboardSegue) {
