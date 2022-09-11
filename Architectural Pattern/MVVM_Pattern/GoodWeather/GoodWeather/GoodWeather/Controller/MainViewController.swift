@@ -49,12 +49,7 @@ extension MainViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "WeatherCell") ?? UITableViewCell(style: .value1, reuseIdentifier: "WeatherCell")
-        
-        let data = weatherListViewModel.modelAt(indexPath.row)
-        cell.textLabel?.text = data.city
-        cell.textLabel?.font = UIFont.systemFont(ofSize: 22)
-        cell.detailTextLabel?.text = "\(data.temperature)"
-        cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 25)
+        weatherListViewModel.setupCellData(cell: cell, index: indexPath.row, listModel: self.weatherListViewModel)
         return cell
     }
     
@@ -149,5 +144,13 @@ extension MainViewController {
     
     @objc func addWeather(_ sender: Any) {
         self.performSegue(withIdentifier: "AddWeatherSegue", sender: sender)
+    }
+}
+
+
+//MARK: basic structure extension
+extension Double {
+    func formatAsDegree() -> String {
+        return String(format: "%.0f",self)
     }
 }

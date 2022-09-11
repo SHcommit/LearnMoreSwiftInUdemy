@@ -1,3 +1,4 @@
+import UIKit
 class WeatherListViewModel {
     private var list = [WeatherViewModel]()
     
@@ -33,4 +34,11 @@ extension WeatherListViewModel {
         return list[index]
     }
     
+    func setupCellData(cell: UITableViewCell, index: Int, listModel: WeatherListViewModel) {
+        let data = listModel.modelAt(index)
+        cell.textLabel?.text = data.city
+        cell.textLabel?.font = UIFont.systemFont(ofSize: 22)
+        cell.detailTextLabel?.text = "\(data.temperature)"
+        cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 25)
+    }
 }
