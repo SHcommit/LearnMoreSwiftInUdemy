@@ -38,7 +38,7 @@ extension WeatherListViewModel {
         let data = listModel.modelAt(index)
         cell.textLabel?.text = data.city
         cell.textLabel?.font = UIFont.systemFont(ofSize: 22)
-        cell.detailTextLabel?.text = "\(data.temperature)"
+        cell.detailTextLabel?.text = "\(data.temperature)°"
         cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 25)
     }
 }
