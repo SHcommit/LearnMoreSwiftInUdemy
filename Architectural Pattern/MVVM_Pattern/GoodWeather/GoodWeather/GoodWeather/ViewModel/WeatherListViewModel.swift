@@ -46,7 +46,7 @@ extension WeatherListViewModel {
         
         list = list.map { vm in
             let weatherModel = vm
-            weatherModel.temperature = (weatherModel.temperature - 32) * 5/9
+            weatherModel.temperature = round((weatherModel.temperature - 32) * 5/9)
             return weatherModel
         }
         
@@ -55,7 +55,7 @@ extension WeatherListViewModel {
     private func toFahrenheit() {
         list = list.map { vm in
             let weatherModel = vm
-            weatherModel.temperature = (weatherModel.temperature * 9/5) + 32
+            weatherModel.temperature = round((weatherModel.temperature * 9/5) + 32)
             return weatherModel
         }
     }

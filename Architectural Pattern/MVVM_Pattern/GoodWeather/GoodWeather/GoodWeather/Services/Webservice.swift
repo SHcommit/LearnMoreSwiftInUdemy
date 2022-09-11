@@ -13,7 +13,12 @@ class HTTPResource {
     var url: String = "https://api.openweathermap.org/data/2.5/weather?lang=kr"
     
     var city: String = ""
-    var options = "units=imperial"
+    var selectedUnit = (UserDefaults.standard.value(forKey: "unit") as? String ) ?? "imperial"
+    var options :String {
+        get {
+            return "units=" + self.selectedUnit
+        }
+    }
     var searchCity: String {
         get {
             return city.isEmpty ? "Seoul" : self.city
