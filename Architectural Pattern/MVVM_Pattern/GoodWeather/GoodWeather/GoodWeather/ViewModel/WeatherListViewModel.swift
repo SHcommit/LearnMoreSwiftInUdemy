@@ -1,5 +1,10 @@
 class WeatherListViewModel {
-    var list = [WeatherViewModel]()
+    private var list = [WeatherViewModel]()
+    
+    func addWeatherViewModel(_ vm: WeatherViewModel) {
+        list.append(vm)
+    }
+    
 }
 
 class WeatherViewModel {
@@ -17,3 +22,15 @@ class WeatherViewModel {
     }
 }
 
+//MARK: -  TableView's data
+extension WeatherListViewModel {
+    
+    func numberOfRows(_ section: Int) -> Int {
+        return list.count
+    }
+    
+    func modelAt(_ index: Int) -> WeatherViewModel {
+        return list[index]
+    }
+    
+}
