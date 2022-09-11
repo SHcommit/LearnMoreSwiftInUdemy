@@ -1,8 +1,19 @@
-//
-//  WeatherListViewModel.swift
-//  GoodWeather
-//
-//  Created by 양승현 on 2022/09/11.
-//
+class WeatherListViewModel {
+    var list = [WeatherViewModel]()
+}
 
-import Foundation
+class WeatherViewModel {
+    let weather: WeatherResponse
+    init(weather: WeatherResponse) {
+        self.weather = weather
+    }
+    
+    var city: String {
+        return weather.local
+    }
+    
+    var temperature: Double {
+        return weather.main.temp
+    }
+}
+
