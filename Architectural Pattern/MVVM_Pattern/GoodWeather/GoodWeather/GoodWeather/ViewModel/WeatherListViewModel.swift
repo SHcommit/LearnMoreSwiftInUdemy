@@ -1,6 +1,6 @@
 import UIKit
 class WeatherListViewModel {
-    private var list = [WeatherViewModel]()
+    var list = [WeatherViewModel]()
     
     func addWeatherViewModel(_ vm: WeatherViewModel) {
         list.append(vm)
