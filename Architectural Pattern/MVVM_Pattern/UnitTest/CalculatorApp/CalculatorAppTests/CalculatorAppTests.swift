@@ -8,28 +8,30 @@
 import XCTest
 @testable import CalculatorApp
 /*
-    이렇게 통과한 테스트 코드를 이제 리펙토링한다.
-    테스트 코드 또한 깔끔해야한다.
+    setUp() 함수는 이미 XCTestCase에 추가되어 있는 함수이다.
+    -> super.setUP() 호출해야 한다.
+    각각의 테스트<testSubstractTwoNumbers(),testAddTwoNumbers()>가 실행되기 전에 setUp() 이 실행된다.
+    즉 setUp()함수는 두번 실행된다.
  
-    지금 코드에서 개선해야 할 점.
-    Calculator 인스턴스를 두 번 생성한다. 각 테스트가 실행되기 전에 무언가를 시도 하려고하면
-    setup func를 오버로딩해서 그곳에 집어넣으면 된다.
+    즉 중복 실행되는 Calculator() 인스턴스는 setUp()에서 초기화 될 경우 두개의 단위 테스트가 실행되기 이전에 초기화가 될 것이다.
+ 
  */
 class CalculatorAppTests: XCTestCase {
-
-    func testSubstractTwoNumbers() {
-        let calculator = Calculator()
-        let result = calculator.subtract(5,2)
+    
+    private var calculator: Calculator!
+    override func setUp() {
+        super.setUp()
         
+        self.calculator = Calculator()
+        
+    }
+    func testSubstractTwoNumbers() {
+        let result = self.calculator.subtract(5,2)
         XCTAssertEqual(result, 3)
     }
     
     func testAddTwoNumbers() {
-        let calculator = Calculator()
-        let result = calculator.add(2,3)
-        /*
-            2+3은 5를 수행할 것이다! 내가 계산한 것과 Calculator의 로직이 맞는지 test가 가능하다.
-         */
+        let result = self.calculator.add(2,3)
         XCTAssertEqual(result, 5)
     }
 
