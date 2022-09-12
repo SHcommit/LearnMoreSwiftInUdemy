@@ -35,7 +35,7 @@ TextField를 상속받는 <a href="https://github.com/SHcommit/LearnMoreSwiftInU
 
 ![p0](https://user-images.githubusercontent.com/96910404/189542984-2d798e65-59ff-49ef-bca3-effca99c3ca3.png)
 
-그전에 위 사진을 보면 textChanged에 클로저를 직접 설정해주어도 바인딩은 잘 잘 작동된다. 하지만 bind(callback:) 함수를 추가로 선언한 이유는 아무래도 프로퍼티를 사용하는 것 보단 함수를 호출하는게 캡슐화 측면에서 좋은 방안이어서 아래와 같은 함수를 선언 한 것 같다.
+그전에 위 사진을 보면 textChanged에 클로저를 직접 설정해주어도 바인딩은 잘 잘 작동된다. 하지만 bind(callback:) 함수를 추가로 선언한 이유는 아무래도 프로퍼티를 사용하는 것 보단 함수를 호출하는게 캡슐화 측면에서 좋은 방안이어서 아래와 같은 함수를 선언 한 것 같다. // **UI에 등록을 허용**하는 기능이다.
 
 
 ![p1](https://user-images.githubusercontent.com/96910404/189542983-e41b221c-7431-4820-946b-c3013999c7c1.png)
@@ -49,3 +49,15 @@ textChanged를 바로 사용할 수 는 없다. 디폴트로 {_ in} 초기화만
 >bind(callback:) 함수는 단 한번 실행이 된다. 이때 주요  역할은 @escaping을 통해 BindingTextField의 textChanged 클로저 역할을 대입해준다.
 >
 > 이제 사용자가 TextField를 입력할 때마다 addTarget의 .editingChanged 조건에 의해 textFieldDidChanged(_:)메소드가 호출되는데 이때마다 textChanged클로저가 실행되기 때문에 지속적으로 값이 갱신되는 것이다. bind에 의해 textChanded 로직이 정의됬는데 주요 로직은 self?.loginVM의 username에 값을 지속적으로 할당하는 것이다.
+
+---
+
+## Q2> What is ViewModel to View binding?
+
+> 개발자가 ViewModel의 프로퍼티 값을 바꾸면 변경된 값이 TextField에도 자동으로 적용되야 한다.
+
+View to VIewModel 와 비슷하다. 한가지 차이점은 ViewModel to View에서 View의 예로 TextField를 들었는데 바인딩을 사용하려면 커스터마이징을 해야했다.
+
+View to ViewModel은 반대로 TextField에 bind를 걸어주는데 값은 다양하기때문에 제너릭 타입으로 선언되서 사용했다. ViewModel의 타입을 단순한 "" String에서 Dynamic타입으로 함으로써 값이 변경되면 Dynamic의 value가 변하는데 이때 didSet가 실행되면서 bind 함수의 callback 클로저 내용이 실행된다. 이때 TextField의 값이 변하는 것이다.
+
+bind(callback:) 는 최초로 불러지면 listener에 대입되는데 이는 UI에 바인딩 됬다는 것을 의미하기 위해 func bind ( callback: @escape Listener) 로 listener를 초기화하는 것이다.
