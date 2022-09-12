@@ -8,7 +8,12 @@
 import XCTest
 @testable import CalculatorApp
 /*
-  이렇게 통과한 테스트 코드를 이제 리펙토링한다.
+    이렇게 통과한 테스트 코드를 이제 리펙토링한다.
+    테스트 코드 또한 깔끔해야한다.
+ 
+    지금 코드에서 개선해야 할 점.
+    Calculator 인스턴스를 두 번 생성한다. 각 테스트가 실행되기 전에 무언가를 시도 하려고하면
+    setup func를 오버로딩해서 그곳에 집어넣으면 된다.
  */
 class CalculatorAppTests: XCTestCase {
 
