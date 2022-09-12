@@ -18,6 +18,24 @@ import Foundation
  
  */
 struct LoginViewModel {
-    var username: String = ""
-    var password: String = ""
+    var username = Dynamic("")
+    var password = Dynamic("")
+}
+
+
+class Dynamic<T> {
+    typealias Listener = (T) -> Void
+    var listener: Listener?
+    var value: T {
+        didSet {
+            listener?(value)
+        }
+    }
+    func bind(callback: @escaping Listener) {
+        self.listener = callback
+    }
+    
+    init(_ value: T) {
+        self.value = value
+    }
 }
