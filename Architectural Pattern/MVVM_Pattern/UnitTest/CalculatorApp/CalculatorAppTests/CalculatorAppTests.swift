@@ -7,15 +7,7 @@
 
 import XCTest
 @testable import CalculatorApp
-/*
-    setUp() 함수는 이미 XCTestCase에 추가되어 있는 함수이다.
-    -> super.setUP() 호출해야 한다.
-    각각의 테스트<testSubstractTwoNumbers(),testAddTwoNumbers()>가 실행되기 전에 setUp() 이 실행된다.
-    즉 setUp()함수는 두번 실행된다.
- 
-    즉 중복 실행되는 Calculator() 인스턴스는 setUp()에서 초기화 될 경우 두개의 단위 테스트가 실행되기 이전에 초기화가 될 것이다.
- 
- */
+
 class CalculatorAppTests: XCTestCase {
     
     private var calculator: Calculator!
@@ -34,5 +26,20 @@ class CalculatorAppTests: XCTestCase {
         let result = self.calculator.add(2,3)
         XCTAssertEqual(result, 5)
     }
-
+    
+    //MARK: - 기본 제공 함수들
+    
+    // test 가 실행된 후에 실행되는 함수
+    // 이 함수는 db에서 무언가를 작성하거나, 파일을 작성한 후에 테스트가 실행될 경우.
+    // 내가 실행한 테스트들을 삭제하는 로직을 tearDown()에서 할 수 있다.
+    // 테스트가 실제로 변경되지않도록!!! 삭제하는 로직을
+    
+    //만약 UserDefaults.default 나중에 사용할 수 있는 영구저장소를 test로 쓰고 있다면
+    // tearDown()에서 userDefaults값을 삭제할 수 있다.
+    override func tearDown() {
+        super.tearDown()
+    }
+    
+    // 따라서 테스트는 한가지만 테스트하고 tearDown()을 통해 제거하는 원칙을 따른다.
+    // 신뢰할 수 없을때 하는게 test이다.
 }
