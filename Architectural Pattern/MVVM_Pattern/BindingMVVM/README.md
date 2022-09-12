@@ -61,3 +61,13 @@ View to VIewModel 와 비슷하다. 한가지 차이점은 ViewModel to View에�
 View to ViewModel은 반대로 TextField에 bind를 걸어주는데 값은 다양하기때문에 제너릭 타입으로 선언되서 사용했다. ViewModel의 타입을 단순한 "" String에서 Dynamic타입으로 함으로써 값이 변경되면 Dynamic의 value가 변하는데 이때 didSet가 실행되면서 bind 함수의 callback 클로저 내용이 실행된다. 이때 TextField의 값이 변하는 것이다.
 
 bind(callback:) 는 최초로 불러지면 listener에 대입되는데 이는 UI에 바인딩 됬다는 것을 의미하기 위해 func bind ( callback: @escape Listener) 로 listener를 초기화하는 것이다.
+
+---
+
+### 공부하면서 궁금했던 점
+
+왜 클로저일때만 [weak self] 키워드를 붙이는 것일까? 어차피 VC의 인스턴스가 없다면 실행되 되지 않을 것인데?
+
+> self 키워드는 참조를 유지하고 VC가 사라진 후에도 계속 참조를 유지한다. 클로저의 특성과 맞지 않기에 [weak self] 를 선언함으로써 모든 리소스를 garbage collected를 통해 관리하게 한다. 그럼 VC가 벗어난 이후에는 garbage collected가 처리한다.
+
+앗 참고로 클로저는 내부 컨텐츠에 대해서 캡처 ,저장 가능한 특징이 있다. @escaping 인 경우에 그리고 만약 비동기 처리된다는 가정 하에 self키워드가 소멸된 후에 self를 호출할 수 있는데 이때 그.. 캡처?! 클로저 안의 내용중 self또한 캡쳐할 수 있는데 이미 그 self는 소멸되어서 문제가 발생함. ( 얫날에 공부해서 다시 진지하게 공부해 볼 필요가 있다!!!! _)_
