@@ -2,6 +2,8 @@
 
 <a href="https://www.udemy.com/course/mastering-mvvm-for-ios">MVVM Design Pattern Using Swift in iOS</a> 유데미 강의를 들으며 공부를 하고 있습니다.
 
+Study date : 22.09.01 ~ 12
+
 각 앱 실습 파일 마다 README.md가 있는데
 
 느낀점 - 마주한 에러 , 해결과정 - 새로 알게된 개념으로 공부 기록을 작성했습니다.
@@ -24,3 +26,7 @@
 
 - <a href="https://github.com/SHcommit/LearnMoreSwiftInUdemy/blob/master/Architectural%20Pattern/MVVM_Pattern/UnitTest/README.md">Unit Test에 관한 간단한 이론</a>
 - - <a href="https://github.com/SHcommit/LearnMoreSwiftInUdemy/tree/master/Architectural%20Pattern/MVVM_Pattern/UnitTest/CalculatorApp/CalculatorApp">source code</a>
+
+--- 
+
+강의 들으면서 추가로 공부 하고 싶은 개념 TDD, Combine으로 바인딩 하는 방법
