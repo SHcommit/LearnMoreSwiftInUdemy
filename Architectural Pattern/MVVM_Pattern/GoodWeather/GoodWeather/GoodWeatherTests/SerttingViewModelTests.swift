@@ -6,30 +6,54 @@
 //
 
 import XCTest
-
+@testable import GoodWeather
+/*
+    TODO: 새로운 지역을 추가했을때 기본적인 단위가 화씨인지 섭씨인지 확인하고 싶다.
+ 
+    1. 새로운 Object를 생성하면 default로 화씨가 설정됬는지 확인하고 싶다.
+    함수 네이밍은 자세하게! 왜냐면 실패했을때 그 이유를 분명히 알 수 있기 때문
+ 
+    2. 디스플레이 name에 관한 테스트 (화씨 이면 화씨)
+ 
+    3. 사용자의 선택 저장 ( SettingViewController에서 _selectedUnit을 선택했을 때 set을 통해 영구저장소에 저장됬는데 이게 정말 되는지
+ 
+        3에서 영구 저장소를 사용했기에 이를 지워야한다.
+ */
 class SerttingViewModelTests: XCTestCase {
-
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+    
+    private var settingVM: SettingViewModel!
+    
+    override func setUp() {
+        super.setUp()
+        
+        self.settingVM = SettingViewModel()
+    }
+    
+    func test_should_make_sure_that_default_selected_unit_is_fahrenheit() {
+        
+        XCTAssertEqual(settingVM.selectedUnit, .fahrenheit)
     }
 
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+    func test_should_return_correct_display_name_for_fahrenheit() {
+        
+        XCTAssertEqual(self.settingVM.selectedUnit.displayType, "Fahrenheit")
+        
     }
-
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
+    
+    func test_should_be_able_to_save_user_unit_selection() {
+        
+        settingVM.selectedUnit = .celsius
+        let ud = UserDefaults.standard
+        XCTAssertNotNil(ud.value(forKey: "unit"))
+        
     }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
+    
+    //MARK: - clear test logic
+    
+    override func tearDown() {
+        super.tearDown()
+        
+        let ud = UserDefaults.standard
+        ud.removeObject(forKey: "unit")
     }
-
 }
