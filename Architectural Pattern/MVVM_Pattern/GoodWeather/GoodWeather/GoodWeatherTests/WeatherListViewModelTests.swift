@@ -21,7 +21,7 @@ import XCTest
         함수이다. 이 두 로직은 의미 깊기에 테스트 할 가치가 있다.
  
     TODO: 2. 온도가 섭씨인지 화씨인지, 성공적으로 convert할수 있는지 테스트 해보자.
-        테스트를 하기 위해선 몇가지 정보가 필요하다. list에 저장된 vm 한개라던지,, weather정보 etc
+        테스트를 하기 위해선 몇가지 정보가 필요하다. list에 저장된 vm 한개라던지,, weather정보 etc 
  
  */
 class WeatherListViewModelTests: XCTestCase {
