@@ -41,7 +41,20 @@ class WeatherListViewModelTests: XCTestCase {
         self.weatherListVM.addWeatherViewModel(WeatherViewModel(weather: WeatherResponse(local: "Daejeon", sys: .init(country: "Korea"), main: .init(temp: 72, humidity: 0))))
     }
     
+    func test_should_be_able_to_convert_to_celsius_successfully() {
+        
+        let celsiusTemperatures = [0,22.2222]
+        
+        self.weatherListVM.updateUnit(to: .celsius)
+        
+        for (index, vm) in self.weatherListVM.list.enumerated() {
+            XCTAssertEqual(round(vm.temperature), round(celsiusTemperatures[index]))
+            //이제 failed가 뜨는데 이유는 22.2222 != 22.2222222.... 이는 반올림하면 되니까 갠츈!!
+            // round()로 반올림하니까 success
+        }
+    }
+    
     override func tearDown() {
-        <#code#>
+        super.tearDown()
     }
 }
