@@ -6,30 +6,26 @@
 //
 
 import XCTest
-
+@testable import CalculatorApp
+/*
+  이렇게 통과한 테스트 코드를 이제 리펙토링한다.
+ */
 class CalculatorAppTests: XCTestCase {
 
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+    func testSubstractTwoNumbers() {
+        let calculator = Calculator()
+        let result = calculator.subtract(5,2)
+        
+        XCTAssertEqual(result, 3)
     }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
-    }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        measure {
-            // Put the code you want to measure the time of here.
-        }
+    
+    func testAddTwoNumbers() {
+        let calculator = Calculator()
+        let result = calculator.add(2,3)
+        /*
+            2+3은 5를 수행할 것이다! 내가 계산한 것과 Calculator의 로직이 맞는지 test가 가능하다.
+         */
+        XCTAssertEqual(result, 5)
     }
 
 }
