@@ -7,3 +7,6 @@ Study date : 22.09.15 ~
 
 ---
 
+- <a href="https://github.com/SHcommit/LearnMoreSwiftInUdemy/tree/master/AutoLayout/CHCRLab">CHCRlab 공부하면서 직면한 문제, 알게된 개념</a>
+
+- - <a href="https://github.com/SHcommit/LearnMoreSwiftInUdemy/blob/master/AutoLayout/CHCRLab/CHCRLab/ViewController.swift">source code</a>
