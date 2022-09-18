@@ -12,16 +12,14 @@ class RowView: UIView {
     
     var title: String
     var isOn: Bool
-    var subTitle: String?
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    init(title: String, isOn: Bool, subTitle: String) {
+    init(title: String, isOn: Bool) {
         self.title = title
         self.isOn = isOn
-        self.subTitle = subTitle
         
         super.init(frame: CGRect.zero)
         translatesAutoresizingMaskIntoConstraints = false
@@ -37,13 +35,6 @@ class RowView: UIView {
         addSubview(onOffSwitch)
         setupRowViewConstraint(leading: titleLabel, trailing: onOffSwitch)
         
-        guard let subTitle = subTitle else {
-            return
-        }
-        
-        let subTitleLabel = makeSubLabel(withText: subTitle)
-        addSubview(subTitleLabel)
-        setupRowDetailViewConstraint(view: subTitleLabel, targetAnchor: titleLabel)
     }
     
     override var intrinsicContentSize: CGSize {
@@ -60,13 +51,6 @@ extension RowView {
             label.leadingAnchor.constraint(equalTo: leadingAnchor),
             onOffSwitch.topAnchor.constraint(equalTo: topAnchor),
             onOffSwitch.trailingAnchor.constraint(equalTo: trailingAnchor)])
-    }
-    
-    func setupRowDetailViewConstraint(view: UILabel, targetAnchor upperView: UILabel) {
-        NSLayoutConstraint.activate([
-            view.topAnchor.constraint(equalTo: upperView.bottomAnchor, constant: 32),
-            view.leadingAnchor.constraint(equalTo: leadingAnchor),
-            view.trailingAnchor.constraint(equalTo: trailingAnchor)])
     }
 }
  
@@ -96,9 +80,6 @@ class CrossView: UIView {
         let progressView = makeProgressView()
         let endLabel = makeLabel(withText: endTitle)
         
-        startLabel.setContentHuggingPriority(UILayoutPriority(250), for: .horizontal)
-        progressView.setContentHuggingPriority(UILayoutPriority(249), for: .horizontal)
-        endLabel.setContentHuggingPriority(UILayoutPriority(250), for: .horizontal)
         var stackView = makeStackView(withOrientation: .horizontal)
         stackView.addArrangedSubview(startLabel)
         stackView.addArrangedSubview(progressView)
@@ -107,10 +88,15 @@ class CrossView: UIView {
         addSubview(stackView)
         NSLayoutConstraint.activate([
             upperLabel.topAnchor.constraint(equalTo: topAnchor),
-            upperLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
+            upperLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
+            upperLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
             stackView.topAnchor.constraint(equalTo: upperLabel.bottomAnchor, constant: 8),
             stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
             stackView.trailingAnchor.constraint(equalTo: trailingAnchor)])
         
     }
+    override var intrinsicContentSize: CGSize {
+        return CGSize(width: 200, height: 31)
+    }
+
 }
