@@ -17,6 +17,7 @@ class Challenge: UIViewController {
         super.viewDidLoad()
         setupNavigationBar()
         setupViews()
+    
     }
 
     func setupNavigationBar() {
@@ -49,14 +50,16 @@ class Challenge: UIViewController {
      
      */
     func setupViews() {
+        let subTitle = "When you go offline, you'll only be able to play the music and podcasts you've downloaded."
+        let offilneRow = RowView(title: "Offline", isOn: false,subTitle: subTitle)
+        let crossViewRow = CrossView(center: "Crossfade", left: "0s", right: "12s")
         
-//        let offilneRow = RowView(title: "Offline", isOn: false)
-//        let offlineSublabel = makeSubLabel(withText: "When you go offline, you'll only be able to play the music and podcasts you've downloaded.")
-        let crossView = CrossView(center: "Crossfade", left: "0s", right: "12s")
-        view.addSubview(crossView)
+        view.addSubview(offilneRow)
+        //view.addSubview(crossViewRow)
         
-        crossView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
-        crossView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        setupOfflineRowConstraint(view: offilneRow)
+        //setupCrossViewRowConstraint(view: crossViewRow, targetAnchor: offilneRow)
+        
         
 //        let offlineLabel = makeLabel(withText: "Offline")
 //        let offlineSwitch = makeSwitch(isOn: false)
@@ -94,46 +97,24 @@ class Challenge: UIViewController {
 //        view.addSubview(enableNormalizationLabel)
 //        view.addSubview(enableNormalizationSwitch)
 
-//        offlineLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: margin).isActive = true
-//        offlineLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: margin).isActive = true
-//
-//        offlineSwitch.centerYAnchor.constraint(equalTo: offlineLabel.centerYAnchor).isActive = true
-//        offlineSwitch.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -margin).isActive = true
-//
-//        offlineSublabel.topAnchor.constraint(equalTo: offlineLabel.bottomAnchor, constant: margin).isActive = true
-//        offlineSublabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: margin).isActive = true
-//        offlineSublabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -margin).isActive = true
-//
-//        crossfadeLabel.topAnchor.constraint(equalTo: offlineSublabel.bottomAnchor, constant: spacing).isActive = true
-//        crossfadeLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-//
-//        crossfadeMinLabel.topAnchor.constraint(equalTo: crossfadeLabel.bottomAnchor, constant: spacing).isActive = true
-//        crossfadeMinLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: margin).isActive = true
-//
-//        crossfadeProgressView.centerYAnchor.constraint(equalTo: crossfadeMinLabel.centerYAnchor).isActive = true
-//        crossfadeProgressView.leadingAnchor.constraint(equalTo: crossfadeMinLabel.trailingAnchor, constant: 4).isActive = true
-//        crossfadeProgressView.trailingAnchor.constraint(equalTo: crossfadeMaxLabel.leadingAnchor, constant: -4).isActive = true
-//
-//        crossfadeMaxLabel.centerYAnchor.constraint(equalTo: crossfadeMinLabel.centerYAnchor).isActive = true
-//        crossfadeMaxLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -margin).isActive = true
-//
-//        gaplessPlaybackLabel.topAnchor.constraint(equalTo: crossfadeMinLabel.bottomAnchor, constant: spacing).isActive = true
-//        gaplessPlaybackLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: margin).isActive = true
-//
-//        gaplessPlaybackSwitch.centerYAnchor.constraint(equalTo: gaplessPlaybackLabel.centerYAnchor).isActive = true
-//        gaplessPlaybackSwitch.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -margin).isActive = true
-//
-//        hideSongsLabel.topAnchor.constraint(equalTo: gaplessPlaybackLabel.bottomAnchor, constant: spacing).isActive = true
-//        hideSongsLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: margin).isActive = true
-//
-//        hideSongsSwitch.centerYAnchor.constraint(equalTo: hideSongsLabel.centerYAnchor).isActive = true
-//        hideSongsSwitch.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -margin).isActive = true
-//
-//        enableNormalizationLabel.topAnchor.constraint(equalTo: hideSongsLabel.bottomAnchor, constant: spacing).isActive = true
-//        enableNormalizationLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: margin).isActive = true
-//
-//        enableNormalizationSwitch.centerYAnchor.constraint(equalTo: enableNormalizationLabel.centerYAnchor).isActive = true
-//        enableNormalizationSwitch.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -margin).isActive = true
+
+    }
+    
+}
+
+//MARK: - setup SubView Constraints
+extension Challenge {
+    
+    func setupOfflineRowConstraint(view: RowView) {
+        view.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor).isActive = true
+        view.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
+        view.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
+    }
+    
+    func setupCrossViewRowConstraint(view: CrossView, targetAnchor upperView: RowView ) {
+        view.topAnchor.constraint(equalTo: upperView.bottomAnchor).isActive = true
+        view.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
+        view.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
     }
 }
 

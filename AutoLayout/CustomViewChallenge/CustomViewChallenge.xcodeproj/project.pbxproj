@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		15AF0FEF28D745C600F20FF2 /* RowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15AF0FEE28D745C600F20FF2 /* RowView.swift */; };
+		15AF0FEF28D745C600F20FF2 /* CustomRows.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15AF0FEE28D745C600F20FF2 /* CustomRows.swift */; };
 		71AC01802358AA14005C42BC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71AC017F2358AA14005C42BC /* AppDelegate.swift */; };
 		71AC01892358AA15005C42BC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 71AC01882358AA15005C42BC /* Assets.xcassets */; };
 		71AC018C2358AA15005C42BC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 71AC018A2358AA15005C42BC /* LaunchScreen.storyboard */; };
@@ -16,7 +16,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		15AF0FEE28D745C600F20FF2 /* RowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RowView.swift; sourceTree = "<group>"; };
+		15AF0FEE28D745C600F20FF2 /* CustomRows.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomRows.swift; sourceTree = "<group>"; };
 		71AC017C2358AA13005C42BC /* CustomViewChallenge.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CustomViewChallenge.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		71AC017F2358AA14005C42BC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		71AC01882358AA15005C42BC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -60,7 +60,7 @@
 				71AC017F2358AA14005C42BC /* AppDelegate.swift */,
 				71AC01942358AA68005C42BC /* Challenge.swift */,
 				71AC01962358AA84005C42BC /* Factories.swift */,
-				15AF0FEE28D745C600F20FF2 /* RowView.swift */,
+				15AF0FEE28D745C600F20FF2 /* CustomRows.swift */,
 			);
 			path = CustomViewChallenge;
 			sourceTree = "<group>";
@@ -146,7 +146,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				71AC01972358AA84005C42BC /* Factories.swift in Sources */,
-				15AF0FEF28D745C600F20FF2 /* RowView.swift in Sources */,
+				15AF0FEF28D745C600F20FF2 /* CustomRows.swift in Sources */,
 				71AC01802358AA14005C42BC /* AppDelegate.swift in Sources */,
 				71AC01952358AA68005C42BC /* Challenge.swift in Sources */,
 			);
