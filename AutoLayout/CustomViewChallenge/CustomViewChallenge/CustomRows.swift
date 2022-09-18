@@ -57,16 +57,16 @@ extension RowView {
     func setupRowViewConstraint(leading label: UILabel, trailing onOffSwitch: UISwitch) {
         NSLayoutConstraint.activate([
             label.topAnchor.constraint(equalTo: topAnchor),
-            label.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
+            label.leadingAnchor.constraint(equalTo: leadingAnchor),
             onOffSwitch.topAnchor.constraint(equalTo: topAnchor),
-            onOffSwitch.trailingAnchor.constraint(equalTo: trailingAnchor,constant: -8)])
+            onOffSwitch.trailingAnchor.constraint(equalTo: trailingAnchor)])
     }
     
     func setupRowDetailViewConstraint(view: UILabel, targetAnchor upperView: UILabel) {
         NSLayoutConstraint.activate([
             view.topAnchor.constraint(equalTo: upperView.bottomAnchor, constant: 32),
-            view.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
-            view.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8)])
+            view.leadingAnchor.constraint(equalTo: leadingAnchor),
+            view.trailingAnchor.constraint(equalTo: trailingAnchor)])
     }
 }
  
