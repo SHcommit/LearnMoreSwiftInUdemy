@@ -6,7 +6,7 @@
 
 ---
 
-![1.png](:/1e996986acba48879bf89a10225ebc93)
+![1](https://user-images.githubusercontent.com/96910404/190897626-67617786-6713-411f-8ed5-6d6cffbc3bf2.png)
 
 - 초록 버튼 width=100, height=100
 - 빨간 버튼 width=200, height = 300
@@ -17,7 +17,7 @@
 StackView의 Axis = vertical, Alignment = Fill, Distribution = Fill로 한 상태이다.
 AutoLayout 경고창이 떴다.
 
-![2.png](:/926fb89865c84a2b92654c6b212edcc8)
+![2](https://user-images.githubusercontent.com/96910404/190897632-1339405e-2a65-47f1-bec5-a00336c20d7c.png)
 
 AutoLayout에 의해 빌드가 되긴 하는데 StackView의 버튼 width Constraint들에 대해서 Conflict Constraint 경고가 발생했다. 뭐를 우선시 해서 StackView의 width로 정해야 할지 몰라 발생되는 경고 상황이다.
 
@@ -32,4 +32,5 @@ width에 대해 required priority를 제일 큰 값으로 해주어야 비로소
 	반면 Label들로 stackView를 채운 경우 Intrinsic Content Size에 의해 가장 큰 view의 width를 기준으로 나머지 Label들도 Fill이 됬다.
 
 
-![5.png](:/d1cc1a5539164734923a75903120baeb)
+![5](https://user-images.githubusercontent.com/96910404/190897635-0f75e027-832a-438c-aa99-90fa40fef6de.png)
+
