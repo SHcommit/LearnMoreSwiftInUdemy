@@ -45,3 +45,45 @@ class RowView: UIView {
     }
     
 }
+
+
+class CrossView: UIView {
+    
+    let centerTitle: String
+    let startTitle: String
+    let endTitle: String
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implement")
+    }
+    
+    init(center title: String, left startTitle: String, right endTitle: String) {
+        centerTitle = title
+        self.startTitle = startTitle
+        self.endTitle = endTitle
+        super.init(frame: .zero)
+        setupSubViews()
+        translatesAutoresizingMaskIntoConstraints = false
+    }
+    
+    func setupSubViews() {
+        let upperLabel = makeBoldLabel(withText: centerTitle)
+        let startLabel = makeLabel(withText: startTitle)
+        let progressView = makeProgressView()
+        let endLabel = makeLabel(withText: endTitle)
+        
+        var stackView = makeStackView(withOrientation: .horizontal)
+        stackView.addArrangedSubview(startLabel)
+        stackView.addArrangedSubview(progressView)
+        stackView.addArrangedSubview(endLabel)
+        
+        addSubview(upperLabel)
+        //addSubview(stackView)
+        NSLayoutConstraint.activate([
+            upperLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
+            upperLabel.topAnchor.constraint(equalTo: topAnchor)])
+        //stackView.topAnchor.constraint(equalTo: upperLabel.topAnchor),
+        //stackView.centerXAnchor.constraint(equalTo: centerXAnchor)
+        
+    }
+}

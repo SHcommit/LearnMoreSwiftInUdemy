@@ -49,6 +49,15 @@ class Challenge: UIViewController {
      
      */
     func setupViews() {
+        
+//        let offilneRow = RowView(title: "Offline", isOn: false)
+//        let offlineSublabel = makeSubLabel(withText: "When you go offline, you'll only be able to play the music and podcasts you've downloaded.")
+        let crossView = CrossView(center: "Crossfade", left: "0s", right: "12s")
+        view.addSubview(crossView)
+        
+        crossView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+        crossView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        
 //        let offlineLabel = makeLabel(withText: "Offline")
 //        let offlineSwitch = makeSwitch(isOn: false)
 //        let offlineSublabel = makeSubLabel(withText: "When you go offline, you'll only be able to play the music and podcasts you've downloaded.")
