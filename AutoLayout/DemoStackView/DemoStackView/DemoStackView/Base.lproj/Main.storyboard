@@ -16,35 +16,35 @@
                         <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="Ga1-sn-usw">
-                                <rect key="frame" x="145" y="164" width="100" height="516"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" misplaced="YES" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="AhB-s0-D4l">
+                                <rect key="frame" x="54" y="234" width="159.33333333333337" height="223"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fuK-Ka-wGD">
-                                        <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
-                                        <color key="backgroundColor" red="0.66349166820000005" green="0.76942896839999997" blue="0.71910166799999997" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="100" id="GFP-NL-Fb5"/>
-                                            <constraint firstAttribute="width" constant="100" id="NIR-jO-Aer"/>
-                                        </constraints>
-                                        <state key="normal" title="Button"/>
-                                        <buttonConfiguration key="configuration" style="plain" title="Button"/>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Boe-Qh-JIQ">
-                                        <rect key="frame" x="0.0" y="108" width="100" height="300"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0Oi-R9-oyx">
+                                        <rect key="frame" x="0.0" y="0.0" width="159.33333333333334" height="82.666666666666671"/>
                                         <color key="backgroundColor" systemColor="systemRedColor"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="69"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lae-tr-utL">
+                                        <rect key="frame" x="0.0" y="82.666666666666686" width="159.33333333333334" height="60"/>
+                                        <color key="backgroundColor" red="0.66349166820000005" green="0.76942896839999997" blue="0.71910166799999997" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="50"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gEK-SB-7Va">
+                                        <rect key="frame" x="0.0" y="142.66666666666669" width="159.33333333333334" height="20.333333333333343"/>
+                                        <color key="backgroundColor" red="0.96240557859999998" green="1" blue="0.77121629130000002" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BTt-9a-rra">
+                                        <rect key="frame" x="0.0" y="163" width="159.33333333333334" height="60"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="300" id="aZZ-Ec-OcR"/>
-                                            <constraint firstAttribute="width" constant="200" id="tOX-i8-v4j"/>
-                                        </constraints>
-                                        <state key="normal" title="Button"/>
-                                        <buttonConfiguration key="configuration" style="plain" title="Button"/>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Lfy-F5-RHJ">
-                                        <rect key="frame" x="0.0" y="416" width="100" height="100"/>
-                                        <color key="backgroundColor" systemColor="systemYellowColor"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="100" id="GLl-7p-78B"/>
-                                            <constraint firstAttribute="width" constant="250" id="PX5-cq-Rfu"/>
+                                            <constraint firstAttribute="height" constant="60" id="NQD-qO-6pP"/>
+                                            <constraint firstAttribute="width" constant="50" id="yPP-kV-ekN"/>
                                         </constraints>
                                         <state key="normal" title="Button"/>
                                         <buttonConfiguration key="configuration" style="plain" title="Button"/>
@@ -55,8 +55,9 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="Ga1-sn-usw" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="KqR-xb-Il2"/>
-                            <constraint firstItem="Ga1-sn-usw" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="YtJ-iH-hKv"/>
+                            <constraint firstItem="AhB-s0-D4l" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="187" id="C1w-t9-6Df"/>
+                            <constraint firstItem="AhB-s0-D4l" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="89.000000000000014" id="CvI-Yj-t2H"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="AhB-s0-D4l" secondAttribute="trailing" constant="75.666666666666629" id="DBU-OR-3z9"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -71,9 +72,6 @@
         </systemColor>
         <systemColor name="systemRedColor">
             <color red="1" green="0.23137254901960785" blue="0.18823529411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
-        <systemColor name="systemYellowColor">
-            <color red="1" green="0.80000000000000004" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>
