@@ -88,15 +88,14 @@ class CrossView: UIView {
         addSubview(stackView)
         NSLayoutConstraint.activate([
             upperLabel.topAnchor.constraint(equalTo: topAnchor),
-            upperLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
-            upperLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
-            stackView.topAnchor.constraint(equalTo: upperLabel.bottomAnchor, constant: 8),
+            upperLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
+            stackView.topAnchor.constraint(equalTo: upperLabel.bottomAnchor, constant: 16),
             stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
             stackView.trailingAnchor.constraint(equalTo: trailingAnchor)])
         
     }
     override var intrinsicContentSize: CGSize {
-        return CGSize(width: 200, height: 31)
+        return CGSize(width: 200, height: 61)
     }
 
 }

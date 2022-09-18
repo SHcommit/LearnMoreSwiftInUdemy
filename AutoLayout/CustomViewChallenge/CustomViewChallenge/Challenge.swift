@@ -55,64 +55,32 @@ class Challenge: UIViewController {
         
         let offilneRow = RowView(title: "Offline", isOn: false)
         let crossViewRow = CrossView(center: "Crossfade", left: "0s", right: "12s")
-        
         let subTitleLabel = makeSubLabel(withText: subTitle)
-        //view.addSubview(offilneRow)
-        //view.addSubview(crossViewRow)
-        //view.addSubview(subTitleLabel)
+        let playbackRow = RowView(title: "Gapless Playback", isOn: true)
+
+        let hideRow = RowView(title: "Hide Unplayable Songs", isOn: true)
+        let enableNormalLable = RowView(title: "Enable Audio Normalization", isOn: true)
         stackView.addArrangedSubview(offilneRow)
         stackView.addArrangedSubview(subTitleLabel)
         stackView.addArrangedSubview(crossViewRow)
+        stackView.addArrangedSubview(playbackRow)
+        stackView.addArrangedSubview(hideRow)
+        stackView.addArrangedSubview(enableNormalLable)
         
         view.addSubview(stackView)
         
         stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
-        stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor,constant: 8).isActive = true
+        stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8).isActive = true
         
-        stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        // stackView 사용 안할 경우 constraint 정해줘야함.
+        //view.addSubview(offilneRow)
+        //view.addSubview(crossViewRow)
+        //view.addSubview(subTitleLabel)
         
         //setupOfflineRowConstraint(view: offilneRow)
         //setupRowDetailViewConstraint(view: subTitleLabel, targetAnchor: offilneRow)
         //setupCrossViewRowConstraint(view: crossViewRow, targetAnchor: subTitleLabel)
-        
-        
-//        let offlineLabel = makeLabel(withText: "Offline")
-//        let offlineSwitch = makeSwitch(isOn: false)
-//        let offlineSublabel = makeSubLabel(withText: "When you go offline, you'll only be able to play the music and podcasts you've downloaded.")
-//
-//        let crossfadeLabel = makeBoldLabel(withText: "Crossfade")
-//        let crossfadeMinLabel = makeSubLabel(withText: "0s")
-//        let crossfadeMaxLabel = makeSubLabel(withText: "12s")
-//        let crossfadeProgressView = makeProgressView()
-//
-//        let gaplessPlaybackLabel = makeLabel(withText: "Gapless Playback")
-//        let gaplessPlaybackSwitch = makeSwitch(isOn: true)
-//
-//        let hideSongsLabel = makeLabel(withText: "Hide Unplayable Songs")
-//        let hideSongsSwitch = makeSwitch(isOn: true)
-//
-//        let enableNormalizationLabel = makeLabel(withText: "Enable Audio Normalization")
-//        let enableNormalizationSwitch = makeSwitch(isOn: true)
-
-//        view.addSubview(offlineLabel)
-//        view.addSubview(offlineSwitch)
-//        view.addSubview(offlineSublabel)
-//
-//        view.addSubview(crossfadeLabel)
-//        view.addSubview(crossfadeMinLabel)
-//        view.addSubview(crossfadeProgressView)
-//        view.addSubview(crossfadeMaxLabel)
-//
-//        view.addSubview(gaplessPlaybackLabel)
-//        view.addSubview(gaplessPlaybackSwitch)
-//
-//        view.addSubview(hideSongsLabel)
-//        view.addSubview(hideSongsSwitch)
-//
-//        view.addSubview(enableNormalizationLabel)
-//        view.addSubview(enableNormalizationSwitch)
-
-
     }
     
 }
