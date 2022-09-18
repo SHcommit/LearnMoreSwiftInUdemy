@@ -10,3 +10,5 @@ Study date : 22.09.15 ~
 - <a href="https://github.com/SHcommit/LearnMoreSwiftInUdemy/tree/master/AutoLayout/CHCRLab">CHCRLab 공부하면서 직면한 문제, 알게된 개념</a>
 
 - - <a href="https://github.com/SHcommit/LearnMoreSwiftInUdemy/blob/master/AutoLayout/CHCRLab/CHCRLab/ViewController.swift">source code</a>
+
+- <a href="https://github.com/SHcommit/LearnMoreSwiftInUdemy/tree/master/AutoLayout/DemoStackView">DemoStackView로 stackView에 CHCR 적용이 안된 이유</a>
