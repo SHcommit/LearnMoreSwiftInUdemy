@@ -51,14 +51,29 @@ class Challenge: UIViewController {
      */
     func setupViews() {
         let subTitle = "When you go offline, you'll only be able to play the music and podcasts you've downloaded."
-        let offilneRow = RowView(title: "Offline", isOn: false,subTitle: subTitle)
+       let stackView = makeStackView(withOrientation: .vertical)
+        
+        let offilneRow = RowView(title: "Offline", isOn: false)
         let crossViewRow = CrossView(center: "Crossfade", left: "0s", right: "12s")
         
-        view.addSubview(offilneRow)
+        let subTitleLabel = makeSubLabel(withText: subTitle)
+        //view.addSubview(offilneRow)
         //view.addSubview(crossViewRow)
+        //view.addSubview(subTitleLabel)
+        stackView.addArrangedSubview(offilneRow)
+        stackView.addArrangedSubview(subTitleLabel)
+        stackView.addArrangedSubview(crossViewRow)
         
-        setupOfflineRowConstraint(view: offilneRow)
-        //setupCrossViewRowConstraint(view: crossViewRow, targetAnchor: offilneRow)
+        view.addSubview(stackView)
+        
+        stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+        stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        
+        stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        
+        //setupOfflineRowConstraint(view: offilneRow)
+        //setupRowDetailViewConstraint(view: subTitleLabel, targetAnchor: offilneRow)
+        //setupCrossViewRowConstraint(view: crossViewRow, targetAnchor: subTitleLabel)
         
         
 //        let offlineLabel = makeLabel(withText: "Offline")
@@ -107,15 +122,23 @@ extension Challenge {
     
     func setupOfflineRowConstraint(view: RowView) {
         view.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor).isActive = true
-        view.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
-        view.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
+        view.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 8).isActive = true
+        view.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -8).isActive = true
     }
     
-    func setupCrossViewRowConstraint(view: CrossView, targetAnchor upperView: RowView ) {
-        view.topAnchor.constraint(equalTo: upperView.bottomAnchor).isActive = true
-        view.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
-        view.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
+    func setupCrossViewRowConstraint(view: CrossView, targetAnchor upperView: UILabel ) {
+        view.topAnchor.constraint(equalTo: upperView.bottomAnchor, constant: 16).isActive = true
+        view.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 8).isActive = true
+        view.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -8).isActive = true
     }
+    
+    func setupRowDetailViewConstraint(view: UILabel, targetAnchor upperView: RowView) {
+        NSLayoutConstraint.activate([
+            view.topAnchor.constraint(equalTo: upperView.bottomAnchor, constant: 16),
+            view.leadingAnchor.constraint(equalTo: self.view.leadingAnchor,constant: 8),
+            view.trailingAnchor.constraint(equalTo: self.view.trailingAnchor,constant: -8)])
+    }
+    
 }
 
 
