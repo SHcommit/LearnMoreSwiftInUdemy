@@ -29,40 +29,47 @@ class RowView: UIView {
     }
     
     func setupSubViews() {
+        
         let titleLabel = makeLabel(withText: title)
         let onOffSwitch = makeSwitch(isOn: isOn)
         
         addSubview(titleLabel)
         addSubview(onOffSwitch)
-        
-        NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: topAnchor),
-            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
-            
-            onOffSwitch.topAnchor.constraint(equalTo: topAnchor),
-            onOffSwitch.trailingAnchor.constraint(equalTo: trailingAnchor,constant: -8)])
+        setupRowViewConstraint(leading: titleLabel, trailing: onOffSwitch)
         
         guard let subTitle = subTitle else {
             return
         }
         
         let subTitleLabel = makeSubLabel(withText: subTitle)
-        
         addSubview(subTitleLabel)
-        
-        NSLayoutConstraint.activate([
-            subTitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 32),
-            subTitleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
-            subTitleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8)])
-                                
+        setupRowDetailViewConstraint(view: subTitleLabel, targetAnchor: titleLabel)
     }
     
     override var intrinsicContentSize: CGSize {
         return CGSize(width: 200, height: 31)
     }
-    
 }
 
+//MARK: - setup subview's constraint
+extension RowView {
+    
+    func setupRowViewConstraint(leading label: UILabel, trailing onOffSwitch: UISwitch) {
+        NSLayoutConstraint.activate([
+            label.topAnchor.constraint(equalTo: topAnchor),
+            label.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
+            onOffSwitch.topAnchor.constraint(equalTo: topAnchor),
+            onOffSwitch.trailingAnchor.constraint(equalTo: trailingAnchor,constant: -8)])
+    }
+    
+    func setupRowDetailViewConstraint(view: UILabel, targetAnchor upperView: UILabel) {
+        NSLayoutConstraint.activate([
+            view.topAnchor.constraint(equalTo: upperView.bottomAnchor, constant: 32),
+            view.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
+            view.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8)])
+    }
+}
+ 
 
 class CrossView: UIView {
     
