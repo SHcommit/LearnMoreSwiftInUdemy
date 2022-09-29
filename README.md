@@ -2,7 +2,7 @@
 
 - [x] MVVM pattern Model과 VM사이에 바인딩하는 방법
 
-- [ ] 레이아웃
+- [x] 레이아웃
 
 - [ ] Combine, Combine으로 바인딩 하는 방법
 
