@@ -7,69 +7,59 @@
 
 import UIKit
 
-class MainHomeController: UIViewController {
+class MainHomeTabController: UITabBarController {
     
-    var tabBar: UITabBar?
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupTabBarUI()
         view.backgroundColor = .red
+        configureViewControllers()
+        customTabBarUI()
     }
 }
 
 //MARK: - TabBar delegate
-extension MainHomeController: UITabBarDelegate {
+extension MainHomeTabController {
     
 }
 
 
 //MARK: - Helpers
-extension MainHomeController {
+extension MainHomeTabController {
     func configureViewControllers() {
         
         let feed = FeedController()
         let search = SearchController()
         let imageSelector = ImageSelectorController()
         let notifications = NotificationController()
-        let 
+        let profile = ProfileController()
+        
+        viewControllers = [feed,search,imageSelector,notifications,profile]
     }
 }
 
 //MARK: - Setup tabBar
-extension MainHomeController {
+extension MainHomeTabController {
     
-    func setupTabBarUI() {
-        initialTabBar()
+    func customTabBarUI() {
         setupTabBarAppearance()
-        setupTabBarConstraints()
+        //setupTabBarConstraints()
     }
     
-    func initialTabBar() {
-        tabBar = UITabBar()
-        guard let tabBar = tabBar else {
-            return
-        }
-        tabBar.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(tabBar)
-    }
     
     func setupTabBarAppearance() {
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = .blue
-        tabBar?.standardAppearance = appearance
-        tabBar?.scrollEdgeAppearance = appearance
+        appearance.backgroundColor = .systemYellow
+        tabBar.standardAppearance = appearance
+        tabBar.scrollEdgeAppearance = appearance
     }
     
-    func setupTabBarConstraints() {
-        guard let tabBar = tabBar else {
-            return
-        }
-        NSLayoutConstraint.activate([
-            tabBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tabBar.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            tabBar.trailingAnchor.constraint(equalTo: view.trailingAnchor)])
-    }
+//    func setupTabBarConstraints() {
+//        NSLayoutConstraint.activate([
+//            tabBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+//            tabBar.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+//            tabBar.trailingAnchor.constraint(equalTo: view.trailingAnchor)])
+//    }
     
 }

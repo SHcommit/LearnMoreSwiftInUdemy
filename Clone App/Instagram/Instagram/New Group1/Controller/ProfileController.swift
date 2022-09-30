@@ -5,4 +5,11 @@
 //  Created by 양승현 on 2022/09/30.
 //
 
-import Foundation
+import UIKit
+
+class ProfileController: UIViewController {
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    }
+}
