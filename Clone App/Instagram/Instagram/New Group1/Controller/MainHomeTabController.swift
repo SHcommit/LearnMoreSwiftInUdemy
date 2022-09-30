@@ -12,54 +12,63 @@ class MainHomeTabController: UITabBarController {
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .red
         configureViewControllers()
         customTabBarUI()
     }
-}
-
-//MARK: - TabBar delegate
-extension MainHomeTabController {
-    
 }
 
 
 //MARK: - Helpers
 extension MainHomeTabController {
     func configureViewControllers() {
-        
-        let feed = FeedController()
-        let search = SearchController()
-        let imageSelector = ImageSelectorController()
-        let notifications = NotificationController()
-        let profile = ProfileController()
+        let feed = templateNavigationController(unselectedImage: UIImage(imageLiteralResourceName: "home_unselected"), selectedImage: UIImage(imageLiteralResourceName: "home_selected"), rootViewController: FeedController())
+        let search = templateNavigationController(unselectedImage: UIImage(imageLiteralResourceName: "search_unselected"), selectedImage: UIImage(imageLiteralResourceName: "search_selected"), rootViewController: SearchController())
+        let imageSelector = templateNavigationController(unselectedImage: UIImage(imageLiteralResourceName: "plus_unselected"), selectedImage: UIImage(imageLiteralResourceName: "plus_unselected").withTintColor(.white, renderingMode: .alwaysTemplate), rootViewController: ImageSelectorController())
+        let notifications = templateNavigationController(unselectedImage: UIImage(imageLiteralResourceName: "like_unselected"), selectedImage: UIImage(imageLiteralResourceName: "like_selected"), rootViewController: NotificationController())
+        let profile = templateNavigationController(unselectedImage: UIImage(imageLiteralResourceName: "profile_unselected"), selectedImage: UIImage(imageLiteralResourceName: "profile_selected"), rootViewController: ProfileController())
         
         viewControllers = [feed,search,imageSelector,notifications,profile]
     }
 }
 
-//MARK: - Setup tabBar
+//MARK: - Setup NavigationController Helpers
+extension MainHomeTabController {
+    func templateNavigationController(unselectedImage: UIImage, selectedImage: UIImage, rootViewController: UIViewController) -> UINavigationController {
+        let nav = UINavigationController(rootViewController: rootViewController)
+        nav.tabBarItem.image = unselectedImage
+        nav.tabBarItem.selectedImage = selectedImage
+        nav.navigationBar.tintColor = .black
+        setupNavigationAppearance(nav: nav)
+        return nav
+    }
+    
+    func setupNavigationAppearance(nav: UINavigationController) {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .white
+        nav.navigationBar.standardAppearance = appearance
+        nav.navigationBar.scrollEdgeAppearance = appearance
+    }
+}
+
+//MARK: - Setup tabBar UI
 extension MainHomeTabController {
     
     func customTabBarUI() {
         setupTabBarAppearance()
-        //setupTabBarConstraints()
+        setupTabBarTintColor()
     }
-    
     
     func setupTabBarAppearance() {
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = .systemYellow
+        appearance.backgroundColor = .white
         tabBar.standardAppearance = appearance
         tabBar.scrollEdgeAppearance = appearance
     }
     
-//    func setupTabBarConstraints() {
-//        NSLayoutConstraint.activate([
-//            tabBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-//            tabBar.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-//            tabBar.trailingAnchor.constraint(equalTo: view.trailingAnchor)])
-//    }
-    
+    func setupTabBarTintColor() {
+        tabBar.tintColor = .black
+    }
+
 }
