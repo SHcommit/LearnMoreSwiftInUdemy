@@ -14,8 +14,9 @@ class FeedController: UICollectionViewController {
     //MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier  )
+        collectionView.register(FeedCell.self, forCellWithReuseIdentifier: reuseIdentifier  )
         setupUI()
+        
     }
 }
 
@@ -35,9 +36,10 @@ extension FeedController {
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath)
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as? FeedCell else {
+            fatalError()
+        }
         
-        cell.backgroundColor = .red
         return cell
     }
 }
@@ -45,6 +47,13 @@ extension FeedController {
 //MARK: - UICollectionViewDelegateFlowLayout
 extension FeedController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: view.frame.width, height: 200)
+        
+        let cellWidth = view.frame.width
+        var cellHeight = cellWidth + 8 + 40 + 8
+        
+        cellHeight += 50
+        cellHeight += 60
+        
+        return CGSize(width: view.frame.width, height: cellHeight)
     }
  }
