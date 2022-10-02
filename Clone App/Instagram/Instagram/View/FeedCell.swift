@@ -11,6 +11,7 @@ class FeedCell: UICollectionViewCell {
     
     //MARK: - Properties
     private let profileImageView: UIImageView = initialProfileImageVIew()
+    private lazy var usernameButton: UIButton = initialUsernameButton()
     //MARK: - Lifecycle
     
     override init(frame: CGRect) {
@@ -30,8 +31,10 @@ extension FeedCell {
         backgroundColor = .white
         
         addSubview(profileImageView)
+        addSubview(usernameButton)
         
         setupProfileImageViewConstraints()
+        setupUsernameButtonConstraints()
     }
 }
 
@@ -49,6 +52,16 @@ extension FeedCell {
         iv.layer.cornerRadius = 40/2
         return iv
     }
+    
+    func initialUsernameButton() -> UIButton {
+        let btn = UIButton(type: .system)
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        btn.setTitle("ksa_qs", for: .normal)
+        btn.setTitleColor(.black, for: .normal)
+        btn.titleLabel?.font = UIFont.boldSystemFont(ofSize: 13)
+        btn.addTarget(self, action: #selector(didTapUsername(_:)), for: .touchUpInside)
+        return btn
+    }
 }
 
 
@@ -61,5 +74,20 @@ extension FeedCell {
             profileImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
             profileImageView.widthAnchor.constraint(equalToConstant: 40),
             profileImageView.heightAnchor.constraint(equalToConstant: 40)])
+    }
+    
+    func setupUsernameButtonConstraints() {
+        NSLayoutConstraint.activate([
+            usernameButton.centerYAnchor.constraint(equalTo: profileImageView.centerYAnchor),
+            usernameButton.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 8)])
+    }
+}
+
+
+//MARK: - Setup event handler
+extension FeedCell {
+    
+    @objc func didTapUsername(_ sender: Any) {
+        print("DEBUG : did tap username")
     }
 }
