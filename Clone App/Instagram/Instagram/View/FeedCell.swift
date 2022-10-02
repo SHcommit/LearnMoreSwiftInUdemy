@@ -14,6 +14,7 @@ class FeedCell: UICollectionViewCell {
     private let postImageView: UIImageView = initialPostImageView()
     private let likeLabel: UILabel = initialLikeLabel()
     private let captionLabel: UILabel = initialCaptionLabel()
+    private let postTimeLabel: UILabel = initialPostTimeLabel()
     private lazy var usernameButton: UIButton = initialUsernameButton()
     private lazy var likeButton: UIButton = initialLikeButton()
     private lazy var commentButton: UIButton = initialCommentButton()
@@ -50,6 +51,7 @@ extension FeedCell {
         addSubview(shareButton)
         addSubview(likeLabel)
         addSubview(captionLabel)
+        addSubview(postTimeLabel)
     }
 }
 
@@ -138,6 +140,16 @@ extension FeedCell {
         label.setContentCompressionResistancePriority(UILayoutPriority(999), for: .vertical)
         return label
     }
+    
+    static func initialPostTimeLabel() -> UILabel {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "2 days ago"
+        label.font = UIFont.boldSystemFont(ofSize: 12)
+        label.textColor = .lightGray
+        label.setContentCompressionResistancePriority(UILayoutPriority(999), for: .vertical)
+        return label
+    }
 }
 
 
@@ -153,6 +165,7 @@ extension FeedCell {
         setupShareButtonConstraints()
         setupLikeLabelConstraints()
         setupCaptionLabelConstraints()
+        setupPostTimeLabelConstraints()
     }
     
     func setupProfileImageViewConstraints() {
@@ -171,9 +184,9 @@ extension FeedCell {
     
     func setupPostImageViewConstarints() {
         NSLayoutConstraint.activate([
-            postImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
+            postImageView.leadingAnchor.constraint(equalTo: leadingAnchor),
             postImageView.topAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: 12),
-            postImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12)])
+            postImageView.trailingAnchor.constraint(equalTo: trailingAnchor)])
     }
     
     func setupLikeButtonConstraints() {
@@ -203,8 +216,14 @@ extension FeedCell {
     func setupCaptionLabelConstraints() {
         NSLayoutConstraint.activate([
             captionLabel.topAnchor.constraint(equalTo: likeLabel.bottomAnchor, constant: 12),
-            captionLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
-            captionLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12)])
+            captionLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12)])
+    }
+    
+    func setupPostTimeLabelConstraints() {
+        NSLayoutConstraint.activate([
+            postTimeLabel.topAnchor.constraint(equalTo: captionLabel.bottomAnchor, constant: 12),
+            postTimeLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
+            postTimeLabel.bottomAnchor.constraint(equalTo: bottomAnchor)])
     }
 }
 
