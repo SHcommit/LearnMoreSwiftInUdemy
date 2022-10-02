@@ -19,6 +19,7 @@
 		15A53A0328E7C383000A3807 /* ProfileController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15A539FD28E7C383000A3807 /* ProfileController.swift */; };
 		15A53A0428E7C383000A3807 /* NotificationsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15A539FE28E7C383000A3807 /* NotificationsController.swift */; };
 		15A53A0528E7C383000A3807 /* MainHomeTabController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15A539FF28E7C383000A3807 /* MainHomeTabController.swift */; };
+		15A53A0728E7C3F2000A3807 /* FeedCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15A53A0628E7C3F2000A3807 /* FeedCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +37,7 @@
 		15A539FD28E7C383000A3807 /* ProfileController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileController.swift; sourceTree = "<group>"; };
 		15A539FE28E7C383000A3807 /* NotificationsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationsController.swift; sourceTree = "<group>"; };
 		15A539FF28E7C383000A3807 /* MainHomeTabController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainHomeTabController.swift; sourceTree = "<group>"; };
+		15A53A0628E7C3F2000A3807 /* FeedCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,10 +70,10 @@
 		15A539D228E5F843000A3807 /* Instagram */ = {
 			isa = PBXGroup;
 			children = (
-				15A539F928E7C383000A3807 /* Controller */,
 				15A539EC28E5F943000A3807 /* Model */,
+				15A53A1D28E9AAF2000A3807 /* ViewModel */,
+				15A539F928E7C383000A3807 /* Controller */,
 				15A539EB28E5F93E000A3807 /* View */,
-				15A539EA28E5F932000A3807 /* ViewModel */,
 				15A539E828E5F931000A3807 /* API */,
 				15A539E728E5F924000A3807 /* Utils */,
 				15A539D328E5F843000A3807 /* AppDelegate.swift */,
@@ -99,17 +101,10 @@
 			path = API;
 			sourceTree = "<group>";
 		};
-		15A539EA28E5F932000A3807 /* ViewModel */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = ViewModel;
-			path = "New Group1/New Group/ViewModel";
-			sourceTree = "<group>";
-		};
 		15A539EB28E5F93E000A3807 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				15A53A0628E7C3F2000A3807 /* FeedCell.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -132,6 +127,13 @@
 				15A539FF28E7C383000A3807 /* MainHomeTabController.swift */,
 			);
 			path = Controller;
+			sourceTree = "<group>";
+		};
+		15A53A1D28E9AAF2000A3807 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModel;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -206,6 +208,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				15A53A0128E7C383000A3807 /* ImageSelectorController.swift in Sources */,
+				15A53A0728E7C3F2000A3807 /* FeedCell.swift in Sources */,
 				15A539D828E5F843000A3807 /* ViewController.swift in Sources */,
 				15A53A0528E7C383000A3807 /* MainHomeTabController.swift in Sources */,
 				15A53A0428E7C383000A3807 /* NotificationsController.swift in Sources */,
