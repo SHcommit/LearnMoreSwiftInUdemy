@@ -11,7 +11,15 @@ class FeedCell: UICollectionViewCell {
     
     //MARK: - Properties
     private let profileImageView: UIImageView = initialProfileImageVIew()
+    private let postImageView: UIImageView = initialPostImageView()
+    private let likeLabel: UILabel = initialLikeLabel()
+    private let captionLabel: UILabel = initialCaptionLabel()
     private lazy var usernameButton: UIButton = initialUsernameButton()
+    private lazy var likeButton: UIButton = initialLikeButton()
+    private lazy var commentButton: UIButton = initialCommentButton()
+    private lazy var shareButton: UIButton = initialShareButton()
+    
+    private var isSelectedLikeButton: Bool = false
     //MARK: - Lifecycle
     
     override init(frame: CGRect) {
@@ -29,12 +37,19 @@ extension FeedCell {
     
     func setupUI() {
         backgroundColor = .white
-        
+        addSubviews()
+        setupSubViewsConstraints()
+    }
+    
+    func addSubviews() {
         addSubview(profileImageView)
         addSubview(usernameButton)
-        
-        setupProfileImageViewConstraints()
-        setupUsernameButtonConstraints()
+        addSubview(postImageView)
+        addSubview(likeButton)
+        addSubview(commentButton)
+        addSubview(shareButton)
+        addSubview(likeLabel)
+        addSubview(captionLabel)
     }
 }
 
@@ -48,8 +63,9 @@ extension FeedCell {
         iv.contentMode = .scaleAspectFill
         iv.clipsToBounds = true
         iv.isUserInteractionEnabled = true
-        iv.image = UIImage(imageLiteralResourceName: "girl-1")
+        iv.image = .imageLiteral(name: "girl-1")
         iv.layer.cornerRadius = 40/2
+        iv.setContentCompressionResistancePriority(UILayoutPriority(999), for: .vertical)
         return iv
     }
     
@@ -60,13 +76,84 @@ extension FeedCell {
         btn.setTitleColor(.black, for: .normal)
         btn.titleLabel?.font = UIFont.boldSystemFont(ofSize: 13)
         btn.addTarget(self, action: #selector(didTapUsername(_:)), for: .touchUpInside)
+        btn.setContentCompressionResistancePriority(UILayoutPriority(999), for: .vertical)
         return btn
+    }
+    
+    static func initialPostImageView() -> UIImageView {
+        let iv = UIImageView()
+        iv.translatesAutoresizingMaskIntoConstraints = false
+        iv.contentMode = .scaleAspectFill
+        iv.clipsToBounds = true
+        iv.isUserInteractionEnabled = true
+        iv.image = .imageLiteral(name: "sea")
+        iv.setContentCompressionResistancePriority(UILayoutPriority(998), for: .vertical)
+        return iv
+    }
+    
+    func initialLikeButton() -> UIButton {
+        let btn = UIButton(type: .system)
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        btn.setImage(.imageLiteral(name: "like_unselected"), for: .normal)
+        btn.addTarget(self, action: #selector(didTapLikeButton(_:)), for: .touchUpInside)
+        btn.setContentCompressionResistancePriority(UILayoutPriority(999), for: .vertical)
+        btn.tintColor = .black
+        return btn
+    }
+    
+    func initialCommentButton() -> UIButton {
+        let btn = UIButton(type: .system)
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        btn.setImage(.imageLiteral(name: "comment"), for: .normal)
+        btn.addTarget(self, action: #selector(didTapLikeButton(_:)), for: .touchUpInside)
+        btn.setContentCompressionResistancePriority(UILayoutPriority(999), for: .vertical)
+        btn.tintColor = .black
+        return btn
+    }
+    
+    func initialShareButton() -> UIButton {
+        let btn = UIButton(type: .system)
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        btn.setImage(.imageLiteral(name: "send2"), for: .normal)
+        btn.addTarget(self, action: #selector(didTapLikeButton(_:)), for: .touchUpInside)
+        btn.setContentCompressionResistancePriority(UILayoutPriority(999), for: .vertical)
+        btn.tintColor = .black
+        return btn
+    }
+    
+    static func initialLikeLabel() -> UILabel {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "1 like"
+        label.font = UIFont.boldSystemFont(ofSize: 12)
+        label.setContentCompressionResistancePriority(UILayoutPriority(999), for: .vertical)
+        return label
+    }
+    
+    static func initialCaptionLabel() -> UILabel {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "Some test caption for now"
+        label.font = UIFont.boldSystemFont(ofSize: 12)
+        label.setContentCompressionResistancePriority(UILayoutPriority(999), for: .vertical)
+        return label
     }
 }
 
 
 //MARK: - Setup subview's constraints
 extension FeedCell {
+    
+    func setupSubViewsConstraints() {
+        setupProfileImageViewConstraints()
+        setupUsernameButtonConstraints()
+        setupPostImageViewConstarints()
+        setupLikeButtonConstraints()
+        setupCommentButtonConstraints()
+        setupShareButtonConstraints()
+        setupLikeLabelConstraints()
+        setupCaptionLabelConstraints()
+    }
     
     func setupProfileImageViewConstraints() {
         NSLayoutConstraint.activate([
@@ -81,6 +168,44 @@ extension FeedCell {
             usernameButton.centerYAnchor.constraint(equalTo: profileImageView.centerYAnchor),
             usernameButton.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 8)])
     }
+    
+    func setupPostImageViewConstarints() {
+        NSLayoutConstraint.activate([
+            postImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
+            postImageView.topAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: 12),
+            postImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12)])
+    }
+    
+    func setupLikeButtonConstraints() {
+        NSLayoutConstraint.activate([
+            likeButton.topAnchor.constraint(equalTo: postImageView.bottomAnchor, constant: 12),
+            likeButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12)])
+    }
+    
+    func setupCommentButtonConstraints() {
+        NSLayoutConstraint.activate([
+            commentButton.centerYAnchor.constraint(equalTo: likeButton.centerYAnchor),
+            commentButton.leadingAnchor.constraint(equalTo: likeButton.trailingAnchor, constant: 12)])
+    }
+    
+    func setupShareButtonConstraints() {
+        NSLayoutConstraint.activate([
+            shareButton.centerYAnchor.constraint(equalTo: commentButton.centerYAnchor),
+            shareButton.leadingAnchor.constraint(equalTo: commentButton.trailingAnchor, constant: 12)])
+    }
+    
+    func setupLikeLabelConstraints() {
+        NSLayoutConstraint.activate([
+            likeLabel.topAnchor.constraint(equalTo: likeButton.bottomAnchor, constant: 12),
+            likeLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12)])
+    }
+    
+    func setupCaptionLabelConstraints() {
+        NSLayoutConstraint.activate([
+            captionLabel.topAnchor.constraint(equalTo: likeLabel.bottomAnchor, constant: 12),
+            captionLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
+            captionLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12)])
+    }
 }
 
 
@@ -89,5 +214,15 @@ extension FeedCell {
     
     @objc func didTapUsername(_ sender: Any) {
         print("DEBUG : did tap username")
+    }
+    
+    @objc func didTapLikeButton(_ sender: Any) {
+        guard isSelectedLikeButton else{
+            isSelectedLikeButton = true
+            likeButton.setImage(.imageLiteral(name: "like_selected"), for: .normal)
+            return
+        }
+        isSelectedLikeButton = false
+        likeButton.setImage(.imageLiteral(name: "like_unselected"), for: .normal)
     }
 }
