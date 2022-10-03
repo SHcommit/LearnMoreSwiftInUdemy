@@ -81,12 +81,14 @@ extension LoginController {
     static func initialEmailTextField() -> UITextField {
         let tf = CustomTextField(placeHolder: "Email")
         tf.keyboardType = .emailAddress
+        tf.setHeight(50)
         return tf
     }
     
     static func initialPasswdTextField() -> UITextField {
         let tf = CustomTextField(placeHolder: "Password")
         tf.isSecureTextEntry = true
+        tf.setHeight(50)
         return tf
     }
     
@@ -146,16 +148,14 @@ extension LoginController {
         NSLayoutConstraint.activate([
             emailTextField.topAnchor.constraint(equalTo: instagramIcon.bottomAnchor, constant: 32),
             emailTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
-            emailTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32),
-            emailTextField.heightAnchor.constraint(equalToConstant: emailTextField.frame.height + 50)])
+            emailTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32)])
     }
     
     func setupPasswordTextFieldConstraints() {
         NSLayoutConstraint.activate([
             passwdTextField.topAnchor.constraint(equalTo: emailTextField.bottomAnchor, constant: 8),
             passwdTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
-            passwdTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32),
-            passwdTextField.heightAnchor.constraint(equalToConstant: passwdTextField.frame.height + 50)])
+            passwdTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32)])
     }
     
     func setupLoginButtonConstraints() {
