@@ -45,12 +45,6 @@ extension LoginController {
         view.addSubview(signUpLineStackView)
     }
     
-    static func setupTextfieldMargins(tf : UITextField) {
-        tf.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 0))
-        tf.leftViewMode = .always
-        tf.rightView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 0))
-        tf.rightViewMode = .always
-    }
 }
 
 
@@ -103,29 +97,13 @@ extension LoginController {
     }
     
     static func initialEmailTextField() -> UITextField {
-        let tf = UITextField()
-        tf.translatesAutoresizingMaskIntoConstraints = false
-        tf.textColor = .white
-        tf.attributedPlaceholder = NSAttributedString(string: "Email", attributes: [NSAttributedString.Key.foregroundColor : UIColor.init(white: 1, alpha: 0.7)])
-        tf.font = UIFont.systemFont(ofSize: 17)
-        tf.backgroundColor = .init(white: 1, alpha: 0.1)
-        tf.keyboardAppearance = .dark
-        tf.keyboardType = .emailAddress
-        setupTextfieldMargins(tf: tf)
+        let tf = CustomTextField(placeHolder: "Email")
         return tf
     }
     
     static func initialPasswdTextField() -> UITextField {
-        let tf = UITextField()
-        tf.translatesAutoresizingMaskIntoConstraints = false
-        tf.textColor = .white
-        tf.attributedPlaceholder = NSAttributedString(string: "Password", attributes: [NSAttributedString.Key.foregroundColor : UIColor.init(white: 1, alpha: 0.7)])
+        let tf = CustomTextField(placeHolder: "Password")
         tf.isSecureTextEntry = true
-        tf.font = UIFont.systemFont(ofSize: 17)
-        tf.backgroundColor = .init(white: 1, alpha: 0.1)
-        tf.keyboardAppearance = .dark
-        setupTextfieldMargins(tf: tf)
-        
         return tf
     }
     
