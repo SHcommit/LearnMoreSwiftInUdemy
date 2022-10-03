@@ -106,9 +106,11 @@ extension LoginController {
         let tf = UITextField()
         tf.translatesAutoresizingMaskIntoConstraints = false
         tf.textColor = .white
-        tf.attributedPlaceholder = NSAttributedString(string: "Email", attributes: [NSAttributedString.Key.foregroundColor : UIColor.white])
+        tf.attributedPlaceholder = NSAttributedString(string: "Email", attributes: [NSAttributedString.Key.foregroundColor : UIColor.init(white: 1, alpha: 0.7)])
         tf.font = UIFont.systemFont(ofSize: 17)
-        tf.backgroundColor = .init(red: 0.58, green: 0.69, blue: 0.75, alpha: 0.45)
+        tf.backgroundColor = .init(white: 1, alpha: 0.1)
+        tf.keyboardAppearance = .dark
+        tf.keyboardType = .emailAddress
         setupTextfieldMargins(tf: tf)
         return tf
     }
@@ -117,10 +119,11 @@ extension LoginController {
         let tf = UITextField()
         tf.translatesAutoresizingMaskIntoConstraints = false
         tf.textColor = .white
-        tf.attributedPlaceholder = NSAttributedString(string: "Password", attributes: [NSAttributedString.Key.foregroundColor : UIColor.white])
+        tf.attributedPlaceholder = NSAttributedString(string: "Password", attributes: [NSAttributedString.Key.foregroundColor : UIColor.init(white: 1, alpha: 0.7)])
         tf.isSecureTextEntry = true
         tf.font = UIFont.systemFont(ofSize: 17)
-        tf.backgroundColor = .init(red: 0.58, green: 0.69, blue: 0.75, alpha: 0.45)
+        tf.backgroundColor = .init(white: 1, alpha: 0.1)
+        tf.keyboardAppearance = .dark
         setupTextfieldMargins(tf: tf)
         
         return tf
@@ -134,7 +137,7 @@ extension LoginController {
         btn.backgroundColor = UIColor.systemPink.withAlphaComponent(0.4)
         btn.addTarget(self, action: #selector(didTapLoginButton(_:)), for: .touchUpInside)
         btn.titleLabel?.font = .systemFont(ofSize: 17)
-        
+        btn.setTitleColor(.systemPink, for: .highlighted)
         return btn
     }
     
@@ -153,7 +156,7 @@ extension LoginController {
     func initialForgetLoginTextlabel() -> UILabel {
         let lb = UILabel()
         lb.textColor = .white
-        lb.text = "Forget your password?"
+        lb.text = "Forget your password? "
         lb.font = .systemFont(ofSize: 13)
         
         return lb
@@ -162,9 +165,10 @@ extension LoginController {
     func initialHelpButton() -> UIButton {
         let btn = UIButton()
         btn.setTitleColor(.white, for: .normal)
-        btn.setTitle("Get help signing in. ", for: .normal)
+        btn.setTitle("Get help signing in.", for: .normal)
         btn.addTarget(self, action: #selector(didTapHelpButton(_:)), for: .touchUpInside)
         btn.titleLabel?.font = .boldSystemFont(ofSize: 13)
+        btn.layer.cornerRadius =  5
         
         return btn
     }
@@ -215,31 +219,31 @@ extension LoginController {
     
     func setupInstagramIconConstraints() {
         NSLayoutConstraint.activate([
-            instagramIcon.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
+            instagramIcon.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 32),
             instagramIcon.centerXAnchor.constraint(equalTo: view.centerXAnchor)])
     }
     
     func setupEmailTextFieldConstraints() {
         NSLayoutConstraint.activate([
-            emailTextField.topAnchor.constraint(equalTo: instagramIcon.bottomAnchor, constant: 30),
-            emailTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 30),
-            emailTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -30),
+            emailTextField.topAnchor.constraint(equalTo: instagramIcon.bottomAnchor, constant: 32),
+            emailTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
+            emailTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32),
             emailTextField.heightAnchor.constraint(equalToConstant: emailTextField.frame.height + 50)])
     }
     
     func setupPasswordTextFieldConstraints() {
         NSLayoutConstraint.activate([
             passwdTextField.topAnchor.constraint(equalTo: emailTextField.bottomAnchor, constant: 8),
-            passwdTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 30),
-            passwdTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -30),
+            passwdTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
+            passwdTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32),
             passwdTextField.heightAnchor.constraint(equalToConstant: passwdTextField.frame.height + 50)])
     }
     
     func setupLoginButtonConstraints() {
         NSLayoutConstraint.activate([
             loginButton.topAnchor.constraint(equalTo: passwdTextField.bottomAnchor, constant: 16),
-            loginButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 30),
-            loginButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -30),
+            loginButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
+            loginButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32),
             loginButton.heightAnchor.constraint(equalToConstant: loginButton.frame.height + 40)])
     }
     
