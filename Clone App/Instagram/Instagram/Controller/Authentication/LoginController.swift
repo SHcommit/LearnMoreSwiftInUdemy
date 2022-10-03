@@ -13,11 +13,11 @@ class LoginController: UIViewController {
     private let instagramIcon: UIImageView = initialInstagramIcon()
     private var emailTextField: UITextField = initialEmailTextField()
     private var passwdTextField: UITextField = initialPasswdTextField()
-    private lazy var loginButton: UIButton = initialLoginButton()
+    private lazy var loginButton: LoginButton = initialLoginButton()
     private lazy var forgotHelpLineStackView: UIStackView = initialForgotStackView()
     private lazy var signUpLineStackView: UIStackView = initialSignUpLineStackView()
     
-    //MARK: - Lifecycle
+    //MARK: - Life cycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -98,6 +98,7 @@ extension LoginController {
     
     static func initialEmailTextField() -> UITextField {
         let tf = CustomTextField(placeHolder: "Email")
+        tf.keyboardType = .emailAddress
         return tf
     }
     
@@ -107,23 +108,19 @@ extension LoginController {
         return tf
     }
     
-    func initialLoginButton() -> UIButton {
-        let btn = UIButton()
-        btn.translatesAutoresizingMaskIntoConstraints = false
-        btn.setTitleColor(.white, for: .normal)
-        btn.setTitle("Log in", for: .normal)
-        btn.backgroundColor = UIColor.systemPink.withAlphaComponent(0.4)
+    func initialLoginButton() -> LoginButton {
+        let btn = LoginButton(title: "Log in")
         btn.addTarget(self, action: #selector(didTapLoginButton(_:)), for: .touchUpInside)
-        btn.titleLabel?.font = .systemFont(ofSize: 17)
-        btn.setTitleColor(.systemPink, for: .highlighted)
+        
         return btn
     }
     
     func initialForgotStackView() -> UIStackView {
-        let forgotLoginTextLabel: UILabel = initialForgetLoginTextlabel()
-        let helpTextLabel: UIButton = initialHelpButton()
+
+        let lineViews = UserHelpLabelAndButton(first: "Forgot your password ", second: "Get help signing in.")
+        lineViews.addTargetSecondButton(eventHandler: #selector(didTapHelpButton(_:)))
         
-        let stackView = UIStackView(arrangedSubviews: [forgotLoginTextLabel,helpTextLabel])
+        let stackView = UIStackView(arrangedSubviews: lineViews.getProperties)
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.distribution = .equalCentering
         stackView.axis = .horizontal
@@ -131,31 +128,11 @@ extension LoginController {
         return stackView
     }
     
-    func initialForgetLoginTextlabel() -> UILabel {
-        let lb = UILabel()
-        lb.textColor = .white
-        lb.text = "Forget your password? "
-        lb.font = .systemFont(ofSize: 13)
-        
-        return lb
-    }
-    
-    func initialHelpButton() -> UIButton {
-        let btn = UIButton()
-        btn.setTitleColor(.white, for: .normal)
-        btn.setTitle("Get help signing in.", for: .normal)
-        btn.addTarget(self, action: #selector(didTapHelpButton(_:)), for: .touchUpInside)
-        btn.titleLabel?.font = .boldSystemFont(ofSize: 13)
-        btn.layer.cornerRadius =  5
-        
-        return btn
-    }
-    
     func initialSignUpLineStackView() -> UIStackView {
-        let questionAccount = initialQuestionAccountTextlabel()
-        let signUp = initialSignUpButton()
+        let questAccountAndSignUpLine = UserHelpLabelAndButton(first: "Don't have an account? ", second: "Sign Up")
+        questAccountAndSignUpLine.addTargetSecondButton(eventHandler: #selector(didTapSignUpButton(_:)))
         
-        let sv = UIStackView(arrangedSubviews: [questionAccount, signUp])
+        let sv = UIStackView(arrangedSubviews: questAccountAndSignUpLine.getProperties)
         sv.translatesAutoresizingMaskIntoConstraints = false
         sv.distribution = .equalCentering
         sv.axis = .horizontal
@@ -163,24 +140,6 @@ extension LoginController {
         return sv
     }
     
-    func initialQuestionAccountTextlabel() -> UILabel {
-        let lb = UILabel()
-        lb.textColor = .white
-        lb.text = "Don't have an account? "
-        lb.font = .systemFont(ofSize: 13)
-        
-        return lb
-    }
-    
-    func initialSignUpButton() -> UIButton {
-        let btn = UIButton()
-        btn.setTitleColor(.white, for: .normal)
-        btn.setTitle("Sign Up", for: .normal)
-        btn.addTarget(self, action: #selector(didTapSignUpButton(_:)), for: .touchUpInside)
-        btn.titleLabel?.font = .boldSystemFont(ofSize: 13)
-        
-        return btn
-    }
 }
 
 //MARK: - Setup subivew's constraints
