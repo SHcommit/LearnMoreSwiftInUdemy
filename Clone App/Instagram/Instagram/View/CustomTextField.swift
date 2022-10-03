@@ -40,5 +40,8 @@ extension CustomTextField {
         rightViewMode = .always
     }
     
+    func setHeight(_ height: CGFloat) {
+        heightAnchor.constraint(equalToConstant: frame.height + height).isActive = true
+    }
     
 }
