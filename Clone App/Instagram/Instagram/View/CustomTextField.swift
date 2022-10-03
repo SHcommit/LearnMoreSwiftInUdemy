@@ -30,7 +30,6 @@ extension CustomTextField {
         font = UIFont.systemFont(ofSize: 17)
         backgroundColor = .init(white: 1, alpha: 0.1)
         keyboardAppearance = .dark
-        keyboardType = .emailAddress
         setupTextfieldMargins()
     }
     
