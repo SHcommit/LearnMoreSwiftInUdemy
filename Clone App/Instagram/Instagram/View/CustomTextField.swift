@@ -9,9 +9,12 @@ import UIKit
 
 class CustomTextField: UITextField {
     
+    var textChanged: (String) -> Void = { _ in }
+    
     init(placeHolder: String) {
         super.init(frame: .zero)
         setupCustomTextField(placeHolder)
+        addTargetTextField(textFieldDidChanged: #selector(textFieldDidChanged(_:)))
     }
     
     required init?(coder: NSCoder) {
@@ -42,6 +45,24 @@ extension CustomTextField {
     
     func setHeight(_ height: CGFloat) {
         heightAnchor.constraint(equalToConstant: frame.height + height).isActive = true
+    }
+    
+}
+
+extension CustomTextField: BindingTextField{
+    func bind(callback: @escaping (String) -> Void) {
+        textChanged = callback
+    }
+    
+    func addTargetTextField(textFieldDidChanged: Selector) {
+        addTarget(self, action: textFieldDidChanged, for: .editingChanged)
+    }
+    
+    @objc func textFieldDidChanged(_ textField: UITextField) {
+        guard let text = textField.text else {
+            return
+        }
+        textChanged(text)
     }
     
 }
