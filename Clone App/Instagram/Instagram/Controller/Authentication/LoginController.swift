@@ -11,17 +11,27 @@ class LoginController: UIViewController {
     
     //MARK: - Properties
     private let instagramIcon: UIImageView = initialInstagramIcon()
-    private var emailTextField: UITextField = initialEmailTextField()
-    private var passwdTextField: UITextField = initialPasswdTextField()
+    private lazy var emailTextField: UITextField = initialEmailTextField()
+    private lazy var passwdTextField: UITextField = initialPasswdTextField()
     private lazy var loginButton: LoginButton = initialLoginButton()
     private lazy var forgotHelpLineStackView: UIStackView = initialForgotStackView()
     private lazy var signUpLineStackView: UIStackView = initialSignUpLineStackView()
+    
+    private var vm = LoginViewModel()
     
     //MARK: - Life cycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        vm.email.bind{ [weak self] text in
+            self?.emailTextField.text = text
+            print(text)
+        }
+        
+        vm.password.bind{ [weak self] text in
+            self?.passwdTextField.text = text
+        }
     }
 }
 
@@ -78,17 +88,26 @@ extension LoginController {
         return iv
     }
     
-    static func initialEmailTextField() -> UITextField {
+    func initialEmailTextField() -> UITextField {
         let tf = CustomTextField(placeHolder: "Email")
         tf.keyboardType = .emailAddress
         tf.setHeight(50)
+        tf.bind{ [weak self] text in
+            print(text)
+            self?.vm.email.value = text
+        }
         return tf
     }
     
-    static func initialPasswdTextField() -> UITextField {
+    func initialPasswdTextField() -> UITextField {
         let tf = CustomTextField(placeHolder: "Password")
         tf.isSecureTextEntry = true
         tf.setHeight(50)
+        tf.bind { [weak self] text in
+            print(text)
+            self?.vm.password.value = text
+        }
+        
         return tf
     }
     
