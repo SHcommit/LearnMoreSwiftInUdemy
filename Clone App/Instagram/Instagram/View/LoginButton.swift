@@ -30,5 +30,6 @@ extension LoginButton {
         backgroundColor = UIColor.systemPink.withAlphaComponent(0.4)
         titleLabel?.font = .systemFont(ofSize: 17)
         setTitleColor(.systemPink, for: .highlighted)
+        layer.cornerRadius = 5
     }
 }
