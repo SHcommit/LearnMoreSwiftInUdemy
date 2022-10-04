@@ -10,7 +10,7 @@ import UIKit
 class RegistrationController: UIViewController {
     
     //MARK: - Properties
-    private let photoImageView: UIImageView = initialPhotoImageView()
+    private lazy var photoButton: UIButton = initialPhotoButton()
     private lazy var userInputStackView: UIStackView = initialUserInputStackView()
     private var emailTextField: CustomTextField = initialEmailTextField()
     private var passwordTextField: CustomTextField = initialPasswordTextField()
@@ -39,14 +39,14 @@ extension RegistrationController {
     }
     
     func addSubviews() {
-        view.addSubview(photoImageView)
+        view.addSubview(photoButton)
         view.addSubview(userInputStackView)
         view.addSubview(signUpButton)
         view.addSubview(readyLogInLineStackView)
     }
     
     func setupSubviewsConstraints() {
-        setupPhotoImageViewConstraints()
+        setupPhotoButtonConstraints()
         setupUserInputStackViewConstraints()
         setupSignUpButtonConstraints()
         setupReadyLogInLineStackViewConstraints()
@@ -56,16 +56,14 @@ extension RegistrationController {
 //MARK: - Initial subviews
 extension RegistrationController {
     
-    static func initialPhotoImageView() -> UIImageView {
-        let iv = UIImageView()
-        iv.translatesAutoresizingMaskIntoConstraints = false
-        iv.image = .imageLiteral(name: "plus_photo").withRenderingMode(.alwaysTemplate)
-        iv.tintColor = .white
-        
-//        let gesture = UITapGestureRecognizer(target: self, action: #selector(didTapPhotoImageView(_:)))
-//        iv.isUserInteractionEnabled = true
-//        iv.addGestureRecognizer(gesture)
-        return iv
+    func initialPhotoButton() -> UIButton {
+        let btn = UIButton()
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        let img = UIImage.imageLiteral(name: "plus_photo").withRenderingMode(.alwaysTemplate)
+        btn.setImage(img, for: .normal)
+        btn.tintColor = .white
+        btn.addTarget(self, action: #selector(didTapPhotoButton(_:)), for: .touchUpInside)
+        return btn
     }
     
     func initialUserInputStackView()-> UIStackView {
@@ -128,15 +126,17 @@ extension RegistrationController {
 //MARK: - Setup subview's constraints
 extension RegistrationController {
     
-    func setupPhotoImageViewConstraints() {
+    func setupPhotoButtonConstraints() {
         NSLayoutConstraint.activate([
-            photoImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 32),
-            photoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor)])
+            photoButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 32),
+            photoButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            photoButton.widthAnchor.constraint(equalToConstant: 140),
+            photoButton.heightAnchor.constraint(equalToConstant: 140)])
     }
     
     func setupUserInputStackViewConstraints() {
         NSLayoutConstraint.activate([
-            userInputStackView.topAnchor.constraint(equalTo: photoImageView.bottomAnchor, constant: 32),
+            userInputStackView.topAnchor.constraint(equalTo: photoButton.bottomAnchor, constant: 32),
             userInputStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
             userInputStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32)])
     }
@@ -167,7 +167,7 @@ extension RegistrationController {
         print("사인업 버튼 터치")
     }
     
-    @objc func didTapPhotoImageView(_ sender: Any) {
+    @objc func didTapPhotoButton(_ sender: Any) {
         print("포토 이미지 클릭")
     }
 }
