@@ -64,5 +64,4 @@ extension CustomTextField: BindingTextField{
         }
         textChanged(text)
     }
-    
 }
