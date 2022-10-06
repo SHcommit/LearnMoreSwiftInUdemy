@@ -27,9 +27,12 @@ extension LoginButton {
         translatesAutoresizingMaskIntoConstraints = false
         setTitleColor(.white, for: .normal)
         setTitle(title, for: .normal)
-        backgroundColor = UIColor.systemPink.withAlphaComponent(0.4)
+        backgroundColor = UIColor.systemPink.withAlphaComponent(0.3)
         titleLabel?.font = .systemFont(ofSize: 17)
         setTitleColor(.systemPink, for: .highlighted)
         layer.cornerRadius = 5
+        
+        isEnabled = false
+        titleLabel?.textColor.withAlphaComponent(0.2)
     }
 }
