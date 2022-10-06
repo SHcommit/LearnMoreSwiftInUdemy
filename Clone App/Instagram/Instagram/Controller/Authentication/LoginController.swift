@@ -11,8 +11,8 @@ class LoginController: UIViewController {
     
     //MARK: - Properties
     private let instagramIcon: UIImageView = initialInstagramIcon()
-    private lazy var emailTextField: UITextField = initialEmailTextField()
-    private lazy var passwdTextField: UITextField = initialPasswdTextField()
+    private lazy var emailTextField: CustomTextField = initialEmailTextField()
+    private lazy var passwdTextField: CustomTextField = initialPasswdTextField()
     private lazy var loginButton: LoginButton = initialLoginButton()
     private lazy var forgotHelpLineStackView: UIStackView = initialForgotStackView()
     private lazy var signUpLineStackView: UIStackView = initialSignUpLineStackView()
@@ -24,19 +24,12 @@ class LoginController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        vm.email.bind{ [weak self] text in
-            self?.emailTextField.text = text
-            print(text)
-        }
-        
-        vm.password.bind{ [weak self] text in
-            self?.passwdTextField.text = text
-        }
+        setupTextFieldBindingByViewModel()
     }
 }
 
 
-//MARK: - Helpers
+//MARK: - View helpers
 extension LoginController {
     
     func setupUI() {
@@ -88,24 +81,24 @@ extension LoginController {
         return iv
     }
     
-    func initialEmailTextField() -> UITextField {
+    func initialEmailTextField() -> CustomTextField {
         let tf = CustomTextField(placeHolder: "Email")
         tf.keyboardType = .emailAddress
         tf.setHeight(50)
         tf.bind{ [weak self] text in
-            print(text)
             self?.vm.email.value = text
+            self?.changeValidTextFields()
         }
         return tf
     }
     
-    func initialPasswdTextField() -> UITextField {
+    func initialPasswdTextField() -> CustomTextField {
         let tf = CustomTextField(placeHolder: "Password")
         tf.isSecureTextEntry = true
         tf.setHeight(50)
         tf.bind { [weak self] text in
-            print(text)
             self?.vm.password.value = text
+            self?.changeValidTextFields()
         }
         
         return tf
@@ -114,7 +107,6 @@ extension LoginController {
     func initialLoginButton() -> LoginButton {
         let btn = LoginButton(title: "Log in")
         btn.addTarget(self, action: #selector(didTapLoginButton(_:)), for: .touchUpInside)
-        
         return btn
     }
     
@@ -203,7 +195,7 @@ extension LoginController {
 extension LoginController {
     
     @objc func didTapLoginButton(_ sender: Any) {
-        print("로그인버튼 터치")
+        print("로그인터치됨")
     }
     
     @objc func didTapHelpButton(_ sender: Any) {
@@ -214,4 +206,36 @@ extension LoginController {
         let registrationVC = RegistrationController()
         navigationController?.pushViewController(registrationVC, animated: true)
     }
+}
+
+
+//MARK: - Helpers
+extension LoginController {
+    
+    //vm의 값이 바뀌면 현재 연결된 UITextField의 쳐져있는 값도 변경.
+    func setupTextFieldBindingByViewModel() {
+        vm.email.bind{ [weak self] text in
+            self?.emailTextField.text = text
+        }
+        vm.password.bind{ [weak self] text in
+            self?.passwdTextField.text = text
+        }
+    }
+    
+    func changeValidTextFields() {
+        if vm.isValiedUserForm {
+            DispatchQueue.main.async {
+                self.loginButton.isEnabled = true
+                self.loginButton.backgroundColor = UIColor.systemPink.withAlphaComponent(0.6)
+                self.loginButton.titleLabel?.textColor.withAlphaComponent(1)
+            }
+        } else {
+            DispatchQueue.main.async {
+                self.loginButton.isEnabled = false
+                self.loginButton.backgroundColor = UIColor.systemPink.withAlphaComponent(0.3)
+                self.loginButton.titleLabel?.textColor.withAlphaComponent(0.2)
+            }
+        }
+    }
+    
 }
