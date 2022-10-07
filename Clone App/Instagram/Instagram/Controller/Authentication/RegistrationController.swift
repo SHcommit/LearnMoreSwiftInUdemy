@@ -7,7 +7,7 @@
 
 import UIKit
 
-class RegistrationController: UIViewController {
+class RegistrationController: UIViewController, UINavigationControllerDelegate {
     
     //MARK: - Properties
     private lazy var photoButton: UIButton = initialPhotoButton()
@@ -18,12 +18,15 @@ class RegistrationController: UIViewController {
     private var usernameTextField: CustomTextField = initialUsernameTextField()
     private lazy var signUpButton: LoginButton = initialSignUpButton()
     private var readyLogInLineStackView: UIStackView = initialReadyLogInLineStackView()
+    
+    private var vm = RegistrationViewModel()
     //MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupUI()
+        setupLabelsBinding()
     }
     
 }
@@ -51,6 +54,52 @@ extension RegistrationController {
         setupSignUpButtonConstraints()
         setupReadyLogInLineStackViewConstraints()
     }
+    
+    func setupLabelsBinding() {
+        emailTextField.bind { [weak self] text in
+            self?.changeValidTextFields()
+            self?.vm.email.value = text
+        }
+        passwordTextField.bind { [weak self] text in
+            self?.changeValidTextFields()
+            self?.vm.password.value = text
+        }
+        fullnameTextField.bind { [weak self] text in
+            self?.changeValidTextFields()
+            self?.vm.fullname.value = text
+        }
+        usernameTextField.bind { [weak self] text in
+            self?.changeValidTextFields()
+            self?.vm.username.value = text
+        }
+        
+    }
+    
+    func updatePhotoButtonState(_ image: UIImage) {
+        photoButton.setImage(image, for: .normal)
+        photoButton.layer.cornerRadius = photoButton.bounds.width / 2
+        photoButton.layer.borderWidth = 1.5
+        photoButton.layer.borderColor = UIColor.white.cgColor
+        photoButton.clipsToBounds = true
+        dismiss(animated: true)
+    }
+    
+    func changeValidTextFields() {
+        if vm.isValiedUserForm {
+            DispatchQueue.main.async {
+                self.signUpButton.isEnabled = true
+                self.signUpButton.backgroundColor = UIColor.systemPink.withAlphaComponent(0.6)
+                self.signUpButton.titleLabel?.textColor.withAlphaComponent(1)
+            }
+        } else {
+            DispatchQueue.main.async {
+                self.signUpButton.isEnabled = false
+                self.signUpButton.backgroundColor = UIColor.systemPink.withAlphaComponent(0.3)
+                self.signUpButton.titleLabel?.textColor.withAlphaComponent(0.2)
+            }
+        }
+    }
+
 }
 
 //MARK: - Initial subviews
@@ -85,7 +134,7 @@ extension RegistrationController {
     
     static func initialPasswordTextField() -> CustomTextField {
         let pw = CustomTextField(placeHolder: "Password")
-        pw.isSecureTextEntry = true
+        //pw.isSecureTextEntry = true
         pw.setHeight(50)
         return pw
     }
@@ -105,6 +154,7 @@ extension RegistrationController {
     
     func initialSignUpButton() -> LoginButton {
         let btn = LoginButton(title: "Sign Up")
+        
         btn.addTarget(self, action: #selector(didTapSignUpButton(_:)), for: .touchUpInside)
         return btn
     }
@@ -151,7 +201,7 @@ extension RegistrationController {
     
     func setupReadyLogInLineStackViewConstraints() {
         NSLayoutConstraint.activate([
-            readyLogInLineStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -32),
+            readyLogInLineStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -8),
             readyLogInLineStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor)])
     }
 }
@@ -160,7 +210,7 @@ extension RegistrationController {
 extension RegistrationController {
 
     @objc func didTapLoginButton(_ sender: Any) {
-        print("로그인 버튼 터치")
+        navigationController?.popViewController(animated: true)
     }
     
     @objc func didTapSignUpButton(_ sender: Any) {
@@ -168,6 +218,21 @@ extension RegistrationController {
     }
     
     @objc func didTapPhotoButton(_ sender: Any) {
-        print("포토 이미지 클릭")
+        let picker = UIImagePickerController()
+        picker.delegate = self
+        picker.allowsEditing = true
+        present(picker, animated: true)
+        
+    }
+}
+
+
+//MARK: - UIImagePickerController delegate
+extension RegistrationController: UIImagePickerControllerDelegate {
+
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        guard let selectedImage = info[.editedImage] as? UIImage else { return }
+        updatePhotoButtonState(selectedImage)
+        
     }
 }
