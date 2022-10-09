@@ -13,6 +13,7 @@ struct LoginViewModel {
     var email = Dynamic("")
     var password = Dynamic("")
     
+    //MARK: - Helpers
     var isValiedUserForm: Bool {
         get {
             return !(email.value.isEmpty) && !(password.value.isEmpty)
@@ -22,6 +23,19 @@ struct LoginViewModel {
 
 struct RegistrationViewModel {
     
+    //MARK: - Properties
+    var email = Dynamic("")
+    var password = Dynamic("")
+    var fullname = Dynamic("")
+    var username = Dynamic("")
+    
+    //MARK: - Helpers
+    var isValiedUserForm: Bool {
+        get {
+            return !(email.value.isEmpty) && !(password.value.isEmpty)
+            && !(fullname.value.isEmpty) && !(username.value.isEmpty)
+        }
+    }
 }
 
 
