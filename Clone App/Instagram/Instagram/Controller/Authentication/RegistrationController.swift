@@ -57,20 +57,20 @@ extension RegistrationController {
     
     func setupLabelsBinding() {
         emailTextField.bind { [weak self] text in
-            self?.changeValidTextFields()
             self?.vm.email.value = text
+            self?.changeValidTextFields()
         }
         passwordTextField.bind { [weak self] text in
-            self?.changeValidTextFields()
             self?.vm.password.value = text
+            self?.changeValidTextFields()
         }
         fullnameTextField.bind { [weak self] text in
-            self?.changeValidTextFields()
             self?.vm.fullname.value = text
+            self?.changeValidTextFields()
         }
         usernameTextField.bind { [weak self] text in
-            self?.changeValidTextFields()
             self?.vm.username.value = text
+            self?.changeValidTextFields()
         }
         
     }
