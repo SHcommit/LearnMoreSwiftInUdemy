@@ -134,7 +134,7 @@ extension RegistrationController {
     
     static func initialPasswordTextField() -> CustomTextField {
         let pw = CustomTextField(placeHolder: "Password")
-        //pw.isSecureTextEntry = true
+        pw.isSecureTextEntry = true
         pw.setHeight(50)
         return pw
     }
@@ -214,7 +214,8 @@ extension RegistrationController {
     }
     
     @objc func didTapSignUpButton(_ sender: Any) {
-        print("사인업 버튼 터치")
+        AuthService.registerUser(withUserInfo: vm)
+        
     }
     
     @objc func didTapPhotoButton(_ sender: Any) {
@@ -232,6 +233,7 @@ extension RegistrationController: UIImagePickerControllerDelegate {
 
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         guard let selectedImage = info[.editedImage] as? UIImage else { return }
+        vm.profileImage = selectedImage
         updatePhotoButtonState(selectedImage)
         
     }
