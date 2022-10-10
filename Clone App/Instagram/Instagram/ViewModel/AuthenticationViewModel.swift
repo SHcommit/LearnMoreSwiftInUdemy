@@ -5,8 +5,7 @@
 //  Created by 양승현 on 2022/10/04.
 //
 
-import Foundation
-
+import UIKit
 
 struct LoginViewModel {
     //MARK: - Properties
@@ -28,6 +27,7 @@ struct RegistrationViewModel {
     var password = Dynamic("")
     var fullname = Dynamic("")
     var username = Dynamic("")
+    var profileImage: UIImage?
     
     //MARK: - Helpers
     var isValiedUserForm: Bool {
