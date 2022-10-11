@@ -214,7 +214,15 @@ extension RegistrationController {
     }
     
     @objc func didTapSignUpButton(_ sender: Any) {
-        AuthService.registerUser(withUserInfo: vm)
+        AuthService.registerUser(withUserInfo: vm) { error in
+            
+            guard let error = error else {
+                print("DEBUG : Failed register user profile info \(error?.localizedDescription)")
+                return
+            }
+            
+            print("DEBUG : Successful registered user with fireStore")
+        }
         
     }
     
