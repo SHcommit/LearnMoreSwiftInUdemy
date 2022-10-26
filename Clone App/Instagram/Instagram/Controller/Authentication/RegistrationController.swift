@@ -134,6 +134,9 @@ extension RegistrationController {
     
     static func initialPasswordTextField() -> CustomTextField {
         let pw = CustomTextField(placeHolder: "Password")
+        if #available(iOS 12.0, *) {
+            pw.textContentType = .oneTimeCode
+        }
         pw.isSecureTextEntry = true
         pw.setHeight(50)
         return pw
@@ -216,14 +219,14 @@ extension RegistrationController {
     @objc func didTapSignUpButton(_ sender: Any) {
         AuthService.registerUser(withUserInfo: vm) { error in
             
-            guard let error = error else {
-                print("DEBUG : Failed register user profile info \(error?.localizedDescription)")
+            if let error = error {
+                print("DEBUG : Failed register user info in Firestore Database \(error.localizedDescription)")
                 return
             }
             
             print("DEBUG : Successful registered user with fireStore")
+            self.navigationController?.popViewController(animated: true)
         }
-        
     }
     
     @objc func didTapPhotoButton(_ sender: Any) {
