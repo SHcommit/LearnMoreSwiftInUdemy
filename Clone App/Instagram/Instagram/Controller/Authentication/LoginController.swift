@@ -6,7 +6,7 @@
 //
 
 import UIKit
-
+import Firebase
 class LoginController: UIViewController {
     
     //MARK: - Properties
@@ -16,6 +16,7 @@ class LoginController: UIViewController {
     private lazy var loginButton: LoginButton = initialLoginButton()
     private lazy var forgotHelpLineStackView: UIStackView = initialForgotStackView()
     private lazy var signUpLineStackView: UIStackView = initialSignUpLineStackView()
+    private var indicator: UIActivityIndicatorView = UIActivityIndicatorView(style: .medium)
     
     private var vm = LoginViewModel()
     
@@ -195,7 +196,24 @@ extension LoginController {
 extension LoginController {
     
     @objc func didTapLoginButton(_ sender: Any) {
-        print("로그인터치됨")
+        startIndicator(indicator: indicator)
+        let email = vm.email.value
+        let pw = vm.password.value
+        AuthService.handleIsLoginAccount(email: email, pw: pw) { [self] result,error in
+            if let error = error {
+                print("Fail login.")
+                return
+            }
+            
+            guard let vc = self.presentingViewController as? MainHomeTabController else {
+                print("no")
+                return
+            }
+            endIndicator(indicator: indicator)
+            vc.view.isHidden = false
+            self.dismiss(animated: false)
+        }
+        endIndicator(indicator: indicator)
     }
     
     @objc func didTapHelpButton(_ sender: Any) {
@@ -206,6 +224,7 @@ extension LoginController {
         let registrationVC = RegistrationController()
         navigationController?.pushViewController(registrationVC, animated: true)
     }
+
 }
 
 

@@ -19,4 +19,36 @@ extension UIViewController {
         gradient.colors = gradientColors
         view.layer.addSublayer(gradient)
     }
+    
+    func presentLoginScene() {
+        let controller = LoginController()
+        let nav = UINavigationController(rootViewController: controller)
+        nav.modalPresentationStyle = .fullScreen
+        self.present(nav,animated: false, completion: nil)
+    }
+    
+    func startIndicator(indicator: UIActivityIndicatorView) {
+        
+        setupIndicatorConstraints(indicator: indicator)
+        
+        DispatchQueue.main.async {
+            self.view.bringSubviewToFront(indicator)
+            indicator.startAnimating()
+        }
+    }
+    
+    func endIndicator(indicator: UIActivityIndicatorView) {
+        DispatchQueue.main.async {
+            indicator.isHidden = true
+            indicator.stopAnimating()
+        }
+    }
+    
+    func setupIndicatorConstraints(indicator: UIActivityIndicatorView) {
+        view.addSubview(indicator)
+        indicator.hidesWhenStopped = true
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([indicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                                     indicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)])
+    }
 }
