@@ -26,6 +26,8 @@ class MainHomeTabController: UITabBarController {
 extension MainHomeTabController {
     func configureViewControllers() {
         let layout = UICollectionViewFlowLayout()
+        let profileLayout = layout
+        
         let feed = templateNavigationController(unselectedImage: .imageLiteral(name: "home_unselected"), selectedImage: .imageLiteral(name: "home_selected"), rootVC: FeedController(collectionViewLayout: layout))
         
         let search = templateNavigationController(unselectedImage: .imageLiteral(name: "search_unselected"), selectedImage: .imageLiteral(name: "search_selected"), rootVC: SearchController())
@@ -34,7 +36,8 @@ extension MainHomeTabController {
         
         let notifications = templateNavigationController(unselectedImage: .imageLiteral(name: "like_unselected"), selectedImage: .imageLiteral(name: "like_selected"), rootVC: NotificationController())
         
-        let profile = templateNavigationController(unselectedImage: .imageLiteral(name: "profile_unselected"), selectedImage: .imageLiteral(name: "profile_selected"), rootVC: ProfileController())
+        
+        let profile = templateNavigationController(unselectedImage: .imageLiteral(name: "profile_unselected"), selectedImage: .imageLiteral(name: "profile_selected"), rootVC: ProfileController(collectionViewLayout: profileLayout))
         
         viewControllers = [feed,search,imageSelector,notifications,profile]
     }
