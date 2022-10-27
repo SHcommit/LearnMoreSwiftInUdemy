@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Firebase
 
 class FeedController: UICollectionViewController {
     
@@ -25,6 +26,8 @@ extension FeedController {
     
     func setupUI() {
         view.backgroundColor = .white
+        setupLogoutBarButton()
+        navigationItem.title = "Feed"
     }
 }
 
@@ -57,3 +60,30 @@ extension FeedController: UICollectionViewDelegateFlowLayout {
         return CGSize(width: view.frame.width, height: cellHeight)
     }
  }
+
+
+//MARK: - UINavigationController configure
+extension FeedController {
+    func setupLogoutBarButton() {
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout",
+                                                            style: .plain,
+                                                            target: self,
+                                                            action: #selector(handleLogout)
+                                                       )
+    }
+}
+
+
+//MARK: - Event handler
+extension FeedController {
+    @objc func handleLogout() {
+        do {
+            try Auth.auth().signOut()
+            DispatchQueue.main.async {
+                self.presentLoginScene()
+            }
+        } catch {
+            print("Failed to sign out")
+        }
+    }
+}

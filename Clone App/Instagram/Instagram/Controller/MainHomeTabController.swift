@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Firebase
 
 class MainHomeTabController: UITabBarController {
     
@@ -14,7 +15,10 @@ class MainHomeTabController: UITabBarController {
         super.viewDidLoad()
         configureViewControllers()
         customTabBarUI()
+        checkIfUserIsLoggedIn()
+        //logout()
     }
+    
 }
 
 
@@ -54,6 +58,7 @@ extension MainHomeTabController {
         nav.navigationBar.standardAppearance = appearance
         nav.navigationBar.scrollEdgeAppearance = appearance
     }
+    
 }
 
 //MARK: - Setup tabBar UI
@@ -75,7 +80,20 @@ extension MainHomeTabController {
     func setupTabBarTintColor() {
         tabBar.tintColor = .black
     }
+    
+}
 
+//MARK: - API. check user's membership
+extension MainHomeTabController {
+    
+    func checkIfUserIsLoggedIn() {
+        if Auth.auth().currentUser == nil {
+            DispatchQueue.main.async {
+                self.view.isHidden = true
+                self.presentLoginScene()
+            }
+        }
+    }
 }
 
 //MARK: - Refactoring
@@ -83,4 +101,5 @@ extension UIImage {
     static func imageLiteral(name: String) -> UIImage {
         return UIImage(imageLiteralResourceName: name)
     }
+    
 }
