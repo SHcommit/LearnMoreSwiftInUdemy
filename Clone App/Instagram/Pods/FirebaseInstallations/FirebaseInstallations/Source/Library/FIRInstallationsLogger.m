@@ -16,7 +16,7 @@
 
 #import "FirebaseInstallations/Source/Library/FIRInstallationsLogger.h"
 
-FIRLoggerService kFIRLoggerInstallations = @"[FirebaseInstallations]";
+FIRLoggerService kFIRLoggerInstallations = @"[Firebase/Installations]";
 
 // FIRInstallationsAPIService.m
 NSString *const kFIRInstallationsMessageCodeSendAPIRequest = @"I-FIS001001";
@@ -34,7 +34,6 @@ NSString *const kFIRInstallationsMessageCodeNewGetInstallationOperationCreated =
 NSString *const kFIRInstallationsMessageCodeNewGetAuthTokenOperationCreated = @"I-FIS002001";
 NSString *const kFIRInstallationsMessageCodeNewDeleteInstallationOperationCreated = @"I-FIS002002";
 NSString *const kFIRInstallationsMessageCodeInvalidFirebaseConfiguration = @"I-FIS002003";
-NSString *const kFIRInstallationsMessageCodeCorruptedStoredInstallation = @"I-FIS002004";
 
 // FIRInstallationsStoredItem.m
 NSString *const kFIRInstallationsMessageCodeInstallationCoderVersionMismatch = @"I-FIS003000";

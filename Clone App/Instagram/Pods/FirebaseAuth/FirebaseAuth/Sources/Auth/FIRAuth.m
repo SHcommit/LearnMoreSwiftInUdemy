@@ -22,11 +22,11 @@
 #import <UIKit/UIKit.h>
 #endif
 
-#import <GoogleUtilities/GULAppDelegateSwizzler.h>
-#import <GoogleUtilities/GULAppEnvironmentUtil.h>
-#import <GoogleUtilities/GULSceneDelegateSwizzler.h>
 #import "FirebaseAuth/Sources/Public/FirebaseAuth/FirebaseAuth.h"
-#import "FirebaseCore/Extension/FirebaseCoreInternal.h"
+#import "FirebaseCore/Sources/Private/FirebaseCoreInternal.h"
+#import "GoogleUtilities/AppDelegateSwizzler/Private/GULAppDelegateSwizzler.h"
+#import "GoogleUtilities/Environment/Private/GULAppEnvironmentUtil.h"
+#import "GoogleUtilities/SceneDelegateSwizzler/Private/GULSceneDelegateSwizzler.h"
 
 #import "FirebaseAuth/Sources/Auth/FIRAuthDataResult_Internal.h"
 #import "FirebaseAuth/Sources/Auth/FIRAuthDispatcher.h"
@@ -80,9 +80,6 @@
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
-
-#pragma mark-- Logger Service String.
-FIRLoggerService kFIRLoggerAuth = @"[FirebaseAuth]";
 
 #pragma mark - Constants
 
@@ -206,6 +203,15 @@ static NSMutableDictionary *gKeychainServiceNameForAppName;
 @end
 
 @implementation FIRActionCodeInfo
+
+- (NSString *)dataForKey:(FIRActionDataKey)key {
+  switch (key) {
+    case FIRActionCodeEmailKey:
+      return self.email;
+    case FIRActionCodeFromEmailKey:
+      return self.previousEmail;
+  }
+}
 
 - (instancetype)initWithOperation:(FIRActionCodeOperation)operation
                             email:(NSString *)email
@@ -420,16 +426,12 @@ static NSMutableDictionary *gKeychainServiceNameForAppName;
           UIApplicationDidEnterBackgroundNotification.
    */
   id<NSObject> _applicationDidEnterBackgroundObserver;
-
-  /** @var _protectedDataDidBecomeAvailableObserver
-      @brief An opaque object to act as the observer for
-     UIApplicationProtectedDataDidBecomeAvailable.
-   */
-  id<NSObject> _protectedDataDidBecomeAvailableObserver;
 }
 
 + (void)load {
-  [FIRApp registerInternalLibrary:(Class<FIRLibrary>)self withName:@"fire-auth"];
+  [FIRApp registerInternalLibrary:(Class<FIRLibrary>)self
+                         withName:@"fire-auth"
+                      withVersion:[NSString stringWithUTF8String:FirebaseAuthVersionStr]];
 }
 
 + (void)initialize {
@@ -439,13 +441,12 @@ static NSMutableDictionary *gKeychainServiceNameForAppName;
 + (FIRAuth *)auth {
   FIRApp *defaultApp = [FIRApp defaultApp];
   if (!defaultApp) {
-    [NSException
-         raise:NSInternalInconsistencyException
-        format:@"The default FirebaseApp instance must be configured before the default Auth"
-               @"instance can be initialized. One way to ensure this is to call "
-               @"`FirebaseApp.configure()` in the App Delegate's "
-               @"`application(_:didFinishLaunchingWithOptions:)` (or the `@main` struct's "
-               @"initializer in SwiftUI)."];
+    [NSException raise:NSInternalInconsistencyException
+                format:@"The default FIRApp instance must be configured before the default FIRAuth"
+                       @"instance can be initialized. One way to ensure that is to call "
+                       @"`[FIRApp configure];` (`FirebaseApp.configure()` in Swift) in the App "
+                       @"Delegate's `application:didFinishLaunchingWithOptions:` "
+                       @"(`application(_:didFinishLaunchingWithOptions:)` in Swift)."];
   }
   return [self authWithApp:defaultApp];
 }
@@ -459,10 +460,7 @@ static NSMutableDictionary *gKeychainServiceNameForAppName;
 
 - (instancetype)initWithApp:(FIRApp *)app {
   [FIRAuth setKeychainServiceNameForApp:app];
-  self = [self initWithAPIKey:app.options.APIKey
-                      appName:app.name
-                        appID:app.options.googleAppID
-              heartbeatLogger:app.heartbeatLogger];
+  self = [self initWithAPIKey:app.options.APIKey appName:app.name];
   if (self) {
     _app = app;
 #if TARGET_OS_IOS
@@ -472,116 +470,73 @@ static NSMutableDictionary *gKeychainServiceNameForAppName;
   return self;
 }
 
-- (nullable instancetype)initWithAPIKey:(NSString *)APIKey
-                                appName:(NSString *)appName
-                                  appID:(NSString *)appID {
-  return [self initWithAPIKey:APIKey appName:appName appID:appID heartbeatLogger:nil];
-}
-
-- (nullable instancetype)initWithAPIKey:(NSString *)APIKey
-                                appName:(NSString *)appName
-                                  appID:(NSString *)appID
-                        heartbeatLogger:(nullable id<FIRHeartbeatLoggerProtocol>)heartbeatLogger {
+- (nullable instancetype)initWithAPIKey:(NSString *)APIKey appName:(NSString *)appName {
   self = [super init];
   if (self) {
     _listenerHandles = [NSMutableArray array];
-    _requestConfiguration = [[FIRAuthRequestConfiguration alloc] initWithAPIKey:APIKey
-                                                                          appID:appID
-                                                                heartbeatLogger:heartbeatLogger];
+    _requestConfiguration = [[FIRAuthRequestConfiguration alloc] initWithAPIKey:APIKey];
     _firebaseAppName = [appName copy];
 #if TARGET_OS_IOS
     _settings = [[FIRAuthSettings alloc] init];
-
-    [GULAppDelegateSwizzler proxyOriginalDelegateIncludingAPNSMethods];
-    [GULSceneDelegateSwizzler proxyOriginalSceneDelegate];
-#endif  // TARGET_OS_IOS
-
-    [self protectedDataInitialization];
-  }
-  return self;
-}
-
-- (void)protectedDataInitialization {
-  // Continue with the rest of initialization in the work thread.
-  __weak FIRAuth *weakSelf = self;
-  dispatch_async(FIRAuthGlobalWorkQueue(), ^{
-    // Load current user from Keychain.
-    FIRAuth *strongSelf = weakSelf;
-    if (!strongSelf) {
-      return;
-    }
-    NSString *keychainServiceName =
-        [FIRAuth keychainServiceNameForAppName:strongSelf->_firebaseAppName];
-    if (keychainServiceName) {
-      strongSelf->_keychainServices =
-          [[FIRAuthKeychainServices alloc] initWithService:keychainServiceName];
-      strongSelf.storedUserManager =
-          [[FIRAuthStoredUserManager alloc] initWithServiceName:keychainServiceName];
-    }
-
-    NSError *error;
-    NSString *storedUserAccessGroup =
-        [strongSelf.storedUserManager getStoredUserAccessGroupWithError:&error];
-    if (!error) {
-      if (!storedUserAccessGroup) {
-        FIRUser *user;
-        if ([strongSelf getUser:&user error:&error]) {
-          strongSelf.tenantID = user.tenantID;
-          [strongSelf updateCurrentUser:user byForce:NO savingToDisk:NO error:&error];
-          self->_lastNotifiedUserToken = user.rawAccessToken;
-        } else {
-#if TARGET_OS_IOS || TARGET_OS_TV || TARGET_OS_MACCATALYST
-          if (error.code == FIRAuthErrorCodeKeychainError) {
-            // If there's a keychain error, assume it is due to the keychain being accessed
-            // before the device is unlocked as a result of prewarming, and listen for the
-            // UIApplicationProtectedDataDidBecomeAvailable notification.
-            [strongSelf addProtectedDataDidBecomeAvailableObserver];
-          }
-#endif  // TARGET_OS_IOS || TARGET_OS_TV || TARGET_OS_MACCATALYST
-          FIRLogError(kFIRLoggerAuth, @"I-AUT000001",
-                      @"Error loading saved user when starting up: %@", error);
-        }
-      } else {
-        [strongSelf internalUseUserAccessGroup:storedUserAccessGroup error:&error];
-        if (error) {
-#if TARGET_OS_IOS || TARGET_OS_TV || TARGET_OS_MACCATALYST
-          if (error.code == FIRAuthErrorCodeKeychainError) {
-            // If there's a keychain error, assume it is due to the keychain being accessed
-            // before the device is unlocked as a result of prewarming, and listen for the
-            // UIApplicationProtectedDataDidBecomeAvailable notification.
-            [strongSelf addProtectedDataDidBecomeAvailableObserver];
-          }
-#endif  // TARGET_OS_IOS || TARGET_OS_TV || TARGET_OS_MACCATALYST
-          FIRLogError(kFIRLoggerAuth, @"I-AUT000001",
-                      @"Error loading saved user when starting up: %@", error);
-        }
-      }
-    } else {
-#if TARGET_OS_IOS || TARGET_OS_TV || TARGET_OS_MACCATALYST
-      if (error.code == FIRAuthErrorCodeKeychainError) {
-        // If there's a keychain error, assume it is due to the keychain being accessed
-        // before the device is unlocked as a result of prewarming, and listen for the
-        // UIApplicationProtectedDataDidBecomeAvailable notification.
-        [strongSelf addProtectedDataDidBecomeAvailableObserver];
-      }
-#endif  // TARGET_OS_IOS || TARGET_OS_TV || TARGET_OS_MACCATALYST
-      FIRLogError(kFIRLoggerAuth, @"I-AUT000001", @"Error loading saved user when starting up: %@",
-                  error);
-    }
-
-#if TARGET_OS_IOS
     static Class applicationClass = nil;
     // iOS App extensions should not call [UIApplication sharedApplication], even if UIApplication
     // responds to it.
     if (![GULAppEnvironmentUtil isAppExtension]) {
       Class cls = NSClassFromString(@"UIApplication");
-      if (cls && [cls respondsToSelector:@selector(sharedApplication)]) {
+      if (cls && [cls respondsToSelector:NSSelectorFromString(@"sharedApplication")]) {
         applicationClass = cls;
       }
     }
     UIApplication *application = [applicationClass sharedApplication];
 
-    if (application) {
+    [GULAppDelegateSwizzler proxyOriginalDelegateIncludingAPNSMethods];
+    [GULSceneDelegateSwizzler proxyOriginalSceneDelegate];
+#endif  // TARGET_OS_IOS
+
+    // Continue with the rest of initialization in the work thread.
+    __weak FIRAuth *weakSelf = self;
+    dispatch_async(FIRAuthGlobalWorkQueue(), ^{
+      // Load current user from Keychain.
+      FIRAuth *strongSelf = weakSelf;
+      if (!strongSelf) {
+        return;
+      }
+      NSString *keychainServiceName =
+          [FIRAuth keychainServiceNameForAppName:strongSelf->_firebaseAppName];
+      if (keychainServiceName) {
+        strongSelf->_keychainServices =
+            [[FIRAuthKeychainServices alloc] initWithService:keychainServiceName];
+        strongSelf.storedUserManager =
+            [[FIRAuthStoredUserManager alloc] initWithServiceName:keychainServiceName];
+      }
+
+      NSError *error;
+      NSString *storedUserAccessGroup =
+          [strongSelf.storedUserManager getStoredUserAccessGroupWithError:&error];
+      if (!error) {
+        if (!storedUserAccessGroup) {
+          FIRUser *user;
+          if ([strongSelf getUser:&user error:&error]) {
+            strongSelf.tenantID = user.tenantID;
+            [strongSelf updateCurrentUser:user byForce:NO savingToDisk:NO error:&error];
+            self->_lastNotifiedUserToken = user.rawAccessToken;
+          } else {
+            FIRLogError(kFIRLoggerAuth, @"I-AUT000001",
+                        @"Error loading saved user when starting up: %@", error);
+          }
+        } else {
+          [strongSelf internalUseUserAccessGroup:storedUserAccessGroup error:&error];
+          if (error) {
+            FIRLogError(kFIRLoggerAuth, @"I-AUT000001",
+                        @"Error loading saved user when starting up: %@", error);
+          }
+        }
+      } else {
+        FIRLogError(kFIRLoggerAuth, @"I-AUT000001",
+                    @"Error loading saved user when starting up: %@", error);
+      }
+
+#if TARGET_OS_IOS
       // Initialize for phone number auth.
       strongSelf->_tokenManager = [[FIRAuthAPNSTokenManager alloc] initWithApplication:application];
 
@@ -591,35 +546,18 @@ static NSMutableDictionary *gKeychainServiceNameForAppName;
       strongSelf->_notificationManager = [[FIRAuthNotificationManager alloc]
            initWithApplication:application
           appCredentialManager:strongSelf->_appCredentialManager];
-    }
 
-    [GULAppDelegateSwizzler registerAppDelegateInterceptor:strongSelf];
+      [GULAppDelegateSwizzler registerAppDelegateInterceptor:strongSelf];
 #if ((TARGET_OS_IOS || TARGET_OS_TV) && (__IPHONE_OS_VERSION_MAX_ALLOWED >= 130000))
-    if (@available(iOS 13, tvos 13, *)) {
-      [GULSceneDelegateSwizzler registerSceneDelegateInterceptor:strongSelf];
-    }
+      if (@available(iOS 13, tvos 13, *)) {
+        [GULSceneDelegateSwizzler registerSceneDelegateInterceptor:strongSelf];
+      }
 #endif  // ((TARGET_OS_IOS || TARGET_OS_TV) && (__IPHONE_OS_VERSION_MAX_ALLOWED >= 130000))
 #endif  // TARGET_OS_IOS
-  });
+    });
+  }
+  return self;
 }
-
-#if TARGET_OS_IOS || TARGET_OS_TV || TARGET_OS_MACCATALYST
-- (void)addProtectedDataDidBecomeAvailableObserver {
-  __weak FIRAuth *weakSelf = self;
-  self->_protectedDataDidBecomeAvailableObserver = [[NSNotificationCenter defaultCenter]
-      addObserverForName:UIApplicationProtectedDataDidBecomeAvailable
-                  object:nil
-                   queue:nil
-              usingBlock:^(NSNotification *notification) {
-                FIRAuth *strongSelf = weakSelf;
-                [[NSNotificationCenter defaultCenter]
-                    removeObserver:strongSelf->_protectedDataDidBecomeAvailableObserver
-                              name:UIApplicationProtectedDataDidBecomeAvailable
-                            object:nil];
-                [strongSelf protectedDataInitialization];
-              }];
-}
-#endif  // TARGET_OS_IOS || TARGET_OS_TV || TARGET_OS_MACCATALYST
 
 - (void)dealloc {
   @synchronized(self) {
@@ -649,6 +587,25 @@ static NSMutableDictionary *gKeychainServiceNameForAppName;
     result = self->_currentUser;
   });
   return result;
+}
+
+- (void)fetchProvidersForEmail:(NSString *)email
+                    completion:(nullable FIRProviderQueryCallback)completion {
+  dispatch_async(FIRAuthGlobalWorkQueue(), ^{
+    FIRCreateAuthURIRequest *request =
+        [[FIRCreateAuthURIRequest alloc] initWithIdentifier:email
+                                                continueURI:@"http://www.google.com/"
+                                       requestConfiguration:self->_requestConfiguration];
+    [FIRAuthBackend
+        createAuthURI:request
+             callback:^(FIRCreateAuthURIResponse *_Nullable response, NSError *_Nullable error) {
+               if (completion) {
+                 dispatch_async(dispatch_get_main_queue(), ^{
+                   completion(response.allProviders, error);
+                 });
+               }
+             }];
+  });
 }
 
 - (void)signInWithProvider:(id<FIRFederatedAuthProvider>)provider
@@ -901,8 +858,16 @@ static NSMutableDictionary *gKeychainServiceNameForAppName;
              }];
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 - (void)signInWithCredential:(FIRAuthCredential *)credential
                   completion:(nullable FIRAuthDataResultCallback)completion {
+  [self signInAndRetrieveDataWithCredential:credential completion:completion];
+}
+#pragma clang diagnostic pop
+
+- (void)signInAndRetrieveDataWithCredential:(FIRAuthCredential *)credential
+                                 completion:(nullable FIRAuthDataResultCallback)completion {
   dispatch_async(FIRAuthGlobalWorkQueue(), ^{
     FIRAuthDataResultCallback callback =
         [self signInFlowAuthDataResultCallbackByDecoratingCallback:completion];
@@ -1463,7 +1428,7 @@ static NSMutableDictionary *gKeychainServiceNameForAppName;
 - (FIRIDTokenDidChangeListenerHandle)addIDTokenDidChangeListener:
     (FIRIDTokenDidChangeListenerBlock)listener {
   if (!listener) {
-    [NSException raise:NSInvalidArgumentException format:@"Listener must not be nil."];
+    [NSException raise:NSInvalidArgumentException format:@"listener must not be nil."];
     return nil;
   }
   FIRAuthStateDidChangeListenerHandle handle;
@@ -1569,7 +1534,6 @@ static NSMutableDictionary *gKeychainServiceNameForAppName;
     didReceiveRemoteNotification:(NSDictionary *)userInfo
           fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
   [self canHandleNotification:userInfo];
-  completionHandler(UIBackgroundFetchResultNoData);
 }
 
 // iOS 10 deprecation
@@ -2090,15 +2054,12 @@ static NSMutableDictionary *gKeychainServiceNameForAppName;
     }
   } else {
     if (!user) {
-      success =
-          [self.storedUserManager removeStoredUserForAccessGroup:self.userAccessGroup
-                                     shareAuthStateAcrossDevices:self.shareAuthStateAcrossDevices
-                                               projectIdentifier:self.app.options.APIKey
-                                                           error:outError];
+      success = [self.storedUserManager removeStoredUserForAccessGroup:self.userAccessGroup
+                                                     projectIdentifier:self.app.options.APIKey
+                                                                 error:outError];
     } else {
       success = [self.storedUserManager setStoredUser:user
                                        forAccessGroup:self.userAccessGroup
-                          shareAuthStateAcrossDevices:self.shareAuthStateAcrossDevices
                                     projectIdentifier:self.app.options.APIKey
                                                 error:outError];
     }
@@ -2150,11 +2111,9 @@ static NSMutableDictionary *gKeychainServiceNameForAppName;
 
     return YES;
   } else {
-    FIRUser *user =
-        [self.storedUserManager getStoredUserForAccessGroup:self.userAccessGroup
-                                shareAuthStateAcrossDevices:self.shareAuthStateAcrossDevices
-                                          projectIdentifier:self.app.options.APIKey
-                                                      error:error];
+    FIRUser *user = [self.storedUserManager getStoredUserForAccessGroup:self.userAccessGroup
+                                                      projectIdentifier:self.app.options.APIKey
+                                                                  error:error];
     user.auth = self;
     *outUser = user;
     if (user) {
@@ -2328,18 +2287,7 @@ static NSMutableDictionary *gKeychainServiceNameForAppName;
 #endif  // TARGET_OS_WATCH
     user = [unarchiver decodeObjectOfClass:[FIRUser class] forKey:userKey];
   } else {
-#if TARGET_OS_TV
-    if (self.shareAuthStateAcrossDevices) {
-      FIRLogError(kFIRLoggerAuth, @"I-AUT000001",
-                  @"Getting a stored user for a given access group is not supported "
-                  @"on tvOS when `shareAuthStateAcrossDevices` is set to `true` (#8878)."
-                  @"This case will return `nil`.");
-      return nil;
-    }
-#endif  // TARGET_OS_TV
-
-    user = [self.storedUserManager getStoredUserForAccessGroup:accessGroup
-                                   shareAuthStateAcrossDevices:self.shareAuthStateAcrossDevices
+    user = [self.storedUserManager getStoredUserForAccessGroup:self.userAccessGroup
                                              projectIdentifier:self.app.options.APIKey
                                                          error:outError];
   }

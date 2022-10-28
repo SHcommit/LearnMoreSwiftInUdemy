@@ -23,41 +23,43 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * The entry point for accessing a Firebase Database.  You can get an instance
- * by calling `Database.database()`. To access a location in the database and
- * read or write data, use `FIRDatabase.reference()`.
+ * by calling [FIRDatabase database]. To access a location in the database and
+ * read or write data, use [FIRDatabase reference].
  */
 NS_SWIFT_NAME(Database)
 @interface FIRDatabase : NSObject
 
 /**
  * The NSObject initializer that has been marked as unavailable. Use the
- * `database` class method instead.
+ * `database` method instead
+ *
+ * @return An instancetype instance
  */
 - (instancetype)init
     __attribute__((unavailable("use the database method instead")));
 
 /**
- * Gets the instance of `Database` for the default `FirebaseApp`.
+ * Gets the instance of FIRDatabase for the default FIRApp.
  *
- * @return A `Database` instance.
+ * @return A FIRDatabase instance.
  */
 + (FIRDatabase *)database NS_SWIFT_NAME(database());
 
 /**
- * Gets a `Database` instance for the specified URL.
+ * Gets a FirebaseDatabase instance for the specified URL.
  *
  * @param url The URL to the Firebase Database instance you want to access.
- * @return A `Database` instance.
+ * @return A FIRDatabase instance.
  */
 + (FIRDatabase *)databaseWithURL:(NSString *)url NS_SWIFT_NAME(database(url:));
 
 /**
- * Gets a `Database` instance for the specified URL, using the specified
- * `FirebaseApp`.
+ * Gets a FirebaseDatabase instance for the specified URL, using the specified
+ * FirebaseApp.
  *
- * @param app The app to get a `Database` for.
+ * @param app The FIRApp to get a FIRDatabase for.
  * @param url The URL to the Firebase Database instance you want to access.
- * @return A `Database` instance.
+ * @return A FIRDatabase instance.
  */
 // clang-format off
 + (FIRDatabase *)databaseForApp:(FIRApp *)app
@@ -65,37 +67,37 @@ NS_SWIFT_NAME(Database)
 // clang-format on
 
 /**
- * Gets an instance of `Database` for a specific `FirebaseApp`.
+ * Gets an instance of FIRDatabase for a specific FIRApp.
  *
- * @param app The app to get a `Database` for.
- * @return A `Database` instance.
+ * @param app The FIRApp to get a FIRDatabase for.
+ * @return A FIRDatabase instance.
  */
 + (FIRDatabase *)databaseForApp:(FIRApp *)app NS_SWIFT_NAME(database(app:));
 
-/** The app instance to which this `Database` belongs. */
+/** The FIRApp instance to which this FIRDatabase belongs. */
 @property(weak, readonly, nonatomic) FIRApp *app;
 
 /**
- * Gets a `DatabaseReference` for the root of your Firebase Database.
+ * Gets a FIRDatabaseReference for the root of your Firebase Database.
  */
 - (FIRDatabaseReference *)reference;
 
 /**
- * Gets a `DatabaseReference` for the provided path.
+ * Gets a FIRDatabaseReference for the provided path.
  *
  * @param path Path to a location in your Firebase Database.
- * @return A `DatabaseReference` pointing to the specified path.
+ * @return A FIRDatabaseReference pointing to the specified path.
  */
 - (FIRDatabaseReference *)referenceWithPath:(NSString *)path;
 
 /**
- * Gets a `DatabaseReference` for the provided URL.  The URL must be a URL to a
- * path within this Firebase Database.  To create a `DatabaseReference` to a
- * different database, create a `FirebaseApp` with an `Options` object
- * configured with the appropriate database URL.
+ * Gets a FIRDatabaseReference for the provided URL.  The URL must be a URL to a
+ * path within this Firebase Database.  To create a FIRDatabaseReference to a
+ * different database, create a FIRApp} with a FIROptions object configured with
+ * the appropriate database URL.
  *
  * @param databaseUrl A URL to a path within your database.
- * @return A `DatabaseReference` for the provided URL.
+ * @return A FIRDatabaseReference for the provided URL.
  */
 - (FIRDatabaseReference *)referenceFromURL:(NSString *)databaseUrl;
 
@@ -114,14 +116,14 @@ NS_SWIFT_NAME(Database)
 - (void)purgeOutstandingWrites;
 
 /**
- * Shuts down the connection to the Firebase Database backend until `goOnline()`
- * is called.
+ * Shuts down our connection to the Firebase Database backend until goOnline is
+ * called.
  */
 - (void)goOffline;
 
 /**
- * Resumes the connection to the Firebase Database backend after a previous
- * goOffline() call.
+ * Resumes our connection to the Firebase Database backend after a previous
+ * goOffline call.
  */
 - (void)goOnline;
 
@@ -133,10 +135,10 @@ NS_SWIFT_NAME(Database)
  *
  * However by default your write operations and cached data are only stored
  * in-memory and will be lost when your app restarts.  By setting this value to
- * `true`, the data will be persisted to on-device (disk) storage and will thus
+ * `YES`, the data will be persisted to on-device (disk) storage and will thus
  * be available again when the app is restarted (even when there is no network
  * connectivity at that time). Note that this property must be set before
- * creating your first `DatabaseReference` and only needs to be called once per
+ * creating your first Database reference and only needs to be called once per
  * application.
  *
  */
@@ -149,7 +151,7 @@ NS_SWIFT_NAME(Database)
  * removing data that hasn't been recently used. If you find that your
  * application caches too little or too much data, call this method to change
  * the cache size. This property must be set before creating your first
- * `DatabaseReference` and only needs to be called once per application.
+ * FIRDatabaseReference and only needs to be called once per application.
  *
  * Note that the specified cache size is only an approximation and the size on
  * disk may temporarily exceed it at times. Cache sizes smaller than 1 MB or
@@ -168,18 +170,12 @@ NS_SWIFT_NAME(Database)
 /**
  * Enables verbose diagnostic logging.
  *
- * @param enabled true to enable logging, false to disable.
+ * @param enabled YES to enable logging, NO to disable.
  */
 + (void)setLoggingEnabled:(BOOL)enabled;
 
 /** Retrieve the Firebase Database SDK version. */
 + (NSString *)sdkVersion;
-
-/**
- * Configures the database to use an emulated backend instead of the default
- * remote backend.
- */
-- (void)useEmulatorWithHost:(NSString *)host port:(NSInteger)port;
 
 @end
 

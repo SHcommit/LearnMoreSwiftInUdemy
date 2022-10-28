@@ -22,8 +22,8 @@
 #import "FBLPromises.h"
 #endif
 
-#import <GoogleUtilities/GULKeychainStorage.h>
-#import "FirebaseCore/Extension/FirebaseCoreInternal.h"
+#import "FirebaseCore/Sources/Private/FirebaseCoreInternal.h"
+#import "GoogleUtilities/Environment/Private/GULKeychainStorage.h"
 
 #import "FirebaseInstallations/Source/Library/Errors/FIRInstallationsErrorUtil.h"
 #import "FirebaseInstallations/Source/Library/FIRInstallationsItem.h"
@@ -71,28 +71,31 @@ static NSString *const kKeychainService = @"com.firebase.FIRInstallations.instal
 
 @implementation FIRInstallationsIDController
 
-- (instancetype)initWithApp:(FIRApp *)app {
-  NSString *serviceName =
-      [FIRInstallationsIDController keychainServiceWithAppID:app.options.googleAppID];
+- (instancetype)initWithGoogleAppID:(NSString *)appID
+                            appName:(NSString *)appName
+                             APIKey:(NSString *)APIKey
+                          projectID:(NSString *)projectID
+                        GCMSenderID:(NSString *)GCMSenderID
+                        accessGroup:(nullable NSString *)accessGroup {
+  NSString *serviceName = [FIRInstallationsIDController keychainServiceWithAppID:appID];
   GULKeychainStorage *secureStorage = [[GULKeychainStorage alloc] initWithService:serviceName];
   FIRInstallationsStore *installationsStore =
-      [[FIRInstallationsStore alloc] initWithSecureStorage:secureStorage
-                                               accessGroup:app.options.appGroupID];
+      [[FIRInstallationsStore alloc] initWithSecureStorage:secureStorage accessGroup:accessGroup];
 
+  // Use `GCMSenderID` as project identifier when `projectID` is not available.
+  NSString *APIServiceProjectID = (projectID.length > 0) ? projectID : GCMSenderID;
   FIRInstallationsAPIService *apiService =
-      [[FIRInstallationsAPIService alloc] initWithAPIKey:app.options.APIKey
-                                               projectID:app.options.projectID
-                                         heartbeatLogger:app.heartbeatLogger];
+      [[FIRInstallationsAPIService alloc] initWithAPIKey:APIKey projectID:APIServiceProjectID];
 
   FIRInstallationsIIDStore *IIDStore = [[FIRInstallationsIIDStore alloc] init];
   FIRInstallationsIIDTokenStore *IIDCheckingStore =
-      [[FIRInstallationsIIDTokenStore alloc] initWithGCMSenderID:app.options.GCMSenderID];
+      [[FIRInstallationsIIDTokenStore alloc] initWithGCMSenderID:GCMSenderID];
 
   FIRInstallationsBackoffController *backoffController =
       [[FIRInstallationsBackoffController alloc] init];
 
-  return [self initWithGoogleAppID:app.options.googleAppID
-                           appName:app.name
+  return [self initWithGoogleAppID:appID
+                           appName:appName
                 installationsStore:installationsStore
                         APIService:apiService
                           IIDStore:IIDStore
@@ -177,13 +180,16 @@ static NSString *const kKeychainService = @"com.firebase.FIRInstallations.instal
 - (FBLPromise<FIRInstallationsItem *> *)getStoredInstallation {
   return [self.installationsStore installationForAppID:self.appID appName:self.appName].validate(
       ^BOOL(FIRInstallationsItem *installation) {
-        NSError *validationError;
-        BOOL isValid = [installation isValid:&validationError];
+        BOOL isValid = NO;
+        switch (installation.registrationStatus) {
+          case FIRInstallationStatusUnregistered:
+          case FIRInstallationStatusRegistered:
+            isValid = YES;
+            break;
 
-        if (!isValid) {
-          FIRLogWarning(
-              kFIRLoggerInstallations, kFIRInstallationsMessageCodeCorruptedStoredInstallation,
-              @"Stored installation validation error: %@", validationError.localizedDescription);
+          case FIRInstallationStatusUnknown:
+            isValid = NO;
+            break;
         }
 
         return isValid;

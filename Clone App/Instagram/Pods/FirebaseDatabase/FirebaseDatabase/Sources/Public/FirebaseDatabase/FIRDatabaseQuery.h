@@ -21,19 +21,19 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * A `DatabaseHandle` is used to identify listeners of Firebase Database
- * events. These handles are returned by `observe(_:with:)` and can later be
- * passed to `removeObserver(withHandle:)` to stop receiving updates.
+ * A FIRDatabaseHandle is used to identify listeners of Firebase Database
+ * events. These handles are returned by observeEventType: and can later be
+ * passed to removeObserverWithHandle: to stop receiving updates.
  */
 typedef NSUInteger FIRDatabaseHandle NS_SWIFT_NAME(DatabaseHandle);
 
 /**
- * A `DatabaseQuery` instance represents a query over the data at a particular
+ * A FIRDatabaseQuery instance represents a query over the data at a particular
  * location.
  *
- * You create one by calling one of the query methods (`queryOrdered(byChild:)`,
- * `queryStarting(atValue:)`, etc.) on a `DatabaseReference`. The query methods
- * can be chained to further specify the data you are interested in observing.
+ * You create one by calling one of the query methods (queryOrderedByChild:,
+ * queryStartingAtValue:, etc.) on a FIRDatabaseReference. The query methods can
+ * be chained to further specify the data you are interested in observing
  */
 NS_SWIFT_NAME(DatabaseQuery)
 @interface FIRDatabaseQuery : NSObject
@@ -41,38 +41,38 @@ NS_SWIFT_NAME(DatabaseQuery)
 #pragma mark - Attach observers to read data
 
 /**
- * This method is used to listen for data changes at a particular location.
- * This is the primary way to read data from the Firebase Database. Your
- * block will be triggered for the initial data and again whenever the
- * data changes.
+ * observeEventType:withBlock: is used to listen for data changes at a
+ * particular location. This is the primary way to read data from the Firebase
+ * Database. Your block will be triggered for the initial data and again
+ * whenever the data changes.
  *
  * Use removeObserverWithHandle: to stop receiving updates.
  *
  * @param eventType The type of event to listen for.
  * @param block The block that should be called with initial data and updates.
- *     It is passed the data as a `DataSnapshot`.
+ * It is passed the data as a FIRDataSnapshot.
  * @return A handle used to unregister this block later using
- *     `removeObserver(withHandle:)`
+ * removeObserverWithHandle:
  */
 - (FIRDatabaseHandle)observeEventType:(FIRDataEventType)eventType
                             withBlock:
                                 (void (^)(FIRDataSnapshot *snapshot))block;
 
 /**
- * This method is used to listen for data changes at a particular location.
- * This is the primary way to read data from the Firebase Database. Your
- * block will be triggered for the initial data and again whenever the data
- * changes. In addition, for `DataEventTypeChildAdded`,
- * `DataEventTypeChildMoved`, and `DataEventTypeChildChanged` events, your
+ * observeEventType:andPreviousSiblingKeyWithBlock: is used to listen for data
+ * changes at a particular location. This is the primary way to read data from
+ * the Firebase Database. Your block will be triggered for the initial data and
+ * again whenever the data changes. In addition, for FIRDataEventTypeChildAdded,
+ * FIRDataEventTypeChildMoved, and FIRDataEventTypeChildChanged events, your
  * block will be passed the key of the previous node by priority order.
  *
- * Use `removeObserver(withHandle:)` to stop receiving updates.
+ * Use removeObserverWithHandle: to stop receiving updates.
  *
  * @param eventType The type of event to listen for.
  * @param block The block that should be called with initial data and updates.
- * It is passed the data as a `DataSnapshot` and the previous child's key.
+ * It is passed the data as a FIRDataSnapshot and the previous child's key.
  * @return A handle used to unregister this block later using
- * `removeObserver(withHandle:)`
+ * removeObserverWithHandle:
  */
 - (FIRDatabaseHandle)observeEventType:(FIRDataEventType)eventType
        andPreviousSiblingKeyWithBlock:
@@ -80,23 +80,23 @@ NS_SWIFT_NAME(DatabaseQuery)
                      NSString *__nullable prevKey))block;
 
 /**
- * This method is used to listen for data changes at a particular location.
- * This is the primary way to read data from the Firebase Database. Your
- * block will be triggered for the initial data and again whenever the data
- * changes.
+ * observeEventType:withBlock: is used to listen for data changes at a
+ * particular location. This is the primary way to read data from the Firebase
+ * Database. Your block will be triggered for the initial data and again
+ * whenever the data changes.
  *
- * The `cancelBlock` will be called if you will no longer receive new events
- * due to no longer having permission.
+ * The cancelBlock will be called if you will no longer receive new events due
+ * to no longer having permission.
  *
- * Use `removeObserver(withHandle:)` to stop receiving updates.
+ * Use removeObserverWithHandle: to stop receiving updates.
  *
  * @param eventType The type of event to listen for.
  * @param block The block that should be called with initial data and updates.
- *     It is passed the data as a `DataSnapshot`.
+ * It is passed the data as a FIRDataSnapshot.
  * @param cancelBlock The block that should be called if this client no longer
- *     has permission to receive these events
+ * has permission to receive these events
  * @return A handle used to unregister this block later using
- *     `removeObserver(withHandle:)`
+ * removeObserverWithHandle:
  */
 - (FIRDatabaseHandle)observeEventType:(FIRDataEventType)eventType
                             withBlock:(void (^)(FIRDataSnapshot *snapshot))block
@@ -104,25 +104,25 @@ NS_SWIFT_NAME(DatabaseQuery)
                           (nullable void (^)(NSError *error))cancelBlock;
 
 /**
- * This method is used to listen for data changes at a particular location.
- * This is the primary way to read data from the Firebase Database. Your block
- * will be triggered for the initial data and again whenever the data changes.
- * In addition, for `FIRDataEventTypeChildAdded`, `FIRDataEventTypeChildMoved`,
- * and FIRDataEventTypeChildChanged events, your block will be passed the key
- * of the previous node by priority order.
+ * observeEventType:andPreviousSiblingKeyWithBlock: is used to listen for data
+ * changes at a particular location. This is the primary way to read data from
+ * the Firebase Database. Your block will be triggered for the initial data and
+ * again whenever the data changes. In addition, for FIRDataEventTypeChildAdded,
+ * FIRDataEventTypeChildMoved, and FIRDataEventTypeChildChanged events, your
+ * block will be passed the key of the previous node by priority order.
  *
- * The `cancelBlock` will be called if you will no longer receive new events due
+ * The cancelBlock will be called if you will no longer receive new events due
  * to no longer having permission.
  *
- * Use `removeObserver(withHandle:)` to stop receiving updates.
+ * Use removeObserverWithHandle: to stop receiving updates.
  *
  * @param eventType The type of event to listen for.
  * @param block The block that should be called with initial data and updates.
- *     It is passed the data as a `DataSnapshot` and the previous child's key.
+ * It is passed the data as a FIRDataSnapshot and the previous child's key.
  * @param cancelBlock The block that should be called if this client no longer
- *     has permission to receive these events
+ * has permission to receive these events
  * @return A handle used to unregister this block later using
- *     `removeObserver(withHandle:)`
+ * removeObserverWithHandle:
  */
 - (FIRDatabaseHandle)observeEventType:(FIRDataEventType)eventType
        andPreviousSiblingKeyWithBlock:
@@ -132,39 +132,26 @@ NS_SWIFT_NAME(DatabaseQuery)
                           (nullable void (^)(NSError *error))cancelBlock;
 
 /**
- * This method is used to get the most up-to-date value for this query. This
- * method updates the cache and raises events if successful. If
- * not connected, it returns a locally-cached value.
- *
- * @param block The block that should be called with the most up-to-date value
- *     of this query, or an error if no such value could be retrieved.
- */
-- (void)getDataWithCompletionBlock:
-    (void (^_Nonnull)(NSError *__nullable error,
-                      FIRDataSnapshot *__nullable snapshot))block
-    NS_SWIFT_NAME(getData(completion:));
-
-/**
- * This is equivalent to `observe(_:with:)`, except the block is
+ * This is equivalent to observeEventType:withBlock:, except the block is
  * immediately canceled after the initial data is returned.
  *
  * @param eventType The type of event to listen for.
  * @param block The block that should be called.  It is passed the data as a
- *     `DataSnapshot`.
+ * FIRDataSnapshot.
  */
 - (void)observeSingleEventOfType:(FIRDataEventType)eventType
                        withBlock:(void (^)(FIRDataSnapshot *snapshot))block;
 
 /**
- * This is equivalent to `observe(_:with:)`, except the block is
+ * This is equivalent to observeEventType:withBlock:, except the block is
  * immediately canceled after the initial data is returned. In addition, for
- * `DataEventTypeChildAdded`, `DataEventTypeChildMoved`, and
- * `DataEventTypeChildChanged` events, your block will be passed the key of the
+ * FIRDataEventTypeChildAdded, FIRDataEventTypeChildMoved, and
+ * FIRDataEventTypeChildChanged events, your block will be passed the key of the
  * previous node by priority order.
  *
  * @param eventType The type of event to listen for.
  * @param block The block that should be called.  It is passed the data as a
- *     `DataSnapshot` and the previous child's key.
+ * FIRDataSnapshot and the previous child's key.
  */
 - (void)observeSingleEventOfType:(FIRDataEventType)eventType
     andPreviousSiblingKeyWithBlock:
@@ -172,37 +159,37 @@ NS_SWIFT_NAME(DatabaseQuery)
                   NSString *__nullable prevKey))block;
 
 /**
- * This is equivalent to `observe(_:with:)`, except the block is
+ * This is equivalent to observeEventType:withBlock:, except the block is
  * immediately canceled after the initial data is returned.
  *
- * The `cancelBlock` will be called if you do not have permission to read data
- * at this location.
+ * The cancelBlock will be called if you do not have permission to read data at
+ * this location.
  *
  * @param eventType The type of event to listen for.
  * @param block The block that should be called.  It is passed the data as a
- *     `DataSnapshot`.
+ * FIRDataSnapshot.
  * @param cancelBlock The block that will be called if you don't have permission
- *     to access this data
+ * to access this data
  */
 - (void)observeSingleEventOfType:(FIRDataEventType)eventType
                        withBlock:(void (^)(FIRDataSnapshot *snapshot))block
                  withCancelBlock:(nullable void (^)(NSError *error))cancelBlock;
 
 /**
- * This is equivalent to `observe(_:with:)`, except the block is
+ * This is equivalent to observeEventType:withBlock:, except the block is
  * immediately canceled after the initial data is returned. In addition, for
- * `DataEventTypeChildAdded`, `DataEventTypeChildMoved`, and
- * `DataEventTypeChildChanged` events, your block will be passed the key of the
+ * FIRDataEventTypeChildAdded, FIRDataEventTypeChildMoved, and
+ * FIRDataEventTypeChildChanged events, your block will be passed the key of the
  * previous node by priority order.
  *
- * The `cancelBlock` will be called if you do not have permission to read data
- * at this location.
+ * The cancelBlock will be called if you do not have permission to read data at
+ * this location.
  *
  * @param eventType The type of event to listen for.
  * @param block The block that should be called.  It is passed the data as a
- *     `DataSnapshot` and the previous child's key.
+ * FIRDataSnapshot and the previous child's key.
  * @param cancelBlock The block that will be called if you don't have permission
- *     to access this data
+ * to access this data
  */
 - (void)observeSingleEventOfType:(FIRDataEventType)eventType
     andPreviousSiblingKeyWithBlock:(void (^)(FIRDataSnapshot *snapshot,
@@ -213,248 +200,183 @@ NS_SWIFT_NAME(DatabaseQuery)
 #pragma mark - Detaching observers
 
 /**
- * Detach a block previously attached with `observe(_:with:)`, or another query
- * observation method. After this method is called, the associated block
- * registered to receive snapshot updates will no longer be invoked.
+ * Detach a block previously attached with observeEventType:withBlock:.
  *
- * @param handle The handle returned by the call to `observe(_:with:)`
- *     which we are trying to remove.
+ * @param handle The handle returned by the call to observeEventType:withBlock:
+ * which we are trying to remove.
  */
 - (void)removeObserverWithHandle:(FIRDatabaseHandle)handle;
 
 /**
  * Detach all blocks previously attached to this Firebase Database location with
- * `observe(_:with:)` and other query observation methods.
+ * observeEventType:withBlock:
  */
 - (void)removeAllObservers;
 
 /**
- * By calling `keepSynced(true)` on a location, the data for that location will
+ * By calling `keepSynced:YES` on a location, the data for that location will
  * automatically be downloaded and kept in sync, even when no listeners are
  * attached for that location. Additionally, while a location is kept synced, it
  * will not be evicted from the persistent disk cache.
  *
- * @param keepSynced Pass true to keep this location synchronized, or false to
- *     stop synchronization.
+ * @param keepSynced Pass YES to keep this location synchronized, pass NO to
+ * stop synchronization.
  */
 - (void)keepSynced:(BOOL)keepSynced;
 
 #pragma mark - Querying and limiting
 
 /**
- * This method is used to generate a reference to a limited view of the
- * data at this location. The `DatabaseQuery` instance returned by
- * `queryLimited(toFirst:)` will respond to at most the first limit child nodes.
+ * queryLimitedToFirst: is used to generate a reference to a limited view of the
+ * data at this location. The FIRDatabaseQuery instance returned by
+ * queryLimitedToFirst: will respond to at most the first limit child nodes.
  *
  * @param limit The upper bound, inclusive, for the number of child nodes to
- *     receive events for
- * @return A `DatabaseQuery` instance, limited to at most limit child nodes.
+ * receive events for
+ * @return A FIRDatabaseQuery instance, limited to at most limit child nodes.
  */
 - (FIRDatabaseQuery *)queryLimitedToFirst:(NSUInteger)limit;
 
 /**
- * `queryLimited(toLast:)` is used to generate a reference to a limited view of
- * the data at this location. The `DatabaseQuery` instance returned by
- * this method will respond to at most the last limit child nodes.
+ * queryLimitedToLast: is used to generate a reference to a limited view of the
+ * data at this location. The FIRDatabaseQuery instance returned by
+ * queryLimitedToLast: will respond to at most the last limit child nodes.
  *
  * @param limit The upper bound, inclusive, for the number of child nodes to
- *     receive events for
- * @return A `DatabaseQuery` instance, limited to at most limit child nodes.
+ * receive events for
+ * @return A FIRDatabaseQuery instance, limited to at most limit child nodes.
  */
 - (FIRDatabaseQuery *)queryLimitedToLast:(NSUInteger)limit;
 
 /**
- * This method is used to generate a reference to a view of the data that's
+ * queryOrderBy: is used to generate a reference to a view of the data that's
  * been sorted by the values of a particular child key. This method is intended
- * to be used in combination with `queryStarting(atValue:)`,
- * `queryEnding(atValue:)`, or `queryEqual(toValue:)`.
+ * to be used in combination with queryStartingAtValue:, queryEndingAtValue:, or
+ * queryEqualToValue:.
  *
  * @param key The child key to use in ordering data visible to the returned
- *     `DatabaseQuery`
- * @return A `DatabaseQuery` instance, ordered by the values of the specified
+ * FIRDatabaseQuery
+ * @return A FIRDatabaseQuery instance, ordered by the values of the specified
  * child key.
  */
 - (FIRDatabaseQuery *)queryOrderedByChild:(NSString *)key;
 
 /**
- * `queryOrdered(byKey:) is used to generate a reference to a view of the data
+ * queryOrderedByKey: is used to generate a reference to a view of the data
  * that's been sorted by child key. This method is intended to be used in
- * combination with `queryStarting(atValue:)`, `queryEnding(atValue:)`, or
- * `queryEqual(toValue:)`.
+ * combination with queryStartingAtValue:, queryEndingAtValue:, or
+ * queryEqualToValue:.
  *
- * @return A `DatabaseQuery` instance, ordered by child keys.
+ * @return A FIRDatabaseQuery instance, ordered by child keys.
  */
 - (FIRDatabaseQuery *)queryOrderedByKey;
 
 /**
- * `queryOrdered(byValue:)` is used to generate a reference to a view of the
- * data that's been sorted by child value. This method is intended to be used in
- * combination with `queryStarting(atValue:)`, `queryEnding(atValue:)`, or
- * `queryEqual(toValue:)`.
+ * queryOrderedByValue: is used to generate a reference to a view of the data
+ * that's been sorted by child value. This method is intended to be used in
+ * combination with queryStartingAtValue:, queryEndingAtValue:, or
+ * queryEqualToValue:.
  *
- * @return A `DatabaseQuery` instance, ordered by child value.
+ * @return A FIRDatabaseQuery instance, ordered by child value.
  */
 - (FIRDatabaseQuery *)queryOrderedByValue;
 
 /**
- * `queryOrdered(byPriority:) is used to generate a reference to a view of the
- * data that's been sorted by child priority. This method is intended to be used
- * in combination with `queryStarting(atValue:)`, `queryEnding(atValue:)`, or
- * `queryEqual(toValue:)`.
+ * queryOrderedByPriority: is used to generate a reference to a view of the data
+ * that's been sorted by child priority. This method is intended to be used in
+ * combination with queryStartingAtValue:, queryEndingAtValue:, or
+ * queryEqualToValue:.
  *
- * @return A `DatabaseQuery` instance, ordered by child priorities.
+ * @return A FIRDatabaseQuery instance, ordered by child priorities.
  */
 - (FIRDatabaseQuery *)queryOrderedByPriority;
 
 /**
- * `queryStarting(atValue:)` is used to generate a reference to a limited view
- * of the data at this location. The `DatabaseQuery` instance returned by
- * `queryStarting(atValue:)` will respond to events at nodes with a value
- * greater than or equal to `startValue`.
+ * queryStartingAtValue: is used to generate a reference to a limited view of
+ * the data at this location. The FIRDatabaseQuery instance returned by
+ * queryStartingAtValue: will respond to events at nodes with a value greater
+ * than or equal to startValue.
  *
  * @param startValue The lower bound, inclusive, for the value of data visible
- *     to the returned `DatabaseQuery`
- * @return A `DatabaseQuery` instance, limited to data with value greater than
- *     or equal to `startValue`
+ * to the returned FIRDatabaseQuery
+ * @return A FIRDatabaseQuery instance, limited to data with value greater than
+ * or equal to startValue
  */
 - (FIRDatabaseQuery *)queryStartingAtValue:(nullable id)startValue;
 
 /**
- * `queryStarting(atValue:childKey:)` is used to generate a reference to a
- * limited view of the data at this location. The `DatabaseQuery` instance
- * returned by `queryStarting(atValue:childKey:)` will respond to events at
- * nodes with a value greater than `startValue`, or equal to `startValue` and
- * with a key greater than or equal to `childKey`. This is most useful when
- * implementing pagination in a case where multiple nodes can match the
- * `startValue`.
+ * queryStartingAtValue:childKey: is used to generate a reference to a limited
+ * view of the data at this location. The FIRDatabaseQuery instance returned by
+ * queryStartingAtValue:childKey will respond to events at nodes with a value
+ * greater than startValue, or equal to startValue and with a key greater than
+ * or equal to childKey. This is most useful when implementing pagination in a
+ * case where multiple nodes can match the startValue.
  *
  * @param startValue The lower bound, inclusive, for the value of data visible
- *     to the returned `DatabaseQuery`
+ * to the returned FIRDatabaseQuery
  * @param childKey The lower bound, inclusive, for the key of nodes with value
- *     equal to `startValue`
- * @return A `DatabaseQuery` instance, limited to data with value greater than
- *     or equal to `startValue`
+ * equal to startValue
+ * @return A FIRDatabaseQuery instance, limited to data with value greater than
+ * or equal to startValue
  */
 - (FIRDatabaseQuery *)queryStartingAtValue:(nullable id)startValue
                                   childKey:(nullable NSString *)childKey;
 
 /**
- * `queryStarting(afterValue:)` is used to generate a reference to a
- * limited view of the data at this location. The `DatabaseQuery` instance
- * returned by `queryStarting(afterValue:)` will respond to events at nodes
- * with a value greater than startAfterValue.
- *
- * @param startAfterValue The lower bound, exclusive, for the value of data
- *     visible to the returned `DatabaseQuery`
- * @return A `DatabaseQuery` instance, limited to data with value greater
- *     `startAfterValue`
- */
-- (FIRDatabaseQuery *)queryStartingAfterValue:(nullable id)startAfterValue;
-
-/**
- * `queryStarting(afterValue:childKey:)` is used to generate a reference to a
- * limited view of the data at this location. The `DatabaseQuery` instance
- * returned by `queryStarting(afterValue:childKey:)` will respond to events at
- * nodes with a value greater than `startAfterValue`, or equal to
- * `startAfterValue` and with a key greater than `childKey`. This is most useful
- * when implementing pagination in a case where multiple nodes can match the
- * `startAfterValue`.
- *
- * @param startAfterValue The lower bound, inclusive, for the value of data
- *     visible to the returned `DatabaseQuery`
- * @param childKey The lower bound, exclusive, for the key of nodes with value
- *     equal to `startAfterValue`
- * @return A `DatabaseQuery` instance, limited to data with value greater than
- *     `startAfterValue`, or equal to `startAfterValue` with a key greater than
- *     `childKey`
- */
-- (FIRDatabaseQuery *)queryStartingAfterValue:(nullable id)startAfterValue
-                                     childKey:(nullable NSString *)childKey;
-/**
- * `queryEnding(atValue:)` is used to generate a reference to a limited view of
- * the data at this location. The DatabaseQuery instance returned by
- * `queryEnding(atValue:)` will respond to events at nodes with a value less
- * than or equal to `endValue`.
+ * queryEndingAtValue: is used to generate a reference to a limited view of the
+ * data at this location. The FIRDatabaseQuery instance returned by
+ * queryEndingAtValue: will respond to events at nodes with a value less than or
+ * equal to endValue.
  *
  * @param endValue The upper bound, inclusive, for the value of data visible to
- *     the returned `DatabaseQuery`
- * @return A `DatabaseQuery` instance, limited to data with value less than or
- *     equal to `endValue`
+ * the returned FIRDatabaseQuery
+ * @return A FIRDatabaseQuery instance, limited to data with value less than or
+ * equal to endValue
  */
 - (FIRDatabaseQuery *)queryEndingAtValue:(nullable id)endValue;
 
 /**
- * `queryEnding(atValue:childKey:)` is used to generate a reference to a limited
- * view of the data at this location. The `DatabaseQuery` instance returned by
- * `queryEnding(atValue:childKey:)` will respond to events at nodes with a value
- * less than `endValue`, or equal to `endValue` and with a key less than or
- * equal to `childKey`. This is most useful when implementing pagination in a
- * case where multiple nodes can match the `endValue`.
+ * queryEndingAtValue:childKey: is used to generate a reference to a limited
+ * view of the data at this location. The FIRDatabaseQuery instance returned by
+ * queryEndingAtValue:childKey will respond to events at nodes with a value less
+ * than endValue, or equal to endValue and with a key less than or equal to
+ * childKey. This is most useful when implementing pagination in a case where
+ * multiple nodes can match the endValue.
  *
  * @param endValue The upper bound, inclusive, for the value of data visible to
- *     the returned `DatabaseQuery`
+ * the returned FIRDatabaseQuery
  * @param childKey The upper bound, inclusive, for the key of nodes with value
- *     equal to `endValue`
- * @return A `DatabaseQuery` instance, limited to data with value less than or
- *     equal to `endValue`
+ * equal to endValue
+ * @return A FIRDatabaseQuery instance, limited to data with value less than or
+ * equal to endValue
  */
 - (FIRDatabaseQuery *)queryEndingAtValue:(nullable id)endValue
                                 childKey:(nullable NSString *)childKey;
 
 /**
- * `queryEnding(beforeValue:) is used to generate a reference to a limited view
- * of the data at this location. The `DatabaseQuery` instance returned by
- * `queryEnding(beforeValue:)` will respond to events at nodes with a value less
- * than `endValue`.
+ * queryEqualToValue: is used to generate a reference to a limited view of the
+ * data at this location. The FIRDatabaseQuery instance returned by
+ * queryEqualToValue: will respond to events at nodes with a value equal to the
+ * supplied argument.
  *
- * @param endValue The upper bound, exclusive, for the value of data visible to
- *     the returned `DatabaseQuery`
- * @return A `DatabaseQuery` instance, limited to data with value less than
- *     `endValue`
- */
-- (FIRDatabaseQuery *)queryEndingBeforeValue:(nullable id)endValue;
-
-/**
- * `queryEnding(beforeValue:childKey:)` is used to generate a reference to a
- * limited view of the data at this location. The `DatabaseQuery` instance
- * returned by `queryEnding(beforeValue:childKey:)` will respond to events at
- * nodes with a value less than `endValue`, or equal to `endValue` and with a
- * key less than childKey.
- *
- * @param endValue The upper bound, inclusive, for the value of data visible to
- *     the returned `DatabaseQuery`
- * @param childKey The upper bound, exclusive, for the key of nodes with value
- *     equal to endValue
- * @return A `DatabaseQuery` instance, limited to data with value less than or
- *     equal to endValue
- */
-- (FIRDatabaseQuery *)queryEndingBeforeValue:(nullable id)endValue
-                                    childKey:(nullable NSString *)childKey;
-
-/**
- * `queryEqual(toValue:)` is used to generate a reference to a limited view of
- * the data at this location. The `DatabaseQuery` instance returned by
- * `queryEqual(toValue:)` will respond to events at nodes with a value equal to
- * the supplied argument.
- *
- * @param value The value that the data returned by this `DatabaseQuery` will
- *     have
- * @return A `DatabaseQuery` instance, limited to data with the supplied value.
+ * @param value The value that the data returned by this FIRDatabaseQuery will
+ * have
+ * @return A FIRDatabaseQuery instance, limited to data with the supplied value.
  */
 - (FIRDatabaseQuery *)queryEqualToValue:(nullable id)value;
 
 /**
- * `queryEqual(toValue:childKey:)` is used to generate a reference to a limited
- * view of the data at this location. The `DatabaseQuery` instance returned by
- * `queryEqual(toValue:childKey:)` will respond to events at nodes with a value
- * equal to the supplied argument and with their key equal to `childKey`. There
- * will be at most one node that matches because child keys are unique.
+ * queryEqualToValue:childKey: is used to generate a reference to a limited view
+ * of the data at this location. The FIRDatabaseQuery instance returned by
+ * queryEqualToValue:childKey will respond to events at nodes with a value equal
+ * to the supplied argument and with their key equal to childKey. There will be
+ * at most one node that matches because child keys are unique.
  *
- * @param value The value that the data returned by this `DatabaseQuery` will
- *     have
+ * @param value The value that the data returned by this FIRDatabaseQuery will
+ * have
  * @param childKey The name of nodes with the right value
- * @return A `DatabaseQuery` instance, limited to data with the supplied value
- *     and the key.
+ * @return A FIRDatabaseQuery instance, limited to data with the supplied value
+ * and the key.
  */
 - (FIRDatabaseQuery *)queryEqualToValue:(nullable id)value
                                childKey:(nullable NSString *)childKey;
@@ -462,9 +384,9 @@ NS_SWIFT_NAME(DatabaseQuery)
 #pragma mark - Properties
 
 /**
- * Gets a `DatabaseReference` for the location of this query.
+ * Gets a FIRDatabaseReference for the location of this query.
  *
- * @return A `DatabaseReference` for the location of this query.
+ * @return A FIRDatabaseReference for the location of this query.
  */
 @property(nonatomic, readonly, strong) FIRDatabaseReference *ref;
 

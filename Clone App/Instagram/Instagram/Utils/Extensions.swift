@@ -6,6 +6,8 @@
 //
 import UIKit
 
+let firestoreUsers = "users"
+
 extension UIViewController {
     func setupViewGradientBackground() {
         let gradient = CAGradientLayer()

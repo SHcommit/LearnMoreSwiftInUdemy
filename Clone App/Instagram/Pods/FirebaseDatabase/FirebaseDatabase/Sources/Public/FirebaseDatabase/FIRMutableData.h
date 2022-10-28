@@ -19,23 +19,22 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * A `MutableData` instance is populated with data from a Firebase Database
- * location. When you are using `runTransactionBlock(_:)`, you will be given an
+ * A FIRMutableData instance is populated with data from a Firebase Database
+ * location. When you are using runTransactionBlock:, you will be given an
  * instance containing the current data at that location. Your block will be
  * responsible for updating that instance to the data you wish to save at that
- * location, and then returning using `TransactionResult.success(withValue:)`.
+ * location, and then returning using [FIRTransactionResult successWithValue:].
  *
- * To modify the data, set its value property to any of the Objective-C types
- * supported by Firebase Database, or any equivalent natively bridgeable Swift
- * type:
+ * To modify the data, set its value property to any of the native types support
+ * by Firebase Database:
  *
- * + `NSNumber` (includes booleans)
- * + `NSDictionary`
- * + `NSArray`
- * + `NSString`
- * + `nil` / `NSNull` to remove the data
+ * + NSNumber (includes BOOL)
+ * + NSDictionary
+ * + NSArray
+ * + NSString
+ * + nil / NSNull to remove the data
  *
- * Note that changes made to a child `MutableData` instance will be visible to
+ * Note that changes made to a child FIRMutableData instance will be visible to
  * the parent.
  */
 NS_SWIFT_NAME(MutableData)
@@ -60,28 +59,27 @@ NS_SWIFT_NAME(MutableData)
 - (BOOL)hasChildAtPath:(NSString *)path;
 
 /**
- * Used to obtain a `MutableData` instance that encapsulates the data at the
+ * Used to obtain a FIRMutableData instance that encapsulates the data at the
  * given relative path. Note that changes made to the child will be visible to
  * the parent.
  *
  * @param path A path string, consisting either of a single segment, like
  * 'child', or multiple segments, 'a/deeper/child'
- * @return A `MutableData` instance containing the data at the given path
+ * @return A FIRMutableData instance containing the data at the given path
  */
 - (FIRMutableData *)childDataByAppendingPath:(NSString *)path;
 
 #pragma mark - Properties
 
 /**
- * To modify the data contained by this instance of `MutableData`, set this to
- * any of the Objective-C types supported by Firebase Database, or any
- * equivalent natively bridgeable Swift type:
+ * To modify the data contained by this instance of FIRMutableData, set this to
+ * any of the native types supported by Firebase Database:
  *
- * + `NSNumber` (includes booleans)
- * + `NSDictionary`
- * + `NSArray`
- * + `NSString`
- * + `nil` / `NSNull` to remove the data
+ * + NSNumber (includes BOOL)
+ * + NSDictionary
+ * + NSArray
+ * + NSString
+ * + nil / NSNull to remove the data
  *
  * Note that setting this value will override the priority at this location.
  *
@@ -91,12 +89,11 @@ NS_SWIFT_NAME(MutableData)
 
 /**
  * Set this property to update the priority of the data at this location. Can be
- * set to any of the following Objective-C types supported by Firebase Database,
- * or any equivalent natively bridgeable Swift type:
+ * set to the following types:
  *
- * + `NSNumber` (includes booleans)
- * + `NSString`
- * + `nil` / `NSNull` to remove the data
+ * + NSNumber
+ * + NSString
+ * + nil / NSNull to remove the priority
  *
  * @return The priority of the data at this location
  */
@@ -108,10 +105,11 @@ NS_SWIFT_NAME(MutableData)
 @property(readonly, nonatomic) NSUInteger childrenCount;
 
 /**
- * An enumeration of the children at this location.
+ * Used to iterate over the children at this location. You can use the native
+ * for .. in syntax:
  *
- * for var child in data.children {
- *   // ...
+ * for (FIRMutableData* child in data.children) {
+ *     ...
  * }
  *
  * Note that this enumerator operates on an immutable copy of the child list.
@@ -121,7 +119,7 @@ NS_SWIFT_NAME(MutableData)
 @property(readonly, nonatomic, strong) NSEnumerator<FIRMutableData *> *children;
 
 /**
- * @return The key name of this node, or `nil` if it is the top-most location
+ * @return The key name of this node, or nil if it is the top-most location
  */
 @property(readonly, nonatomic, strong, nullable) NSString *key;
 
