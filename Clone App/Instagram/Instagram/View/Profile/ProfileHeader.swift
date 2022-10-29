@@ -51,72 +51,29 @@ extension ProfileHeader {
         guard let userUID = Auth.auth().currentUser?.uid else {
             fatalError("Fail to bind user UID")
         }
-        print(userUID)
         let db = Firestore.firestore()
         
-        let firestoreUserInfo = db.collection(firestoreUsers)
-//        firestoreUserInfo.getDocuments() { querySnapshot, error in
-//            guard error == nil else {
-//                return print("Error getting documents: \(String(describing: error))")
-//            }
-//            guard let documents = querySnapshot?.documents else { return }
-//            for info in documents {
-//                let userInfo = info.data()
-//                print(userInfo)
-//            }
-//        }
+        let usersCollection = db.collection(firestoreUsers)
         
-        let userInfo = firestoreUserInfo.document(userUID).getDocument { documentSnapshot, error in
-            guard error == nil else { fatalError("nooooooo") }
-            guard let document = documentSnapshot else { return }
-            print("try11")
+        usersCollection.document(userUID).getDocument { document, error in
+            guard error == nil else { fatalError("Fail to get firestore document") }
+            guard let document = document else { return }
             
             do {
-                let a: UserInfoViewModel = try document.data(as: UserInfoViewModel.self)
-                print(a)
+                
+                let info: UserInfoModel = try document.data(as: UserInfoModel.self)
+                let eee = try JSONEncoder().encode(info)
+                print()
+                ///print(eee)
+                
+                
+                guard let jsonData = String(data: eee, encoding: .utf8) else { return }
+                print(jsonData)
+                //print(info)
             } catch let e{
                 print("Fail : \(e.localizedDescription)")
             }
-            print("end11")
-            
-            if documentSnapshot?.exists != nil {
-
-                let t = documentSnapshot?.data()
-//                    let user = try? JSONDecoder().decode(UserInfoViewModel.self, from: documentSnapshot?.data())
-//                    print(user)
-//                } catch let e {
-//                    print("Fail: \(e.localizedDescription)")
-//                }
-                //print(documentSnapshot?.data())
-            }
         }
-        
-        
-        
-//        db.collection("YOUR_COLLECTION").getDocuments()
-//                            { (QuerySnapshot, err) in
-//                                if err != nil
-//                                {
-//                                    print("Error getting documents: \(String(describing: err))");
-//                                }
-//                                else
-//                                {
-//                                    //For-loop
-//                                    for document in QuerySnapshot!.documents
-//                                    {
-//                                        //let document = QuerySnapshot!.documents
-//                                        let data = document.data()
-//
-//                                        let data1 = data["YOUR_DATA1"] as? String
-//                                        let data2 = data["YOUR_DATA2"] as? String
-//
-//                                        //Now you can access your data1 and data2 like this:
-//                                        //example code:
-//                                        txtfield_data1.text = data1
-//                                        txtfield_data2.text = data2
-//                                    }
-
-        
         return lb
     }
 }
