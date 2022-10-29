@@ -18,6 +18,7 @@ struct LoginViewModel {
             return !(email.value.isEmpty) && !(password.value.isEmpty)
         }
     }
+    
 }
 
 struct RegistrationViewModel {
@@ -36,6 +37,15 @@ struct RegistrationViewModel {
             && !(fullname.value.isEmpty) && !(username.value.isEmpty)
         }
     }
+    
+    func getUserInfoModel(uid: String, url: String) -> UserInfoModel {
+        return UserInfoModel(email: email.value,
+                                 fullname: password.value,
+                                 profileURL: url,
+                                 uid: uid,
+                                 username: username.value)
+    }
+    
 }
 
 
