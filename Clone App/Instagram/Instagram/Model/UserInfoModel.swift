@@ -5,7 +5,7 @@
 //  Created by 양승현 on 2022/10/28.
 //
 
-struct UserInfoViewModel: Codable {
+struct UserInfoModel: Codable {
     var email: String
     var fullname: String
     var profileURL: String
@@ -22,7 +22,7 @@ struct UserInfoViewModel: Codable {
 }
 
 //MARK: - Decodable
-extension UserInfoViewModel {
+extension UserInfoModel {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         email = try container.decode(String.self, forKey: .email)
@@ -35,7 +35,7 @@ extension UserInfoViewModel {
 }
 
 //MARK: - Encodable
-extension UserInfoViewModel {
+extension UserInfoModel {
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(email, forKey: .email)
