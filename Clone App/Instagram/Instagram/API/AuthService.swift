@@ -6,6 +6,7 @@
 //
 
 import Firebase
+import FirebaseFirestore
 
 struct AuthService {
     
@@ -15,26 +16,21 @@ struct AuthService {
     
     static func registerUser(withUserInfo info: RegistrationViewModel, completion: @escaping (Error?)->Void) {
         guard let image = info.profileImage else { return }
+        
         ImageUploader.uploadImage(image: image) { imageUrl in
             Auth.auth().createUser(withEmail: info.email.value, password: info.password.value) { result, error in
-                
-                if let error = error  {
-                    print("DEBUG : Failure uploadImage \(error.localizedDescription)")
-                    return
-                }
-                
+                guard error == nil else { print("Fail uploadImage"); return }
                 guard let uid = result?.user.uid else { return }
-                
-                //이거도 codable로바꿔야겠다 나중에,, Authentication에 RegistrationViewModel!! 이거
-                let data : [String : Any] = ["email" : info.email.value,
-                                           "fullname" : info.fullname.value,
-                                           "profileImgaeUrl": imageUrl,
-                                           "uid" : uid,
-                                           "username" : info.username.value]
-                
-                Firestore.firestore().collection("users").document(uid).setData(data, completion: completion)
+
+                let userModel = info.getUserInfoModel(uid: uid, url: imageUrl)
+                let encodedUserModel = encodeToNSDictionary(codableType: userModel)
+                Firestore.firestore().collection("users").document(uid).setData(encodedUserModel, completion: completion)
             }
-            
         }
+    }
+    
+    static func encodeToNSDictionary(codableType info: Codable) -> [String : Any] {
+        guard let dataDictionary = info.encodeToDictionary else { fatalError() }
+        return dataDictionary
     }
 }
