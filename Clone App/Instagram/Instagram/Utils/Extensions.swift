@@ -6,7 +6,8 @@
 //
 import UIKit
 
-let firestoreUsers = "users"
+//MARK: - Constant properties
+let userProfileMegaByte = Int64(1*400*400)
 
 extension UIViewController {
     func setupViewGradientBackground() {
@@ -57,7 +58,6 @@ extension UIViewController {
 
 
 //MARK: - Codable extensions
-
 extension Encodable {
     var encodeToDictionary: [String:Any]? {
         guard let data = try? JSONEncoder().encode(self) else { return nil }
