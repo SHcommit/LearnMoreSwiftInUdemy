@@ -16,7 +16,6 @@ class MainHomeTabController: UITabBarController {
         configureViewControllers()
         customTabBarUI()
         checkIfUserIsLoggedIn()
-        //logout()
     }
     
 }
