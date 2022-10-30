@@ -13,8 +13,13 @@ import FirebaseFirestoreSwift
 class ProfileHeader: UICollectionReusableView {
     
     //MARK: - Properties
-    private let profileIV: UIImageView = initialProfileIV()
+    private lazy var postFollowStackView: UIStackView = initialPostFollowStackView()
+    private lazy var postLabel: UILabel = initialPostLabel()
+    private lazy var followersLabel: UILabel = initialFollowersLabel()
+    private lazy var followingLabel: UILabel = initialFollowingLabel()
+    private lazy var profileIV: UIImageView = initialProfileIV()
     private let nameLabel: UILabel = initialNameLabel()
+    private lazy var editProfileFollowButton: UIButton = initialEditProfileFollowButton()
     
     //MARK: - LifeCycle
     override init(frame: CGRect) {
@@ -34,7 +39,7 @@ class ProfileHeader: UICollectionReusableView {
 //MARK: - Initial subviews
 extension ProfileHeader {
     
-    static func initialProfileIV() -> UIImageView {
+    func initialProfileIV() -> UIImageView {
         let iv = UIImageView()
         AuthService.fetchCurrentUserInfo() { userInfo in
             guard let userInfo = userInfo else { return }
@@ -65,6 +70,63 @@ extension ProfileHeader {
         }
         return lb
     }
+    
+     func initialPostFollowStackView() -> UIStackView {
+         let sv = UIStackView(arrangedSubviews: [postLabel, followersLabel, followingLabel])
+         sv.translatesAutoresizingMaskIntoConstraints = false
+         sv.distribution = .fillEqually
+         return sv
+    }
+        
+    
+    //MARK: - lazy properties initialize
+    func initialEditProfileFollowButton() -> UIButton {
+        let button = UIButton(type: .system)
+        button.setTitle("Edit Profile", for: .normal)
+        button.layer.cornerRadius = 3
+        button.layer.borderColor = UIColor.lightGray.cgColor
+        button.layer.borderWidth = 0.5
+        button.tintColor = UIColor.white
+        
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
+        button.setTitleColor(.black, for: .normal)
+        button.addTarget(self, action: #selector(didTapEditProfileFollow(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }
+    
+    func initialPostLabel() -> UILabel {
+        let label = UILabel()
+        label.numberOfLines = 0
+        label.textAlignment = .center
+        label.attributedText = attributedStatText(value: 7, label: "posts")
+        return label
+    }
+    
+    func initialFollowersLabel() -> UILabel {
+        let label = UILabel()
+        label.numberOfLines = 0
+        label.textAlignment = .center
+        label.attributedText = attributedStatText(value: 21, label: "followers")
+        return label
+    }
+    
+    func initialFollowingLabel() -> UILabel {
+        let label = UILabel()
+        label.numberOfLines = 0
+        label.textAlignment = .center
+        label.attributedText = attributedStatText(value: 19, label: "following")
+        return label
+    }
+
+}
+ 
+//MARK: - event handler
+extension ProfileHeader {
+    
+    @objc func didTapEditProfileFollow(_ sender: Any) {
+        print("tapped ")
+    }
 }
 
 
@@ -78,12 +140,17 @@ extension ProfileHeader {
     
     func addSubviews() {
         addSubview(profileIV)
+        addSubview(postFollowStackView)
         addSubview(nameLabel)
+        addSubview(editProfileFollowButton)
+        
     }
     
     func setupSubviewsConstraints() {
         setupPostIVConstraints()
         setupNameLabelConstraints()
+        setupEditProfileFollowButtonConstraints()
+        setupPostFollowStackViewConstraints()
     }
     
 }
@@ -105,4 +172,28 @@ extension ProfileHeader {
             nameLabel.leadingAnchor.constraint(equalTo: profileIV.leadingAnchor, constant: 12)])
     }
     
+    func setupEditProfileFollowButtonConstraints() {
+        NSLayoutConstraint.activate([
+            editProfileFollowButton.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 16),
+            editProfileFollowButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
+            editProfileFollowButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -24)])
+    }
+    
+    func setupPostFollowStackViewConstraints() {
+        NSLayoutConstraint.activate([
+            postFollowStackView.centerYAnchor.constraint(equalTo: profileIV.centerYAnchor),
+            postFollowStackView.leadingAnchor.constraint(equalTo: profileIV.trailingAnchor, constant: 12),
+            postFollowStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12)])
+    }
+    
+}
+
+
+//MARK: - Helpers
+extension ProfileHeader {
+    func attributedStatText(value: Int, label: String) -> NSAttributedString {
+        let attributedText = NSMutableAttributedString(string: "\(value)\n" ,attributes: [.font: UIFont.boldSystemFont(ofSize: 14)])
+        attributedText.append(NSAttributedString(string: label, attributes: [.font: UIFont.systemFont(ofSize: 14), .foregroundColor: UIColor.lightGray]))
+        return attributedText
+    }
 }
