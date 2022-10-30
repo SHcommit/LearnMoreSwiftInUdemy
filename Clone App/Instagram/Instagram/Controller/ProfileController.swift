@@ -8,12 +8,15 @@
 import UIKit
 
 class ProfileController: UICollectionViewController {
+    
+    //MARK: - properties
     private let collectionHeaderReusableID = "UserProfileCollectionHeaderView"
     private let cellReusableId = "CollectionViewCell"
     
+    //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemMint
+        view.backgroundColor = .white
         setupCollectionView()
     }
 }
@@ -27,6 +30,7 @@ extension ProfileController {
         collectionView.register(ProfileHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: collectionHeaderReusableID)
     }
 }
+
 
 //MARK: - UICollectionViewDataSource
 extension ProfileController {
