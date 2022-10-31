@@ -21,6 +21,11 @@ class ProfileHeader: UICollectionReusableView {
     private let nameLabel: UILabel = initialNameLabel()
     private lazy var editProfileFollowButton: UIButton = initialEditProfileFollowButton()
     
+    private lazy var buttonStackView: UIStackView = initialButtonStackView()
+    private lazy var gridBtn: UIButton = initialGridBtn()
+    private lazy var listBtn: UIButton = initialListBtn()
+    private lazy var bookMarkBtn: UIButton = initialBookMarkBtn()
+    
     //MARK: - LifeCycle
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -38,6 +43,19 @@ class ProfileHeader: UICollectionReusableView {
 
 //MARK: - Initial subviews
 extension ProfileHeader {
+    
+    static func initialNameLabel() -> UILabel {
+        let lb = UILabel()
+        lb.translatesAutoresizingMaskIntoConstraints = false
+        AuthService.fetchCurrentUserInfo() { userInfo in
+            guard let userInfo = userInfo  else { return }
+            lb.text = userInfo.username
+        }
+        return lb
+    }
+    
+    
+    //MARK: - lazy properties initialize
     
     func initialProfileIV() -> UIImageView {
         let iv = UIImageView()
@@ -59,27 +77,48 @@ extension ProfileHeader {
         return iv
     }
     
-    
-    
-    static func initialNameLabel() -> UILabel {
-        let lb = UILabel()
-        lb.translatesAutoresizingMaskIntoConstraints = false
-        AuthService.fetchCurrentUserInfo() { userInfo in
-            guard let userInfo = userInfo  else { return }
-            lb.text = userInfo.username
-        }
-        return lb
+    func initialGridBtn() -> UIButton {
+        let btn = UIButton(type: .system)
+        btn.setImage(.imageLiteral(name: "grid"), for: .normal)
+        btn.tintColor = .systemPink
+        btn.addTarget(self, action: #selector(didTapGridBtn(_:)), for: .touchUpInside)
+        return btn
     }
     
-     func initialPostFollowStackView() -> UIStackView {
-         let sv = UIStackView(arrangedSubviews: [postLabel, followersLabel, followingLabel])
-         sv.translatesAutoresizingMaskIntoConstraints = false
-         sv.distribution = .fillEqually
-         return sv
+    func initialListBtn() -> UIButton {
+        let btn = UIButton(type: .system)
+        btn.setImage(.imageLiteral(name: "list"), for: .normal)
+        btn.setImage(.imageLiteral(name: "list"), for: .highlighted)
+        btn.tintColor = .black
+        btn.isSelected = false
+        btn.addTarget(self, action: #selector(didTapListBtn(_:)), for: .touchUpInside)
+        return btn
     }
-        
     
-    //MARK: - lazy properties initialize
+    func initialBookMarkBtn() -> UIButton {
+        let btn = UIButton(type: .system)
+        btn.setImage(.imageLiteral(name: "ribbon"), for: .normal)
+        btn.setImage(.imageLiteral(name: "ribbon"), for: .highlighted)
+        btn.addTarget(self, action: #selector(didTapBookMarkBtn(_:)), for: .touchUpInside)
+        btn.isSelected = false
+        btn.tintColor = .black
+        return btn
+    }
+    
+    func initialButtonStackView() -> UIStackView {
+        let sv = UIStackView(arrangedSubviews: [gridBtn, listBtn, bookMarkBtn])
+        sv.translatesAutoresizingMaskIntoConstraints = false
+        sv.distribution = .fillEqually
+        return sv
+    }
+    
+    func initialPostFollowStackView() -> UIStackView {
+        let sv = UIStackView(arrangedSubviews: [postLabel, followersLabel, followingLabel])
+        sv.translatesAutoresizingMaskIntoConstraints = false
+        sv.distribution = .fillEqually
+        return sv
+   }
+    
     func initialEditProfileFollowButton() -> UIButton {
         let button = UIButton(type: .system)
         button.setTitle("Edit Profile", for: .normal)
@@ -119,13 +158,38 @@ extension ProfileHeader {
         return label
     }
 
+    
 }
  
 //MARK: - event handler
 extension ProfileHeader {
     
     @objc func didTapEditProfileFollow(_ sender: Any) {
-        print("tapped ")
+        
+    }
+    @objc func didTapGridBtn(_ sender: Any) {
+        guard let button = sender as? UIButton else { return }
+        
+        button.tintColor = .systemPink
+        listBtn.tintColor = .black
+        bookMarkBtn.tintColor = .black
+        
+    }
+    @objc func didTapListBtn(_ sender: Any) {
+        
+        guard let button = sender as? UIButton else { return }
+        button.tintColor = .systemPink
+        gridBtn.tintColor = .black
+        bookMarkBtn.tintColor = .black
+        
+    }
+    @objc func didTapBookMarkBtn(_ sender: Any) {
+        
+        guard let button = sender as? UIButton else { return }
+        button.tintColor = .systemPink
+        gridBtn.tintColor = .black
+        listBtn.tintColor = .black
+        
     }
 }
 
@@ -143,6 +207,7 @@ extension ProfileHeader {
         addSubview(postFollowStackView)
         addSubview(nameLabel)
         addSubview(editProfileFollowButton)
+        addSubview(buttonStackView)
         
     }
     
@@ -151,12 +216,47 @@ extension ProfileHeader {
         setupNameLabelConstraints()
         setupEditProfileFollowButtonConstraints()
         setupPostFollowStackViewConstraints()
+        setupButtonStackViewConstraints()
+        setupTopDivider()
+        setupBottomDivider()
+    }
+    
+    func setupTopDivider() {
+        let topDivider = UIView()
+        topDivider.translatesAutoresizingMaskIntoConstraints = false
+        topDivider.backgroundColor = .lightGray
+        addSubview(topDivider)
+        NSLayoutConstraint.activate([
+            topDivider.topAnchor.constraint(equalTo: buttonStackView.topAnchor),
+            topDivider.leadingAnchor.constraint(equalTo: leadingAnchor),
+            topDivider.trailingAnchor.constraint(equalTo: trailingAnchor),
+            topDivider.heightAnchor.constraint(equalToConstant: 0.5)])
+    }
+    
+    func setupBottomDivider() {
+        let bottomDivider = UIView()
+        bottomDivider.translatesAutoresizingMaskIntoConstraints = false
+        bottomDivider.backgroundColor = .lightGray
+        addSubview(bottomDivider)
+        NSLayoutConstraint.activate([
+            bottomDivider.topAnchor.constraint(equalTo: buttonStackView.bottomAnchor),
+            bottomDivider.leadingAnchor.constraint(equalTo: leadingAnchor),
+            bottomDivider.trailingAnchor.constraint(equalTo: trailingAnchor),
+            bottomDivider.heightAnchor.constraint(equalToConstant: 0.5)])
     }
     
 }
 
 //MARK: - Setup subviews constraints
 extension ProfileHeader {
+    
+    func setupButtonStackViewConstraints() {
+        NSLayoutConstraint.activate([
+            buttonStackView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            buttonStackView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            buttonStackView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            buttonStackView.heightAnchor.constraint(equalToConstant: 50)])
+    }
     
     func setupPostIVConstraints() {
         NSLayoutConstraint.activate([
