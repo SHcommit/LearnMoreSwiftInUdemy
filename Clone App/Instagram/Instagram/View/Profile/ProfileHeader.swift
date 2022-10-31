@@ -47,7 +47,7 @@ extension ProfileHeader {
     static func initialNameLabel() -> UILabel {
         let lb = UILabel()
         lb.translatesAutoresizingMaskIntoConstraints = false
-        AuthService.fetchCurrentUserInfo() { userInfo in
+        UserService.fetchCurrentUserInfo() { userInfo in
             guard let userInfo = userInfo  else { return }
             lb.text = userInfo.username
         }
@@ -59,10 +59,10 @@ extension ProfileHeader {
     
     func initialProfileIV() -> UIImageView {
         let iv = UIImageView()
-        AuthService.fetchCurrentUserInfo() { userInfo in
+        UserService.fetchCurrentUserInfo() { userInfo in
             guard let userInfo = userInfo else { return }
             DispatchQueue.main.async {
-                AuthService.fetchUserProfile(userProfile: userInfo.profileURL) { image in
+                UserService.fetchUserProfile(userProfile: userInfo.profileURL) { image in
                     guard let image = image else { return }
                     iv.image = image
                 }
