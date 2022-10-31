@@ -13,15 +13,13 @@ struct UserService {
     
     static func updateCurrentUserInfo(CodableType info: UserInfoModel) {
         let encodedUserModel = encodeToNSDictionary(codableType: info)
-        Firestore.firestore().collection(firestoreUsers).document(info.uid).updateData(encodedUserModel)
+        COLLECTION_USERS.document(info.uid).updateData(encodedUserModel)
         
     }
     
     static func fetchCurrentUserInfo(completion: @escaping (UserInfoModel?)->Void) {
-        guard let userUID = Auth.auth().currentUser?.uid else { completion((nil)); return }
-        let db = Firestore.firestore()
-        let userCollection = db.collection(firestoreUsers)
-        userCollection.document(userUID).getDocument() { documentSnapshot, error in
+        guard let userUID = CURRENT_USER?.uid else { completion((nil)); return }
+        COLLECTION_USERS.document(userUID).getDocument() { documentSnapshot, error in
             guard error == nil else { return }
             guard let document = documentSnapshot else { return }
             do {
@@ -34,9 +32,9 @@ struct UserService {
     }
     
     static func fetchUserProfile(userProfile url: String, completion: @escaping (UIImage?) -> Void) {
-        let storageReference = Storage.storage().reference(forURL: url)
+        let storageReference = STORAGE.reference(forURL: url)
         
-        storageReference.getData(maxSize: userProfileMegaByte) { data, error in
+        storageReference.getData(maxSize: USERPROFILEIMAGEMEGABYTE) { data, error in
             guard error == nil else { return }
             guard let data = data else { completion(nil); return }
             completion(UIImage(data: data))

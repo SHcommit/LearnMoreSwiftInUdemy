@@ -6,9 +6,6 @@
 //
 import UIKit
 
-//MARK: - Constant properties
-let userProfileMegaByte = Int64(1*400*400)
-
 extension UIViewController {
     func setupViewGradientBackground() {
         let gradient = CAGradientLayer()
