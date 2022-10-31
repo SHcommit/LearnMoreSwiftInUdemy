@@ -18,7 +18,7 @@ class ProfileHeader: UICollectionReusableView {
     private lazy var followersLabel: UILabel = initialFollowersLabel()
     private lazy var followingLabel: UILabel = initialFollowingLabel()
     private lazy var profileIV: UIImageView = initialProfileIV()
-    private let nameLabel: UILabel = initialNameLabel()
+    private var nameLabel: UILabel = initialNameLabel()
     private lazy var editProfileFollowButton: UIButton = initialEditProfileFollowButton()
     
     private lazy var buttonStackView: UIStackView = initialButtonStackView()
@@ -30,7 +30,9 @@ class ProfileHeader: UICollectionReusableView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = .white
+        initiateBackgroundWork()
         setupSubview()
+        
     }
     
     required init?(coder: NSCoder) {
@@ -39,7 +41,35 @@ class ProfileHeader: UICollectionReusableView {
 }
 
 
+//MARK: - Dispatch QoS
+extension ProfileHeader {
+    func initiateBackgroundWork() {
+        let dispatchSemaphore = DispatchSemaphore(value: 0)
+        let backgroundQueue = DispatchQueue(label: "background_queue",
+                                            qos: .background)
+        var url: String = ""
+        backgroundQueue.async {
+            // Perform work on a separate thread at background QoS and
+            // signal when the work completes.
+            UserService.fetchCurrentUserInfo() { userInfo in
+                guard let userInfo = userInfo else { return }
+                self.nameLabel.text = userInfo.username
+                url = userInfo.profileURL
+                dispatchSemaphore.signal()
+            }
+            
+           _ = dispatchSemaphore.wait(timeout: DispatchTime.distantFuture)
+           
+           DispatchQueue.main.async { [weak self] in
+               UserService.fetchUserProfile(userProfile: url) { image in
+                   guard let image = image else { return }
+                   self?.profileIV.image = image
+               }
+           }
+        }
+    }
 
+}
 
 //MARK: - Initial subviews
 extension ProfileHeader {
@@ -47,10 +77,6 @@ extension ProfileHeader {
     static func initialNameLabel() -> UILabel {
         let lb = UILabel()
         lb.translatesAutoresizingMaskIntoConstraints = false
-        UserService.fetchCurrentUserInfo() { userInfo in
-            guard let userInfo = userInfo  else { return }
-            lb.text = userInfo.username
-        }
         return lb
     }
     
@@ -59,17 +85,6 @@ extension ProfileHeader {
     
     func initialProfileIV() -> UIImageView {
         let iv = UIImageView()
-        UserService.fetchCurrentUserInfo() { userInfo in
-            guard let userInfo = userInfo else { return }
-            DispatchQueue.main.async {
-                UserService.fetchUserProfile(userProfile: userInfo.profileURL) { image in
-                    guard let image = image else { return }
-                    iv.image = image
-                }
-            }
-
-        }
-
         iv.contentMode = .scaleAspectFill
         iv.clipsToBounds = true
         iv.translatesAutoresizingMaskIntoConstraints = false

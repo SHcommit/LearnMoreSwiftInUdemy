@@ -12,12 +12,17 @@ class ProfileController: UICollectionViewController {
     //MARK: - properties
     private let collectionHeaderReusableID = "UserProfileCollectionHeaderView"
     private let cellReusableId = "CollectionViewCell"
-    
+    private var user: UserInfoModel? {
+        didSet {
+            navigationItem.title = user?.username
+        }
+    }
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         setupCollectionView()
+        initialUser()
     }
 }
 
@@ -28,6 +33,12 @@ extension ProfileController {
         
         collectionView.register(ProfileCell.self, forCellWithReuseIdentifier: cellReusableId)
         collectionView.register(ProfileHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: collectionHeaderReusableID)
+    }
+    
+    func initialUser() {
+        UserService.fetchCurrentUserInfo() { user in
+            self.user = user
+        }
     }
 }
 
@@ -48,7 +59,6 @@ extension ProfileController {
     
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         guard let headerView =  collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: collectionHeaderReusableID, for: indexPath) as? ProfileHeader else { fatalError() }
-        
         
         return headerView
     }
