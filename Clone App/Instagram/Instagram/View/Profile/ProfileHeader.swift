@@ -26,11 +26,17 @@ class ProfileHeader: UICollectionReusableView {
     private lazy var listBtn: UIButton = initialListBtn()
     private lazy var bookMarkBtn: UIButton = initialBookMarkBtn()
     
+    var userVM: UserInfoViewModel? {
+        didSet {
+            configure()
+        }
+    }
+    
     //MARK: - LifeCycle
     override init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = .white
-        initiateBackgroundWork()
+        //initiateBackgroundWork()
         setupSubview()
         
     }
@@ -60,12 +66,6 @@ extension ProfileHeader {
             
            _ = dispatchSemaphore.wait(timeout: DispatchTime.distantFuture)
            
-           DispatchQueue.main.async { [weak self] in
-               UserService.fetchUserProfile(userProfile: url) { image in
-                   guard let image = image else { return }
-                   self?.profileIV.image = image
-               }
-           }
         }
     }
 
@@ -89,6 +89,7 @@ extension ProfileHeader {
         iv.clipsToBounds = true
         iv.translatesAutoresizingMaskIntoConstraints = false
         iv.layer.cornerRadius = 80/2
+        iv.backgroundColor = .lightGray
         return iv
     }
     
@@ -172,7 +173,14 @@ extension ProfileHeader {
         label.attributedText = attributedStatText(value: 19, label: "following")
         return label
     }
-
+    
+    //MARK: - Async firebase data
+    func configure() {
+        guard let userVM = userVM else { return }
+        userVM.getUserProfile(iv: profileIV)
+        nameLabel.text = userVM.getUserName()
+        
+    }
     
 }
  
