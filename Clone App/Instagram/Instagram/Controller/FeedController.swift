@@ -16,7 +16,7 @@ class FeedController: UICollectionViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         collectionView.register(FeedCell.self, forCellWithReuseIdentifier: reuseIdentifier  )
-        setupUI()
+        setupNavigationUI()
         
     }
 }
@@ -25,9 +25,20 @@ class FeedController: UICollectionViewController {
 extension FeedController {
     
     func setupUI() {
+        setupNavigationUI()
         view.backgroundColor = .white
+    }
+    func setupNavigationUI() {
         setupLogoutBarButton()
         navigationItem.title = "Feed"
+    }
+    
+    func presentLoginScene() {
+        let controller = LoginController()
+        controller.authDelegate = tabBarController as? MainHomeTabController
+        let nav = UINavigationController(rootViewController: controller)
+        nav.modalPresentationStyle = .fullScreen
+        self.present(nav,animated: false, completion: nil)
     }
 }
 
