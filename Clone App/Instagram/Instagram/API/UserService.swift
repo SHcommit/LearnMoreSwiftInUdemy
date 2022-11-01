@@ -25,9 +25,9 @@ struct UserService {
             do {
                 completion(try document.data(as: UserInfoModel.self))
             }catch let e {
+                completion(nil)
                 print("Fail decode user document field : \(e.localizedDescription)")
             }
-            completion(nil)
         }
     }
     
