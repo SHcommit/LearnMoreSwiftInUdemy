@@ -7,9 +7,15 @@
 
 import UIKit
 import Firebase
+
+protocol AuthentificationDelegate: class {
+    func authenticationCompletion()
+}
+
 class LoginController: UIViewController {
     
     //MARK: - Properties
+    weak var authDelegate: AuthentificationDelegate?
     private let instagramIcon: UIImageView = initialInstagramIcon()
     private lazy var emailTextField: CustomTextField = initialEmailTextField()
     private lazy var passwdTextField: CustomTextField = initialPasswdTextField()
@@ -204,14 +210,13 @@ extension LoginController {
                 print("Fail login.")
                 return
             }
-            
             guard let vc = self.presentingViewController as? MainHomeTabController else {
                 print("no")
                 return
             }
             endIndicator(indicator: indicator)
             vc.view.isHidden = false
-            self.dismiss(animated: false)
+            self.authDelegate?.authenticationCompletion()
         }
         endIndicator(indicator: indicator)
     }
