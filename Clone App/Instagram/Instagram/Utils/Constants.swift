@@ -15,3 +15,8 @@ let FIRESTORE_DB = Firestore.firestore()
 let CURRENT_USER = Auth.auth().currentUser
 let STORAGE = Storage.storage()
 let AUTH = Auth.auth()
+
+
+//MARK: - profile subview's ID
+let COLLECTIONHEADERREUSEABLEID = "UserProfileCollectionHeaderView"
+let CELLREUSEABLEID = "CollectionViewCell"
