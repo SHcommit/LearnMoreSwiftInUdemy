@@ -54,3 +54,12 @@ extension Encodable {
         return try? JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String : Any]
     }
 }
+
+
+//MARK: - About UIImage
+extension UIImage {
+    static func imageLiteral(name: String) -> UIImage {
+        return UIImage(imageLiteralResourceName: name)
+    }
+    
+}
