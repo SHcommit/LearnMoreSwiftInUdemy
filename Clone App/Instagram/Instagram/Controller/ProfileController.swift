@@ -14,9 +14,16 @@ class ProfileController: UICollectionViewController {
     private let cellReusableId = "CollectionViewCell"
     private var user: UserInfoModel? {
         didSet {
-            navigationItem.title = user?.username
+            collectionView.reloadData()
+            navigationItem.titleView?.reloadInputViews()
         }
     }
+    private var profileImage: UIImage? {
+        didSet {
+            collectionView.reloadData()
+        }
+    }
+    
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,7 +44,12 @@ extension ProfileController {
     
     func initialUser() {
         UserService.fetchCurrentUserInfo() { user in
+            guard let user = user else { return }
             self.user = user
+            self.navigationItem.title = user.username
+            UserService.fetchUserProfile(userProfile: user.profileURL) { image in
+                self.profileImage = image
+            }
         }
     }
 }
@@ -59,6 +71,10 @@ extension ProfileController {
     
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         guard let headerView =  collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: collectionHeaderReusableID, for: indexPath) as? ProfileHeader else { fatalError() }
+        
+        guard let user = user else { return headerView }
+        guard let profileImage = profileImage else { return headerView }
+        headerView.userVM = UserInfoViewModel(user: user, profileImage: profileImage)
         
         return headerView
     }
