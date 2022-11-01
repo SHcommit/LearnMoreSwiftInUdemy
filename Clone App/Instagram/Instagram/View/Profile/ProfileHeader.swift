@@ -28,7 +28,7 @@ class ProfileHeader: UICollectionReusableView {
     
     var userVM: UserInfoViewModel? {
         didSet {
-            configure()
+            bindAsyncData()
         }
     }
     
@@ -36,7 +36,6 @@ class ProfileHeader: UICollectionReusableView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = .white
-        initiateBackgroundWork()
         setupSubview()
         
     }
@@ -44,31 +43,54 @@ class ProfileHeader: UICollectionReusableView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) not implement")
     }
+    
+    
 }
 
-
-//MARK: - Dispatch QoS
+//MARK: - Helpers
 extension ProfileHeader {
-    func initiateBackgroundWork() {
-        let dispatchSemaphore = DispatchSemaphore(value: 0)
-        let backgroundQueue = DispatchQueue(label: "background_queue",
-                                            qos: .background)
-        var url: String = ""
-        backgroundQueue.async {
-            // Perform work on a separate thread at background QoS and
-            // signal when the work completes.
-            UserService.fetchCurrentUserInfo() { userInfo in
-                guard let userInfo = userInfo else { return }
-                self.nameLabel.text = userInfo.username
-                url = userInfo.profileURL
-                dispatchSemaphore.signal()
-            }
-            
-           _ = dispatchSemaphore.wait(timeout: DispatchTime.distantFuture)
-           
-        }
+    
+    func bindAsyncData() {
+        guard let userVM = userVM else { return }
+        userVM.setUserProfile(iv: profileIV)
+        nameLabel.text = userVM.getUserName()
+        
     }
+}
 
+//MARK: - event handler
+extension ProfileHeader {
+    
+    @objc func didTapEditProfileFollow(_ sender: Any) {
+        
+    }
+    
+    @objc func didTapGridBtn(_ sender: Any) {
+        guard let button = sender as? UIButton else { return }
+        
+        button.tintColor = .systemPink
+        listBtn.tintColor = .black
+        bookMarkBtn.tintColor = .black
+        
+    }
+    
+    @objc func didTapListBtn(_ sender: Any) {
+        
+        guard let button = sender as? UIButton else { return }
+        button.tintColor = .systemPink
+        gridBtn.tintColor = .black
+        bookMarkBtn.tintColor = .black
+        
+    }
+    
+    @objc func didTapBookMarkBtn(_ sender: Any) {
+        
+        guard let button = sender as? UIButton else { return }
+        button.tintColor = .systemPink
+        gridBtn.tintColor = .black
+        listBtn.tintColor = .black
+        
+    }
 }
 
 //MARK: - Initial subviews
@@ -82,7 +104,6 @@ extension ProfileHeader {
     
     
     //MARK: - lazy properties initialize
-    
     func initialProfileIV() -> UIImageView {
         let iv = UIImageView()
         iv.contentMode = .scaleAspectFill
@@ -174,49 +195,7 @@ extension ProfileHeader {
         return label
     }
     
-    //MARK: - Async firebase data
-    func configure() {
-        guard let userVM = userVM else { return }
-        userVM.getUserProfile(iv: profileIV)
-        nameLabel.text = userVM.getUserName()
-        
-    }
-    
 }
- 
-//MARK: - event handler
-extension ProfileHeader {
-    
-    @objc func didTapEditProfileFollow(_ sender: Any) {
-        
-    }
-    @objc func didTapGridBtn(_ sender: Any) {
-        guard let button = sender as? UIButton else { return }
-        
-        button.tintColor = .systemPink
-        listBtn.tintColor = .black
-        bookMarkBtn.tintColor = .black
-        
-    }
-    @objc func didTapListBtn(_ sender: Any) {
-        
-        guard let button = sender as? UIButton else { return }
-        button.tintColor = .systemPink
-        gridBtn.tintColor = .black
-        bookMarkBtn.tintColor = .black
-        
-    }
-    @objc func didTapBookMarkBtn(_ sender: Any) {
-        
-        guard let button = sender as? UIButton else { return }
-        button.tintColor = .systemPink
-        gridBtn.tintColor = .black
-        listBtn.tintColor = .black
-        
-    }
-}
-
-
 
 //MARK: - Setup subviews
 extension ProfileHeader {
