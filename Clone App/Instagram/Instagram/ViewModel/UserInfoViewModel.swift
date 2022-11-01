@@ -12,8 +12,9 @@ struct UserInfoViewModel {
     //MARK: - Properties
     private var user: UserInfoModel
     private var profileImage : UIImage?
+    
     //MARK: - LifeCycle
-    init(user: UserInfoModel, profileImage image: UIImage) {
+    init(user: UserInfoModel, profileImage image: UIImage?) {
         self.user = user
         self.profileImage = image
     }
@@ -30,7 +31,15 @@ extension UserInfoViewModel {
         return user.fullname
     }
     
-    func getUserProfile(iv: UIImageView) {
+    
+    func getUserProfileURL() -> String {
+        return user.profileURL
+    }
+    func getUserInfoModel() -> UserInfoModel {
+        return user
+    }
+    
+    func setUserProfile(iv: UIImageView) {
         iv.image = profileImage
     }
 }
