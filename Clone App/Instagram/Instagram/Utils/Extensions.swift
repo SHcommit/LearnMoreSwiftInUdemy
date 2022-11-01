@@ -20,13 +20,6 @@ extension UIViewController {
         view.layer.addSublayer(gradient)
     }
     
-    func presentLoginScene() {
-        let controller = LoginController()
-        let nav = UINavigationController(rootViewController: controller)
-        nav.modalPresentationStyle = .fullScreen
-        self.present(nav,animated: false, completion: nil)
-    }
-    
     func startIndicator(indicator: UIActivityIndicatorView) {
         
         setupIndicatorConstraints(indicator: indicator)
