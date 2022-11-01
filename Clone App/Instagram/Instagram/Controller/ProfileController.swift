@@ -12,13 +12,14 @@ class ProfileController: UICollectionViewController {
     //MARK: - properties
     private let collectionHeaderReusableID = "UserProfileCollectionHeaderView"
     private let cellReusableId = "CollectionViewCell"
+    var mainHomeDelegate: MainHomeTabController?
     private var user: UserInfoModel? {
         didSet {
             collectionView.reloadData()
-            navigationItem.titleView?.reloadInputViews()
+            
         }
     }
-    private var profileImage: UIImage? {
+    var profileImage: UIImage? {
         didSet {
             collectionView.reloadData()
         }

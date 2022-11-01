@@ -38,6 +38,7 @@ extension MainHomeTabController {
         
         let profile = templateNavigationController(unselectedImage: .imageLiteral(name: "profile_unselected"), selectedImage: .imageLiteral(name: "profile_selected"), rootVC: ProfileController(collectionViewLayout: profileLayout))
         
+        
         viewControllers = [feed,search,imageSelector,notifications,profile]
     }
 }
