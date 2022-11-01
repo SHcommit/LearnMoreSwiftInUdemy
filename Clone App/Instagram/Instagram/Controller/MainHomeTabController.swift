@@ -10,37 +10,53 @@ import Firebase
 
 class MainHomeTabController: UITabBarController {
     
+    //MARK: - Properties
+    private var userVM: UserInfoViewModel? {
+        didSet {
+            configureViewControllers()
+        }
+    }
+    
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureViewControllers()
-        customTabBarUI()
-        checkIfUserIsLoggedIn()
+        view.backgroundColor = .white
+        configure()
     }
     
 }
 
-
 //MARK: - Helpers
 extension MainHomeTabController {
+    
+    func configure() {
+        customTabBarUI()
+        checkIfUserIsLoggedIn()
+        fetchUserInfo()
+    }
+    
     func configureViewControllers() {
+        guard let userVM = userVM else { return }
+        
         let layout = UICollectionViewFlowLayout()
-        let profileLayout = layout
         
         let feed = templateNavigationController(unselectedImage: .imageLiteral(name: "home_unselected"), selectedImage: .imageLiteral(name: "home_selected"), rootVC: FeedController(collectionViewLayout: layout))
-        
+
         let search = templateNavigationController(unselectedImage: .imageLiteral(name: "search_unselected"), selectedImage: .imageLiteral(name: "search_selected"), rootVC: SearchController())
         
         let imageSelector = templateNavigationController(unselectedImage: .imageLiteral(name: "plus_unselected"), selectedImage: .imageLiteral(name: "plus_unselected"), rootVC: ImageSelectorController())
         
         let notifications = templateNavigationController(unselectedImage: .imageLiteral(name: "like_unselected"), selectedImage: .imageLiteral(name: "like_selected"), rootVC: NotificationController())
         
-        
-        let profile = templateNavigationController(unselectedImage: .imageLiteral(name: "profile_unselected"), selectedImage: .imageLiteral(name: "profile_selected"), rootVC: ProfileController(collectionViewLayout: profileLayout))
-        
+        var profileVC = ProfileController(user: userVM.getUserInfoModel())
+        UserService.fetchUserProfile(userProfile: userVM.getUserProfileURL()) { image in
+            profileVC.profileImage = image
+        }
+        let profile = templateNavigationController(unselectedImage: .imageLiteral(name: "profile_unselected"), selectedImage: .imageLiteral(name: "profile_selected"), rootVC: profileVC)
         
         viewControllers = [feed,search,imageSelector,notifications,profile]
     }
+    
 }
 
 //MARK: - Setup NavigationController Helpers
@@ -86,9 +102,18 @@ extension MainHomeTabController {
     
 }
 
-//MARK: - API. check user's membership
+//MARK: - API.
 extension MainHomeTabController {
     
+    //MARK: - API. About User
+    func fetchUserInfo() {
+        UserService.fetchCurrentUserInfo() { userInfo in
+            guard let userInfo = userInfo else { return }
+            self.userVM = UserInfoViewModel(user: userInfo, profileImage: nil)
+        }
+    }
+    
+    //MARK: - API. check user's membership
     func checkIfUserIsLoggedIn() {
         if Auth.auth().currentUser == nil {
             DispatchQueue.main.async {
@@ -97,12 +122,26 @@ extension MainHomeTabController {
             }
         }
     }
+    
+    func presentLoginScene() {
+        let controller = LoginController()
+        controller.authDelegate = self
+        let nav = UINavigationController(rootViewController: controller)
+        nav.modalPresentationStyle = .fullScreen
+        self.present(nav,animated: false, completion: nil)
+    }
+    
 }
 
-//MARK: - Refactoring
-extension UIImage {
-    static func imageLiteral(name: String) -> UIImage {
-        return UIImage(imageLiteralResourceName: name)
+//MARK: - Implement AuthentificationDelegate
+extension MainHomeTabController: AuthentificationDelegate {
+    func authenticationCompletion() {
+        UserService.fetchCurrentUserInfo() { userInfo in
+            guard let userInfo = userInfo else { return }
+            self.userVM = UserInfoViewModel(user: userInfo, profileImage: nil)
+        }
+        self.dismiss(animated: false)
     }
+    
     
 }
