@@ -17,22 +17,37 @@ class MainHomeTabController: UITabBarController {
         }
     }
     
+    private var isLogin: Bool? {
+        didSet {
+            guard let isLogin = isLogin else { return }
+            if !isLogin {
+                DispatchQueue.main.async {
+                    self.presentLoginScene()
+                }
+            }
+        }
+    }
+    
+    
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         configure()
     }
     
-}
+} 
 
 //MARK: - Helpers
 extension MainHomeTabController {
     
     func configure() {
         customTabBarUI()
-        checkIfUserIsLoggedIn()
-        fetchUserInfo()
+        isLogin = isUserLogined()
     }
     
     func configureViewControllers() {
@@ -114,14 +129,15 @@ extension MainHomeTabController {
     }
     
     //MARK: - API. check user's membership
-    func checkIfUserIsLoggedIn() {
+    func isUserLogined() -> Bool {
         if Auth.auth().currentUser == nil {
-            DispatchQueue.main.async {
-                self.view.isHidden = true
-                self.presentLoginScene()
-            }
+            return false
         }
+        fetchUserInfo()
+        return true
     }
+    
+    
     
     func presentLoginScene() {
         let controller = LoginController()
@@ -138,10 +154,10 @@ extension MainHomeTabController: AuthentificationDelegate {
     func authenticationCompletion() {
         UserService.fetchCurrentUserInfo() { userInfo in
             guard let userInfo = userInfo else { return }
+            self.viewDidLoad()
             self.userVM = UserInfoViewModel(user: userInfo, profileImage: nil)
         }
         self.dismiss(animated: false)
     }
-    
     
 }

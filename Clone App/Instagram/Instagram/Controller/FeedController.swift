@@ -15,7 +15,6 @@ class FeedController: UICollectionViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         collectionView.register(FeedCell.self, forCellWithReuseIdentifier: FEEDCELLRESUIDENTIFIER  )
-        setupNavigationUI()
     }
     
     override func viewWillAppear(_ animated: Bool) {
