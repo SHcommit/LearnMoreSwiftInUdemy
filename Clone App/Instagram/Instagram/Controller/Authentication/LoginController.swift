@@ -9,7 +9,7 @@ import UIKit
 import Firebase
 
 protocol AuthentificationDelegate: class {
-    func authenticationCompletion()
+    func authenticationCompletion(uid: String)
 }
 
 class LoginController: UIViewController {
@@ -211,18 +211,12 @@ extension LoginController {
                 return
             }
             guard let vc = self.presentingViewController as? MainHomeTabController else {
-                
-                print("DEBUG: No")
-                let vc = MainHomeTabController()
-                vc.modalPresentationStyle = .fullScreen
-                vc.fetchUserInfo()
-                present(vc, animated: false)
-                
                 return
             }
+            guard let result = result else { return }
             endIndicator(indicator: indicator)
             vc.view.isHidden = false
-            self.authDelegate?.authenticationCompletion()
+            self.authDelegate?.authenticationCompletion(uid: result.user.uid)
         }
         endIndicator(indicator: indicator)
     }

@@ -41,10 +41,6 @@ class MainHomeTabController: UITabBarController {
         
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        configure()
-    }
-    
 } 
 
 //MARK: - Helpers
@@ -160,8 +156,8 @@ extension MainHomeTabController {
 
 //MARK: - Implement AuthentificationDelegate
 extension MainHomeTabController: AuthentificationDelegate {
-    func authenticationCompletion() {
-        UserService.fetchCurrentUserInfo() { userInfo in
+    func authenticationCompletion(uid: String) {
+        UserService.fetchUserInfo(withUid: uid) { userInfo in
             guard let userInfo = userInfo else { return }
             self.viewDidLoad()
             self.userVM = UserInfoViewModel(user: userInfo, profileImage: nil)
