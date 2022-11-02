@@ -20,3 +20,8 @@ let AUTH = Auth.auth()
 //MARK: - profile subview's ID
 let COLLECTIONHEADERREUSEABLEID = "UserProfileCollectionHeaderView"
 let CELLREUSEABLEID = "CollectionViewCell"
+
+
+//MARK:  - FeedVieController subview's ID
+
+let FEEDCELLRESUIDENTIFIER = "FeedCell"
