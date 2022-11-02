@@ -8,7 +8,7 @@
 import Firebase
 
 //MARK: - Constant properties
-let USERPROFILEIMAGEMEGABYTE = Int64(1*400*400)
+let USERPROFILEIMAGEMEGABYTE = Int64(1*1024*1024)
 let FIRESTORE_USERS = "users"
 let COLLECTION_USERS = Firestore.firestore().collection(FIRESTORE_USERS)
 let FIRESTORE_DB = Firestore.firestore()
