@@ -17,10 +17,26 @@ class MainHomeTabController: UITabBarController {
         }
     }
     
+    private var isLogin: Bool? {
+        didSet {
+            guard let isLogin = isLogin else { return }
+            if !isLogin {
+                DispatchQueue.main.async {
+                    self.presentLoginScene()
+                }
+            }
+        }
+    }
+    
+    
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         configure()
         
     }
@@ -29,15 +45,14 @@ class MainHomeTabController: UITabBarController {
         configure()
     }
     
-}
+} 
 
 //MARK: - Helpers
 extension MainHomeTabController {
     
     func configure() {
         customTabBarUI()
-        fetchUserInfo()
-        checkIfUserIsLoggedIn()
+        isLogin = isUserLogined()
     }
     
     func configureViewControllers() {
@@ -53,7 +68,7 @@ extension MainHomeTabController {
         
         let notifications = templateNavigationController(unselectedImage: .imageLiteral(name: "like_unselected"), selectedImage: .imageLiteral(name: "like_selected"), rootVC: NotificationController())
         
-        var profileVC = ProfileController(user: userVM.getUserInfoModel())
+        let profileVC = ProfileController(user: userVM.getUserInfoModel())
         UserService.fetchUserProfile(userProfile: userVM.getUserProfileURL()) { image in
             profileVC.profileImage = image
         }
@@ -122,12 +137,15 @@ extension MainHomeTabController {
     
     
     //MARK: - API. check user's membership
-    func checkIfUserIsLoggedIn() {
-        if CURRENT_USER == nil {
-            self.view.isHidden = true
-            self.presentLoginScene()
+    func isUserLogined() -> Bool {
+        if Auth.auth().currentUser == nil {
+            return false
         }
+        fetchUserInfo()
+        return true
     }
+    
+    
     
     func presentLoginScene() {
         let controller = LoginController()
@@ -143,9 +161,12 @@ extension MainHomeTabController {
 //MARK: - Implement AuthentificationDelegate
 extension MainHomeTabController: AuthentificationDelegate {
     func authenticationCompletion() {
-        fetchUserInfo()
+        UserService.fetchCurrentUserInfo() { userInfo in
+            guard let userInfo = userInfo else { return }
+            self.viewDidLoad()
+            self.userVM = UserInfoViewModel(user: userInfo, profileImage: nil)
+        }
         self.dismiss(animated: false)
     }
-    
     
 }

@@ -10,14 +10,17 @@ import Firebase
 
 class FeedController: UICollectionViewController {
     
-    private let reuseIdentifier = "FeedCell"
     
     //MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        collectionView.register(FeedCell.self, forCellWithReuseIdentifier: reuseIdentifier  )
+        collectionView.register(FeedCell.self, forCellWithReuseIdentifier: FEEDCELLRESUIDENTIFIER  )
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        collectionView.register(FeedCell.self, forCellWithReuseIdentifier: FEEDCELLRESUIDENTIFIER)
         setupNavigationUI()
-        
     }
 }
 
@@ -50,7 +53,7 @@ extension FeedController {
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as? FeedCell else {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FEEDCELLRESUIDENTIFIER, for: indexPath) as? FeedCell else {
             fatalError()
         }
         
