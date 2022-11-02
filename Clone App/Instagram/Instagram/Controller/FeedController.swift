@@ -21,6 +21,7 @@ class FeedController: UICollectionViewController {
         super.viewWillAppear(animated)
         collectionView.register(FeedCell.self, forCellWithReuseIdentifier: FEEDCELLRESUIDENTIFIER)
         setupNavigationUI()
+        isCurrentUser() 
     }
 }
 
@@ -42,6 +43,19 @@ extension FeedController {
         let nav = UINavigationController(rootViewController: controller)
         nav.modalPresentationStyle = .fullScreen
         self.present(nav,animated: false, completion: nil)
+    }
+    
+    //API. user
+    func isCurrentUser() {
+        guard let tabVC = tabBarController as? MainHomeTabController else { return }
+        guard let uid = tabVC.getUserVM?.getUserUID() else  { return }
+        if CURRENT_USER?.uid != uid {
+            UserService.fetchCurrentUserInfo() { userInfo in
+                guard let userInfo = userInfo else { return }
+                tabVC.getUserVM = UserInfoViewModel(user: userInfo, profileImage: nil)
+                self.tabBarController?.tabBarController?.viewDidLoad()
+            }
+        }
     }
 }
 

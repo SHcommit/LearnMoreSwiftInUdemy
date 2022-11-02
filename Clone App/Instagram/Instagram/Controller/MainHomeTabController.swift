@@ -17,12 +17,29 @@ class MainHomeTabController: UITabBarController {
         }
     }
     
+    var getUserVM: UserInfoViewModel? {
+        get {
+            return self.userVM
+        }
+        set (newUser) {
+            self.userVM = newUser
+        }
+    }
+    
     private var isLogin: Bool? {
         didSet {
             guard let isLogin = isLogin else { return }
             if !isLogin {
                 DispatchQueue.main.async {
                     self.presentLoginScene()
+                }
+            }else {
+                guard let userVM = userVM else {
+                    fetchUserInfo()
+                    return
+                }
+                if CURRENT_USER?.email != userVM.getUserEmail() {
+                    fetchUserInfo()
                 }
             }
         }
@@ -41,9 +58,6 @@ class MainHomeTabController: UITabBarController {
         
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        configure()
-    }
     
 } 
 
@@ -141,7 +155,6 @@ extension MainHomeTabController {
         if Auth.auth().currentUser == nil {
             return false
         }
-        fetchUserInfo()
         return true
     }
     
