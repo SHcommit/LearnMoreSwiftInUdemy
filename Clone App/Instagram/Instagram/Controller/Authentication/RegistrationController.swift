@@ -220,12 +220,11 @@ extension RegistrationController {
     @objc func didTapSignUpButton(_ sender: Any) {
         startIndicator(indicator: indicator)
         AuthService.registerUser(withUserInfo: vm) { [self] error in
-            
             if let error = error {
+                endIndicator(indicator: indicator)
                 print("DEBUG : Failed register user info in Firestore Database \(error.localizedDescription)")
                 return
             }
-            
             print("DEBUG : Successful registered user with fireStore")
             endIndicator(indicator: indicator)
             self.navigationController?.popViewController(animated: true)

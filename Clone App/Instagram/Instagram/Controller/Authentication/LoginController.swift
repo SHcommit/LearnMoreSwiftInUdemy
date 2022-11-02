@@ -211,7 +211,13 @@ extension LoginController {
                 return
             }
             guard let vc = self.presentingViewController as? MainHomeTabController else {
-                print("no")
+                
+                print("DEBUG: No")
+                let vc = MainHomeTabController()
+                vc.modalPresentationStyle = .fullScreen
+                vc.fetchUserInfo()
+                present(vc, animated: false)
+                
                 return
             }
             endIndicator(indicator: indicator)

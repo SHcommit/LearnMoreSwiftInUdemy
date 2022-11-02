@@ -23,6 +23,7 @@ struct UserInfoViewModel {
 
 extension UserInfoViewModel {
     
+    //MARK: - Get user value
     func getUserName() -> String {
         return user.username
     }
@@ -39,7 +40,15 @@ extension UserInfoViewModel {
         return user
     }
     
+    func getUserEmail() -> String {
+        return user.email
+    }
+    
+    //MARK: - Set user value
+    
     func setUserProfile(iv: UIImageView) {
         iv.image = profileImage
     }
+    
+    
 }

@@ -26,6 +26,7 @@ extension UIViewController {
         
         DispatchQueue.main.async {
             self.view.bringSubviewToFront(indicator)
+            indicator.isHidden = false
             indicator.startAnimating()
         }
     }
@@ -39,7 +40,7 @@ extension UIViewController {
     
     func setupIndicatorConstraints(indicator: UIActivityIndicatorView) {
         view.addSubview(indicator)
-        indicator.hidesWhenStopped = true
+        indicator.hidesWhenStopped = true 
         indicator.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([indicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
                                      indicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)])

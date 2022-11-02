@@ -89,7 +89,9 @@ extension FeedController {
 extension FeedController {
     @objc func handleLogout() {
         do {
+            print("Logout user: \(Auth.auth().currentUser?.email)")
             try Auth.auth().signOut()
+            print("Check really logouted user: \(Auth.auth().currentUser?.email)")
             DispatchQueue.main.async {
                 self.presentLoginScene()
             }

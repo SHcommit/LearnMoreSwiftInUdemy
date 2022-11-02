@@ -19,9 +19,8 @@ struct AuthService {
         
         ImageUploader.uploadImage(image: image) { imageUrl in
             AUTH.createUser(withEmail: info.email.value, password: info.password.value) { result, error in
-                guard error == nil else { print("Fail uploadImage"); return }
+                guard error == nil else { print("Fail uploadImage: \(error?.localizedDescription)"); return }
                 guard let uid = result?.user.uid else { return }
-                
                 let userModel = info.getUserInfoModel(uid: uid, url: imageUrl)
                 let encodedUserModel = encodeToNSDictionary(codableType: userModel)
                 COLLECTION_USERS.document(uid).setData(encodedUserModel, completion: completion)
