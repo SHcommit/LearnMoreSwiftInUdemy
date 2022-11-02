@@ -44,6 +44,10 @@ extension UserInfoViewModel {
         return user.email
     }
     
+    func getUserUID() -> String {
+        return user.uid
+    }
+    
     //MARK: - Set user value
     
     func setUserProfile(iv: UIImageView) {
