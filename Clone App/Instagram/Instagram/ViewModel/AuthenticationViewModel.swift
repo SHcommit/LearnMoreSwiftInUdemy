@@ -40,7 +40,7 @@ struct RegistrationViewModel {
     
     func getUserInfoModel(uid: String, url: String) -> UserInfoModel {
         return UserInfoModel(email: email.value,
-                                 fullname: password.value,
+                                 fullname: fullname.value,
                                  profileURL: url,
                                  uid: uid,
                                  username: username.value)
