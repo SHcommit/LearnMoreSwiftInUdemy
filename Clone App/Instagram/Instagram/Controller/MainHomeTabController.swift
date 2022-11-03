@@ -38,13 +38,14 @@ class MainHomeTabController: UITabBarController {
                     fetchUserInfo()
                     return
                 }
-                if CURRENT_USER?.email != userVM.getUserEmail() {
+                
+                if CURRENT_USER?.uid != userVM.getUserUID() {
                     fetchUserInfo()
                 }
+
             }
         }
     }
-    
     
     //MARK: - Lifecycle
     override func viewDidLoad() {
@@ -156,6 +157,8 @@ extension MainHomeTabController {
         }
         return true
     }
+    
+    
     
     func presentLoginScene() {
         let controller = LoginController()
