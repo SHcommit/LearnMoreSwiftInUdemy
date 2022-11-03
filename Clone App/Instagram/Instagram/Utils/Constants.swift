@@ -22,6 +22,8 @@ let COLLECTIONHEADERREUSEABLEID = "UserProfileCollectionHeaderView"
 let CELLREUSEABLEID = "CollectionViewCell"
 
 
-//MARK:  - FeedVieController subview's ID
-
+//MARK:  - FeedVieController subview's Identifier
 let FEEDCELLRESUIDENTIFIER = "FeedCell"
+
+//MARK: - SearchController subview's Identifier
+let REUSE_SEARCH_TABLE_CELL_IDENTIFIER = "UserCell"
