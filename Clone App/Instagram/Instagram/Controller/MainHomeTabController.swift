@@ -50,6 +50,7 @@ class MainHomeTabController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        fetchUserInfo()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -57,7 +58,6 @@ class MainHomeTabController: UITabBarController {
         configure()
         
     }
-    
     
 } 
 
@@ -96,6 +96,7 @@ extension MainHomeTabController {
 
 //MARK: - Setup NavigationController Helpers
 extension MainHomeTabController {
+    
     func templateNavigationController(unselectedImage: UIImage, selectedImage: UIImage, rootVC: UIViewController) -> UINavigationController {
         let nav = UINavigationController(rootViewController: rootVC)
         nav.tabBarItem.image = unselectedImage
@@ -148,8 +149,6 @@ extension MainHomeTabController {
         }
     }
     
-    
-    
     //MARK: - API. check user's membership
     func isUserLogined() -> Bool {
         if Auth.auth().currentUser == nil {
@@ -158,8 +157,6 @@ extension MainHomeTabController {
         return true
     }
     
-    
-    
     func presentLoginScene() {
         let controller = LoginController()
         controller.authDelegate = self
@@ -167,16 +164,14 @@ extension MainHomeTabController {
         nav.modalPresentationStyle = .fullScreen
         self.present(nav,animated: false, completion: nil)
     }
-    
         
 }
 
 //MARK: - Implement AuthentificationDelegate
 extension MainHomeTabController: AuthentificationDelegate {
-    func authenticationCompletion() {
-        UserService.fetchCurrentUserInfo() { userInfo in
+    func authenticationCompletion(uid: String) {
+        UserService.fetchUserInfo(withUid: uid) { userInfo in
             guard let userInfo = userInfo else { return }
-            self.viewDidLoad()
             self.userVM = UserInfoViewModel(user: userInfo, profileImage: nil)
         }
         self.dismiss(animated: false)

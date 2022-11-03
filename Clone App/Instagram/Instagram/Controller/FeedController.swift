@@ -23,6 +23,7 @@ class FeedController: UICollectionViewController {
         setupNavigationUI()
         isCurrentUser() 
     }
+    
 }
 
 //MARK: - Helpers
@@ -32,6 +33,7 @@ extension FeedController {
         setupNavigationUI()
         view.backgroundColor = .white
     }
+    
     func setupNavigationUI() {
         setupLogoutBarButton()
         navigationItem.title = "Feed"
@@ -59,6 +61,22 @@ extension FeedController {
     }
 }
 
+//MARK: - Event handler
+extension FeedController {
+    
+    @objc func handleLogout() {
+        do {
+            try Auth.auth().signOut()
+            DispatchQueue.main.async {
+                self.presentLoginScene()
+            }
+        } catch {
+            print("Failed to sign out")
+        }
+    }
+    
+}
+
 //MARK: - UICollectionView DataSource
 extension FeedController {
     
@@ -77,6 +95,7 @@ extension FeedController {
 
 //MARK: - UICollectionViewDelegateFlowLayout
 extension FeedController: UICollectionViewDelegateFlowLayout {
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
         let cellWidth = view.frame.width
@@ -87,11 +106,13 @@ extension FeedController: UICollectionViewDelegateFlowLayout {
         
         return CGSize(width: view.frame.width, height: cellHeight)
     }
+    
  }
 
 
 //MARK: - UINavigationController configure
 extension FeedController {
+    
     func setupLogoutBarButton() {
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout",
                                                             style: .plain,
@@ -99,21 +120,5 @@ extension FeedController {
                                                             action: #selector(handleLogout)
                                                        )
     }
-}
-
-
-//MARK: - Event handler
-extension FeedController {
-    @objc func handleLogout() {
-        do {
-            print("Logout user: \(Auth.auth().currentUser?.email)")
-            try Auth.auth().signOut()
-            print("Check really logouted user: \(Auth.auth().currentUser?.email)")
-            DispatchQueue.main.async {
-                self.presentLoginScene()
-            }
-        } catch {
-            print("Failed to sign out")
-        }
-    }
+    
 }

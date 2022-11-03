@@ -9,7 +9,7 @@ import UIKit
 import Firebase
 
 protocol AuthentificationDelegate: class {
-    func authenticationCompletion()
+    func authenticationCompletion(uid: String)
 }
 
 class LoginController: UIViewController {
@@ -56,6 +56,73 @@ extension LoginController {
     }
     
 }
+
+//MARK: - Setup event handler
+extension LoginController {
+    
+    @objc func didTapLoginButton(_ sender: Any) {
+        startIndicator(indicator: indicator)
+        let email = vm.email.value
+        let pw = vm.password.value
+        AuthService.handleIsLoginAccount(email: email, pw: pw) { [self] result,error in
+            if let error = error {
+                print("Fail login.")
+                return
+            }
+            guard let vc = self.presentingViewController as? MainHomeTabController else {
+                return
+            }
+            guard let result = result else { return }
+            endIndicator(indicator: indicator)
+            vc.view.isHidden = false
+            self.authDelegate?.authenticationCompletion(uid: result.user.uid)
+        }
+        endIndicator(indicator: indicator)
+    }
+    
+    @objc func didTapHelpButton(_ sender: Any) {
+        print("핼프버튼 터치")
+    }
+    
+    @objc func didTapSignUpButton(_ sender: Any) {
+        let registrationVC = RegistrationController()
+        navigationController?.pushViewController(registrationVC, animated: true)
+    }
+
+}
+
+
+//MARK: - Helpers
+extension LoginController {
+    
+    //vm의 값이 바뀌면 현재 연결된 UITextField의 쳐져있는 값도 변경.
+    func setupTextFieldBindingByViewModel() {
+        vm.email.bind{ [weak self] text in
+            self?.emailTextField.text = text
+        }
+        vm.password.bind{ [weak self] text in
+            self?.passwdTextField.text = text
+        }
+    }
+    
+    func changeValidTextFields() {
+        if vm.isValiedUserForm {
+            DispatchQueue.main.async {
+                self.loginButton.isEnabled = true
+                self.loginButton.backgroundColor = UIColor.systemPink.withAlphaComponent(0.6)
+                self.loginButton.titleLabel?.textColor.withAlphaComponent(1)
+            }
+        } else {
+            DispatchQueue.main.async {
+                self.loginButton.isEnabled = false
+                self.loginButton.backgroundColor = UIColor.systemPink.withAlphaComponent(0.3)
+                self.loginButton.titleLabel?.textColor.withAlphaComponent(0.2)
+            }
+        }
+    }
+    
+}
+
 
 
 //MARK: - Setup Navigation
@@ -196,7 +263,6 @@ extension LoginController {
             signUpLineStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor)])
     }
 }
-
 
 //MARK: - Setup event handler
 extension LoginController {
