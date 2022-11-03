@@ -14,6 +14,7 @@ class SearchedUserCell: UITableViewCell {
     private let profileImageView: UIImageView = initProfileImageView()
     private let usernameLabel: UILabel = initUsernameLabel()
     private let fullnameLabel: UILabel = initFullnameLabel()
+    private lazy var nameStackView: UIStackView = initNameStackView()
     
     //MARK: - Lifecycle
     
@@ -39,14 +40,12 @@ extension SearchedUserCell {
     
     func addSubviews() {
         addSubview(profileImageView)
-        addSubview(usernameLabel)
-        addSubview(fullnameLabel)
+        addSubview(nameStackView)
     }
     
     func setupSubviewConstraints() {
         setupProfileImageViewConstriants()
-        setupUsernameLabelConstraints()
-        setupFullnameLabelConstraints()
+        setupNameStackViewConstraints()
     }
 }
 
@@ -67,19 +66,27 @@ extension SearchedUserCell {
     
     static func initUsernameLabel() -> UILabel {
         let lb = UILabel()
-        lb.translatesAutoresizingMaskIntoConstraints = false
-        lb.font = UIFont.boldSystemFont(ofSize: 12)
+        lb.font = UIFont.boldSystemFont(ofSize: SEARCHED_USER_CELL_FONT_SIZE)
         lb.text = "Jessy"
         return lb
     }
     
     static func initFullnameLabel() -> UILabel {
         let lb = UILabel()
-        lb.translatesAutoresizingMaskIntoConstraints = false
-        lb.font = UIFont.systemFont(ofSize: 12)
+        lb.font = UIFont.systemFont(ofSize: SEARCHED_USER_CELL_FONT_SIZE)
         lb.textColor = .lightGray
         lb.text = "Jessy Kim"
         return lb
+    }
+    
+    func initNameStackView() -> UIStackView {
+        let sv = UIStackView(arrangedSubviews: [usernameLabel,fullnameLabel])
+        sv.translatesAutoresizingMaskIntoConstraints = false
+        sv.axis = .vertical
+        sv.spacing = SEARCHED_USER_CELL_STACKVIEW_SPACING
+        sv.alignment = .leading
+        
+        return sv
     }
     
 }
@@ -95,15 +102,9 @@ extension SearchedUserCell {
             profileImageView.heightAnchor.constraint(equalToConstant: SEARCHED_USER_CELL_PROFILE_WIDTH)])
     }
     
-    func setupUsernameLabelConstraints() {
+    func setupNameStackViewConstraints() {
         NSLayoutConstraint.activate([
-            usernameLabel.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 7),
-            usernameLabel.topAnchor.constraint(equalTo: topAnchor, constant: SEARCHED_USER_CELL_PROFILE_MARGIN*3)])
-    }
-    
-    func setupFullnameLabelConstraints() {
-        NSLayoutConstraint.activate([
-            fullnameLabel.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 7),
-            fullnameLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -SEARCHED_USER_CELL_PROFILE_MARGIN*3)])
+            nameStackView.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: SEARCHED_USER_CELL_PROFILE_MARGIN),
+            nameStackView.centerYAnchor.constraint(equalTo: centerYAnchor)])
     }
 }
