@@ -16,6 +16,7 @@ class SearchedUserCell: UITableViewCell {
     private let fullnameLabel: UILabel = initFullnameLabel()
     private lazy var nameStackView: UIStackView = initNameStackView()
     
+    
     //MARK: - Lifecycle
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -23,12 +24,13 @@ class SearchedUserCell: UITableViewCell {
         configureSubview()
     }
     
+    
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
 }
-
 
 //MARK: - View Helpers
 extension SearchedUserCell {
