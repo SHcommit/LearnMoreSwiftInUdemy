@@ -10,24 +10,15 @@ import UIKit
 class SearchController: UITableViewController {
     
     //MARK: - Properties
+    private var userVM: SearchUserViewModel?
     
     //MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
         configure()
-        
+        fetchUserProfileList()
     }
 }
-
-//MARK: - setupNavigation UI
-extension SearchController {
-    
-    func setupNavigationBar() {
-        let searchBar = UISearchController()
-        navigationItem.searchController = searchBar
-    }
-}
-
 
 //MARK: - Helpers
 extension SearchController {
@@ -43,15 +34,48 @@ extension SearchController {
     }
 }
 
+//MARK: - setupNavigation UI
+extension SearchController {
+    
+    func setupNavigationBar() {
+        let searchBar = UISearchController()
+        navigationItem.searchController = searchBar
+    }
+}
+
+
+//MARK: - API
+extension SearchController {
+    
+    func fetchUserProfileList() {
+        UserService.fetchUserList() { users in
+            guard let users = users else { return }
+            self.userVM = SearchUserViewModel(users: users)
+            self.tableView.reloadData()
+        }
+    }
+    
+}
+
 //MARK: - TableView DataSource
 extension SearchController {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 10
+        guard let userVM = userVM else {
+            print("Fail to bind userVM in SearchController")
+            return 0
+        }
+
+        return userVM.numberOfRowsInSection(section)
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: REUSE_SEARCH_TABLE_CELL_IDENTIFIER, for: indexPath)
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: REUSE_SEARCH_TABLE_CELL_IDENTIFIER, for: indexPath) as? SearchedUserCell else {
+            fatalError("Fail to find reusableCell in SearchController")
+        }
+        
+        cell.user = userVM?.cellForRowAt(indexPath.row)
+        
         return cell
     }
     

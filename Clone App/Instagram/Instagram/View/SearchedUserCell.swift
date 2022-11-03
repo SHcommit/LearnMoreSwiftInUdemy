@@ -15,7 +15,12 @@ class SearchedUserCell: UITableViewCell {
     private let usernameLabel: UILabel = initUsernameLabel()
     private let fullnameLabel: UILabel = initFullnameLabel()
     private lazy var nameStackView: UIStackView = initNameStackView()
-    
+    var user: UserInfoModel? {
+        didSet {
+            usernameLabel.text = user?.username
+            fullnameLabel.text = user?.fullname
+        }
+    }
     
     //MARK: - Lifecycle
     
@@ -23,8 +28,6 @@ class SearchedUserCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         configureSubview()
     }
-    
-    
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -69,7 +72,6 @@ extension SearchedUserCell {
     static func initUsernameLabel() -> UILabel {
         let lb = UILabel()
         lb.font = UIFont.boldSystemFont(ofSize: SEARCHED_USER_CELL_FONT_SIZE)
-        lb.text = "Jessy"
         return lb
     }
     
@@ -77,7 +79,6 @@ extension SearchedUserCell {
         let lb = UILabel()
         lb.font = UIFont.systemFont(ofSize: SEARCHED_USER_CELL_FONT_SIZE)
         lb.textColor = .lightGray
-        lb.text = "Jessy Kim"
         return lb
     }
     

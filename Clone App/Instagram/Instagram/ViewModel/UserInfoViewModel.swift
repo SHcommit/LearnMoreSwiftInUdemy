@@ -7,10 +7,10 @@
 
 import UIKit
 
-struct UserInfoViewModel {
+class UserInfoViewModel {
     
     //MARK: - Properties
-    private var user: UserInfoModel
+    fileprivate var user: UserInfoModel
     private var profileImage : UIImage?
     
     //MARK: - LifeCycle
