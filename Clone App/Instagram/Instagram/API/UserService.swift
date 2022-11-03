@@ -64,3 +64,27 @@ extension UserService {
     }
     
 }
+
+//MARK: - SearchController API
+extension UserService {
+    
+    static func fetchUserList(completion: @escaping ([UserInfoModel]?) -> Void) {
+        COLLECTION_USERS.getDocuments { document, error in
+            guard let documents = document?.documents else { return }
+            do{
+                var users = [UserInfoModel]()
+                documents.map {
+                    let user: UserInfoModel? = try? $0.data(as: UserInfoModel.self)
+                    guard let user = user else { return }
+                    users.append(user)
+                }
+                completion(users)
+            }catch let e {
+                completion(nil)
+                print("DEBUG: can't parsing fireStore's all user info. \(e.localizedDescription)")
+            }
+            
+        }
+    }
+    
+}
