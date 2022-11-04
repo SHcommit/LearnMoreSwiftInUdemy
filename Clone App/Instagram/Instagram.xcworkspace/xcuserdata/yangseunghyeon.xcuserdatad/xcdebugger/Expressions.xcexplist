@@ -3,6 +3,60 @@
    version = "1.0">
    <ContextStates>
       <ContextState
+         contextName = "SearchController.tableView(_:numberOfRowsInSection:):SearchController.swift">
+      </ContextState>
+      <ContextState
+         contextName = "MainHomeTabController.userVM.didset:MainHomeTabController.swift">
+      </ContextState>
+      <ContextState
+         contextName = "MainHomeTabController.configureViewControllers():MainHomeTabController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in closure #1 in static AppDelegate.initialUserInfo():AppDelegate.swift">
+      </ContextState>
+      <ContextState
+         contextName = "SearchController.tableView(_:cellForRowAt:):SearchController.swift">
+      </ContextState>
+      <ContextState
+         contextName = "ProfileHeader.init(frame:):ProfileHeader.swift">
+      </ContextState>
+      <ContextState
+         contextName = "SearchUserViewModel.numberOfRowsInSection(_:):SearchUserViewModel.swift">
+      </ContextState>
+      <ContextState
+         contextName = "FeedController.handleLogout():FeedController.swift">
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in closure #1 in static ProfileHeader.initialProfileIV():ProfileHeader.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "info?.profileURL">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "MainHomeTabController.isLogin.didset:MainHomeTabController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "CURRENT_USER?.uid">
+            </PersistentString>
+            <PersistentString
+               value = "print(userVM)">
+            </PersistentString>
+            <PersistentString
+               value = "userVM">
+            </PersistentString>
+            <PersistentString
+               value = "print(CURRENT_USER?.uid)">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "closure #1 in MainHomeTabController.authenticationCompletion():MainHomeTabController.swift">
          <PersistentStrings>
             <PersistentString
@@ -10,20 +64,6 @@
             </PersistentString>
             <PersistentString
                value = "CURRENT_USER?.uid">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "FeedController.handleLogout():FeedController.swift">
-      </ContextState>
-      <ContextState
-         contextName = "ProfileHeader.init(frame:):ProfileHeader.swift">
-      </ContextState>
-      <ContextState
-         contextName = "closure #1 in closure #1 in static ProfileHeader.initialProfileIV():ProfileHeader.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "info?.profileURL">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -40,17 +80,6 @@
                value = "MainHomeTabController.userProfileInfo">
             </PersistentString>
          </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "MainHomeTabController.configureViewControllers():MainHomeTabController.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "closure #1 in closure #1 in static AppDelegate.initialUserInfo():AppDelegate.swift">
       </ContextState>
       <ContextState
          contextName = "static ProfileHeader.initialProfileIV():ProfileHeader.swift">
