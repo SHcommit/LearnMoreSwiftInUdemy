@@ -10,7 +10,11 @@ import UIKit
 class SearchController: UITableViewController {
     
     //MARK: - Properties
-    private var userVM: SearchUserViewModel?
+    private var userVM: SearchUserViewModel? {
+        didSet {
+            tableView.reloadData()
+        }
+    }
     //MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -54,7 +58,6 @@ extension SearchController {
         UserService.fetchUserList() { users in
             guard let users = users else { return }
             self.userVM = SearchUserViewModel(users: users)
-            self.tableView.reloadData()
         }
     }
     
@@ -78,8 +81,14 @@ extension SearchController {
         }
         guard let userVM = userVM else { fatalError() }
         
-        cell.userVM = userVM.cellForRowAt(indexPath.row)
-        
+        let user = userVM.cellForRowAt(indexPath.row).userInfoModel()
+        let url = user.profileURL
+        DispatchQueue.main.async {
+            UserService.fetchUserProfile(userProfile: url) { image in
+                guard let image = image else { return }
+                cell.userVM = UserInfoViewModel(user: user, profileImage: image)
+            }
+        }
         return cell
     }
     
