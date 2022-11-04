@@ -10,7 +10,7 @@ import UIKit
 class UserInfoViewModel {
     
     //MARK: - Properties
-    private var user: UserInfoModel
+    private var user: UserInfoModel 
     private var profileImage : UIImage?
     
     //MARK: - LifeCycle
@@ -57,4 +57,19 @@ extension UserInfoViewModel {
         return profileImage
     }
     
+}
+
+//MARK: - API
+extension UserInfoViewModel {
+    func fetchImage(completion: @escaping (UIImage)-> Void) {
+        if let _ = profileImage {
+            return
+        }
+        let url = profileURL()
+        UserService.fetchUserProfile(userProfile: url) { image in
+            guard let image = image else { return }
+            self.profileImage = image
+            completion(image)
+        }
+    }
 }

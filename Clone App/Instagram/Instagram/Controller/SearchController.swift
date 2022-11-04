@@ -83,15 +83,7 @@ extension SearchController {
         }
         guard let userVM = userVM else { fatalError() }
         let user = userVM.cellForRowAt(indexPath.row).userInfoModel()
-        let url = user.profileURL
         cell.userVM = UserInfoViewModel(user: user, profileImage: nil)
-        DispatchQueue.main.async {
-            UserService.fetchUserProfile(userProfile: url) { image in
-                guard let image = image else { return }
-                cell.userVM?.initProfileImage(image: image)
-                cell.configureImage()
-            }
-        }
         return cell
     }
     

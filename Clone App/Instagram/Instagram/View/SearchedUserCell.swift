@@ -19,7 +19,6 @@ class SearchedUserCell: UITableViewCell {
         didSet {
             configureText()
             configureImage()
-            
         }
     }
     
@@ -35,7 +34,7 @@ class SearchedUserCell: UITableViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        userVM = nil
+        
     }
     
 }
@@ -50,7 +49,11 @@ extension SearchedUserCell {
     }
     func configureImage() {
         guard let userVM = userVM else { return }
-        profileImageView.image = userVM.image()
+        DispatchQueue.main.async {
+            self.userVM?.fetchImage() { _ in
+                self.profileImageView.image = userVM.image()
+            }
+        }
         
     }
     func configureSubview() {
