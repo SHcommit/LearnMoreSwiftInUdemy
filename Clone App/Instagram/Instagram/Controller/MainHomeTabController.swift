@@ -28,22 +28,7 @@ class MainHomeTabController: UITabBarController {
     
     private var isLogin: Bool? {
         didSet {
-            guard let isLogin = isLogin else { return }
-            if !isLogin {
-                DispatchQueue.main.async {
-                    self.presentLoginScene()
-                }
-            }else {
-                guard let userVM = userVM else {
-                    fetchUserInfo()
-                    return
-                }
-                
-                if CURRENT_USER?.uid != userVM.getUserUID() {
-                    fetchUserInfo()
-                }
-
-            }
+            isLoginConfigure()
         }
     }
     
@@ -52,7 +37,6 @@ class MainHomeTabController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        fetchUserInfo()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -71,6 +55,20 @@ extension MainHomeTabController {
         isLogin = isUserLogined()
     }
     
+    func isLoginConfigure() {
+        guard let isLogin = isLogin else { return }
+        if !isLogin {
+            DispatchQueue.main.async {
+                self.presentLoginScene()
+            }
+        }else {
+            guard let userVM = userVM else {
+                fetchUserInfo()
+                return
+            }
+        }
+    }
+    
     func configureViewControllers() {
         guard let userVM = userVM else { return }
         
@@ -84,9 +82,11 @@ extension MainHomeTabController {
         
         let notifications = templateNavigationController(unselectedImage: .imageLiteral(name: "like_unselected"), selectedImage: .imageLiteral(name: "like_selected"), rootVC: NotificationController())
         
-        let profileVC = ProfileController(user: userVM.getUserInfoModel())
-        UserService.fetchUserProfile(userProfile: userVM.getUserProfileURL()) { image in
-            profileVC.profileImage = image
+        let profileVC = ProfileController(user: userVM.userInfoModel())
+        DispatchQueue.main.async {
+            UserService.fetchUserProfile(userProfile: userVM.profileURL()) { image in
+                profileVC.profileImage = image
+            }
         }
         let profile = templateNavigationController(unselectedImage: .imageLiteral(name: "profile_unselected"), selectedImage: .imageLiteral(name: "profile_selected"), rootVC: profileVC)
         
