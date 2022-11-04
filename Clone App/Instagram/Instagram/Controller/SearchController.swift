@@ -63,8 +63,10 @@ extension SearchController {
     
 }
 
+
 //MARK: - TableView DataSource
 extension SearchController {
+    
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard let userVM = userVM else {
@@ -80,17 +82,20 @@ extension SearchController {
             fatalError("Fail to find reusableCell in SearchController")
         }
         guard let userVM = userVM else { fatalError() }
-        
         let user = userVM.cellForRowAt(indexPath.row).userInfoModel()
         let url = user.profileURL
+        cell.userVM = UserInfoViewModel(user: user, profileImage: nil)
         DispatchQueue.main.async {
             UserService.fetchUserProfile(userProfile: url) { image in
                 guard let image = image else { return }
-                cell.userVM = UserInfoViewModel(user: user, profileImage: image)
+                cell.userVM?.initProfileImage(image: image)
+                cell.configureImage()
             }
         }
         return cell
     }
+    
+    
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return SEARCHED_USER_CELL_PROFILE_WIDTH + SEARCHED_USER_CELL_PROFILE_MARGIN*2 + 1

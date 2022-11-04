@@ -17,7 +17,8 @@ class SearchedUserCell: UITableViewCell {
     private lazy var nameStackView: UIStackView = initNameStackView()
     var userVM: UserInfoViewModel? {
         didSet {
-            configure()
+            configureText()
+            configureImage()
             
         }
     }
@@ -32,14 +33,23 @@ class SearchedUserCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        userVM = nil
+    }
+    
 }
 
 //MARK: - View Helpers
 extension SearchedUserCell {
-    func configure() {
+    
+    func configureText() {
         guard let userVM = userVM else { return }
         usernameLabel.text = userVM.username()
         fullnameLabel.text = userVM.fullname()
+    }
+    func configureImage() {
+        guard let userVM = userVM else { return }
         profileImageView.image = userVM.image()
         
     }
@@ -67,8 +77,7 @@ extension SearchedUserCell {
         iv.translatesAutoresizingMaskIntoConstraints = false
         iv.contentMode = .scaleAspectFill
         iv.clipsToBounds = true
-        iv.backgroundColor  = .lightGray
-        iv.image = .imageLiteral(name: "girl-1")
+        iv.backgroundColor  = .white
         iv.layer.cornerRadius = SEARCHED_USER_CELL_PROFILE_WIDTH/2
         
         return iv
