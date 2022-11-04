@@ -15,15 +15,14 @@ class SearchedUserCell: UITableViewCell {
     private let usernameLabel: UILabel = initUsernameLabel()
     private let fullnameLabel: UILabel = initFullnameLabel()
     private lazy var nameStackView: UIStackView = initNameStackView()
-    var user: UserInfoModel? {
+    var userVM: UserInfoViewModel? {
         didSet {
-            usernameLabel.text = user?.username
-            fullnameLabel.text = user?.fullname
+            configure()
+            
         }
     }
     
     //MARK: - Lifecycle
-    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         configureSubview()
@@ -37,7 +36,13 @@ class SearchedUserCell: UITableViewCell {
 
 //MARK: - View Helpers
 extension SearchedUserCell {
-    
+    func configure() {
+        guard let userVM = userVM else { return }
+        usernameLabel.text = userVM.username()
+        fullnameLabel.text = userVM.fullname()
+        profileImageView.image = userVM.image()
+        
+    }
     func configureSubview() {
         addSubviews()
         setupSubviewConstraints()

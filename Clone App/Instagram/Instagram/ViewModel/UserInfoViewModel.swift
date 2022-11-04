@@ -10,7 +10,7 @@ import UIKit
 class UserInfoViewModel {
     
     //MARK: - Properties
-    fileprivate var user: UserInfoModel
+    private var user: UserInfoModel
     private var profileImage : UIImage?
     
     //MARK: - LifeCycle
@@ -23,36 +23,38 @@ class UserInfoViewModel {
 
 extension UserInfoViewModel {
     
+    func initProfileImage(image: UIImage) {
+        profileImage = image
+    }
     //MARK: - Get user value
-    func getUserName() -> String {
+    func username() -> String {
         return user.username
     }
     
-    func getUserFullName() -> String {
+    func fullname() -> String {
         return user.fullname
     }
     
     
-    func getUserProfileURL() -> String {
+    func profileURL() -> String {
         return user.profileURL
     }
-    func getUserInfoModel() -> UserInfoModel {
+    func userInfoModel() -> UserInfoModel {
         return user
     }
     
-    func getUserEmail() -> String {
+    func email() -> String {
         return user.email
     }
     
-    func getUserUID() -> String {
+    func uid() -> String {
         return user.uid
     }
     
     //MARK: - Set user value
     
-    func setUserProfile(iv: UIImageView) {
-        iv.image = profileImage
+    func image() -> UIImage? {
+        return profileImage
     }
-    
     
 }

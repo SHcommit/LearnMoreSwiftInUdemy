@@ -11,12 +11,15 @@ class SearchController: UITableViewController {
     
     //MARK: - Properties
     private var userVM: SearchUserViewModel?
-    
     //MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
         configure()
         fetchUserProfileList()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        tableView.reloadData()
     }
 }
 
@@ -73,8 +76,9 @@ extension SearchController {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: REUSE_SEARCH_TABLE_CELL_IDENTIFIER, for: indexPath) as? SearchedUserCell else {
             fatalError("Fail to find reusableCell in SearchController")
         }
+        guard let userVM = userVM else { fatalError() }
         
-        cell.user = userVM?.cellForRowAt(indexPath.row)
+        cell.userVM = userVM.cellForRowAt(indexPath.row)
         
         return cell
     }

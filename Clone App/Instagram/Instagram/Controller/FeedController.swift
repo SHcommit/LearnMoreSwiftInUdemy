@@ -19,9 +19,7 @@ class FeedController: UICollectionViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        collectionView.register(FeedCell.self, forCellWithReuseIdentifier: FEEDCELLRESUIDENTIFIER)
         setupNavigationUI()
-        isCurrentUser() 
     }
     
 }
@@ -47,18 +45,6 @@ extension FeedController {
         self.present(nav,animated: false, completion: nil)
     }
     
-    //API. user
-    func isCurrentUser() {
-        guard let tabVC = tabBarController as? MainHomeTabController else { return }
-        guard let uid = tabVC.getUserVM?.getUserUID() else  { return }
-        if CURRENT_USER?.uid != uid {
-            UserService.fetchCurrentUserInfo() { userInfo in
-                guard let userInfo = userInfo else { return }
-                tabVC.getUserVM = UserInfoViewModel(user: userInfo, profileImage: nil)
-                self.tabBarController?.tabBarController?.viewDidLoad()
-            }
-        }
-    }
 }
 
 //MARK: - Event handler

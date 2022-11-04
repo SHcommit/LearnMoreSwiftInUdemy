@@ -13,7 +13,7 @@ class ProfileController: UICollectionViewController {
     private var user: UserInfoModel
     var profileImage: UIImage? {
         didSet {
-            collectionView.reloadData()
+            viewWillAppear(false)
         }
     }
     

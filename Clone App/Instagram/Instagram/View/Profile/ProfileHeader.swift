@@ -51,9 +51,10 @@ class ProfileHeader: UICollectionReusableView {
 extension ProfileHeader {
     
     func bindAsyncData() {
+        
         guard let userVM = userVM else { return }
-        userVM.setUserProfile(iv: profileIV)
-        nameLabel.text = userVM.getUserName()
+        profileIV.image = userVM.image()
+        nameLabel.text = userVM.username()
         
     }
 }
