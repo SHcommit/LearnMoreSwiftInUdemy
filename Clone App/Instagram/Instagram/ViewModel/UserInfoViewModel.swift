@@ -14,7 +14,7 @@ class UserInfoViewModel {
     private var profileImage : UIImage?
     
     //MARK: - LifeCycle
-    init(user: UserInfoModel, profileImage image: UIImage?) {
+    init(user: UserInfoModel, profileImage image: UIImage? = nil) {
         self.user = user
         self.profileImage = image
     }
