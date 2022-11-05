@@ -23,6 +23,10 @@ class ProfileHeaderViewModel {
         self.profileImage = image
     }
     
+    func initProfileImage(image: UIImage?) {
+        profileImage = image
+    }
+    
 }
 
 
@@ -37,6 +41,13 @@ extension ProfileHeaderViewModel {
         return user.username
     }
     
+    func getUserInfo() -> UserInfoModel {
+        return user
+    }
+    
+    func profileURL() -> String {
+        return user.profileURL
+    }
 }
 
 

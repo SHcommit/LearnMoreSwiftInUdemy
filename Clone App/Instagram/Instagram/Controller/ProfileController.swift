@@ -25,6 +25,11 @@ class ProfileController: UICollectionViewController {
         navigationItem.title = user.username
     }
     
+    convenience init(profileVM: ProfileHeaderViewModel) {
+        self.init(user: profileVM.getUserInfo())
+        profileImage = profileVM.image()
+    }
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -67,17 +72,10 @@ extension ProfileController {
     
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         guard let headerView =  collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: COLLECTIONHEADERREUSEABLEID, for: indexPath) as? ProfileHeader else { fatalError() }
-        guard let profileImage = profileImage else { return headerView }
-        headerView.userVM = ProfileHeaderViewModel(user: user, profileImage: profileImage)
+        headerView.userVM = ProfileHeaderViewModel(user: self.user, profileImage: self.profileImage)
         return headerView
     }
 
-    
-}
-
-//MARK: - UICollectionViewDelegate
-extension ProfileController {
-    
     
 }
 
