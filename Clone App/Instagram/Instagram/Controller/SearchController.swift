@@ -6,7 +6,9 @@
 //
 
 import UIKit
-
+/*
+ TODO: 셀 누를 때마다 tableView(_:didSelectRowAt:) 에서 userInfo를 받아오는데 그거 말고 dequeue에서 cell userVM 꺼내서 써볼라고 함.
+ */
 class SearchController: UITableViewController {
     
     //MARK: - Properties
