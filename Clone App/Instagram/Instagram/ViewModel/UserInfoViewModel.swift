@@ -16,18 +16,13 @@ class UserInfoViewModel {
     //MARK: - LifeCycle
     init(user: UserInfoModel, profileImage image: UIImage? = nil) {
         self.user = user
-        self.profileImage = image
+        profileImage = image
     }
     
 }
 
 extension UserInfoViewModel {
     
-    func initProfileImage() {
-        fetchImage() { image in
-            self.profileImage = image
-        }
-    }
     //MARK: - Get user value
     func username() -> String {
         return user.username
@@ -53,11 +48,6 @@ extension UserInfoViewModel {
         return user.uid
     }
     
-    func getProfileImage() -> UIImage {
-        guard let profileImage = profileImage else { fatalError() }
-        return profileImage
-    }
-    
     func image() -> UIImage? {
         return profileImage
     }
@@ -66,14 +56,15 @@ extension UserInfoViewModel {
 
 //MARK: - API
 extension UserInfoViewModel {
-    func fetchImage(completion: @escaping (UIImage)-> Void) {
+    func fetchImage(completion: @escaping () -> Void) {
         if let _ = profileImage {
             return
         }
         let url = profileURL()
         UserService.fetchUserProfile(userProfile: url) { image in
             guard let image = image else { return }
-            completion(image)
+            self.profileImage = image
+            completion()
         }
     }
 }
