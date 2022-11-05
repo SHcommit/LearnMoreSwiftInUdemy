@@ -17,6 +17,13 @@ class SearchUserViewModel {
     }
 }
 
+//MARK: - get/set
+extension SearchUserViewModel {
+    
+    func getUserInfoModel() -> [UserInfoModel] {
+        return users
+    }
+}
 
 //MARK: - Return tableViewDataSource
 extension SearchUserViewModel {
