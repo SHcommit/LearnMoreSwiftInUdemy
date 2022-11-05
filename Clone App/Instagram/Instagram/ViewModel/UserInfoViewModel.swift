@@ -19,16 +19,17 @@ class UserInfoViewModel {
         self.profileImage = image
     }
     
-}
-
-extension UserInfoViewModel {
-    
     func initProfileImage() {
         fetchImage() { image in
             self.profileImage = image
         }
     }
-    //MARK: - Get user value
+    
+}
+
+//MARK: - Get/Set properties
+extension UserInfoViewModel {
+    
     func username() -> String {
         return user.username
     }
@@ -36,7 +37,6 @@ extension UserInfoViewModel {
     func fullname() -> String {
         return user.fullname
     }
-    
     
     func profileURL() -> String {
         return user.profileURL
