@@ -67,17 +67,14 @@ extension ProfileController {
     
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         guard let headerView =  collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: COLLECTIONHEADERREUSEABLEID, for: indexPath) as? ProfileHeader else { fatalError() }
+        
         guard let profileImage = profileImage else { return headerView }
-        headerView.userVM = ProfileHeaderViewModel(user: user, profileImage: profileImage)
+        DispatchQueue.main.async {
+            headerView.userVM = ProfileHeaderViewModel(user: self.user, profileImage: profileImage)
+        }
         return headerView
     }
 
-    
-}
-
-//MARK: - UICollectionViewDelegate
-extension ProfileController {
-    
     
 }
 
