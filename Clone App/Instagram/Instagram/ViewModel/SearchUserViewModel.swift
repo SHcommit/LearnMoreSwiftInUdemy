@@ -39,9 +39,6 @@ extension SearchUserViewModel {
     func cellForRowAt(_ index: Int) -> UserInfoViewModel {
         let user = users[index]
         let userVM = UserInfoViewModel(user: user, profileImage: nil)
-        DispatchQueue.main.async {
-            userVM.initProfileImage()
-        }
         return userVM
     }
 }
