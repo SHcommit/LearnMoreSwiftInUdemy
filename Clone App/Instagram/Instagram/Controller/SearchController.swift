@@ -89,9 +89,9 @@ extension SearchController {
             print("Fail to bind userVM in SearchController")
             return 0
         }
-        return isSearchMode ? filteredUsers.count : userVM.numberOfRowsInSection(section)
+        //return isSearchMode ? filteredUsers.count : userVM.numberOfRowsInSection(section)
 
-        //return 3
+        return 3
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

@@ -10,6 +10,10 @@ import Firebase
 import FirebaseFirestore
 import FirebaseFirestoreSwift
 
+protocol ProfileHeaderDelegate: class {
+    func header(_ profileHeader: ProfileHeader, didTapActionButtonFor user: UserInfoModel)
+}
+
 class ProfileHeader: UICollectionReusableView {
     
     //MARK: - Properties
@@ -25,7 +29,7 @@ class ProfileHeader: UICollectionReusableView {
     private lazy var gridBtn: UIButton = initialGridBtn()
     private lazy var listBtn: UIButton = initialListBtn()
     private lazy var bookMarkBtn: UIButton = initialBookMarkBtn()
-    
+    weak var delegate: ProfileHeaderDelegate?
     var userVM: ProfileHeaderViewModel? {
         didSet {
             configure()
@@ -65,7 +69,8 @@ extension ProfileHeader {
 extension ProfileHeader {
     
     @objc func didTapEditProfileFollow(_ sender: Any) {
-        
+        guard let userVM = userVM else { return }
+        delegate?.header(self, didTapActionButtonFor: userVM.getUserInfo())
     }
     
     @objc func didTapGridBtn(_ sender: Any) {

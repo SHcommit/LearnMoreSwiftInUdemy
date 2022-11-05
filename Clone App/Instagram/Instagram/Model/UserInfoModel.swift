@@ -12,6 +12,9 @@ struct UserInfoModel: Codable {
     var uid: String
     var username: String
     var isFollowed = false
+    var isCurrentUser: Bool {
+        return CURRENT_USER?.uid == uid
+    }
     
     enum CodingKeys: String,CodingKey {
         case email

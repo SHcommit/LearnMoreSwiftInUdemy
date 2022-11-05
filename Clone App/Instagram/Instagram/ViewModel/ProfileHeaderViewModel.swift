@@ -14,9 +14,6 @@ class ProfileHeaderViewModel {
     private var user: UserInfoModel
     private var profileImage : UIImage?
     
-    private var isCurrentUser: Bool {
-        return CURRENT_USER?.uid == user.uid
-    }
     //MARK: - LifeCycle
     init(user: UserInfoModel, profileImage image: UIImage? = nil) {
         self.user = user
@@ -58,18 +55,18 @@ extension ProfileHeaderViewModel {
 //MARK: - Helpers
 extension ProfileHeaderViewModel {
     func followButtonText() -> String {
-        if isCurrentUser {
+        if user.isCurrentUser {
             return "Edit Profile"
         }
         return user.isFollowed ? "Following" : "Follow"
     }
     
     func followButtonBackgroundColor() -> UIColor {
-        return isCurrentUser ? .white : .systemBlue
+        return user.isCurrentUser ? .white : .systemBlue
     }
     
     func followButtonTextColor() -> UIColor {
-        return isCurrentUser ? .black : .white
+        return user.isCurrentUser ? .black : .white
     }
 }
 
