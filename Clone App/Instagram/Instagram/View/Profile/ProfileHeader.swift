@@ -52,9 +52,9 @@ extension ProfileHeader {
     
     func configure() {
         guard let userVM = userVM else { return }
-        profileIV.image = userVM.image()
         nameLabel.text = userVM.username()
         editProfileFollowButton.setTitle(userVM.followButtonText(), for: .normal)
+        profileIV.image = userVM.image()
     }
     
 }

@@ -20,7 +20,14 @@ class ProfileHeaderViewModel {
     //MARK: - LifeCycle
     init(user: UserInfoModel, profileImage image: UIImage? = nil) {
         self.user = user
-        self.profileImage = image
+        if image == nil {
+            fetchImage() { image in
+                self.profileImage = image
+            }
+        }else {
+            profileImage = image
+        }
+        
     }
     
 }
@@ -28,6 +35,10 @@ class ProfileHeaderViewModel {
 
 //MARK: - Get data
 extension ProfileHeaderViewModel {
+    
+    func profileURL() -> String {
+        return user.profileURL
+    }
     
     func image() -> UIImage? {
         return profileImage
@@ -52,4 +63,20 @@ extension ProfileHeaderViewModel {
         }
         return user.isFollowed ? "Following" : "Follow"
     }
+}
+
+
+//MARK: - API
+extension ProfileHeaderViewModel {
+    func fetchImage(completion: @escaping (UIImage)-> Void) {
+        if let _ = profileImage {
+            return
+        }
+        let url = profileURL()
+        UserService.fetchUserProfile(userProfile: url) { image in
+            guard let image = image else { return }
+            completion(image)
+        }
+    }
+
 }
