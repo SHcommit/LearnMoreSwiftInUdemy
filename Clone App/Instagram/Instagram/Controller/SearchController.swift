@@ -17,11 +17,18 @@ class SearchController: UITableViewController {
     }
     private var filteredUsers = [UserInfoModel]()
     private let searchController = UISearchController(searchResultsController: nil)
+    private var isSearchMode: Bool {
+        get {
+            guard let searchedText = searchController.searchBar.text else {
+                return false
+            }
+            return searchController.isActive && !searchedText.isEmpty
+        }
+    }
     //MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
         configure()
-        fetchUserProfileList()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -36,7 +43,7 @@ extension SearchController {
     func configure() {
         configureSearchController()
         configureTableView()
-        //setupNavigationBar()
+        fetchUserProfileList()
     }
     
     func configureTableView() {
@@ -82,12 +89,8 @@ extension SearchController {
             print("Fail to bind userVM in SearchController")
             return 0
         }
-        
-        if filteredUsers.count != 0 {
-            return filteredUsers.count
-        }
+        return isSearchMode ? filteredUsers.count : userVM.numberOfRowsInSection(section)
 
-        return userVM.numberOfRowsInSection(section)
         //return 3
     }
     
@@ -95,20 +98,13 @@ extension SearchController {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: REUSE_SEARCH_TABLE_CELL_IDENTIFIER, for: indexPath) as? SearchedUserCell else {
             fatalError("Fail to find reusableCell in SearchController")
         }
-        if filteredUsers.count != 0 {
-            cell.userVM = UserInfoViewModel(user: filteredUsers[indexPath.row], profileImage: nil)
-            
-            DispatchQueue.main.async {
-                cell.userVM?.initProfileImage()
-            }
-            return cell
-        }
         guard let userVM = userVM else { fatalError() }
-        let user = userVM.cellForRowAt(indexPath.row).userInfoModel()
-        cell.userVM = UserInfoViewModel(user: user, profileImage: nil)
+        cell.userVM = isSearchMode ? UserInfoViewModel(user: filteredUsers[indexPath.row]) : userVM.cellForRowAt(indexPath.row)
+        DispatchQueue.main.async {
+            cell.userVM?.initProfileImage()
+        }
         return cell
     }
-    
     
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -125,10 +121,10 @@ extension SearchController {
     }
 }
 
+//MARK: - Adopt SearchResultsUpdating Protocol
 extension SearchController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         guard let text = searchController.searchBar.text else  { return }
-        print("DEBUG: Search Text: \(text)")
         guard let users = userVM?.getUserInfoModel() else { return }
         
         filteredUsers = users.filter {
