@@ -97,6 +97,10 @@ extension SearchController {
         }
         if filteredUsers.count != 0 {
             cell.userVM = UserInfoViewModel(user: filteredUsers[indexPath.row], profileImage: nil)
+            
+            DispatchQueue.main.async {
+                cell.userVM?.initProfileImage()
+            }
             return cell
         }
         guard let userVM = userVM else { fatalError() }

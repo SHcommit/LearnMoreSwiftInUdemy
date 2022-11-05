@@ -40,10 +40,7 @@ extension SearchUserViewModel {
         let user = users[index]
         let userVM = UserInfoViewModel(user: user, profileImage: nil)
         DispatchQueue.main.async {
-            UserService.fetchUserProfile(userProfile: user.profileURL) { image in
-                guard let image = image else { return }
-                userVM.initProfileImage(image: image)
-            }
+            userVM.initProfileImage()
         }
         return userVM
     }
