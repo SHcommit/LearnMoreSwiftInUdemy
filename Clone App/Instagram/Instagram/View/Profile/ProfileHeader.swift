@@ -26,9 +26,9 @@ class ProfileHeader: UICollectionReusableView {
     private lazy var listBtn: UIButton = initialListBtn()
     private lazy var bookMarkBtn: UIButton = initialBookMarkBtn()
     
-    var userVM: UserInfoViewModel? {
+    var userVM: ProfileHeaderViewModel? {
         didSet {
-            bindAsyncData()
+            configure()
         }
     }
     
@@ -50,13 +50,13 @@ class ProfileHeader: UICollectionReusableView {
 //MARK: - Helpers
 extension ProfileHeader {
     
-    func bindAsyncData() {
-        
+    func configure() {
         guard let userVM = userVM else { return }
         profileIV.image = userVM.image()
         nameLabel.text = userVM.username()
-        
+        editProfileFollowButton.setTitle(userVM.followButtonText(), for: .normal)
     }
+    
 }
 
 //MARK: - event handler

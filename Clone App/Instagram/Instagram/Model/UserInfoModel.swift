@@ -11,6 +11,7 @@ struct UserInfoModel: Codable {
     var profileURL: String
     var uid: String
     var username: String
+    var isFollowed = false
     
     enum CodingKeys: String,CodingKey {
         case email

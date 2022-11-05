@@ -58,8 +58,6 @@ extension UserInfoViewModel {
         return profileImage
     }
     
-    //MARK: - Set user value
-    
     func image() -> UIImage? {
         return profileImage
     }
