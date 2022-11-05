@@ -25,6 +25,11 @@ class ProfileController: UICollectionViewController {
         navigationItem.title = user.username
     }
     
+    convenience init(profileVM: ProfileHeaderViewModel) {
+        self.init(user: profileVM.getUserInfo())
+        profileImage = profileVM.image()
+    }
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

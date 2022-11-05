@@ -37,6 +37,10 @@ extension ProfileHeaderViewModel {
         return user.username
     }
     
+    func getUserInfo() -> UserInfoModel {
+        return user
+    }
+    
 }
 
 

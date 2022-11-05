@@ -6,9 +6,7 @@
 //
 
 import UIKit
-/*
- TODO: 셀 누를 때마다 tableView(_:didSelectRowAt:) 에서 userInfo를 받아오는데 그거 말고 dequeue에서 cell userVM 꺼내서 써볼라고 함.
- */
+
 class SearchController: UITableViewController {
     
     //MARK: - Properties
@@ -117,9 +115,12 @@ extension SearchController {
 //MARK: - TableViewDelegate
 extension SearchController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let userVM = userVM else { return }
-        let vc = ProfileController(user: userVM.cellForRowAt(indexPath.row).userInfoModel())
-        navigationController?.pushViewController(vc, animated: true)
+        guard let cell = tableView.cellForRow(at: indexPath) as? SearchedUserCell else {fatalError("DEBUG: Fail to fild reusableCell in SearchController")}
+        guard let user = cell.userVM else { return }
+        DispatchQueue.main.async {
+            let vc = ProfileController(profileVM: ProfileHeaderViewModel(user: user.userInfoModel(), profileImage: user.image()))
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
     }
 }
 
