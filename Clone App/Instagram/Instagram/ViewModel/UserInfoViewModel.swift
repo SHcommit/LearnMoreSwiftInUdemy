@@ -10,7 +10,15 @@ import UIKit
 class UserInfoViewModel {
     
     //MARK: - Properties
-    private var user: UserInfoModel 
+    private var user: UserInfoModel {
+        didSet {
+            if profileImage == nil {
+                self.fetchImage { image in
+                    self.profileImage = image
+                }
+            }
+        }
+    }
     private var profileImage : UIImage?
     
     //MARK: - LifeCycle
@@ -49,6 +57,11 @@ extension UserInfoViewModel {
     
     func uid() -> String {
         return user.uid
+    }
+    
+    func getProfileImage() -> UIImage {
+        guard let profileImage = profileImage else { fatalError() }
+        return profileImage
     }
     
     //MARK: - Set user value

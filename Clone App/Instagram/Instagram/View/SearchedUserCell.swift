@@ -18,7 +18,14 @@ class SearchedUserCell: UITableViewCell {
     var userVM: UserInfoViewModel? {
         didSet {
             configureText()
-            configureImage()
+            if profileImageView.image == nil {
+                DispatchQueue.main.async {
+                    self.configureImage()
+                }
+            }else {
+                profileImageView.image = userVM?.getProfileImage()
+            }
+            
         }
     }
     
@@ -49,10 +56,8 @@ extension SearchedUserCell {
     }
     func configureImage() {
         guard let userVM = userVM else { return }
-        DispatchQueue.main.async {
-            self.userVM?.fetchImage() { _ in
-                self.profileImageView.image = userVM.image()
-            }
+        userVM.fetchImage() { _ in
+            self.profileImageView.image = userVM.image()
         }
         
     }
