@@ -63,6 +63,14 @@ extension ProfileHeaderViewModel {
         }
         return user.isFollowed ? "Following" : "Follow"
     }
+    
+    func followButtonBackgroundColor() -> UIColor {
+        return isCurrentUser ? .white : .systemBlue
+    }
+    
+    func followButtonTextColor() -> UIColor {
+        return isCurrentUser ? .black : .white
+    }
 }
 
 

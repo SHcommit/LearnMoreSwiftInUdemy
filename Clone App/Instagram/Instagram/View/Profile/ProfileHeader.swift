@@ -54,6 +54,8 @@ extension ProfileHeader {
         guard let userVM = userVM else { return }
         nameLabel.text = userVM.username()
         editProfileFollowButton.setTitle(userVM.followButtonText(), for: .normal)
+        editProfileFollowButton.setTitleColor(userVM.followButtonTextColor(), for: .normal)
+        editProfileFollowButton.backgroundColor = userVM.followButtonBackgroundColor()
         profileIV.image = userVM.image()
     }
     
