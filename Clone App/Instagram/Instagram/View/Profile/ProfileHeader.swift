@@ -58,9 +58,31 @@ extension ProfileHeader {
         guard let userVM = userVM else { return }
         nameLabel.text = userVM.username()
         editProfileFollowButton.setTitle(userVM.followButtonText(), for: .normal)
-        editProfileFollowButton.setTitleColor(userVM.followButtonTextColor(), for: .normal)
-        editProfileFollowButton.backgroundColor = userVM.followButtonBackgroundColor()
-        profileIV.image = userVM.image()
+        
+        if userVM.image() == nil {
+            fetchImage() {}
+        }else {
+            profileIV.image = userVM.image()
+        }
+    }
+    
+}
+
+//MARK: - API
+extension ProfileHeader {
+    
+    func fetchImage(completion: @escaping () -> Void) {
+        if let _ = profileIV.image {
+            return
+        }
+        guard let url = userVM?.profileURL() else { return }
+        DispatchQueue.main.async {
+            UserService.fetchUserProfile(userProfile: url) { image in
+                guard let image = image else { return }
+                self.profileIV.image = image
+                completion()
+            }
+        }
     }
     
 }

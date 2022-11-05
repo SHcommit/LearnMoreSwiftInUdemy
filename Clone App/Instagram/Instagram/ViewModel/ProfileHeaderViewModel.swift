@@ -27,6 +27,10 @@ class ProfileHeaderViewModel {
         
     }
     
+    func initProfileImage(image: UIImage?) {
+        profileImage = image
+    }
+    
 }
 
 

@@ -101,7 +101,9 @@ extension SearchController {
         guard let userVM = userVM else { fatalError() }
         cell.userVM = isSearchMode ? UserInfoViewModel(user: filteredUsers[indexPath.row]) : userVM.cellForRowAt(indexPath.row)
         DispatchQueue.main.async {
-            cell.userVM?.initProfileImage()
+            cell.userVM?.fetchImage() {
+                cell.configureImage()
+            }
         }
         return cell
     }
@@ -117,10 +119,8 @@ extension SearchController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let cell = tableView.cellForRow(at: indexPath) as? SearchedUserCell else {fatalError("DEBUG: Fail to fild reusableCell in SearchController")}
         guard let user = cell.userVM else { return }
-        DispatchQueue.main.async {
-            let vc = ProfileController(profileVM: ProfileHeaderViewModel(user: user.userInfoModel(), profileImage: user.image()))
-            self.navigationController?.pushViewController(vc, animated: true)
-        }
+        let vc = ProfileController(profileVM: ProfileHeaderViewModel(user: user.userInfoModel(), profileImage: user.image()))
+        self.navigationController?.pushViewController(vc, animated: true)
     }
 }
 
