@@ -63,7 +63,11 @@ extension MainHomeTabController {
             }
         }else {
             guard let userVM = userVM else {
-                fetchUserInfo()
+                guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+                appDelegate.pList.synchronize()
+                guard let currentUserUID = appDelegate.pList.string(forKey: CURRENT_USER_UID) else { return }
+                        
+                fetchUserInfo(withUID: currentUserUID)
                 return
             }
         }
@@ -144,8 +148,8 @@ extension MainHomeTabController {
 extension MainHomeTabController {
     
     //MARK: - API. About User
-    func fetchUserInfo() {
-        UserService.fetchCurrentUserInfo() { userInfo in
+    func fetchUserInfo(withUID uid: String) {
+        UserService.fetchUserInfo(withUid: uid) { userInfo in
             guard let userInfo = userInfo else { return }
             self.userVM = UserInfoViewModel(user: userInfo, profileImage: nil)
         }
@@ -153,7 +157,12 @@ extension MainHomeTabController {
     
     //MARK: - API. check user's membership
     func isUserLogined() -> Bool {
-        if Auth.auth().currentUser == nil {
+        
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return false }
+        appDelegate.pList.synchronize()
+        let currentUserUid = appDelegate.pList.string(forKey: CURRENT_USER_UID)
+        
+        if Auth.auth().currentUser == nil || currentUserUid == nil{
             return false
         }
         return true
@@ -174,6 +183,9 @@ extension MainHomeTabController {
 //MARK: - Implement AuthentificationDelegate
 extension MainHomeTabController: AuthentificationDelegate {
     func authenticationCompletion(uid: String) {
+        guard let appDelegaet = UIApplication.shared.delegate as? AppDelegate else  { return }
+        appDelegaet.pList.set(uid, forKey: CURRENT_USER_UID)
+        
         UserService.fetchUserInfo(withUid: uid) { userInfo in
             guard let userInfo = userInfo else { return }
             self.userVM = UserInfoViewModel(user: userInfo, profileImage: nil)

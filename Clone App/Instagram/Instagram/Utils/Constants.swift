@@ -7,15 +7,7 @@
 
 import Firebase
 
-//MARK: - Constant properties
-let USERPROFILEIMAGEMEGABYTE = Int64(1*1024*1024)
-let FIRESTORE_USERS = "users"
-let COLLECTION_USERS = Firestore.firestore().collection(FIRESTORE_USERS)
-let FIRESTORE_DB = Firestore.firestore()
-let CURRENT_USER = Auth.auth().currentUser
-let STORAGE = Storage.storage()
-let AUTH = Auth.auth()
-
+// Constant properties
 
 //MARK: - profile subview's ID
 let COLLECTIONHEADERREUSEABLEID = "UserProfileCollectionHeaderView"
@@ -31,3 +23,19 @@ let SEARCHED_USER_CELL_PROFILE_WIDTH: CGFloat = 60
 let SEARCHED_USER_CELL_PROFILE_MARGIN: CGFloat = 7
 let SEARCHED_USER_CELL_FONT_SIZE: CGFloat = 16
 let SEARCHED_USER_CELL_STACKVIEW_SPACING: CGFloat = 4
+
+
+//MARK: - UserService
+typealias FiresotreCompletion = (Error?) -> Void
+let FIRESTORE_USERS = "users"
+let COLLECTION_USERS = Firestore.firestore().collection(FIRESTORE_USERS)
+let COLLECTION_FOLLOWERS = Firestore.firestore().collection("followers")
+let COLLECTION_FOLLOWING = Firestore.firestore().collection("following")
+let FIRESTORE_DB = Firestore.firestore()
+let STORAGE = Storage.storage()
+let AUTH = Auth.auth()
+let USERPROFILEIMAGEMEGABYTE = Int64(1*1024*1024)
+
+
+//MARK: - UserDefaults
+let CURRENT_USER_UID = "currentUserUID"

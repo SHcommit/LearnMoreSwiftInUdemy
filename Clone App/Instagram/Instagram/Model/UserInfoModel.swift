@@ -5,6 +5,8 @@
 //  Created by 양승현 on 2022/10/28.
 //
 
+import UIKit
+
 struct UserInfoModel: Codable {
     var email: String
     var fullname: String
@@ -12,6 +14,13 @@ struct UserInfoModel: Codable {
     var uid: String
     var username: String
     var isFollowed = false
+    var isCurrentUser: Bool {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError() }
+        appDelegate.pList.synchronize()
+        guard let currentUserUid = appDelegate.pList.string(forKey: CURRENT_USER_UID) else { return false }
+                
+        return currentUserUid == uid
+    }
     
     enum CodingKeys: String,CodingKey {
         case email

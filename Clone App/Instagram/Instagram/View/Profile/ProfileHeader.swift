@@ -10,6 +10,10 @@ import Firebase
 import FirebaseFirestore
 import FirebaseFirestoreSwift
 
+protocol ProfileHeaderDelegate: class {
+    func header(_ profileHeader: ProfileHeader, didTapActionButtonFor user: UserInfoModel)
+}
+
 class ProfileHeader: UICollectionReusableView {
     
     //MARK: - Properties
@@ -25,7 +29,7 @@ class ProfileHeader: UICollectionReusableView {
     private lazy var gridBtn: UIButton = initialGridBtn()
     private lazy var listBtn: UIButton = initialListBtn()
     private lazy var bookMarkBtn: UIButton = initialBookMarkBtn()
-    
+    weak var delegate: ProfileHeaderDelegate?
     var userVM: ProfileHeaderViewModel? {
         didSet {
             configure()
@@ -52,10 +56,13 @@ extension ProfileHeader {
     
     func configure() {
         guard let userVM = userVM else { return }
-        profileIV.image = userVM.image()
         nameLabel.text = userVM.username()
         editProfileFollowButton.setTitle(userVM.followButtonText(), for: .normal)
-        
+        editProfileFollowButton.setTitleColor(userVM.followButtonTextColor(), for: .normal)
+        editProfileFollowButton.backgroundColor = userVM.followButtonBackgroundColor()
+        postLabel.attributedText = userVM.numberOfPosts()
+        followersLabel.attributedText = userVM.numberOfFollowers()
+        followingLabel.attributedText = userVM.numberOfFollowing()
         if userVM.image() == nil {
             fetchImage() {}
         }else {
@@ -67,6 +74,7 @@ extension ProfileHeader {
 
 //MARK: - API
 extension ProfileHeader {
+    
     func fetchImage(completion: @escaping () -> Void) {
         if let _ = profileIV.image {
             return
@@ -80,13 +88,15 @@ extension ProfileHeader {
             }
         }
     }
+    
 }
 
 //MARK: - event handler
 extension ProfileHeader {
     
     @objc func didTapEditProfileFollow(_ sender: Any) {
-        
+        guard let userVM = userVM else { return }
+        delegate?.header(self, didTapActionButtonFor: userVM.getUserInfo())
     }
     
     @objc func didTapGridBtn(_ sender: Any) {
@@ -182,7 +192,7 @@ extension ProfileHeader {
     
     func initialEditProfileFollowButton() -> UIButton {
         let button = UIButton(type: .system)
-        button.setTitle("Edit Profile", for: .normal)
+        button.setTitle("Loading", for: .normal)
         button.layer.cornerRadius = 3
         button.layer.borderColor = UIColor.lightGray.cgColor
         button.layer.borderWidth = 0.5
@@ -199,7 +209,6 @@ extension ProfileHeader {
         let label = UILabel()
         label.numberOfLines = 0
         label.textAlignment = .center
-        label.attributedText = attributedStatText(value: 7, label: "posts")
         return label
     }
     
@@ -207,7 +216,6 @@ extension ProfileHeader {
         let label = UILabel()
         label.numberOfLines = 0
         label.textAlignment = .center
-        label.attributedText = attributedStatText(value: 21, label: "followers")
         return label
     }
     
@@ -215,7 +223,6 @@ extension ProfileHeader {
         let label = UILabel()
         label.numberOfLines = 0
         label.textAlignment = .center
-        label.attributedText = attributedStatText(value: 19, label: "following")
         return label
     }
     
@@ -314,12 +321,3 @@ extension ProfileHeader {
     
 }
 
-
-//MARK: - Helpers
-extension ProfileHeader {
-    func attributedStatText(value: Int, label: String) -> NSAttributedString {
-        let attributedText = NSMutableAttributedString(string: "\(value)\n" ,attributes: [.font: UIFont.boldSystemFont(ofSize: 14)])
-        attributedText.append(NSAttributedString(string: label, attributes: [.font: UIFont.systemFont(ofSize: 14), .foregroundColor: UIColor.lightGray]))
-        return attributedText
-    }
-}
