@@ -6,6 +6,9 @@
          contextName = "SearchController.tableView(_:numberOfRowsInSection:):SearchController.swift">
       </ContextState>
       <ContextState
+         contextName = "SearchController.tableView(_:didSelectRowAt:):SearchController.swift">
+      </ContextState>
+      <ContextState
          contextName = "MainHomeTabController.userVM.didset:MainHomeTabController.swift">
       </ContextState>
       <ContextState
@@ -20,13 +23,13 @@
          contextName = "closure #1 in closure #1 in static AppDelegate.initialUserInfo():AppDelegate.swift">
       </ContextState>
       <ContextState
-         contextName = "SearchController.tableView(_:cellForRowAt:):SearchController.swift">
+         contextName = "SearchUserViewModel.numberOfRowsInSection(_:):SearchUserViewModel.swift">
       </ContextState>
       <ContextState
          contextName = "ProfileHeader.init(frame:):ProfileHeader.swift">
       </ContextState>
       <ContextState
-         contextName = "SearchUserViewModel.numberOfRowsInSection(_:):SearchUserViewModel.swift">
+         contextName = "SearchController.tableView(_:cellForRowAt:):SearchController.swift">
       </ContextState>
       <ContextState
          contextName = "FeedController.handleLogout():FeedController.swift">
@@ -36,6 +39,14 @@
          <PersistentStrings>
             <PersistentString
                value = "info?.profileURL">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "MainHomeTabController.authenticationCompletion(uid:):MainHomeTabController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "print(appDelegate.pList.string(forKey: CURRENT_USER_UID))">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
