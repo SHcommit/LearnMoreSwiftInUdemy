@@ -30,7 +30,9 @@ struct UserService {
     }
     
     static func fetchCurrentUserInfo(completion: @escaping (UserInfoModel?)->Void) {
-        guard let userUID = CURRENT_USER?.uid else { completion((nil)); return }
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        appDelegate.pList.synchronize()
+        guard let userUID = appDelegate.pList.string(forKey: CURRENT_USER_UID) else  { return }
         COLLECTION_USERS.document(userUID).getDocument() { documentSnapshot, error in
             guard error == nil else { return }
             guard let document = documentSnapshot else { return }
@@ -93,7 +95,10 @@ extension UserService {
 extension UserService {
     
     static func follow(uid: String, completion: @escaping(FiresotreCompletion)) {
-        guard let currentUid = CURRENT_USER?.uid else  { return }
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        appDelegate.pList.synchronize()
+        guard let currentUid = appDelegate.pList.string(forKey: CURRENT_USER_UID) else { return }
+        
         COLLECTION_FOLLOWING.document(currentUid).collection("user-following").document(uid).setData([:]) { _ in
             COLLECTION_FOLLOWERS.document(uid).collection("user-followers").document(currentUid).setData([:], completion: completion)
             
@@ -101,7 +106,9 @@ extension UserService {
     }
     
     static func unfollow(uid: String, completion: @escaping(FiresotreCompletion)) {
-        guard let currentUid = CURRENT_USER?.uid else { return }
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        appDelegate.pList.synchronize()
+        guard let currentUid = appDelegate.pList.string(forKey: CURRENT_USER_UID) else { return }
         
         COLLECTION_FOLLOWING.document(currentUid).collection("user-following").document(uid).delete() { _ in
             COLLECTION_FOLLOWERS.document(uid).collection("user-followers").document(currentUid).delete(completion: completion)
@@ -109,4 +116,15 @@ extension UserService {
         }
     }
     
+    
+    static func checkIfUserIsFollowd(uid: String, completion: @escaping(Bool) -> Void) {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        appDelegate.pList.synchronize()
+        guard let currentUid = appDelegate.pList.string(forKey: CURRENT_USER_UID) else { return }
+        
+        COLLECTION_FOLLOWING.document(currentUid).collection("user-following").document(uid).getDocument() { document, _ in
+            guard let isFollowd = document?.exists else { return }
+            completion(isFollowd)
+        }
+    }
 }

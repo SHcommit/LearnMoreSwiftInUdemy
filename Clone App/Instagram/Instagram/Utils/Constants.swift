@@ -32,7 +32,10 @@ let COLLECTION_USERS = Firestore.firestore().collection(FIRESTORE_USERS)
 let COLLECTION_FOLLOWERS = Firestore.firestore().collection("followers")
 let COLLECTION_FOLLOWING = Firestore.firestore().collection("following")
 let FIRESTORE_DB = Firestore.firestore()
-let CURRENT_USER = Auth.auth().currentUser
 let STORAGE = Storage.storage()
 let AUTH = Auth.auth()
 let USERPROFILEIMAGEMEGABYTE = Int64(1*1024*1024)
+
+
+//MARK: - UserDefaults
+let CURRENT_USER_UID = "currentUserUID"
