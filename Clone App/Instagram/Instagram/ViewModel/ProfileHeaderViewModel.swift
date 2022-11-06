@@ -13,10 +13,12 @@ class ProfileHeaderViewModel {
     //MARK: - Properties
     private var user: UserInfoModel
     private var profileImage : UIImage?
+    private var userStats: Userstats?
     
     //MARK: - LifeCycle
-    init(user: UserInfoModel, profileImage image: UIImage? = nil) {
+    init(user: UserInfoModel, profileImage image: UIImage? = nil, userStats: Userstats? = nil) {
         self.user = user
+        self.userStats = userStats
         if image == nil {
             fetchImage() { image in
                 self.profileImage = image
@@ -53,6 +55,19 @@ extension ProfileHeaderViewModel {
         return user
     }
     
+    func numberOfFollowers() -> NSAttributedString {
+        return attributedStatText(value: userStats?.followers ?? 0, label: "followers")
+    }
+    
+    func numberOfFollowing() -> NSAttributedString {
+        return attributedStatText(value: userStats?.following ?? 0, label: "following")
+    }
+    
+    func numberOfPosts() -> NSAttributedString {
+        //guard let userStats = userStats else { fatalError() }
+        return attributedStatText(value: 5, label: "posts")
+    }
+    
 }
 
 
@@ -72,6 +87,13 @@ extension ProfileHeaderViewModel {
     func followButtonTextColor() -> UIColor {
         return user.isCurrentUser ? .black : .white
     }
+    
+    func attributedStatText(value: Int, label: String) -> NSAttributedString {
+        let attributedText = NSMutableAttributedString(string: "\(value)\n" ,attributes: [.font: UIFont.boldSystemFont(ofSize: 14)])
+        attributedText.append(NSAttributedString(string: label, attributes: [.font: UIFont.systemFont(ofSize: 14), .foregroundColor: UIColor.lightGray]))
+        return attributedText
+    }
+    
 }
 
 

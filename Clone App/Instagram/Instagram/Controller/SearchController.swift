@@ -30,10 +30,7 @@ class SearchController: UITableViewController {
         super.viewDidLoad()
         configure()
     }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        tableView.reloadData()
-    }
+
 }
 
 
@@ -104,6 +101,9 @@ extension SearchController {
             cell.userVM?.fetchImage() {
                 cell.configureImage()
             }
+            cell.userVM?.fetchUserStats() {
+                
+            }
         }
         return cell
     }
@@ -119,7 +119,7 @@ extension SearchController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let cell = tableView.cellForRow(at: indexPath) as? SearchedUserCell else {fatalError("DEBUG: Fail to fild reusableCell in SearchController")}
         guard let user = cell.userVM else { return }
-        let vc = ProfileController(profileVM: ProfileHeaderViewModel(user: user.userInfoModel(), profileImage: user.image()))
+        let vc = ProfileController(profileVM: ProfileHeaderViewModel(user: user.userInfoModel(), profileImage: user.image(), userStats: user.stats))
         self.navigationController?.pushViewController(vc, animated: true)
     }
 }

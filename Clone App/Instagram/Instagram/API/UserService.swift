@@ -127,4 +127,16 @@ extension UserService {
             completion(isFollowd)
         }
     }
+    
+    static func fetchUserStats(uid: String, completion: @escaping(Userstats) -> Void) {
+        COLLECTION_FOLLOWERS.document(uid).collection("user-followers").getDocuments() { document, error in
+            let followers = document?.documents.count ?? 0
+            
+            COLLECTION_FOLLOWING.document(uid).collection("user-following").getDocuments() { document, error in
+                let following = document?.documents.count ?? 0
+                
+                completion(Userstats(followers: followers, following: following))
+            }
+        }
+    }
 }

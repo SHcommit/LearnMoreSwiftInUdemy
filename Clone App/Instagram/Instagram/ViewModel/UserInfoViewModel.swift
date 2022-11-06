@@ -11,17 +11,30 @@ class UserInfoViewModel {
     
     //MARK: - Properties
     private var user: UserInfoModel
+    private var userStats: Userstats?
     private var profileImage : UIImage?
     
+    
     //MARK: - LifeCycle
-    init(user: UserInfoModel, profileImage image: UIImage? = nil) {
+    init(user: UserInfoModel, profileImage image: UIImage? = nil, stats: Userstats? = nil) {
         self.user = user
         profileImage = image
+        userStats = stats
     }
     
 }
 
 extension UserInfoViewModel {
+    
+    var stats: Userstats {
+        get {
+            guard let userStats = userStats else { return Userstats(followers: -1, following: -1) }
+            return userStats
+        }
+        set(value) {
+            userStats = value
+        }
+    }
     
     //MARK: - Get user value
     func username() -> String {
@@ -52,6 +65,7 @@ extension UserInfoViewModel {
         return profileImage
     }
     
+    
 }
 
 //MARK: - API
@@ -69,4 +83,11 @@ extension UserInfoViewModel {
         }
     }
     
+    func fetchUserStats(completion: @escaping () -> Void) {
+        UserService.fetchUserStats(uid: user.uid) { stats in
+            self.userStats = stats
+            completion()
+        }
+    }
+
 }

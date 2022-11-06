@@ -11,6 +11,11 @@ class ProfileController: UICollectionViewController {
     
     //MARK: - properties
     private var user: UserInfoModel
+    private var userStats: Userstats? {
+        didSet {
+            collectionView.reloadData()
+        }
+    }
     var profileImage: UIImage? {
         didSet {
             collectionView.reloadData()
@@ -37,9 +42,12 @@ class ProfileController: UICollectionViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupCollectionView()
+        checkIfUserIsFollowed()
+        fetchUserStats()
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        fetchUserStats()
         collectionView.reloadData()
     }
 
@@ -56,6 +64,24 @@ extension ProfileController {
     
 }
 
+//MARK: - API
+extension ProfileController {
+    
+    func checkIfUserIsFollowed() {
+        UserService.checkIfUserIsFollowd(uid: user.uid) { isFollowed in
+            self.user.isFollowed = isFollowed
+            self.collectionView.reloadData()
+            
+        }
+    }
+    
+    func fetchUserStats() {
+        UserService.fetchUserStats(uid: user.uid) { stats in
+            self.userStats = stats
+            self.collectionView.reloadData()
+        }
+    }
+}
 
 //MARK: - UICollectionViewDataSource
 extension ProfileController {
@@ -73,7 +99,7 @@ extension ProfileController {
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         guard let headerView =  collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: COLLECTIONHEADERREUSEABLEID, for: indexPath) as? ProfileHeader else { fatalError() }
         headerView.delegate = self
-        headerView.userVM = ProfileHeaderViewModel(user: self.user, profileImage: self.profileImage)
+        headerView.userVM = ProfileHeaderViewModel(user: self.user, profileImage: self.profileImage, userStats: userStats )
         return headerView
     }
 
@@ -109,13 +135,25 @@ extension ProfileController: ProfileHeaderDelegate {
         if user.isCurrentUser {
             print("DEBUG: Show edit profile here..")
         }else if user.isFollowed {
-            print("DEBUG: Handle unFollow user here")
+            DispatchQueue.main.async {
+                UserService.unfollow(uid: user.uid) { _ in
+                    self.user.isFollowed = false
+                    UserService.fetchUserStats(uid: user.uid) { stats in
+                        self.userStats = stats
+                        self.collectionView.reloadData()
+                    }
+                }
+            }
         }else {
-            UserService.follow(uid: user.uid) { error in
-                self.user.isFollowed = true
-                self.collectionView.reloadData()
+            DispatchQueue.main.async {
+                UserService.follow(uid: user.uid) { _ in
+                    self.user.isFollowed = true
+                    UserService.fetchUserStats(uid: user.uid) { stats in
+                        self.userStats = stats
+                        self.collectionView.reloadData()
+                    }
+                }
             }
         }
-        
     }
 }

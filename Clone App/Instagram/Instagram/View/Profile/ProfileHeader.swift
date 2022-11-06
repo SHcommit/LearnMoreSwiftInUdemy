@@ -58,7 +58,11 @@ extension ProfileHeader {
         guard let userVM = userVM else { return }
         nameLabel.text = userVM.username()
         editProfileFollowButton.setTitle(userVM.followButtonText(), for: .normal)
-        
+        editProfileFollowButton.setTitleColor(userVM.followButtonTextColor(), for: .normal)
+        editProfileFollowButton.backgroundColor = userVM.followButtonBackgroundColor()
+        postLabel.attributedText = userVM.numberOfPosts()
+        followersLabel.attributedText = userVM.numberOfFollowers()
+        followingLabel.attributedText = userVM.numberOfFollowing()
         if userVM.image() == nil {
             fetchImage() {}
         }else {
@@ -188,7 +192,7 @@ extension ProfileHeader {
     
     func initialEditProfileFollowButton() -> UIButton {
         let button = UIButton(type: .system)
-        button.setTitle("Edit Profile", for: .normal)
+        button.setTitle("Loading", for: .normal)
         button.layer.cornerRadius = 3
         button.layer.borderColor = UIColor.lightGray.cgColor
         button.layer.borderWidth = 0.5
@@ -205,7 +209,6 @@ extension ProfileHeader {
         let label = UILabel()
         label.numberOfLines = 0
         label.textAlignment = .center
-        label.attributedText = attributedStatText(value: 7, label: "posts")
         return label
     }
     
@@ -213,7 +216,6 @@ extension ProfileHeader {
         let label = UILabel()
         label.numberOfLines = 0
         label.textAlignment = .center
-        label.attributedText = attributedStatText(value: 21, label: "followers")
         return label
     }
     
@@ -221,7 +223,6 @@ extension ProfileHeader {
         let label = UILabel()
         label.numberOfLines = 0
         label.textAlignment = .center
-        label.attributedText = attributedStatText(value: 19, label: "following")
         return label
     }
     
@@ -320,12 +321,3 @@ extension ProfileHeader {
     
 }
 
-
-//MARK: - Helpers
-extension ProfileHeader {
-    func attributedStatText(value: Int, label: String) -> NSAttributedString {
-        let attributedText = NSMutableAttributedString(string: "\(value)\n" ,attributes: [.font: UIFont.boldSystemFont(ofSize: 14)])
-        attributedText.append(NSAttributedString(string: label, attributes: [.font: UIFont.systemFont(ofSize: 14), .foregroundColor: UIColor.lightGray]))
-        return attributedText
-    }
-}
