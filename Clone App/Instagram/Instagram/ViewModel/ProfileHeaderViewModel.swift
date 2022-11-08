@@ -20,8 +20,12 @@ class ProfileHeaderViewModel {
         self.user = user
         self.userStats = userStats
         if image == nil {
-            fetchImage() { image in
-                self.profileImage = image
+            DispatchQueue.global().async {
+                self.fetchImage() { image in
+                    DispatchQueue.main.async {
+                        self.profileImage = image
+                    }
+                }
             }
         }else {
             profileImage = image
