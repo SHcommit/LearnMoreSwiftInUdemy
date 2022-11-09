@@ -4,7 +4,7 @@
 <dict>
 	<key>FirebaseAutomaticScreenReportingEnabled</key>
 	<false/>
-	<key>FirebaseAppFirebaseAppDelegateProxyEnabled</key>
+	<key>FirebaseAppDelegateProxyEnabled</key>
 	<false/>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
