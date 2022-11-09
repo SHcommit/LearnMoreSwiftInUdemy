@@ -9,6 +9,7 @@ import Firebase
 import FirebaseFirestore
 
 
+
 struct UserService {
     
     static func updateCurrentUserInfo(CodableType info: UserInfoModel) {
