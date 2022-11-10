@@ -124,6 +124,22 @@ extension MainHomeTabController {
     
 }
 
+//MARK: - Event Handler
+extension MainHomeTabController {
+    func didFinishPickingMedia(_ picker: YPImagePicker) {
+        picker.didFinishPicking { items, _ in
+            picker.dismiss(animated: true) {
+                guard let selectedImage = items.singlePhoto?.image else { return }
+                
+                let vc = UploadPostController()
+                let nav = UINavigationController(rootViewController: vc)
+                nav.modalPresentationStyle = .fullScreen
+                self.present(nav, animated: true)
+            }
+        }
+    }
+}
+
 //MARK: - Setup tabBar UI
 extension MainHomeTabController {
     
@@ -212,6 +228,7 @@ extension MainHomeTabController: UITabBarControllerDelegate {
             let picker = YPImagePicker(configuration: config)
             picker.modalPresentationStyle = .fullScreen
             present(picker, animated: true)
+            didFinishPickingMedia(picker)
         }
         return true
     }
