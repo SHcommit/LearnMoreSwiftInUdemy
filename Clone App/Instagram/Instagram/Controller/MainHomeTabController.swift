@@ -7,6 +7,7 @@
 
 import UIKit
 import Firebase
+import YPImagePicker
 
 class MainHomeTabController: UITabBarController {
     
@@ -53,6 +54,7 @@ extension MainHomeTabController {
     func configure() {
         customTabBarUI()
         isLogin = isUserLogined()
+        delegate = self
     }
     
     func isLoginConfigure() {
@@ -193,4 +195,26 @@ extension MainHomeTabController: AuthentificationDelegate {
         self.dismiss(animated: false)
     }
     
+}
+
+//MAKR: -  UITabBarControllerDelegate
+extension MainHomeTabController: UITabBarControllerDelegate {
+    func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
+        let index = viewControllers?.firstIndex(of: viewController)
+        if index == 2 {
+            var config = YPImagePickerConfiguration()
+            config.library.mediaType = .photo
+            config.shouldSaveNewPicturesToAlbum = false
+            config.startOnScreen = .library
+            config.screens = [.library]
+            config.hidesStatusBar = false
+            config.hidesBottomBar = false
+            config.library.maxNumberOfItems = 1
+            
+            let picker = YPImagePicker(configuration: config)
+            picker.modalPresentationStyle = .fullScreen
+            present(picker, animated: true)
+        }
+        return true
+    }
 }
