@@ -12,6 +12,7 @@ class UploadPostController: UIViewController {
     //MARK: - Properties
     private let photoImageView: UIImageView = initPhotoImageView()
     private let contentsTextView: UITextView = initContentsTextView()
+    private let charCountLabel: UILabel = initCharCountLabel()
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -55,11 +56,13 @@ extension UploadPostController {
     func setupSubviews() {
         view.addSubview(photoImageView)
         view.addSubview(contentsTextView)
+        view.addSubview(charCountLabel)
     }
     
     func setupSubviewsConstraints() {
         setupPhotoImageViewConstraints()
         setupContentsTextViewConstraints()
+        setupCharCountLabelConstraints()
     }
 }
 
@@ -81,6 +84,15 @@ extension UploadPostController {
         tv.translatesAutoresizingMaskIntoConstraints = false
         return tv
     }
+    
+    static func initCharCountLabel() -> UILabel {
+        let lb = UILabel()
+        lb.translatesAutoresizingMaskIntoConstraints = false
+        lb.textColor = .lightGray
+        lb.font = UIFont.systemFont(ofSize: 14)
+        lb.text = "0/100"
+        return lb
+    }
 }
 
 
@@ -101,6 +113,12 @@ extension UploadPostController {
             contentsTextView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: UPLOAD_POST_CONTENT_SIDE_MARGIN),
             contentsTextView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: UPLOAD_POST_CONTENT_SIDE_MARGIN),
             contentsTextView.heightAnchor.constraint(equalToConstant: UPLOAD_POST_CONTENT_VIEW_SIZE)])
+    }
+    
+    func setupCharCountLabelConstraints() {
+        NSLayoutConstraint.activate([
+            charCountLabel.topAnchor.constraint(equalTo: contentsTextView.bottomAnchor, constant: UPLOAD_POST_CONTENT_SIDE_MARGIN),
+            charCountLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -UPLOAD_POST_CONTENT_SIDE_MARGIN)])
     }
     
 }
