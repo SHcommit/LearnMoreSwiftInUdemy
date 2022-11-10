@@ -11,7 +11,7 @@ class ImageSelectorController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemYellow
+        view.backgroundColor = .white
         navigationItem.title = "imageSelector"
     }
 }
