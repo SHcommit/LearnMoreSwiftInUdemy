@@ -11,8 +11,9 @@ class UploadPostController: UIViewController {
     
     //MARK: - Properties
     private let photoImageView: UIImageView = initPhotoImageView()
-    private let contentsTextView: UITextView = initContentsTextView()
-    private let charCountLabel: UILabel = initCharCountLabel()
+    private lazy var contentsTextView: InputTextView = initContentsTextView()
+    private var charCountLabel: UILabel = initCharCountLabel()
+    
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,7 +38,6 @@ extension UploadPostController {
 
     }
 }
-
 
 //MARK: - Event Hanlder
 extension UploadPostController {
@@ -79,14 +79,18 @@ extension UploadPostController {
         return iv
     }
     
-    static func initContentsTextView() -> UITextView {
-        let tv = UITextView()
+    func initContentsTextView() -> InputTextView {
+        let tv = InputTextView()
         tv.translatesAutoresizingMaskIntoConstraints = false
+        tv.placeholderText = "Enter caption.."
+        tv.font = UIFont.systemFont(ofSize: 16)
+        tv.textDelegate = self
         return tv
     }
     
     static func initCharCountLabel() -> UILabel {
         let lb = UILabel()
+        
         lb.translatesAutoresizingMaskIntoConstraints = false
         lb.textColor = .lightGray
         lb.font = UIFont.systemFont(ofSize: 14)
@@ -95,6 +99,13 @@ extension UploadPostController {
     }
 }
 
+extension UploadPostController: InputTextCountDelegate {
+    func inputTextCount(withCount cnt: Int) {
+        DispatchQueue.main.async {
+            self.charCountLabel.text = "\(cnt)/100"
+        }
+    }
+}
 
 //MARK: - AutoLayout subview's constraint
 extension UploadPostController {
