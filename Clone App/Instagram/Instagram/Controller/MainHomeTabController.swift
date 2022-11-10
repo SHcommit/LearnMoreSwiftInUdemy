@@ -170,8 +170,6 @@ extension MainHomeTabController {
         return true
     }
     
-    
-    
     func presentLoginScene() {
         let controller = LoginController()
         controller.authDelegate = self
