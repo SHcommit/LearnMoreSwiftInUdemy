@@ -45,6 +45,8 @@ extension InputTextView: UITextViewDelegate {
         }
         textDelegate?.inputTextCount(withCount: text.count)
     }
+    
+    
 }
 
 //MARK: - Setup subviews
