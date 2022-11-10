@@ -128,13 +128,13 @@ extension MainHomeTabController {
 extension MainHomeTabController {
     func didFinishPickingMedia(_ picker: YPImagePicker) {
         picker.didFinishPicking { items, _ in
-            picker.dismiss(animated: true) {
+            picker.dismiss(animated: false) {
                 guard let selectedImage = items.singlePhoto?.image else { return }
                 
                 let vc = UploadPostController()
                 let nav = UINavigationController(rootViewController: vc)
                 nav.modalPresentationStyle = .fullScreen
-                self.present(nav, animated: true)
+                self.present(nav, animated: false)
             }
         }
     }
