@@ -28,7 +28,9 @@ class MainHomeTabController: UITabBarController {
     
     private var isLogin: Bool? {
         didSet {
-            isLoginConfigure()
+            async{
+                await isLoginConfigure()
+            }
         }
     }
     
@@ -55,7 +57,7 @@ extension MainHomeTabController {
         isLogin = isUserLogined()
     }
     
-    func isLoginConfigure() {
+    func isLoginConfigure() async {
         guard let isLogin = isLogin else { return }
         if !isLogin {
             DispatchQueue.main.async {
@@ -67,7 +69,7 @@ extension MainHomeTabController {
                 appDelegate.pList.synchronize()
                 guard let currentUserUID = appDelegate.pList.string(forKey: CURRENT_USER_UID) else { return }
                         
-                fetchUserInfo(withUID: currentUserUID)
+                await fetchUserInfo(withUID: currentUserUID)
                 return
             }
         }
@@ -148,10 +150,24 @@ extension MainHomeTabController {
 extension MainHomeTabController {
     
     //MARK: - API. About User
-    func fetchUserInfo(withUID uid: String) {
-        UserService.fetchUserInfo(withUid: uid) { userInfo in
-            guard let userInfo = userInfo else { return }
+    func fetchUserInfo(withUID uid: String) async {
+//        UserService.fetchUserInfo(withUid: uid) { userInfo in
+//            guard let userInfo = userInfo else { return }
+//            self.userVM = UserInfoViewModel(user: userInfo, profileImage: nil)
+//        }
+//
+        do{
+            guard let userInfo = try await UserService.fetchUserInfo(withUid: uid) else { throw FetchUserError.invalidUserInfo }
             self.userVM = UserInfoViewModel(user: userInfo, profileImage: nil)
+        }catch {
+            switch error {
+            case FetchUserError.invalidUserInfo:
+                print("DEBUG: Fail to bind userInfo instance.")
+            case FetchUserError.invalidGetDocumentUserUID:
+                print("DEBUG: Fail to get user document with UID.")
+            default:
+                print("DEBUG: An error occured: \(error.localizedDescription)")
+            }
         }
     }
     
@@ -182,13 +198,22 @@ extension MainHomeTabController {
 
 //MARK: - Implement AuthentificationDelegate
 extension MainHomeTabController: AuthentificationDelegate {
-    func authenticationCompletion(uid: String) {
+    func authenticationCompletion(uid: String) async {
         guard let appDelegaet = UIApplication.shared.delegate as? AppDelegate else  { return }
         appDelegaet.pList.set(uid, forKey: CURRENT_USER_UID)
         
-        UserService.fetchUserInfo(withUid: uid) { userInfo in
+//        UserService.fetchUserInfo(withUid: uid) { userInfo in
+//            guard let userInfo = userInfo else { return }
+//            self.userVM = UserInfoViewModel(user: userInfo, profileImage: nil)
+//        }
+        do{
+            let userInfo = try await UserService.fetchUserInfo(withUid: uid)
             guard let userInfo = userInfo else { return }
             self.userVM = UserInfoViewModel(user: userInfo, profileImage: nil)
+        }catch FetchUserError.invalidGetDocumentUserUID {
+            print("DEBUG: Fail to get user document with UID.")
+        }catch {
+            print("DEBUG: Ocurred error \(error.localizedDescription)")
         }
         self.dismiss(animated: false)
     }

@@ -8,7 +8,10 @@
 import Firebase
 import FirebaseFirestore
 
-
+enum FetchUserError: Error {
+    case invalidGetDocumentUserUID
+    case invalidUserInfo
+}
 
 struct UserService {
     
@@ -17,17 +20,23 @@ struct UserService {
         COLLECTION_USERS.document(info.uid).updateData(encodedUserModel)
         
     }
-    static func fetchUserInfo(withUid uid: String, completion: @escaping (UserInfoModel?) -> Void) {
-        COLLECTION_USERS.document(uid).getDocument() { DocumentSnapshot, error in
-            guard error == nil else {return}
-            guard let document = DocumentSnapshot else { return }
-            do {
-                completion(try document.data(as: UserInfoModel.self))
-            }catch let e {
-                completion(nil)
-                print("Fail decode user document field : \(e.localizedDescription)")
-            }
+    static func fetchUserInfo(withUid uid: String) async throws -> UserInfoModel? {
+        let result = try await COLLECTION_USERS.document(uid).getDocument()
+        if result.exists {
+            return try result.data(as: UserInfoModel.self)
+        }else {
+            throw FetchUserError.invalidGetDocumentUserUID
         }
+        
+//        COLLECTION_USERS.document(uid).getDocument() { DocumentSnapshot, error in
+//            do {
+//                completion(try document.data(as: UserInfoModel.self))
+//            }catch let e {
+//                completion(nil)
+//                print("Fail decode user document field : \(e.localizedDescription)")
+//            }
+//
+//        }
     }
     
     static func fetchCurrentUserInfo(completion: @escaping (UserInfoModel?)->Void) {

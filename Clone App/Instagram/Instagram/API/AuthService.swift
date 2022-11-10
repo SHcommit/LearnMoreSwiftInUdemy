@@ -8,10 +8,14 @@
 import Firebase
 import FirebaseFirestore
 
+enum AuthError {
+    case invalidUserIDPW
+}
+
 struct AuthService {
     
-    static func handleIsLoginAccount(email: String, pw: String, completion: @escaping (AuthDataResult?,Error?)-> Void) {
-        AUTH.signIn(withEmail: email, password: pw, completion: completion)
+    static func handleIsLoginAccount(email: String, pw: String) async throws -> AuthDataResult? {
+        return try await AUTH.signIn(withEmail: email, password: pw)
     }
     
     static func registerUser(withUserInfo info: RegistrationViewModel, completion: @escaping (Error?)->Void) {
