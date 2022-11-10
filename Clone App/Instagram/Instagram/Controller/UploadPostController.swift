@@ -39,6 +39,17 @@ extension UploadPostController {
     }
 }
 
+//MARK: - Helpers
+extension UploadPostController {
+    
+    func checkMaxLine(_ textView: UITextView, maxLength: Int) {
+        if textView.text.count > maxLength {
+            textView.deleteBackward()
+        }
+    }
+    
+}
+
 //MARK: - Event Hanlder
 extension UploadPostController {
     @objc func didTapCancel() {
@@ -102,6 +113,7 @@ extension UploadPostController {
 extension UploadPostController: InputTextCountDelegate {
     func inputTextCount(withCount cnt: Int) {
         DispatchQueue.main.async {
+            self.checkMaxLine(self.contentsTextView, maxLength: 100)
             self.charCountLabel.text = "\(cnt)/100"
         }
     }
@@ -122,7 +134,7 @@ extension UploadPostController {
         NSLayoutConstraint.activate([
             contentsTextView.topAnchor.constraint(equalTo: photoImageView.bottomAnchor, constant: UPLOAD_POST_CONTENT_TOP_MARGIN),
             contentsTextView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: UPLOAD_POST_CONTENT_SIDE_MARGIN),
-            contentsTextView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: UPLOAD_POST_CONTENT_SIDE_MARGIN),
+            contentsTextView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -UPLOAD_POST_CONTENT_SIDE_MARGIN),
             contentsTextView.heightAnchor.constraint(equalToConstant: UPLOAD_POST_CONTENT_VIEW_SIZE)])
     }
     
