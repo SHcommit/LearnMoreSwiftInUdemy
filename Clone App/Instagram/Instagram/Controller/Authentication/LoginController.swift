@@ -79,19 +79,6 @@ extension LoginController {
                 print("DEBUG: Failure an occured error: \(error.localizedDescription) ")
             }
         }
-        
-        
-//        { [self] result,error in
-//            if let error = error {
-//                print("Fail login.")
-//                return
-//            }
-//            guard let result = result else { return }
-//            endIndicator(indicator: indicator)
-//            vc.view.isHidden = false
-//            await authDelegate?.authenticationCompletion(uid: result.user.uid)
-//        }
-        endIndicator(indicator: indicator)
     }
     
     @objc func didTapHelpButton(_ sender: Any) {
