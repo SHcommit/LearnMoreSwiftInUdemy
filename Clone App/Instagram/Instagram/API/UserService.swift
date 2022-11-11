@@ -15,6 +15,11 @@ enum FetchUserError: Error {
     case invalidUserStats
 }
 
+enum SystemError: Error {
+    case invalidAppDelegateInstance
+    case invalidCurrentUserUID
+}
+
 //MARK: - Firestore user default info
 struct UserService {
     
@@ -33,20 +38,16 @@ struct UserService {
         }
     }
     
-    static func fetchCurrentUserInfo(completion: @escaping (UserInfoModel?)->Void) {
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+    static func fetchCurrentUserInfo() async throws -> UserInfoModel? {
+        let currentUserUID = try await currentUserLogindUID()
+        return try await fetchUserInfo(withUid: currentUserUID)
+    }
+    
+    static func currentUserLogindUID() async throws -> String {
+        guard let appDelegate = await UIApplication.shared.delegate as? AppDelegate else { throw SystemError.invalidAppDelegateInstance }
         appDelegate.pList.synchronize()
-        guard let userUID = appDelegate.pList.string(forKey: CURRENT_USER_UID) else  { return }
-        COLLECTION_USERS.document(userUID).getDocument() { documentSnapshot, error in
-            guard error == nil else { return }
-            guard let document = documentSnapshot else { return }
-            do {
-                completion(try document.data(as: UserInfoModel.self))
-            }catch let e {
-                completion(nil)
-                print("Fail decode user document field : \(e.localizedDescription)")
-            }
-        }
+        guard let userUID = appDelegate.pList.string(forKey: CURRENT_USER_UID) else { throw SystemError.invalidCurrentUserUID }
+        return userUID
     }
 
 }

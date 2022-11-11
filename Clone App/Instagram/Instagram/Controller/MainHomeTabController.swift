@@ -65,11 +65,7 @@ extension MainHomeTabController {
             }
         }else {
             guard let userVM = userVM else {
-                guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
-                appDelegate.pList.synchronize()
-                guard let currentUserUID = appDelegate.pList.string(forKey: CURRENT_USER_UID) else { return }
-                        
-                await fetchUserInfo(withUID: currentUserUID)
+                await fetchCurrentUserInfo()
                 return
             }
         }
@@ -156,32 +152,72 @@ extension MainHomeTabController {
                 vc.profileImage = image
             }
         } catch {
-            switch error {
-            case FetchUserError.invalidUserProfileImage :
-                print("DEBUG: Failure invalid user profile image instance")
-            default:
-                print("DEBUG: Unexpected error occured  :\(error.localizedDescription)")
-            }
+            fetchImageErrorHandling(withError: error)
+        }
+    }
+    func fetchImageErrorHandling(withError error: Error) {
+        switch error {
+        case FetchUserError.invalidUserProfileImage :
+            print("DEBUG: Failure invalid user profile image instance")
+        default:
+            print("DEBUG: Unexpected error occured  :\(error.localizedDescription)")
         }
     }
 
-    
-    //MARK: - API. About User
     func fetchUserInfo(withUID uid: String) async {
         do{
-            guard let userInfo = try await UserService.fetchUserInfo(withUid: uid) else { throw FetchUserError.invalidUserInfo }
-            self.userVM = UserInfoViewModel(user: userInfo, profileImage: nil)
+            try await fetchUserInfoFromUserService(withUID: uid)
         }catch {
-            switch error {
-            case FetchUserError.invalidUserInfo:
-                print("DEBUG: Fail to bind userInfo instance.")
-            case FetchUserError.invalidGetDocumentUserUID:
-                print("DEBUG: Fail to get user document with UID.")
-            default:
-                print("DEBUG: An error occured: \(error.localizedDescription)")
-            }
+            fetchUserInfoErrorHandling(withError: error)
         }
     }
+    func fetchUserInfoErrorHandling(withError error: Error) {
+        switch error {
+        case FetchUserError.invalidUserInfo:
+            print("DEBUG: Fail to bind userInfo instance.")
+        case FetchUserError.invalidGetDocumentUserUID:
+            print("DEBUG: Fail to get user document with UID.")
+        default:
+            print("DEBUG: An error occured: \(error.localizedDescription)")
+        }
+
+    }
+    
+    func fetchCurrentUserInfo() async {
+        do {
+            try await fetchUserInfoFromUserService()
+        } catch {
+            fetchCurrentUserInfoErrorHandling(withError: error)
+        }
+    }
+    func fetchUserInfoFromUserService(withUID uid: String? = nil) async throws {
+        guard let uid = uid else {
+            guard let userInfo = try await UserService.fetchCurrentUserInfo() else { throw FetchUserError.invalidUserInfo }
+            DispatchQueue.main.async {
+                self.userVM = UserInfoViewModel(user: userInfo)
+            }
+            return
+        }
+        guard let userInfo = try await UserService.fetchUserInfo(withUid: uid) else { throw FetchUserError.invalidUserInfo }
+        self.userVM = UserInfoViewModel(user: userInfo, profileImage: nil)
+    }
+    
+    func fetchCurrentUserInfoErrorHandling(withError error: Error) {
+        switch error {
+        case FetchUserError.invalidUserInfo:
+            print("DEBUG: Fail to bind userInfo instance.")
+        case FetchUserError.invalidGetDocumentUserUID:
+            print("DEBUG: Fail to get user document with UID.")
+        case SystemError.invalidCurrentUserUID:
+            print("DEBUG: Fail to find user's UID value")
+        case SystemError.invalidAppDelegateInstance:
+            print("DEBUG: Fail to bind AppDelegate instance")
+        default:
+            print("DEBUG: An error occured: \(error.localizedDescription)")
+        }
+
+    }
+    
     
     //MARK: - API. check user's membership
     func isUserLogined() -> Bool {
@@ -195,7 +231,6 @@ extension MainHomeTabController {
         }
         return true
     }
-    
     
     
     func presentLoginScene() {
@@ -214,10 +249,6 @@ extension MainHomeTabController: AuthentificationDelegate {
         guard let appDelegaet = UIApplication.shared.delegate as? AppDelegate else  { return }
         appDelegaet.pList.set(uid, forKey: CURRENT_USER_UID)
         
-//        UserService.fetchUserInfo(withUid: uid) { userInfo in
-//            guard let userInfo = userInfo else { return }
-//            self.userVM = UserInfoViewModel(user: userInfo, profileImage: nil)
-//        }
         do{
             let userInfo = try await UserService.fetchUserInfo(withUid: uid)
             guard let userInfo = userInfo else { return }
