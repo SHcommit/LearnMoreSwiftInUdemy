@@ -7,7 +7,8 @@
 
 import FirebaseStorage
 
-struct ImageUploader {
+//MARK: - Firebase storage upload image
+struct UserProfileImageService {
     
     static func uploadImage(image: UIImage, completion: @escaping(String) -> Void) {
         guard let imageData = image.jpegData(compressionQuality: 0.75) else { return }
@@ -25,4 +26,15 @@ struct ImageUploader {
             }
         }
     }
+}
+
+//MARK: - Firebase storage download image
+extension UserProfileImageService {
+    
+    static func fetchUserProfile(userProfile url: String) async throws -> UIImage {
+        let data = try await STORAGE.reference(forURL: url).data(maxSize: USERPROFILEIMAGEMEGABYTE)
+        guard let image = UIImage(data: data) else { throw FetchUserError.invalidUserProfileImage }
+        return image
+    }
+    
 }

@@ -28,7 +28,7 @@ class MainHomeTabController: UITabBarController {
     
     private var isLogin: Bool? {
         didSet {
-            async{
+            Task() {
                 await isLoginConfigure()
             }
         }
@@ -89,11 +89,11 @@ extension MainHomeTabController {
         let notifications = templateNavigationController(unselectedImage: .imageLiteral(name: "like_unselected"), selectedImage: .imageLiteral(name: "like_selected"), rootVC: NotificationController())
         
         let profileVC = ProfileController(user: userVM.userInfoModel())
-        DispatchQueue.main.async {
-            UserService.fetchUserProfile(userProfile: userVM.profileURL()) { image in
-                profileVC.profileImage = image
-            }
+        
+        Task() {
+            await fetchImage(profileVC: profileVC, profileUrl: userVM.profileURL())
         }
+        
         let profile = templateNavigationController(unselectedImage: .imageLiteral(name: "profile_unselected"), selectedImage: .imageLiteral(name: "profile_selected"), rootVC: profileVC)
         
         viewControllers = [feed,search,imageSelector,notifications,profile]
@@ -149,13 +149,25 @@ extension MainHomeTabController {
 //MARK: - API.
 extension MainHomeTabController {
     
+    func fetchImage(profileVC vc: ProfileController, profileUrl url: String) async {
+        do {
+            let image = try await UserProfileImageService.fetchUserProfile(userProfile: url)
+            DispatchQueue.main.async {
+                vc.profileImage = image
+            }
+        } catch {
+            switch error {
+            case FetchUserError.invalidUserProfileImage :
+                print("DEBUG: Failure invalid user profile image instance")
+            default:
+                print("DEBUG: Unexpected error occured  :\(error.localizedDescription)")
+            }
+        }
+    }
+
+    
     //MARK: - API. About User
     func fetchUserInfo(withUID uid: String) async {
-//        UserService.fetchUserInfo(withUid: uid) { userInfo in
-//            guard let userInfo = userInfo else { return }
-//            self.userVM = UserInfoViewModel(user: userInfo, profileImage: nil)
-//        }
-//
         do{
             guard let userInfo = try await UserService.fetchUserInfo(withUid: uid) else { throw FetchUserError.invalidUserInfo }
             self.userVM = UserInfoViewModel(user: userInfo, profileImage: nil)

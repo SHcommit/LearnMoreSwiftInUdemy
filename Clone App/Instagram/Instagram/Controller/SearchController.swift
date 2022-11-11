@@ -97,13 +97,14 @@ extension SearchController {
         }
         guard let userVM = userVM else { fatalError() }
         cell.userVM = isSearchMode ? UserInfoViewModel(user: filteredUsers[indexPath.row]) : userVM.cellForRowAt(indexPath.row)
+        
         DispatchQueue.global().async {
             cell.userVM?.fetchUserStats() {}
-            cell.userVM?.fetchImage() {
-                
-                DispatchQueue.main.async {
-                    cell.configureImage()
-                }
+        }
+        Task() {
+            await cell.userVM?.fetchImage()
+            DispatchQueue.main.async {
+                cell.configureImage()
             }
         }
         

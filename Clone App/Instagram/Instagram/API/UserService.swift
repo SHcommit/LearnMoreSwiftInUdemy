@@ -11,15 +11,19 @@ import FirebaseFirestore
 enum FetchUserError: Error {
     case invalidGetDocumentUserUID
     case invalidUserInfo
+    case invalidUserProfileImage
+    case invalidUserStats
 }
 
+//MARK: - Firestore user default info
 struct UserService {
     
     static func updateCurrentUserInfo(CodableType info: UserInfoModel) async throws {
         let encodedUserModel = encodeToNSDictionary(codableType: info)
-        let userDocument = await COLLECTION_USERS.document(info.uid)
+        let userDocument = COLLECTION_USERS.document(info.uid)
         try await userDocument.updateData(encodedUserModel)
     }
+    
     static func fetchUserInfo(withUid uid: String) async throws -> UserInfoModel? {
         let result = try await COLLECTION_USERS.document(uid).getDocument()
         if result.exists {
@@ -27,16 +31,6 @@ struct UserService {
         }else {
             throw FetchUserError.invalidGetDocumentUserUID
         }
-        
-//        COLLECTION_USERS.document(uid).getDocument() { DocumentSnapshot, error in
-//            do {
-//                completion(try document.data(as: UserInfoModel.self))
-//            }catch let e {
-//                completion(nil)
-//                print("Fail decode user document field : \(e.localizedDescription)")
-//            }
-//
-//        }
     }
     
     static func fetchCurrentUserInfo(completion: @escaping (UserInfoModel?)->Void) {
@@ -52,16 +46,6 @@ struct UserService {
                 completion(nil)
                 print("Fail decode user document field : \(e.localizedDescription)")
             }
-        }
-    }
-    
-    static func fetchUserProfile(userProfile url: String, completion: @escaping (UIImage?) -> Void) {
-        let storageReference = STORAGE.reference(forURL: url)
-        
-        storageReference.getData(maxSize: USERPROFILEIMAGEMEGABYTE) { data, error in
-            guard error == nil else { return }
-            guard let data = data else { completion(nil); return }
-            completion(UIImage(data: data))
         }
     }
 
