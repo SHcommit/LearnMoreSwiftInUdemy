@@ -21,7 +21,7 @@ struct AuthService {
     static func registerUser(withUserInfo info: RegistrationViewModel, completion: @escaping (Error?)->Void) {
         guard let image = info.profileImage else { return }
         
-        ImageUploader.uploadImage(image: image) { imageUrl in
+        UserProfileImageService.uploadImage(image: image) { imageUrl in
             AUTH.createUser(withEmail: info.email.value, password: info.password.value) { result, error in
                 guard error == nil else { print("Fail uploadImage: \(error?.localizedDescription)"); return }
                 guard let uid = result?.user.uid else { return }
