@@ -15,10 +15,10 @@ enum FetchUserError: Error {
 
 struct UserService {
     
-    static func updateCurrentUserInfo(CodableType info: UserInfoModel) {
+    static func updateCurrentUserInfo(CodableType info: UserInfoModel) async throws {
         let encodedUserModel = encodeToNSDictionary(codableType: info)
-        COLLECTION_USERS.document(info.uid).updateData(encodedUserModel)
-        
+        let userDocument = await COLLECTION_USERS.document(info.uid)
+        try await userDocument.updateData(encodedUserModel)
     }
     static func fetchUserInfo(withUid uid: String) async throws -> UserInfoModel? {
         let result = try await COLLECTION_USERS.document(uid).getDocument()
