@@ -21,6 +21,12 @@ class FeedCell: UICollectionViewCell {
     private lazy var shareButton: UIButton = initialShareButton()
     
     private var isSelectedLikeButton: Bool = false
+    
+    var viewModel: PostViewModel? {
+        didSet {
+            configure()
+        }
+    }
     //MARK: - Lifecycle
     
     override init(frame: CGRect) {
@@ -58,6 +64,12 @@ extension FeedCell {
 //MARK: - Helpers
 extension FeedCell {
     
+    func configure() {
+        guard let viewModel = viewModel else { return }
+        captionLabel.text = viewModel.caption
+        postImageView.image = viewModel.image
+    }
+    
     //MARK: - Initial properties
     static func initialProfileImageVIew() -> UIImageView {
         let iv = UIImageView()
@@ -88,7 +100,6 @@ extension FeedCell {
         iv.contentMode = .scaleAspectFill
         iv.clipsToBounds = true
         iv.isUserInteractionEnabled = true
-        iv.image = .imageLiteral(name: "sea")
         iv.setContentCompressionResistancePriority(UILayoutPriority(998), for: .vertical)
         return iv
     }
@@ -135,7 +146,6 @@ extension FeedCell {
     static func initialCaptionLabel() -> UILabel {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Some test caption for now"
         label.font = UIFont.boldSystemFont(ofSize: 12)
         label.setContentCompressionResistancePriority(UILayoutPriority(999), for: .vertical)
         return label

@@ -10,11 +10,14 @@ import Firebase
 
 class FeedController: UICollectionViewController {
     
+    //MARK: - Properties
+    private var posts = [PostModel]()
     
     //MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
         collectionView.register(FeedCell.self, forCellWithReuseIdentifier: FEEDCELLRESUIDENTIFIER  )
+        fetchPosts()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -47,6 +50,26 @@ extension FeedController {
     
 }
 
+//MARK: - API
+extension FeedController {
+    func fetchPosts() {
+        Task() {
+            do {
+                let posts = try await PostService.fetchPosts()
+                DispatchQueue.main.async {
+                    self.posts = posts
+                    self.collectionView.reloadData()
+                }
+            } catch {
+                switch error {
+                default:
+                    print("DEBUG: Unexpected error occured: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+}
+
 //MARK: - Event handler
 extension FeedController {
     
@@ -67,14 +90,20 @@ extension FeedController {
 extension FeedController {
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 5
+        return posts.count
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FEEDCELLRESUIDENTIFIER, for: indexPath) as? FeedCell else {
             fatalError()
         }
-        
+        cell.viewModel = PostViewModel(post: posts[indexPath.row])
+        Task() {
+            await cell.viewModel?.fetchPostImage()
+            DispatchQueue.main.async {
+                cell.configure()
+            }
+        }
         return cell
     }
 }

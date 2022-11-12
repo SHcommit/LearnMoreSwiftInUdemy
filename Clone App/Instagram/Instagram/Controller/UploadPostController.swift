@@ -21,6 +21,7 @@ class UploadPostController: UIViewController {
         didSet { photoImageView.image = selectedImage }
     }
     weak var didFinishDelegate: UploadPostControllerDelegate?
+    private var indicator: UIActivityIndicatorView = UIActivityIndicatorView(style: .medium)
     
     //MARK: - Lifecycle
     override func viewDidLoad() {
@@ -61,6 +62,7 @@ extension UploadPostController {
     }
     
     @objc func didTapShare() {
+        startIndicator(indicator: indicator)
         guard
             let image = selectedImage ,
             let caption = contentsTextView.text else { return }
@@ -68,9 +70,11 @@ extension UploadPostController {
             do {
                 try await PostService.uploadPost(caption: caption, image: image)
                 DispatchQueue.main.async {
+                    self.endIndicator(indicator: self.indicator)
                     self.didFinishDelegate?.controllerDidFinishUploadingPost(self)
                 }
             }catch {
+                endIndicator(indicator: indicator)
                 uploadPostErrorHandling(error: error)
             }
         }

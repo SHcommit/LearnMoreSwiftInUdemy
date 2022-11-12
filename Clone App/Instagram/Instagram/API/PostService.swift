@@ -11,6 +11,8 @@ import Firebase
 enum FetchPostError: Error {
     case failToRequestPostData
     case failToRequestUploadImage
+    case invalidPostsGetDocuments
+    case failToEncodePost
 }
 
 struct PostService {
@@ -20,11 +22,20 @@ struct PostService {
         ud.synchronize()
         guard let userUID = ud.string(forKey: CURRENT_USER_UID) else { throw FetchUserError.invalidGetDocumentUserUID }
         guard let url = try? await UserProfileImageService.uploadImage(image: image) else { throw FetchPostError.failToRequestUploadImage }
-        let data = ["caption": caption,
-                    "timestamp": Timestamp(date: Date()),
-                    "likes": 0, "iamgeUrl": url,
-                    "ownerUid": userUID] as [String: Any]
-        guard let _ = try? await COLLECTION_POSTS.addDocument(data: data) else { throw FetchPostError.failToRequestPostData}
+        let post = PostModel(caption: caption, timestamp: Timestamp(date: Date()), likes: 0, imageUrl: url, ownerUid: userUID)
+        let encodedPost = UserService.encodeToNSDictionary(codableType: post)
+        guard let _ = try? await COLLECTION_POSTS.addDocument(data: encodedPost) else { throw FetchPostError.failToRequestPostData}
+        
+    }
+    
+    static func fetchPosts() async throws -> [PostModel]{
+        guard let documents = try? await COLLECTION_POSTS.getDocuments().documents else { throw FetchPostError.invalidPostsGetDocuments }
+        let posts = try documents.map {
+            var post = try $0.data(as: PostModel.self)
+            post.postId = $0.documentID
+            return post
+        }
+        return posts
         
     }
 }
