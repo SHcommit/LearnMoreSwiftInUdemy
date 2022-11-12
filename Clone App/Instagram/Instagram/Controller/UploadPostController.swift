@@ -7,12 +7,20 @@
 
 import UIKit
 
+protocol UploadPostControllerDelegate: class {
+    func controllerDidFinishUploadingPost(_ controller: UploadPostController)
+}
+
 class UploadPostController: UIViewController {
     
     //MARK: - Properties
     private let photoImageView: UIImageView = initPhotoImageView()
     private lazy var contentsTextView: InputTextView = initContentsTextView()
     private var charCountLabel: UILabel = initCharCountLabel()
+    var selectedImage: UIImage? {
+        didSet { photoImageView.image = selectedImage }
+    }
+    weak var didFinishDelegate: UploadPostControllerDelegate?
     
     //MARK: - Lifecycle
     override func viewDidLoad() {
@@ -37,10 +45,6 @@ extension UploadPostController {
         setupSubviewsConstraints()
 
     }
-}
-
-//MARK: - Helpers
-extension UploadPostController {
     
     func checkMaxLine(_ textView: UITextView, maxLength: Int) {
         if textView.text.count > maxLength {
@@ -57,7 +61,33 @@ extension UploadPostController {
     }
     
     @objc func didTapShare() {
-        print("DEBUG: tap share event handing please ...")
+        guard
+            let image = selectedImage ,
+            let caption = contentsTextView.text else { return }
+        Task() {
+            do {
+                try await PostService.uploadPost(caption: caption, image: image)
+                DispatchQueue.main.async {
+                    self.didFinishDelegate?.controllerDidFinishUploadingPost(self)
+                }
+            }catch {
+                uploadPostErrorHandling(error: error)
+            }
+        }
+    }
+    
+    //API
+    func uploadPostErrorHandling(error: Error) {
+        switch error {
+        case FetchUserError.invalidGetDocumentUserUID:
+            print("DEBUG: didTapShare error occured. Invalid get docuemnt user uid")
+        case FetchPostError.failToRequestUploadImage:
+            print("DEBUG: didTapShare error occured. Fail to request user's uploadImage post")
+        case FetchPostError.failToRequestPostData:
+            print("DEBUG: didTapShare error occured. Fail to request post data")
+        default:
+            print("DEBUG: didTapShare unexcept error occured : \(error.localizedDescription) ")
+        }
     }
 }
 
@@ -86,7 +116,6 @@ extension UploadPostController {
         iv.contentMode = .scaleAspectFill
         iv.layer.cornerRadius = 10
         iv.clipsToBounds = true
-        iv.image = UIImage(imageLiteralResourceName: "girl-1")
         return iv
     }
     

@@ -86,7 +86,6 @@ extension MainHomeTabController {
         let search = templateNavigationController(unselectedImage: .imageLiteral(name: "search_unselected"), selectedImage: .imageLiteral(name: "search_selected"), rootVC: searchVC)
         
         let imageSelector = templateNavigationController(unselectedImage: .imageLiteral(name: "plus_unselected"), selectedImage: .imageLiteral(name: "plus_unselected"), rootVC: ImageSelectorController())
-        
         let notifications = templateNavigationController(unselectedImage: .imageLiteral(name: "like_unselected"), selectedImage: .imageLiteral(name: "like_selected"), rootVC: NotificationController())
         
         let profileVC = ProfileController(user: userVM.userInfoModel())
@@ -133,6 +132,8 @@ extension MainHomeTabController {
                 guard let selectedImage = items.singlePhoto?.image else { return }
                 
                 let vc = UploadPostController()
+                vc.selectedImage = selectedImage
+                vc.didFinishDelegate = self
                 let nav = UINavigationController(rootViewController: vc)
                 nav.modalPresentationStyle = .fullScreen
                 self.present(nav, animated: false)
@@ -327,4 +328,15 @@ extension MainHomeTabController: UITabBarControllerDelegate {
         }
         return true
     }
+}
+
+
+//MARK: - UploadPostControllerDelegate
+extension MainHomeTabController: UploadPostControllerDelegate {
+    func controllerDidFinishUploadingPost(_ controller: UploadPostController) {
+        selectedIndex = 0
+        controller.dismiss(animated: true)
+    }
+    
+    
 }
