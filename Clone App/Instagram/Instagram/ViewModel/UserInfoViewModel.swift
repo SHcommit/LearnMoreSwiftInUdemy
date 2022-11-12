@@ -68,21 +68,47 @@ extension UserInfoViewModel {
     
 }
 
+//MARK: - Helpers
+extension UserInfoViewModel {
+    
+    func isValidImage() -> Bool {
+        if profileImage == nil {
+           return false
+        }
+        return true
+    }
+}
+
 //MARK: - API
 extension UserInfoViewModel {
     
-    func fetchImage(completion: @escaping () -> Void) {
-        if let _ = profileImage {
-            return
-        }
-        let url = profileURL()
-        UserService.fetchUserProfile(userProfile: url) { image in
-            guard let image = image else { return }
-            self.profileImage = image
-            completion()
+    func fetchImage() async {
+        if isValidImage() { return }
+        do {
+            try await fetchProfileFromImageService()
+        } catch {
+            fetchImageErrorHandling(error: error)
         }
     }
     
+    func fetchProfileFromImageService() async throws {
+        let image = try await UserProfileImageService.fetchUserProfile(userProfile: profileURL())
+        DispatchQueue.main.async {
+            self.profileImage = image
+        }
+    }
+    
+    func fetchImageErrorHandling(error: Error) {
+        switch error {
+        case FetchUserError.invalidUserProfileImage:
+            print("DEBUG: Failure invalid user profile image instance")
+            break
+        default:
+            print("DEBUG: Failure occured unexpected error: \(error.localizedDescription)")
+        }
+    }
+    
+
     func fetchUserStats(completion: @escaping () -> Void) {
         UserService.fetchUserStats(uid: user.uid) { stats in
             self.userStats = stats

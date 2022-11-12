@@ -103,6 +103,71 @@ extension RegistrationController {
 
 }
 
+//MARK: - Setup event handler
+extension RegistrationController {
+
+    @objc func didTapLoginButton(_ sender: Any) {
+        navigationController?.popViewController(animated: true)
+    }
+    
+    @objc func didTapSignUpButton(_ sender: Any) {
+        startIndicator(indicator: indicator)
+        Task() {
+            do {
+                try await registerUserFromSignUp()
+            }catch {
+                registerUserFromSignUpErrorHandling(error: error)
+            }
+        }
+    }
+    
+    @objc func didTapPhotoButton(_ sender: Any) {
+        let picker = UIImagePickerController()
+        picker.delegate = self
+        picker.allowsEditing = true
+        present(picker, animated: true)
+        
+    }
+}
+
+
+//MARK: - UIImagePickerController delegate
+extension RegistrationController: UIImagePickerControllerDelegate {
+
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        guard let selectedImage = info[.editedImage] as? UIImage else { return }
+        vm.profileImage = selectedImage
+        updatePhotoButtonState(selectedImage)
+        
+    }
+}
+
+
+//MARK: - API
+extension RegistrationController {
+    func registerUserFromSignUp() async throws {
+        try await AuthService.registerUser(withUserInfo: vm)
+        DispatchQueue.main.async {
+            self.endIndicator(indicator: self.indicator)
+            self.navigationController?.popViewController(animated: true)
+        }
+    }
+    func registerUserFromSignUpErrorHandling(error: Error) {
+        switch error {
+        case AuthError.badImage:
+            print("DEBUG: Failure bind registerUser's info.profileImage")
+        case AuthError.invalidUserAccount:
+            print("DEBUG: Failure create user account")
+        case AuthError.invalidSetUserDataOnFireStore:
+            print("DEBUG: Failure add user Info in firestore")
+        default:
+            print("DEBUG: Unexcept error occured: \(error.localizedDescription)")
+        }
+    }
+}
+
+
+
 //MARK: - Initial subviews
 extension RegistrationController {
     
@@ -207,47 +272,5 @@ extension RegistrationController {
         NSLayoutConstraint.activate([
             readyLogInLineStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -8),
             readyLogInLineStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor)])
-    }
-}
-
-//MARK: - Setup event handler
-extension RegistrationController {
-
-    @objc func didTapLoginButton(_ sender: Any) {
-        navigationController?.popViewController(animated: true)
-    }
-    
-    @objc func didTapSignUpButton(_ sender: Any) {
-        startIndicator(indicator: indicator)
-        AuthService.registerUser(withUserInfo: vm) { [self] error in
-            if let error = error {
-                endIndicator(indicator: indicator)
-                print("DEBUG : Failed register user info in Firestore Database \(error.localizedDescription)")
-                return
-            }
-            print("DEBUG : Successful registered user with fireStore")
-            endIndicator(indicator: indicator)
-            self.navigationController?.popViewController(animated: true)
-        }
-    }
-    
-    @objc func didTapPhotoButton(_ sender: Any) {
-        let picker = UIImagePickerController()
-        picker.delegate = self
-        picker.allowsEditing = true
-        present(picker, animated: true)
-        
-    }
-}
-
-
-//MARK: - UIImagePickerController delegate
-extension RegistrationController: UIImagePickerControllerDelegate {
-
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        guard let selectedImage = info[.editedImage] as? UIImage else { return }
-        vm.profileImage = selectedImage
-        updatePhotoButtonState(selectedImage)
-        
     }
 }

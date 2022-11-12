@@ -12,7 +12,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             breakpointStackSelectionBehavior = "1"
-            type = "8"
+            type = "4"
             categories = "Hang Risk">
          </BreakpointContent>
       </BreakpointProxy>

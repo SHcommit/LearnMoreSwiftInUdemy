@@ -8,24 +8,29 @@
 import Firebase
 import FirebaseFirestore
 
+enum AuthError: Error {
+    case invalidUserIDPW
+    case badImage
+    case invalidCurrentImage
+    case invalidDownloadUrl
+    case invalidUserAccount
+    case invalidSetUserDataOnFireStore
+}
+
 struct AuthService {
     
-    static func handleIsLoginAccount(email: String, pw: String, completion: @escaping (AuthDataResult?,Error?)-> Void) {
-        AUTH.signIn(withEmail: email, password: pw, completion: completion)
+    static func handleIsLoginAccount(email: String, pw: String) async throws -> AuthDataResult? {
+        return try await AUTH.signIn(withEmail: email, password: pw)
     }
     
-    static func registerUser(withUserInfo info: RegistrationViewModel, completion: @escaping (Error?)->Void) {
-        guard let image = info.profileImage else { return }
-        
-        ImageUploader.uploadImage(image: image) { imageUrl in
-            AUTH.createUser(withEmail: info.email.value, password: info.password.value) { result, error in
-                guard error == nil else { print("Fail uploadImage: \(error?.localizedDescription)"); return }
-                guard let uid = result?.user.uid else { return }
-                let userModel = info.getUserInfoModel(uid: uid, url: imageUrl)
-                let encodedUserModel = encodeToNSDictionary(codableType: userModel)
-                COLLECTION_USERS.document(uid).setData(encodedUserModel, completion: completion)
-            }
-        }
+    static func registerUser(withUserInfo info: RegistrationViewModel) async throws {
+        guard let image = info.profileImage else { throw AuthError.badImage }
+        guard let imageUrl = try? await UserProfileImageService.uploadImage(image: image) else { throw AuthError.badImage }
+        guard let result = try? await AUTH.createUser(withEmail: info.email.value, password: info.password.value) else { throw AuthError.invalidUserAccount }
+        let userUID = result.user.uid
+        let user = info.getUserInfoModel(uid: userUID, url: imageUrl)
+        let encodedUserModel = encodeToNSDictionary(codableType: user)
+        guard let _ = try? await COLLECTION_USERS.document(userUID).setData(encodedUserModel) else { throw AuthError.invalidSetUserDataOnFireStore}
     }
     
 }

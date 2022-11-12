@@ -64,28 +64,14 @@ extension ProfileHeader {
         followersLabel.attributedText = userVM.numberOfFollowers()
         followingLabel.attributedText = userVM.numberOfFollowing()
         if userVM.image() == nil {
-            fetchImage() {}
+            Task() {
+                await userVM.fetchImage()
+                DispatchQueue.main.async {
+                    self.profileIV.image = userVM.image()
+                }
+            }
         }else {
             profileIV.image = userVM.image()
-        }
-    }
-    
-}
-
-//MARK: - API
-extension ProfileHeader {
-    
-    func fetchImage(completion: @escaping () -> Void) {
-        if let _ = profileIV.image {
-            return
-        }
-        guard let url = userVM?.profileURL() else { return }
-        DispatchQueue.main.async {
-            UserService.fetchUserProfile(userProfile: url) { image in
-                guard let image = image else { return }
-                self.profileIV.image = image
-                completion()
-            }
         }
     }
     

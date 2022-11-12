@@ -9,7 +9,7 @@ import UIKit
 import Firebase
 
 protocol AuthentificationDelegate: class {
-    func authenticationCompletion(uid: String)
+    func authenticationCompletion(uid: String) async
 }
 
 class LoginController: UIViewController {
@@ -64,20 +64,21 @@ extension LoginController {
         startIndicator(indicator: indicator)
         let email = vm.email.value
         let pw = vm.password.value
-        AuthService.handleIsLoginAccount(email: email, pw: pw) { [self] result,error in
-            if let error = error {
-                print("Fail login.")
-                return
-            }
-            guard let vc = self.presentingViewController as? MainHomeTabController else {
-                return
-            }
-            guard let result = result else { return }
-            endIndicator(indicator: indicator)
-            vc.view.isHidden = false
-            self.authDelegate?.authenticationCompletion(uid: result.user.uid)
+        guard let vc = self.presentingViewController as? MainHomeTabController else {
+            return
         }
-        endIndicator(indicator: indicator)
+        Task() {
+            do {
+                guard let authDataResult = try await AuthService.handleIsLoginAccount(email: email, pw: pw) else { throw FetchUserError.invalidUserInfo }
+                endIndicator(indicator: indicator)
+                vc.view.isHidden = false
+                await authDelegate?.authenticationCompletion(uid: authDataResult.user.uid)
+            }catch FetchUserError.invalidUserInfo {
+                print("DEBUG: Fail to bind userInfo")
+            }catch {
+                print("DEBUG: Failure an occured error: \(error.localizedDescription) ")
+            }
+        }
     }
     
     @objc func didTapHelpButton(_ sender: Any) {
