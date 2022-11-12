@@ -40,7 +40,6 @@ extension SearchController {
     func configure() {
         configureSearchController()
         configureTableView()
-        fetchUserProfileList()
     }
     
     func configureTableView() {
@@ -56,22 +55,36 @@ extension SearchController {
         navigationItem.searchController = searchController
         definesPresentationContext = false
     }
-    
-    func setupNavigationBar() {
-        let searchBar = UISearchController()
-        navigationItem.searchController = searchBar
-    }
 }
-
-
 
 //MARK: - API
 extension SearchController {
     
-    func fetchUserProfileList() {
-        UserService.fetchUserList() { users in
-            guard let users = users else { return }
+    func fetchAllUser() async {
+        do {
+            try await fetchAllUserDefaultInfo()
+        }catch {
+            fetchAllUserErrorHandling(withError: error)
+        }
+    }
+    
+    func fetchAllUserDefaultInfo() async throws {
+        guard let users = try await UserService.fetchUserList() else { throw FetchUserError.invalidUsers }
+        DispatchQueue.main.async {
             self.userVM = SearchUserViewModel(users: users)
+        }
+    }
+    
+    func fetchAllUserErrorHandling(withError error: Error) {
+        switch error {
+        case FetchUserError.invalidUsers:
+            print("DEBUG: Failure get invalid users instance")
+        case FetchUserError.invalidUserData:
+            print("DEBUG: Failure get invalid user data")
+        case FetchUserError.invalidDocuemnts:
+            print("DEBUG: Failure get invalid firestore's documents")
+        default:
+            print("DEBUG: Failure unexcepted error occured : \(error.localizedDescription)")
         }
     }
     

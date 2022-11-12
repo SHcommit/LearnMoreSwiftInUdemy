@@ -64,7 +64,7 @@ extension MainHomeTabController {
                 self.presentLoginScene()
             }
         }else {
-            guard let userVM = userVM else {
+            guard let _ = userVM else {
                 await fetchCurrentUserInfo()
                 return
             }
@@ -77,8 +77,11 @@ extension MainHomeTabController {
         let layout = UICollectionViewFlowLayout()
         
         let feed = templateNavigationController(unselectedImage: .imageLiteral(name: "home_unselected"), selectedImage: .imageLiteral(name: "home_selected"), rootVC: FeedController(collectionViewLayout: layout))
-
-        let search = templateNavigationController(unselectedImage: .imageLiteral(name: "search_unselected"), selectedImage: .imageLiteral(name: "search_selected"), rootVC: SearchController())
+        let searchVC = SearchController()
+        Task() {
+            await searchVC.fetchAllUser()
+        }
+        let search = templateNavigationController(unselectedImage: .imageLiteral(name: "search_unselected"), selectedImage: .imageLiteral(name: "search_selected"), rootVC: searchVC)
         
         let imageSelector = templateNavigationController(unselectedImage: .imageLiteral(name: "plus_unselected"), selectedImage: .imageLiteral(name: "plus_unselected"), rootVC: ImageSelectorController())
         
@@ -147,12 +150,15 @@ extension MainHomeTabController {
     
     func fetchImage(profileVC vc: ProfileController, profileUrl url: String) async {
         do {
-            let image = try await UserProfileImageService.fetchUserProfile(userProfile: url)
-            DispatchQueue.main.async {
-                vc.profileImage = image
-            }
+            try await fetchImageFromUserProfileImageService(vc: vc, url: url)
         } catch {
             fetchImageErrorHandling(withError: error)
+        }
+    }
+    func fetchImageFromUserProfileImageService(vc: ProfileController, url: String) async throws {
+        let image = try await UserProfileImageService.fetchUserProfile(userProfile: url)
+        DispatchQueue.main.async {
+            vc.profileImage = image
         }
     }
     func fetchImageErrorHandling(withError error: Error) {
@@ -164,6 +170,7 @@ extension MainHomeTabController {
         }
     }
 
+    
     func fetchUserInfo(withUID uid: String) async {
         do{
             try await fetchUserInfoFromUserService(withUID: uid)
@@ -183,6 +190,7 @@ extension MainHomeTabController {
 
     }
     
+    
     func fetchCurrentUserInfo() async {
         do {
             try await fetchUserInfoFromUserService()
@@ -201,13 +209,15 @@ extension MainHomeTabController {
         guard let userInfo = try await UserService.fetchUserInfo(withUid: uid) else { throw FetchUserError.invalidUserInfo }
         self.userVM = UserInfoViewModel(user: userInfo, profileImage: nil)
     }
-    
     func fetchCurrentUserInfoErrorHandling(withError error: Error) {
         switch error {
         case FetchUserError.invalidUserInfo:
             print("DEBUG: Fail to bind userInfo instance.")
         case FetchUserError.invalidGetDocumentUserUID:
-            print("DEBUG: Fail to get user document with UID.")
+            print("DEBUG: Fail to get user document with UID. 이경우 로그인됬는데 uid를 찾을 수 없음 -> 파이어베이스 사용자 UID 잘못 등록됨.")
+            DispatchQueue.main.async {
+                self.presentLoginScene()
+            }
         case SystemError.invalidCurrentUserUID:
             print("DEBUG: Fail to find user's UID value")
         case SystemError.invalidAppDelegateInstance:
@@ -245,20 +255,36 @@ extension MainHomeTabController {
 
 //MARK: - Implement AuthentificationDelegate
 extension MainHomeTabController: AuthentificationDelegate {
+    
     func authenticationCompletion(uid: String) async {
-        guard let appDelegaet = UIApplication.shared.delegate as? AppDelegate else  { return }
-        appDelegaet.pList.set(uid, forKey: CURRENT_USER_UID)
-        
+        let ud = UserDefaults.standard
+        ud.synchronize()
+        ud.set(uid, forKey: CURRENT_USER_UID)
         do{
-            let userInfo = try await UserService.fetchUserInfo(withUid: uid)
-            guard let userInfo = userInfo else { return }
-            self.userVM = UserInfoViewModel(user: userInfo, profileImage: nil)
-        }catch FetchUserError.invalidGetDocumentUserUID {
-            print("DEBUG: Fail to get user document with UID.")
+            try await fetchCurrentUserInfo(withUID: uid)
         }catch {
-            print("DEBUG: Ocurred error \(error.localizedDescription)")
+            authenticationCompletionErrorHandling(error: error)
         }
         self.dismiss(animated: false)
     }
     
+    func fetchCurrentUserInfo(withUID id: String) async throws {
+        let userInfo = try await UserService.fetchUserInfo(withUid: id)
+        guard let userInfo = userInfo else { throw FetchUserError.invalidUserInfo }
+        self.userVM = UserInfoViewModel(user: userInfo, profileImage: nil)
+    }
+    
+    func authenticationCompletionErrorHandling(error: Error) {
+        switch error {
+        case FetchUserError.invalidGetDocumentUserUID:
+            print("DEBUG: Fail to get user document with UID 이경우 로그인됬는데 uid를 찾을 수 없음 -> 파이어베이스 사용자 UID 잘못 등록됨.")
+            DispatchQueue.main.async {
+                self.presentLoginScene()
+            }
+        case FetchUserError.invalidUserInfo:
+            print("DEBUG: Fail to bind userInfo")
+        default:
+            print("DEBUG: Unexpected error occured: \(error.localizedDescription)")
+        }
+    }
 }

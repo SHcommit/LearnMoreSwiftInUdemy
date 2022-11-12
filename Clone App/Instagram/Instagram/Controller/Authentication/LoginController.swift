@@ -67,7 +67,7 @@ extension LoginController {
         guard let vc = self.presentingViewController as? MainHomeTabController else {
             return
         }
-        async {
+        Task() {
             do {
                 guard let authDataResult = try await AuthService.handleIsLoginAccount(email: email, pw: pw) else { throw FetchUserError.invalidUserInfo }
                 endIndicator(indicator: indicator)
