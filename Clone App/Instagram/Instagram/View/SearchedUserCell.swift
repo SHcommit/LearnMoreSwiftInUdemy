@@ -22,8 +22,6 @@ class SearchedUserCell: UITableViewCell {
         }
     }
     
-    
-    
     //MARK: - Lifecycle
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -54,7 +52,6 @@ extension SearchedUserCell {
         guard let userVM = userVM else { return }
         self.profileImageView.image = userVM.image()
     }
-    
     
     func configureSubview() {
         addSubviews()

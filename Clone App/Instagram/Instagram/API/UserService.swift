@@ -8,51 +8,51 @@
 import Firebase
 import FirebaseFirestore
 
+enum FetchUserError: Error {
+    case invalidGetDocumentUserUID
+    case invalidUserInfo
+    case invalidUserProfileImage
+    case invalidUserStats
+    //userAllList
+    case invalidDocuemnts
+    case invalidUserData
+    case invalidUsers
+}
 
+enum SystemError: Error {
+    case invalidAppDelegateInstance
+    case invalidCurrentUserUID
+}
+
+//MARK: - Firestore user default info
 struct UserService {
     
-    static func updateCurrentUserInfo(CodableType info: UserInfoModel) {
+    static func updateCurrentUserInfo(CodableType info: UserInfoModel) async throws {
         let encodedUserModel = encodeToNSDictionary(codableType: info)
-        COLLECTION_USERS.document(info.uid).updateData(encodedUserModel)
-        
+        let userDocument = COLLECTION_USERS.document(info.uid)
+        try await userDocument.updateData(encodedUserModel)
     }
-    static func fetchUserInfo(withUid uid: String, completion: @escaping (UserInfoModel?) -> Void) {
-        COLLECTION_USERS.document(uid).getDocument() { DocumentSnapshot, error in
-            guard error == nil else {return}
-            guard let document = DocumentSnapshot else { return }
-            do {
-                completion(try document.data(as: UserInfoModel.self))
-            }catch let e {
-                completion(nil)
-                print("Fail decode user document field : \(e.localizedDescription)")
-            }
+    
+    static func fetchUserInfo(withUid uid: String) async throws -> UserInfoModel? {
+        let result = try await COLLECTION_USERS.document(uid).getDocument()
+        
+        if result.exists {
+            return try result.data(as: UserInfoModel.self)
+        }else {
+            throw FetchUserError.invalidGetDocumentUserUID
         }
     }
     
-    static func fetchCurrentUserInfo(completion: @escaping (UserInfoModel?)->Void) {
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
-        appDelegate.pList.synchronize()
-        guard let userUID = appDelegate.pList.string(forKey: CURRENT_USER_UID) else  { return }
-        COLLECTION_USERS.document(userUID).getDocument() { documentSnapshot, error in
-            guard error == nil else { return }
-            guard let document = documentSnapshot else { return }
-            do {
-                completion(try document.data(as: UserInfoModel.self))
-            }catch let e {
-                completion(nil)
-                print("Fail decode user document field : \(e.localizedDescription)")
-            }
-        }
+    static func fetchCurrentUserInfo() async throws -> UserInfoModel? {
+        let currentUserUID = try currentUserLogindUID()
+        return try await fetchUserInfo(withUid: currentUserUID)
     }
     
-    static func fetchUserProfile(userProfile url: String, completion: @escaping (UIImage?) -> Void) {
-        let storageReference = STORAGE.reference(forURL: url)
-        
-        storageReference.getData(maxSize: USERPROFILEIMAGEMEGABYTE) { data, error in
-            guard error == nil else { return }
-            guard let data = data else { completion(nil); return }
-            completion(UIImage(data: data))
-        }
+    static func currentUserLogindUID() throws -> String {
+        let ud = UserDefaults.standard
+        ud.synchronize()
+        guard let userUID = ud.string(forKey: CURRENT_USER_UID) else { throw SystemError.invalidCurrentUserUID }
+        return userUID
     }
 
 }
@@ -70,23 +70,12 @@ extension UserService {
 //MARK: - SearchController API
 extension UserService {
     
-    static func fetchUserList(completion: @escaping ([UserInfoModel]?) -> Void) {
-        COLLECTION_USERS.getDocuments { document, error in
-            guard let documents = document?.documents else { return }
-            do{
-                var users = [UserInfoModel]()
-                documents.map {
-                    let user: UserInfoModel? = try? $0.data(as: UserInfoModel.self)
-                    guard let user = user else { return }
-                    users.append(user)
-                }
-                completion(users)
-            }catch let e {
-                completion(nil)
-                print("DEBUG: can't parsing fireStore's all user info. \(e.localizedDescription)")
-            }
-            
+    static func fetchUserList() async throws -> [UserInfoModel]? {
+        let docuemts = try await COLLECTION_USERS.getDocuments().documents
+        let users = try docuemts.map{
+            try $0.data(as: UserInfoModel.self)
         }
+        return users
     }
     
 }

@@ -20,12 +20,8 @@ class ProfileHeaderViewModel {
         self.user = user
         self.userStats = userStats
         if image == nil {
-            DispatchQueue.global().async {
-                self.fetchImage() { image in
-                    DispatchQueue.main.async {
-                        self.profileImage = image
-                    }
-                }
+            Task() {
+                await fetchImage()
             }
         }else {
             profileImage = image
@@ -100,18 +96,31 @@ extension ProfileHeaderViewModel {
     
 }
 
-
 //MARK: - API
 extension ProfileHeaderViewModel {
-    func fetchImage(completion: @escaping (UIImage)-> Void) {
-        if let _ = profileImage {
-            return
+    func fetchImage() async {
+        do {
+            try await fetchProfileFromImageService()
+        } catch {
+            fetchImageErrorHandling(error: error)
         }
-        let url = profileURL()
-        UserService.fetchUserProfile(userProfile: url) { image in
-            guard let image = image else { return }
-            completion(image)
+    }
+    
+    func fetchProfileFromImageService() async throws {
+        let image = try await UserProfileImageService.fetchUserProfile(userProfile: profileURL())
+        DispatchQueue.main.async {
+            self.profileImage = image
         }
+    }
+
+    func fetchImageErrorHandling(error: Error) {
+        switch error {
+        case FetchUserError.invalidUserProfileImage :
+            print("DEBUG: Failure invalid user profile image instance")
+        default:
+            print("DEBUG: Unexpected error occured  :\(error.localizedDescription)")
+        }
+
     }
 
 }
