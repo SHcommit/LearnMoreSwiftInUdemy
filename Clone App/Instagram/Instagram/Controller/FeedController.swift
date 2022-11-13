@@ -22,8 +22,7 @@ class FeedController: UICollectionViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setupNavigationUI()
-        fetchPosts()
+        setupUI()
     }
     
 }
@@ -33,12 +32,19 @@ extension FeedController {
     
     func setupUI() {
         setupNavigationUI()
+        setupRefreshUI()
         view.backgroundColor = .white
     }
     
     func setupNavigationUI() {
         setupLogoutBarButton()
         navigationItem.title = "Feed"
+    }
+    
+    func setupRefreshUI() {
+        let refresh = UIRefreshControl()
+        refresh.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
+        collectionView.refreshControl = refresh
     }
     
     func presentLoginScene() {
@@ -63,6 +69,8 @@ extension FeedController {
                 
                 DispatchQueue.main.async {
                     self.posts = posts
+                    print("DEBUG: Did refresh feed posts")
+                    self.collectionView.refreshControl?.endRefreshing()
                     self.collectionView.reloadData()
                 }
             } catch {
@@ -89,6 +97,10 @@ extension FeedController {
         }
     }
     
+    @objc func handleRefresh() {
+        posts.removeAll()
+        fetchPosts()
+    }
 }
 
 //MARK: - UICollectionView DataSource

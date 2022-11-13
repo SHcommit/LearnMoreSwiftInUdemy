@@ -38,6 +38,16 @@ class FeedCell: UICollectionViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    //
+    //
+    // 임시적으로 흰색으로 만듬. cache 추후 적용시켜야함
+    //
+    //
+    override func prepareForReuse() {
+        profileImageView.image = nil
+        postImageView.image = nil
+    }
 }
 
 //MARK: - setupCellUI
