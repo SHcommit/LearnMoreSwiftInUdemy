@@ -10,7 +10,7 @@ import UIKit
 class ProfileController: UICollectionViewController {
     
     //MARK: - properties
-    private var user: UserInfoModel
+    var user: UserInfoModel
     private var userStats: Userstats? {
         didSet {
             collectionView.reloadData()

@@ -22,7 +22,7 @@ class UploadPostController: UIViewController {
     }
     weak var didFinishDelegate: UploadPostControllerDelegate?
     private var indicator: UIActivityIndicatorView = UIActivityIndicatorView(style: .medium)
-    
+    var currentUserInfo: UserInfoModel?
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -63,16 +63,10 @@ extension UploadPostController {
     
     @objc func didTapShare() {
         startIndicator(indicator: indicator)
-        guard
-            let image = selectedImage ,
-            let caption = contentsTextView.text else { return }
         Task() {
             do {
-                try await PostService.uploadPost(caption: caption, image: image)
-                DispatchQueue.main.async {
-                    self.endIndicator(indicator: self.indicator)
-                    self.didFinishDelegate?.controllerDidFinishUploadingPost(self)
-                }
+                try await uploadPostFromDidTapShareEvent()
+                uploadPostCompletionHandler()
             }catch {
                 endIndicator(indicator: indicator)
                 uploadPostErrorHandling(error: error)
@@ -80,7 +74,22 @@ extension UploadPostController {
         }
     }
     
-    //API
+    func uploadPostFromDidTapShareEvent() async throws {
+        guard
+            let image = selectedImage ,
+            let caption = contentsTextView.text else { throw FetchPostError.invalidUserPostData }
+        guard let userInfo = currentUserInfo else { throw FetchUserError.invalidUserInfo }
+        
+        try await PostService.uploadPost(caption: caption, image: image, ownerProfileUrl: userInfo.profileURL, ownerUsername: userInfo.username)
+    }
+    
+    func uploadPostCompletionHandler() {
+        DispatchQueue.main.async {
+            self.endIndicator(indicator: self.indicator)
+            self.didFinishDelegate?.controllerDidFinishUploadingPost(self)
+        }
+    }
+    
     func uploadPostErrorHandling(error: Error) {
         switch error {
         case FetchUserError.invalidGetDocumentUserUID:
@@ -89,6 +98,8 @@ extension UploadPostController {
             print("DEBUG: didTapShare error occured. Fail to request user's uploadImage post")
         case FetchPostError.failToRequestPostData:
             print("DEBUG: didTapShare error occured. Fail to request post data")
+        case FetchPostError.invalidUserPostData:
+            print("DEBUG: didTapShare error occured. Fail to bind user's Feed post")
         default:
             print("DEBUG: didTapShare unexcept error occured : \(error.localizedDescription) ")
         }

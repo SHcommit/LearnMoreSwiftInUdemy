@@ -13,16 +13,17 @@ enum FetchPostError: Error {
     case failToRequestUploadImage
     case invalidPostsGetDocuments
     case failToEncodePost
+    case invalidUserPostData
 }
 
 struct PostService {
     
-    static func uploadPost(caption: String, image: UIImage ) async throws {
+    static func uploadPost(caption: String, image: UIImage, ownerProfileUrl ownerUrl: String, ownerUsername ownerName: String) async throws {
         let ud = UserDefaults.standard
         ud.synchronize()
         guard let userUID = ud.string(forKey: CURRENT_USER_UID) else { throw FetchUserError.invalidGetDocumentUserUID }
         guard let url = try? await UserProfileImageService.uploadImage(image: image) else { throw FetchPostError.failToRequestUploadImage }
-        let post = PostModel(caption: caption, timestamp: Timestamp(date: Date()), likes: 0, imageUrl: url, ownerUid: userUID)
+        let post = PostModel(caption: caption, timestamp: Timestamp(date: Date()), likes: 0, imageUrl: url, ownerUid: userUID, ownerImageUrl: ownerUrl, ownerUsername: ownerName)
         let encodedPost = UserService.encodeToNSDictionary(codableType: post)
         guard let _ = try? await COLLECTION_POSTS.addDocument(data: encodedPost) else { throw FetchPostError.failToRequestPostData}
         

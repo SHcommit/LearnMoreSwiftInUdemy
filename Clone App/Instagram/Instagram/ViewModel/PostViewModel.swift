@@ -6,10 +6,12 @@
 //
 
 import UIKit
+import Firebase
 
 class PostViewModel {
     private var post: PostModel
     private var postImage: UIImage?
+    private var userProfile: UIImage?
     
     init(post: PostModel) {
         self.post = post
@@ -29,6 +31,19 @@ extension PostViewModel {
         }
     }
     
+    func fetchUserProfile() async {
+        do {
+            guard let image = try? await UserProfileImageService.fetchUserProfile(userProfile: post.ownerImageUrl) else { throw FetchUserError.invalidUserProfileImage }
+            DispatchQueue.main.async {
+                self.userProfile = image
+            }
+        } catch FetchUserError.invalidUserProfileImage {
+            print("DEBUG: Failure fetch owner profile image in PostViewModel")
+        } catch {
+            print("DEBUG: Unexccept Error occured: \(error.localizedDescription)")
+        }
+    }
+    
     var image: UIImage? {
         get {
             guard let postImage = postImage else {
@@ -38,10 +53,38 @@ extension PostViewModel {
         }
     }
     
+    var postedUserProfile: UIImage? {
+        get {
+            guard let profile = userProfile else {
+                print("DEBUG: postVM's userProfile can't bind.")
+                return nil
+            }
+            return profile
+        }
+    }
+    
     var caption: String {
         get {
             return post.caption
         }
     }
     
+    var username: String {
+        get {
+            return post.ownerUsername
+        }
+    }
+    
+    var postTime: Timestamp {
+        get {
+            return post.timestamp
+        }
+    }
+    
+    var ownerImageUrl: String {
+        get {
+            return post.ownerImageUrl
+        }
+    }
+
 }

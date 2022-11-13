@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Firebase
 
 class FeedCell: UICollectionViewCell {
     
@@ -67,6 +68,18 @@ extension FeedCell {
     func configure() {
         guard let viewModel = viewModel else { return }
         captionLabel.text = viewModel.caption
+        usernameButton.setTitle(viewModel.username, for: .normal)
+        let date = Date(timeIntervalSince1970: TimeInterval(viewModel.postTime.seconds))
+        postTimeLabel.text = "\(date)"
+    }
+    
+    func configureProfileImage() {
+        guard let viewModel = viewModel else { return }
+        profileImageView.image = viewModel.postedUserProfile
+    }
+    
+    func configurePostImage() {
+        guard let viewModel = viewModel else { return }
         postImageView.image = viewModel.image
     }
     
@@ -77,7 +90,7 @@ extension FeedCell {
         iv.contentMode = .scaleAspectFill
         iv.clipsToBounds = true
         iv.isUserInteractionEnabled = true
-        iv.image = .imageLiteral(name: "girl-1")
+        iv.backgroundColor = .lightGray
         iv.layer.cornerRadius = 40/2
         iv.setContentCompressionResistancePriority(UILayoutPriority(999), for: .vertical)
         return iv

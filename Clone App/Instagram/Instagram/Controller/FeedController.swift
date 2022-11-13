@@ -23,6 +23,7 @@ class FeedController: UICollectionViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupNavigationUI()
+        fetchPosts()
     }
     
 }
@@ -98,10 +99,15 @@ extension FeedController {
             fatalError()
         }
         cell.viewModel = PostViewModel(post: posts[indexPath.row])
+        DispatchQueue.main.async {
+            cell.configure()
+        }
         Task() {
             await cell.viewModel?.fetchPostImage()
+            await cell.viewModel?.fetchUserProfile()
             DispatchQueue.main.async {
-                cell.configure()
+                cell.configurePostImage()
+                cell.configureProfileImage()
             }
         }
         return cell

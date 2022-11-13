@@ -134,6 +134,7 @@ extension MainHomeTabController {
                 let vc = UploadPostController()
                 vc.selectedImage = selectedImage
                 vc.didFinishDelegate = self
+                vc.currentUserInfo = self.userVM?.userInfoModel()
                 let nav = UINavigationController(rootViewController: vc)
                 nav.modalPresentationStyle = .fullScreen
                 self.present(nav, animated: false)
