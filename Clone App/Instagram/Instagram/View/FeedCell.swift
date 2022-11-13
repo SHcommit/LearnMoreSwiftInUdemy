@@ -69,6 +69,7 @@ extension FeedCell {
         guard let viewModel = viewModel else { return }
         captionLabel.text = viewModel.caption
         usernameButton.setTitle(viewModel.username, for: .normal)
+        likeLabel.text = viewModel.postLikes
         let date = Date(timeIntervalSince1970: TimeInterval(viewModel.postTime.seconds))
         postTimeLabel.text = "\(date)"
     }
@@ -99,7 +100,6 @@ extension FeedCell {
     func initialUsernameButton() -> UIButton {
         let btn = UIButton(type: .system)
         btn.translatesAutoresizingMaskIntoConstraints = false
-        btn.setTitle("ksa_qs", for: .normal)
         btn.setTitleColor(.black, for: .normal)
         btn.titleLabel?.font = UIFont.boldSystemFont(ofSize: 13)
         btn.addTarget(self, action: #selector(didTapUsername(_:)), for: .touchUpInside)
@@ -150,7 +150,6 @@ extension FeedCell {
     static func initialLikeLabel() -> UILabel {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "1 like"
         label.font = UIFont.boldSystemFont(ofSize: 12)
         label.setContentCompressionResistancePriority(UILayoutPriority(999), for: .vertical)
         return label
@@ -167,7 +166,6 @@ extension FeedCell {
     static func initialPostTimeLabel() -> UILabel {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "2 days ago"
         label.font = UIFont.boldSystemFont(ofSize: 12)
         label.textColor = .lightGray
         label.setContentCompressionResistancePriority(UILayoutPriority(999), for: .vertical)

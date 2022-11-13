@@ -86,5 +86,17 @@ extension PostViewModel {
             return post.ownerImageUrl
         }
     }
+    
+    var likes: Int {
+        get {
+            return post.likes
+        }
+    }
+    
+    var postLikes: String {
+        get {
+            return likes < 2 ? "\(likes) like" : "\(likes) likes"
+        }
+    }
 
 }

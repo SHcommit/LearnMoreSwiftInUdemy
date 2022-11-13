@@ -56,7 +56,11 @@ extension FeedController {
     func fetchPosts() {
         Task() {
             do {
-                let posts = try await PostService.fetchPosts()
+                var posts = try await PostService.fetchPosts()
+                posts.sort() {
+                    $0.timestamp.seconds > $1.timestamp.seconds
+                }
+                
                 DispatchQueue.main.async {
                     self.posts = posts
                     self.collectionView.reloadData()
