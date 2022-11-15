@@ -70,8 +70,8 @@ extension FeedController {
                 DispatchQueue.main.async {
                     self.posts = posts
                     print("DEBUG: Did refresh feed posts")
-                    self.collectionView.refreshControl?.endRefreshing()
                     self.collectionView.reloadData()
+                    self.collectionView.refreshControl?.endRefreshing()
                 }
             } catch {
                 switch error {
@@ -99,6 +99,7 @@ extension FeedController {
     
     @objc func handleRefresh() {
         posts.removeAll()
+        collectionView.reloadData()
         fetchPosts()
     }
 }

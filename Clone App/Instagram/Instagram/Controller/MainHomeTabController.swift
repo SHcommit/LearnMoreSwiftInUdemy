@@ -337,6 +337,10 @@ extension MainHomeTabController: UploadPostControllerDelegate {
     func controllerDidFinishUploadingPost(_ controller: UploadPostController) {
         selectedIndex = 0
         controller.dismiss(animated: true)
+        guard let feedNavi = viewControllers?.first as? UINavigationController else { return }
+        guard let feedVC = feedNavi.viewControllers.first as? FeedController else { return }
+        feedVC.handleRefresh()
+        
     }
     
     

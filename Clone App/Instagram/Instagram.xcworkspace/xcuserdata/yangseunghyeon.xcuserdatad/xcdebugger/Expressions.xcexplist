@@ -23,6 +23,9 @@
          contextName = "closure #1 in closure #1 in static AppDelegate.initialUserInfo():AppDelegate.swift">
       </ContextState>
       <ContextState
+         contextName = "closure #1 in FeedController.fetchPosts():FeedController.swift">
+      </ContextState>
+      <ContextState
          contextName = "SearchUserViewModel.numberOfRowsInSection(_:):SearchUserViewModel.swift">
       </ContextState>
       <ContextState
@@ -39,6 +42,14 @@
          <PersistentStrings>
             <PersistentString
                value = "info?.profileURL">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "FeedController.collectionView(_:cellForItemAt:):FeedController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "print(&quot;\(indexPath.row)&quot;)">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
