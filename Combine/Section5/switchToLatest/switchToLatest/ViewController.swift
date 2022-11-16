@@ -15,7 +15,10 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        studySwitchToLatest()
+        //studySwitchToLatest()
+        
+        //studyMergeComgineOperator()
+        studyCombineLatestCombineOperator()
     }
     
 
@@ -63,5 +66,28 @@ extension ViewController {
             .receive(on: RunLoop.main)
             .eraseToAnyPublisher()
         // eraseToAnyPublisher()를 씀으로 publisher가 알지 못해도 보낼 수 있다.
+    }
+}
+
+extension ViewController {
+    func studyMergeComgineOperator() {
+        let publisher1 = PassthroughSubject<Int,Never>()
+        let publisher2 = PassthroughSubject<Int,Never>()
+        
+        _ = publisher1.merge(with: publisher2).sink {
+            print($0)
+        }
+        
+        publisher1.send(19)
+    }
+    
+    func studyCombineLatestCombineOperator() {
+        let publisher1 = PassthroughSubject<Int,Never>()
+        let publisher2 = PassthroughSubject<String,Never>()
+        _ = publisher1.combineLatest(publisher2).sink {
+            print("p1: \($0), p2: \( $1)")
+        }
+        publisher1.send(10)
+        publisher2.send("s")
     }
 }
