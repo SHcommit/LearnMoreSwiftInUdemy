@@ -13,6 +13,7 @@
 		15A1A3A529261C6D005FD14E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 15A1A3A329261C6D005FD14E /* Main.storyboard */; };
 		15A1A3A729261C6D005FD14E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 15A1A3A629261C6D005FD14E /* Assets.xcassets */; };
 		15A1A3AA29261C6D005FD14E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 15A1A3A829261C6D005FD14E /* LaunchScreen.storyboard */; };
+		15A1A3B329261C8C005FD14E /* APIKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15A1A3B229261C8C005FD14E /* APIKeys.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		15A1A3A629261C6D005FD14E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		15A1A3A929261C6D005FD14E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		15A1A3AB29261C6D005FD14E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		15A1A3B229261C8C005FD14E /* APIKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKeys.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +58,7 @@
 		15A1A39C29261C6D005FD14E /* WeatherAPI */ = {
 			isa = PBXGroup;
 			children = (
+				15A1A3B129261C7D005FD14E /* Private */,
 				15A1A39D29261C6D005FD14E /* AppDelegate.swift */,
 				15A1A39F29261C6D005FD14E /* SceneDelegate.swift */,
 				15A1A3A129261C6D005FD14E /* ViewController.swift */,
@@ -65,6 +68,14 @@
 				15A1A3AB29261C6D005FD14E /* Info.plist */,
 			);
 			path = WeatherAPI;
+			sourceTree = "<group>";
+		};
+		15A1A3B129261C7D005FD14E /* Private */ = {
+			isa = PBXGroup;
+			children = (
+				15A1A3B229261C8C005FD14E /* APIKeys.swift */,
+			);
+			path = Private;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -140,6 +151,7 @@
 			files = (
 				15A1A3A229261C6D005FD14E /* ViewController.swift in Sources */,
 				15A1A39E29261C6D005FD14E /* AppDelegate.swift in Sources */,
+				15A1A3B329261C8C005FD14E /* APIKeys.swift in Sources */,
 				15A1A3A029261C6D005FD14E /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
