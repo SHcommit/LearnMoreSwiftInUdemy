@@ -7,4 +7,4 @@
 
 import Foundation
 
-let WeatherAPIKey = "99eb584c4b5bf48e19d075bafb611362"
+let WeatherAPIKey = tt
