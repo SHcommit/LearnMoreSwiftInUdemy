@@ -13,7 +13,6 @@
 		1524EBCA29260938000B36B6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1524EBC829260938000B36B6 /* Main.storyboard */; };
 		1524EBCC29260939000B36B6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1524EBCB29260939000B36B6 /* Assets.xcassets */; };
 		1524EBCF29260939000B36B6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1524EBCD29260939000B36B6 /* LaunchScreen.storyboard */; };
-		1524EBDA29260B59000B36B6 /* PrivateAPIKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1524EBD929260B59000B36B6 /* PrivateAPIKeys.swift */; };
 		1524EBDD29260C5E000B36B6 /* WeatherModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1524EBDC29260C5E000B36B6 /* WeatherModel.swift */; };
 		1524EBE029260F1B000B36B6 /* WebService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1524EBDF29260F1B000B36B6 /* WebService.swift */; };
 		1524EBE329260F45000B36B6 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1524EBE229260F45000B36B6 /* Constants.swift */; };
@@ -28,7 +27,6 @@
 		1524EBCB29260939000B36B6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1524EBCE29260939000B36B6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		1524EBD029260939000B36B6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		1524EBD929260B59000B36B6 /* PrivateAPIKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PrivateAPIKeys.swift; path = WeatherAPI/Private/PrivateAPIKeys.swift; sourceTree = SOURCE_ROOT; };
 		1524EBDC29260C5E000B36B6 /* WeatherModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherModel.swift; sourceTree = "<group>"; };
 		1524EBDF29260F1B000B36B6 /* WebService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebService.swift; sourceTree = "<group>"; };
 		1524EBE229260F45000B36B6 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
@@ -64,7 +62,7 @@
 		1524EBC129260938000B36B6 /* WeatherAPI */ = {
 			isa = PBXGroup;
 			children = (
-				1524EBE429261056000B36B6 /* Private */,
+				1524EBE829261B5F000B36B6 /* Private */,
 				1524EBE129260F3C000B36B6 /* Utiles */,
 				1524EBDE29260F0C000B36B6 /* WebService */,
 				1524EBDB29260C4E000B36B6 /* Model */,
@@ -103,10 +101,9 @@
 			path = Utiles;
 			sourceTree = "<group>";
 		};
-		1524EBE429261056000B36B6 /* Private */ = {
+		1524EBE829261B5F000B36B6 /* Private */ = {
 			isa = PBXGroup;
 			children = (
-				1524EBD929260B59000B36B6 /* PrivateAPIKeys.swift */,
 			);
 			path = Private;
 			sourceTree = "<group>";
@@ -183,7 +180,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				1524EBE029260F1B000B36B6 /* WebService.swift in Sources */,
-				1524EBDA29260B59000B36B6 /* PrivateAPIKeys.swift in Sources */,
 				1524EBC729260938000B36B6 /* ViewController.swift in Sources */,
 				1524EBC329260938000B36B6 /* AppDelegate.swift in Sources */,
 				1524EBE329260F45000B36B6 /* Constants.swift in Sources */,
