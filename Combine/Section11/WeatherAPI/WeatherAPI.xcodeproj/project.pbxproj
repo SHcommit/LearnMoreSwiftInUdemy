@@ -14,6 +14,9 @@
 		15A1A3A729261C6D005FD14E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 15A1A3A629261C6D005FD14E /* Assets.xcassets */; };
 		15A1A3AA29261C6D005FD14E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 15A1A3A829261C6D005FD14E /* LaunchScreen.storyboard */; };
 		15A1A3B329261C8C005FD14E /* APIKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15A1A3B229261C8C005FD14E /* APIKeys.swift */; };
+		15A1A3B629261D1A005FD14E /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15A1A3B529261D1A005FD14E /* Constants.swift */; };
+		15A1A3B929261D71005FD14E /* WebService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15A1A3B829261D71005FD14E /* WebService.swift */; };
+		15A1A3BC29261E88005FD14E /* WeatherModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15A1A3BB29261E88005FD14E /* WeatherModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +29,9 @@
 		15A1A3A929261C6D005FD14E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		15A1A3AB29261C6D005FD14E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		15A1A3B229261C8C005FD14E /* APIKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKeys.swift; sourceTree = "<group>"; };
+		15A1A3B529261D1A005FD14E /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		15A1A3B829261D71005FD14E /* WebService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebService.swift; sourceTree = "<group>"; };
+		15A1A3BB29261E88005FD14E /* WeatherModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +64,9 @@
 		15A1A39C29261C6D005FD14E /* WeatherAPI */ = {
 			isa = PBXGroup;
 			children = (
+				15A1A3BA29261E7A005FD14E /* Model */,
+				15A1A3B729261D65005FD14E /* Service */,
+				15A1A3B429261D10005FD14E /* Utils */,
 				15A1A3B129261C7D005FD14E /* Private */,
 				15A1A39D29261C6D005FD14E /* AppDelegate.swift */,
 				15A1A39F29261C6D005FD14E /* SceneDelegate.swift */,
@@ -76,6 +85,30 @@
 				15A1A3B229261C8C005FD14E /* APIKeys.swift */,
 			);
 			path = Private;
+			sourceTree = "<group>";
+		};
+		15A1A3B429261D10005FD14E /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				15A1A3B529261D1A005FD14E /* Constants.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		15A1A3B729261D65005FD14E /* Service */ = {
+			isa = PBXGroup;
+			children = (
+				15A1A3B829261D71005FD14E /* WebService.swift */,
+			);
+			path = Service;
+			sourceTree = "<group>";
+		};
+		15A1A3BA29261E7A005FD14E /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				15A1A3BB29261E88005FD14E /* WeatherModel.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -149,7 +182,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				15A1A3B929261D71005FD14E /* WebService.swift in Sources */,
+				15A1A3B629261D1A005FD14E /* Constants.swift in Sources */,
 				15A1A3A229261C6D005FD14E /* ViewController.swift in Sources */,
+				15A1A3BC29261E88005FD14E /* WeatherModel.swift in Sources */,
 				15A1A39E29261C6D005FD14E /* AppDelegate.swift in Sources */,
 				15A1A3B329261C8C005FD14E /* APIKeys.swift in Sources */,
 				15A1A3A029261C6D005FD14E /* SceneDelegate.swift in Sources */,
