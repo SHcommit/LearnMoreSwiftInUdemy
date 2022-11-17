@@ -16,12 +16,4 @@ struct WeatherModel: Decodable {
     let temp: Double?
     let humidity: Double?
     
-    init(temp: Double? = nil, humidity: Double? = nil) {
-        self.temp = temp
-        self.humidity = humidity
-    }
-    
-    static var placeholder: WeatherModel {
-        return WeatherModel()
-    }
 }
