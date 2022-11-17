@@ -88,12 +88,15 @@ class ViewController: UIViewController {
             .flatMap{ city in
                 return WebService.fetchWeather(city: city)
                     .catch{ _ in
-                        Just(WeatherModel(temp: 0.0, humidity: 0.0))
+                        Just(WeatherModel(temp: -1000, humidity: -1000))
                     }
                     .map { $0 }
             }.sink {
-                
-                self.label.text = "\($0.temp) F"
+                if -1000 == $0.temp  {
+                    self.label.text = "\($0.temp) F"
+                }else {
+                    self.label.text = ""
+                }
             }
         //.catch{ _ in Empty()}
     }

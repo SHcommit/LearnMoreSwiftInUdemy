@@ -13,7 +13,10 @@ struct WeatherResponseModel: Decodable {
 }
 
 struct WeatherModel: Decodable {
-    let temp: Double?
-    let humidity: Double?
+    let temp: Double
+    let humidity: Double
     
+    static var placeholder: WeatherModel? {
+        return nil
+    }
 }
