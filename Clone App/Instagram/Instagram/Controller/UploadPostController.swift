@@ -41,7 +41,6 @@ extension UploadPostController {
                                                            target: self, action: #selector(didTapCancel))
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Share",
                                                             style: .done, target: self, action: #selector(didTapShare))
-        
         setupSubviews()
         setupSubviewsConstraints()
 
