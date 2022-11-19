@@ -33,7 +33,7 @@ class QuoteViewController: UIViewController {
     private func bind() {
         let output = vm.transform(withInput: input.eraseToAnyPublisher())
         output
-            .receive(on: DispatchQueue.main)
+            .receive(on: RunLoop.main)
             .sink { [weak self] event in
                 switch event {
                 case .fetchQuoteDidFail(let error):
@@ -50,10 +50,6 @@ class QuoteViewController: UIViewController {
         input.send(.refreshButtonDidTap)
     }
 }
-
-
-
-
 
 protocol WebServiceType {
     //일반적인 service
@@ -74,7 +70,6 @@ class WebService: WebServiceType {
         let quote = try JSONDecoder().decode(Quote.self, from: data)
         return quote
     }
-    
 }
 
 /*
@@ -87,8 +82,6 @@ class WebService: WebServiceType {
      output의 경우 viewModel로부터 특정 VC가 얻는 것
  */
 class QuoteViewModel {
-    
-    
     //뷰 모델이 무엇을 얻어야하는가?
     //vc로부터 온다.
     //이 두 경우에 vm이 작동한다.
