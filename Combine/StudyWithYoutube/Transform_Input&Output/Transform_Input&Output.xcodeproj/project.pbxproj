@@ -13,6 +13,7 @@
 		150D6D1629288293005F5424 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 150D6D1429288293005F5424 /* Main.storyboard */; };
 		150D6D1829288293005F5424 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 150D6D1729288293005F5424 /* Assets.xcassets */; };
 		150D6D1B29288293005F5424 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 150D6D1929288293005F5424 /* LaunchScreen.storyboard */; };
+		150D6D26292885A6005F5424 /* PrivateURLs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 150D6D25292885A6005F5424 /* PrivateURLs.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		150D6D1729288293005F5424 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		150D6D1A29288293005F5424 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		150D6D1C29288293005F5424 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		150D6D25292885A6005F5424 /* PrivateURLs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateURLs.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +58,7 @@
 		150D6D0D29288293005F5424 /* Transform_Input&Output */ = {
 			isa = PBXGroup;
 			children = (
+				150D6D2429288516005F5424 /* Private */,
 				150D6D0E29288293005F5424 /* AppDelegate.swift */,
 				150D6D1029288293005F5424 /* SceneDelegate.swift */,
 				150D6D1229288293005F5424 /* ViewController.swift */,
@@ -65,6 +68,14 @@
 				150D6D1C29288293005F5424 /* Info.plist */,
 			);
 			path = "Transform_Input&Output";
+			sourceTree = "<group>";
+		};
+		150D6D2429288516005F5424 /* Private */ = {
+			isa = PBXGroup;
+			children = (
+				150D6D25292885A6005F5424 /* PrivateURLs.swift */,
+			);
+			path = Private;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -139,6 +150,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				150D6D1329288293005F5424 /* ViewController.swift in Sources */,
+				150D6D26292885A6005F5424 /* PrivateURLs.swift in Sources */,
 				150D6D0F29288293005F5424 /* AppDelegate.swift in Sources */,
 				150D6D1129288293005F5424 /* SceneDelegate.swift in Sources */,
 			);
