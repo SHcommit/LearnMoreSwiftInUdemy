@@ -14,6 +14,8 @@
 		150D6D1829288293005F5424 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 150D6D1729288293005F5424 /* Assets.xcassets */; };
 		150D6D1B29288293005F5424 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 150D6D1929288293005F5424 /* LaunchScreen.storyboard */; };
 		150D6D26292885A6005F5424 /* PrivateURLs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 150D6D25292885A6005F5424 /* PrivateURLs.swift */; };
+		150D6D282928FFB0005F5424 /* WebService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 150D6D272928FFB0005F5424 /* WebService.swift */; };
+		150D6D2C2928FFDE005F5424 /* VM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 150D6D2B2928FFDE005F5424 /* VM.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +28,8 @@
 		150D6D1A29288293005F5424 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		150D6D1C29288293005F5424 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		150D6D25292885A6005F5424 /* PrivateURLs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateURLs.swift; sourceTree = "<group>"; };
+		150D6D272928FFB0005F5424 /* WebService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebService.swift; sourceTree = "<group>"; };
+		150D6D2B2928FFDE005F5424 /* VM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VM.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,9 +67,11 @@
 				150D6D1029288293005F5424 /* SceneDelegate.swift */,
 				150D6D1229288293005F5424 /* QuoteViewController.swift */,
 				150D6D1429288293005F5424 /* Main.storyboard */,
+				150D6D2B2928FFDE005F5424 /* VM.swift */,
 				150D6D1729288293005F5424 /* Assets.xcassets */,
 				150D6D1929288293005F5424 /* LaunchScreen.storyboard */,
 				150D6D1C29288293005F5424 /* Info.plist */,
+				150D6D272928FFB0005F5424 /* WebService.swift */,
 			);
 			path = "Transform_Input&Output";
 			sourceTree = "<group>";
@@ -151,7 +157,9 @@
 			files = (
 				150D6D1329288293005F5424 /* QuoteViewController.swift in Sources */,
 				150D6D26292885A6005F5424 /* PrivateURLs.swift in Sources */,
+				150D6D2C2928FFDE005F5424 /* VM.swift in Sources */,
 				150D6D0F29288293005F5424 /* AppDelegate.swift in Sources */,
+				150D6D282928FFB0005F5424 /* WebService.swift in Sources */,
 				150D6D1129288293005F5424 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
