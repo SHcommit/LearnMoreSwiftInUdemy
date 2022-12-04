@@ -135,7 +135,7 @@ extension SearchController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let cell = tableView.cellForRow(at: indexPath) as? SearchedUserCell else {fatalError("DEBUG: Fail to fild reusableCell in SearchController")}
         guard let user = cell.userVM else { return }
-        let vc = ProfileController(profileVM: ProfileHeaderViewModel(user: user.userInfoModel(), profileImage: user.image(), userStats: user.stats))
+        let vc = ProfileController(user: user.userInfoModel())
         self.navigationController?.pushViewController(vc, animated: true)
     }
 }

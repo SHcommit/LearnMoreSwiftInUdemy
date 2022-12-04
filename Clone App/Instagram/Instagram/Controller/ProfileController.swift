@@ -6,35 +6,19 @@
 //
 
 import UIKit
+import Combine
 
 class ProfileController: UICollectionViewController {
     
     //MARK: - properties
     let vm: ProfileViewModel
-    var user: UserInfoModel
-    private var userStats: Userstats? {
-        didSet {
-            collectionView.reloadData()
-        }
-    }
-    var profileImage: UIImage? {
-        didSet {
-            collectionView.reloadData()
-        }
-    }
+    var subscriptions = Set<AnyCancellable>()
     
     //MARK: - Lifecycle
-    
     init(user: UserInfoModel) {
-        self.user = user
-        vm = ProfileViewModel(userInfoModel: user)
+        vm = ProfileViewModel(userInfo: user)
         super.init(collectionViewLayout: UICollectionViewFlowLayout())
         navigationItem.title = user.username
-    }
-    
-    convenience init(profileVM: ProfileHeaderViewModel) {
-        self.init(user: profileVM.getUserInfo())
-        profileImage = profileVM.image()
     }
     
     required init?(coder: NSCoder) {
@@ -44,13 +28,11 @@ class ProfileController: UICollectionViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupCollectionView()
-        checkIfUserIsFollowed()
-        fetchUserStats()
+        setupBindings()
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        fetchUserStats()
-        collectionView.reloadData()
+        vm.fetchUserStats()
     }
 
 }
@@ -64,30 +46,21 @@ extension ProfileController {
         collectionView.register(ProfileHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: COLLECTIONHEADERREUSEABLEID)
     }
     
-    func observe() {
-        vm.$user.recei
+    func setupBindings() {
+        vm.$user.sink { _ in
+            self.collectionView.reloadData()
+        }.store(in:&subscriptions)
+        
+        vm.$userStats.sink{ _ in
+            self.collectionView.reloadData()
+        }.store(in: &subscriptions)
+        
+        vm.$profileImage.sink{ _ in
+            self.collectionView.reloadData()
+        }.store(in: &subscriptions)
         
     }
     
-}
-
-//MARK: - API
-extension ProfileController {
-    
-    func checkIfUserIsFollowed() {
-        UserService.checkIfUserIsFollowd(uid: user.uid) { isFollowed in
-            self.user.isFollowed = isFollowed
-            self.collectionView.reloadData()
-            
-        }
-    }
-    
-    func fetchUserStats() {
-        UserService.fetchUserStats(uid: user.uid) { stats in
-            self.userStats = stats
-            self.collectionView.reloadData()
-        }
-    }
 }
 
 //MARK: - UICollectionViewDataSource
@@ -106,7 +79,7 @@ extension ProfileController {
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         guard let headerView =  collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: COLLECTIONHEADERREUSEABLEID, for: indexPath) as? ProfileHeader else { fatalError() }
         headerView.delegate = self
-        headerView.userVM = ProfileHeaderViewModel(user: self.user, profileImage: self.profileImage, userStats: userStats )
+        headerView.userVM = ProfileHeaderViewModel(user: self.vm.user, profileImage: self.vm.profileImage, userStats: vm.userStats )
         return headerView
     }
 
@@ -144,9 +117,9 @@ extension ProfileController: ProfileHeaderDelegate {
         }else if user.isFollowed {
             DispatchQueue.main.async {
                 UserService.unfollow(uid: user.uid) { _ in
-                    self.user.isFollowed = false
+                    self.vm.user.isFollowed = false
                     UserService.fetchUserStats(uid: user.uid) { stats in
-                        self.userStats = stats
+                        self.vm.userStats = stats
                         self.collectionView.reloadData()
                     }
                 }
@@ -154,9 +127,9 @@ extension ProfileController: ProfileHeaderDelegate {
         }else {
             DispatchQueue.main.async {
                 UserService.follow(uid: user.uid) { _ in
-                    self.user.isFollowed = true
+                    self.vm.user.isFollowed = true
                     UserService.fetchUserStats(uid: user.uid) { stats in
-                        self.userStats = stats
+                        self.vm.userStats = stats
                         self.collectionView.reloadData()
                     }
                 }

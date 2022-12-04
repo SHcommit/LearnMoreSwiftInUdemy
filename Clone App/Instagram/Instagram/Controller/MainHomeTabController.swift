@@ -89,11 +89,7 @@ extension MainHomeTabController {
         let notifications = templateNavigationController(unselectedImage: .imageLiteral(name: "like_unselected"), selectedImage: .imageLiteral(name: "like_selected"), rootVC: NotificationController())
         
         let profileVC = ProfileController(user: userVM.userInfoModel())
-        
-        Task() {
-            await fetchImage(profileVC: profileVC, profileUrl: userVM.profileURL())
-        }
-        
+
         let profile = templateNavigationController(unselectedImage: .imageLiteral(name: "profile_unselected"), selectedImage: .imageLiteral(name: "profile_selected"), rootVC: profileVC)
         
         viewControllers = [feed,search,imageSelector,notifications,profile]
@@ -168,29 +164,6 @@ extension MainHomeTabController {
 //MARK: - API.
 extension MainHomeTabController {
     
-    func fetchImage(profileVC vc: ProfileController, profileUrl url: String) async {
-        do {
-            try await fetchImageFromUserProfileImageService(vc: vc, url: url)
-        } catch {
-            fetchImageErrorHandling(withError: error)
-        }
-    }
-    func fetchImageFromUserProfileImageService(vc: ProfileController, url: String) async throws {
-        let image = try await UserProfileImageService.fetchUserProfile(userProfile: url)
-        DispatchQueue.main.async {
-            vc.profileImage = image
-        }
-    }
-    func fetchImageErrorHandling(withError error: Error) {
-        switch error {
-        case FetchUserError.invalidUserProfileImage :
-            print("DEBUG: Failure invalid user profile image instance")
-        default:
-            print("DEBUG: Unexpected error occured  :\(error.localizedDescription)")
-        }
-    }
-
-    
     func fetchUserInfo(withUID uid: String) async {
         do{
             try await fetchUserInfoFromUserService(withUID: uid)
@@ -209,7 +182,6 @@ extension MainHomeTabController {
         }
 
     }
-    
     
     func fetchCurrentUserInfo() async {
         do {
