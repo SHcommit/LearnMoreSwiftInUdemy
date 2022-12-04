@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Combine
 import Firebase
 import FirebaseFirestore
 import FirebaseFirestoreSwift
@@ -29,50 +30,60 @@ class ProfileHeader: UICollectionReusableView {
     private lazy var gridBtn: UIButton = initialGridBtn()
     private lazy var listBtn: UIButton = initialListBtn()
     private lazy var bookMarkBtn: UIButton = initialBookMarkBtn()
+    
     weak var delegate: ProfileHeaderDelegate?
-    var userVM: ProfileHeaderViewModel? {
+    var vm: ProfileHeaderViewModel? {
         didSet {
-            configure()
+            setupBindings()
         }
     }
+    var subscriptions = Set<AnyCancellable>()
     
     //MARK: - LifeCycle
     override init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = .white
         setupSubview()
-        
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) not implement")
     }
-    
+
     
 }
 
 //MARK: - Helpers
 extension ProfileHeader {
     
-    func configure() {
-        guard let userVM = userVM else { return }
-        nameLabel.text = userVM.username()
-        editProfileFollowButton.setTitle(userVM.followButtonText(), for: .normal)
-        editProfileFollowButton.setTitleColor(userVM.followButtonTextColor(), for: .normal)
-        editProfileFollowButton.backgroundColor = userVM.followButtonBackgroundColor()
-        postLabel.attributedText = userVM.numberOfPosts()
-        followersLabel.attributedText = userVM.numberOfFollowers()
-        followingLabel.attributedText = userVM.numberOfFollowing()
-        if userVM.image() == nil {
-            Task() {
-                await userVM.fetchImage()
-                DispatchQueue.main.async {
-                    self.profileIV.image = userVM.image()
-                }
-            }
-        }else {
-            profileIV.image = userVM.image()
-        }
+    func setupBindings() {
+        vm?.$user
+            .receive(on: RunLoop.main)
+            .sink { [unowned self] _ in
+                configureUI()
+            }.store(in: &subscriptions)
+        vm?.$profileImage
+            .receive(on: RunLoop.main)
+            .sink { [unowned self] image in
+                profileIV.image = image
+            }.store(in: &subscriptions)
+        vm?.$userStats
+            .receive(on: RunLoop.main)
+            .sink{ [unowned self] stats in
+                followersLabel.attributedText = vm?.numberOfFollowers()
+                followingLabel.attributedText = vm?.numberOfFollowing()
+            }.store(in: &subscriptions)
+    }
+    
+    func configureUI() {
+        guard let vm = vm else { return }
+        nameLabel.text = vm.username()
+        editProfileFollowButton.setTitle(vm.followButtonText(), for: .normal)
+        editProfileFollowButton.setTitleColor(vm.followButtonTextColor(), for: .normal)
+        editProfileFollowButton.backgroundColor = vm.followButtonBackgroundColor()
+        postLabel.attributedText = vm.numberOfPosts()
+        followersLabel.attributedText = vm.numberOfFollowers()
+        followingLabel.attributedText = vm.numberOfFollowing()
     }
     
 }
@@ -81,8 +92,8 @@ extension ProfileHeader {
 extension ProfileHeader {
     
     @objc func didTapEditProfileFollow(_ sender: Any) {
-        guard let userVM = userVM else { return }
-        delegate?.header(self, didTapActionButtonFor: userVM.getUserInfo())
+        guard let vm = vm else { return }
+        delegate?.header(self, didTapActionButtonFor: vm.getUserInfo())
     }
     
     @objc func didTapGridBtn(_ sender: Any) {

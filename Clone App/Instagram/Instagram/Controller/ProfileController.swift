@@ -47,20 +47,25 @@ extension ProfileController {
     }
     
     func setupBindings() {
-        vm.$user.sink { _ in
+        vm.$user
+            .receive(on: RunLoop.main)
+            .sink { _ in
             self.collectionView.reloadData()
-        }.store(in:&subscriptions)
+            }.store(in:&subscriptions)
         
-        vm.$userStats.sink{ _ in
-            self.collectionView.reloadData()
-        }.store(in: &subscriptions)
+        vm.$userStats
+            .receive(on: RunLoop.main)
+            .sink{ _ in
+                self.collectionView.reloadData()
+            }.store(in: &subscriptions)
         
-        vm.$profileImage.sink{ _ in
+        vm.$profileImage
+            .receive(on: RunLoop.main)
+            .sink{ _ in
             self.collectionView.reloadData()
         }.store(in: &subscriptions)
         
     }
-    
 }
 
 //MARK: - UICollectionViewDataSource
@@ -77,13 +82,14 @@ extension ProfileController {
     }
     
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        guard let headerView =  collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: COLLECTIONHEADERREUSEABLEID, for: indexPath) as? ProfileHeader else { fatalError() }
+        guard let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: COLLECTIONHEADERREUSEABLEID, for: indexPath) as? ProfileHeader else { fatalError() }
         headerView.delegate = self
-        headerView.userVM = ProfileHeaderViewModel(user: self.vm.user, profileImage: self.vm.profileImage, userStats: vm.userStats )
+        headerView.vm = ProfileHeaderViewModel(user: vm.user)
+        headerView.vm?.profileImage = vm.profileImage
+        headerView.vm?.userStats = vm.userStats
         return headerView
     }
 
-    
 }
 
 //MARK: - UICollectionViewDelegateFlowLayout

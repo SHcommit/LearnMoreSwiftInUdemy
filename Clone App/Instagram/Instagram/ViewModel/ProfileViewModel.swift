@@ -7,11 +7,19 @@
 
 import UIKit
 import Combine
-/**
-    일단 profileImage경우 메인 홈 컨트롤러에서 비동기적으로 업데이트했는데 VM이 하도록 했다.
-    그리고 Controller에선 setupBindings를 통해 profileImage값이 바뀌면 sink로 현재 label등이 바뀌도록할것이다.
-    searchViewController에서 tableView(didSelectedRowAt)요고더 profileVC랑 연관있음.
- */
+
+protocol ProfileViewModelType {
+    func fetchData()
+}
+
+protocol ProfileViewModelAPIType {
+    func fetchToCheckIfUserIsFollowed()
+    func fetchUserStats()
+    func fetchImage(profileUrl url: String) async
+    func fetchImageFromUserProfileImageService(url: String) async throws
+    func fetchImageErrorHandling(withError error: Error)
+}
+
 class ProfileViewModel {
     //MARK: - Properties
     @Published var user: UserInfoModel
@@ -26,7 +34,7 @@ class ProfileViewModel {
 }
 
 //MARK: - Helpers
-extension ProfileViewModel {
+extension ProfileViewModel: ProfileViewModelType {
     func fetchData() {
         fetchToCheckIfUserIsFollowed()
         fetchUserStats()
@@ -37,7 +45,7 @@ extension ProfileViewModel {
 }
 
 //MARK: - API
-extension ProfileViewModel {
+extension ProfileViewModel: ProfileViewModelAPIType {
     func fetchToCheckIfUserIsFollowed() {
         UserService.checkIfUserIsFollowd(uid: user.uid) { [unowned self] isFollowed in
             user.isFollowed = isFollowed
@@ -60,9 +68,7 @@ extension ProfileViewModel {
     
     func fetchImageFromUserProfileImageService(url: String) async throws {
         let image = try await UserProfileImageService.fetchUserProfile(userProfile: url)
-        DispatchQueue.main.async {
-            self.profileImage = image
-        }
+        profileImage = image
     }
     
     func fetchImageErrorHandling(withError error: Error) {

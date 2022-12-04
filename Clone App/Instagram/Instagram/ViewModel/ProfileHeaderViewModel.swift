@@ -11,22 +11,15 @@ import FirebaseFirestore
 class ProfileHeaderViewModel {
     
     //MARK: - Properties
-    private var user: UserInfoModel
-    private var profileImage : UIImage?
-    private var userStats: Userstats?
+    @Published var user: UserInfoModel
+    @Published var profileImage : UIImage?
+    @Published var userStats: Userstats?
     
     //MARK: - LifeCycle
     init(user: UserInfoModel, profileImage image: UIImage? = nil, userStats: Userstats? = nil) {
         self.user = user
         self.userStats = userStats
-        if image == nil {
-            Task() {
-                await fetchImage()
-            }
-        }else {
-            profileImage = image
-        }
-        
+        self.profileImage = profileImage
     }
     
     func initProfileImage(image: UIImage?) {
@@ -94,33 +87,4 @@ extension ProfileHeaderViewModel {
         return attributedText
     }
     
-}
-
-//MARK: - API
-extension ProfileHeaderViewModel {
-    func fetchImage() async {
-        do {
-            try await fetchProfileFromImageService()
-        } catch {
-            fetchImageErrorHandling(error: error)
-        }
-    }
-    
-    func fetchProfileFromImageService() async throws {
-        let image = try await UserProfileImageService.fetchUserProfile(userProfile: profileURL())
-        DispatchQueue.main.async {
-            self.profileImage = image
-        }
-    }
-
-    func fetchImageErrorHandling(error: Error) {
-        switch error {
-        case FetchUserError.invalidUserProfileImage :
-            print("DEBUG: Failure invalid user profile image instance")
-        default:
-            print("DEBUG: Unexpected error occured  :\(error.localizedDescription)")
-        }
-
-    }
-
 }
