@@ -10,6 +10,7 @@ import UIKit
 class ProfileController: UICollectionViewController {
     
     //MARK: - properties
+    let vm: ProfileViewModel
     var user: UserInfoModel
     private var userStats: Userstats? {
         didSet {
@@ -26,6 +27,7 @@ class ProfileController: UICollectionViewController {
     
     init(user: UserInfoModel) {
         self.user = user
+        vm = ProfileViewModel(userInfoModel: user)
         super.init(collectionViewLayout: UICollectionViewFlowLayout())
         navigationItem.title = user.username
     }
@@ -60,6 +62,11 @@ extension ProfileController {
         collectionView.backgroundColor = .white
         collectionView.register(ProfileCell.self, forCellWithReuseIdentifier: CELLREUSEABLEID)
         collectionView.register(ProfileHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: COLLECTIONHEADERREUSEABLEID)
+    }
+    
+    func observe() {
+        vm.$user.recei
+        
     }
     
 }
