@@ -9,7 +9,7 @@ import UIKit
 import Firebase
 
 /**
-    이번에
+    이번에 할거는 LoginController를 MVVM으로 리펙터링 할 것이다. 물론 로그인 컨트롤과 연관된 서비스도 리펙터링
  
  */
 
