@@ -8,6 +8,11 @@
 import UIKit
 import Firebase
 
+/**
+    이번에
+ 
+ */
+
 protocol AuthentificationDelegate: class {
     func authenticationCompletion(uid: String) async
 }
