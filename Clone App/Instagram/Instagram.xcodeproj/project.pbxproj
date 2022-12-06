@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1500CFB2293CE2CF00A081E2 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1500CFB1293CE2CF00A081E2 /* ProfileViewModel.swift */; };
 		150BD52A29138E9600B79158 /* SearchedUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 150BD52929138E9600B79158 /* SearchedUserCell.swift */; };
 		1518D2562913E14E003A2A48 /* SearchUserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1518D2552913E14E003A2A48 /* SearchUserViewModel.swift */; };
 		1518D258291624E0003A2A48 /* ProfileHeaderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1518D257291624E0003A2A48 /* ProfileHeaderViewModel.swift */; };
@@ -50,6 +51,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1500CFB1293CE2CF00A081E2 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		150BD52929138E9600B79158 /* SearchedUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchedUserCell.swift; sourceTree = "<group>"; };
 		1518D2552913E14E003A2A48 /* SearchUserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchUserViewModel.swift; sourceTree = "<group>"; };
 		1518D257291624E0003A2A48 /* ProfileHeaderViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeaderViewModel.swift; sourceTree = "<group>"; };
@@ -241,6 +243,7 @@
 				15C1848E2910D10F004EF35F /* UserInfoViewModel.swift */,
 				1518D257291624E0003A2A48 /* ProfileHeaderViewModel.swift */,
 				15FDED98291FA8CE00DDAF2E /* PostViewModel.swift */,
+				1500CFB1293CE2CF00A081E2 /* ProfileViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -408,6 +411,7 @@
 				15ACA736290D79FA0011E665 /* Extensions.swift in Sources */,
 				15ACA72F290D796F0011E665 /* ProfileCell.swift in Sources */,
 				15C1848A290FF465004EF35F /* UserService.swift in Sources */,
+				1500CFB2293CE2CF00A081E2 /* ProfileViewModel.swift in Sources */,
 				15ACA716290D779B0011E665 /* SearchController.swift in Sources */,
 				1518D2562913E14E003A2A48 /* SearchUserViewModel.swift in Sources */,
 				15ACA71A290D79250011E665 /* RegistrationController.swift in Sources */,
