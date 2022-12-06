@@ -12,6 +12,7 @@ protocol AuthentificationDelegate: class {
     func authenticationCompletion(uid: String) async
 }
 
+
 class LoginController: UIViewController {
     
     //MARK: - Properties
