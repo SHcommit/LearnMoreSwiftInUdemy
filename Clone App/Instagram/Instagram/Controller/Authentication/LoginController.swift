@@ -7,39 +7,29 @@
 
 import UIKit
 import Firebase
-
-/**
-    이번에 할거는 LoginController를 MVVM으로 리펙터링 할 것이다. 물론 로그인 컨트롤과 연관된 서비스도 리펙터링
- 
- */
-
-protocol AuthentificationDelegate: class {
-    func authenticationCompletion(uid: String) async
-}
+import Combine
 
 class LoginController: UIViewController {
     
     //MARK: - Properties
-    weak var authDelegate: AuthentificationDelegate?
     private let instagramIcon: UIImageView = initialInstagramIcon()
-    private lazy var emailTextField: CustomTextField = initialEmailTextField()
-    private lazy var passwdTextField: CustomTextField = initialPasswdTextField()
+    private lazy var emailTextField: UITextField = initialEmailTextField()
+    private lazy var passwdTextField: UITextField = initialPasswdTextField()
     private lazy var loginButton: LoginButton = initialLoginButton()
     private lazy var forgotHelpLineStackView: UIStackView = initialForgotStackView()
     private lazy var signUpLineStackView: UIStackView = initialSignUpLineStackView()
-    private var indicator: UIActivityIndicatorView = UIActivityIndicatorView(style: .medium)
     
-    private var vm = LoginViewModel()
+    var viewModel: LoginViewModel = LoginViewModel()
+    private var subscriptions: Set<AnyCancellable> = Set<AnyCancellable>()
+    private var tapLogin: PassthroughSubject<UIViewController,Never> = PassthroughSubject<UIViewController,Never>()
     
     //MARK: - Life cycle
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        setupTextFieldBindingByViewModel()
+        setupBindings()
     }
 }
-
 
 //MARK: - View helpers
 extension LoginController {
@@ -67,23 +57,8 @@ extension LoginController {
     
     @objc func didTapLoginButton(_ sender: Any) {
         startIndicator(indicator: indicator)
-        let email = vm.email.value
-        let pw = vm.password.value
-        guard let vc = self.presentingViewController as? MainHomeTabController else {
-            return
-        }
-        Task() {
-            do {
-                guard let authDataResult = try await AuthService.handleIsLoginAccount(email: email, pw: pw) else { throw FetchUserError.invalidUserInfo }
-                endIndicator(indicator: indicator)
-                vc.view.isHidden = false
-                await authDelegate?.authenticationCompletion(uid: authDataResult.user.uid)
-            }catch FetchUserError.invalidUserInfo {
-                print("DEBUG: Fail to bind userInfo")
-            }catch {
-                print("DEBUG: Failure an occured error: \(error.localizedDescription) ")
-            }
-        }
+        guard let presentingViewController = presentingViewController else { return }
+        tapLogin.send(presentingViewController)
     }
     
     @objc func didTapHelpButton(_ sender: Any) {
@@ -97,39 +72,45 @@ extension LoginController {
 
 }
 
-
 //MARK: - Helpers
 extension LoginController {
     
-    //vm의 값이 바뀌면 현재 연결된 UITextField의 쳐져있는 값도 변경.
-    func setupTextFieldBindingByViewModel() {
-        vm.email.bind{ [weak self] text in
-            self?.emailTextField.text = text
-        }
-        vm.password.bind{ [weak self] text in
-            self?.passwdTextField.text = text
-        }
+    func setupBindings() {
+        
+        subscriptions.forEach { $0.cancel() }
+        subscriptions.removeAll()
+        
+        let input = LoginViewModelInput(tapLogin: tapLogin.eraseToAnyPublisher())
+        viewModel.login(with: input)
+        
+        textfieldNotificationPublisher(withTF: emailTextField)
+            .receive(on: RunLoop.main)
+            .sink { [unowned self] text in
+                viewModel.email = text
+                viewModel.checkIsValidTextFields(withLogin: loginButton)
+            }.store(in: &subscriptions)
+            
+        textfieldNotificationPublisher(withTF: passwdTextField)
+            .receive(on: RunLoop.main)
+            .sink { [unowned self] text in
+                viewModel.passwd = text
+                viewModel.checkIsValidTextFields(withLogin: loginButton)
+            }.store(in: &subscriptions)
+
     }
     
-    func changeValidTextFields() {
-        if vm.isValiedUserForm {
-            DispatchQueue.main.async {
-                self.loginButton.isEnabled = true
-                self.loginButton.backgroundColor = UIColor.systemPink.withAlphaComponent(0.6)
-                self.loginButton.titleLabel?.textColor.withAlphaComponent(1)
-            }
-        } else {
-            DispatchQueue.main.async {
-                self.loginButton.isEnabled = false
-                self.loginButton.backgroundColor = UIColor.systemPink.withAlphaComponent(0.3)
-                self.loginButton.titleLabel?.textColor.withAlphaComponent(0.2)
-            }
-        }
+    func textfieldNotificationPublisher(withTF textField: UITextField) -> AnyPublisher<String,NotificationCenter.Publisher.Failure> {
+        return NotificationCenter.default
+            .publisher(for: UITextField.textDidChangeNotification,object: textField)
+            .map {
+                guard let text = ($0.object as? UITextField)?.text else {
+                    return ""
+                }
+                return text
+            }.eraseToAnyPublisher()
     }
     
 }
-
-
 
 //MARK: - Setup Navigation
 extension LoginController {
@@ -157,7 +138,6 @@ extension LoginController {
         let iv = UIImageView()
         iv.translatesAutoresizingMaskIntoConstraints = false
         iv.image = .imageLiteral(name: "Instagram_logo_white")
-        
         return iv
     }
     
@@ -165,10 +145,6 @@ extension LoginController {
         let tf = CustomTextField(placeHolder: "Email")
         tf.keyboardType = .emailAddress
         tf.setHeight(50)
-        tf.bind{ [weak self] text in
-            self?.vm.email.value = text
-            self?.changeValidTextFields()
-        }
         return tf
     }
     
@@ -176,11 +152,6 @@ extension LoginController {
         let tf = CustomTextField(placeHolder: "Password")
         tf.isSecureTextEntry = true
         tf.setHeight(50)
-        tf.bind { [weak self] text in
-            self?.vm.password.value = text
-            self?.changeValidTextFields()
-        }
-        
         return tf
     }
     
