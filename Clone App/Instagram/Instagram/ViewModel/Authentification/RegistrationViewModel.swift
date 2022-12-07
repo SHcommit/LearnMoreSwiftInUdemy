@@ -1,27 +1,14 @@
 //
-//  AuthenticationViewModel.swift
+//  RegistrationViewModel.swift
 //  Instagram
 //
-//  Created by 양승현 on 2022/10/04.
+//  Created by 양승현 on 2022/12/06.
 //
 
 import UIKit
 
-struct LoginViewModel {
-    //MARK: - Properties
-    var email = Dynamic("")
-    var password = Dynamic("")
-    
-    //MARK: - Helpers
-    var isValiedUserForm: Bool {
-        get {
-            return !(email.value.isEmpty) && !(password.value.isEmpty)
-        }
-    }
-    
-}
 
-struct RegistrationViewModel {
+class RegistrationViewModel {
     
     //MARK: - Properties
     var email = Dynamic("")
