@@ -16,4 +16,7 @@ struct RegistrationViewModelInput {
     /// Emit signUp event to viewModel when user did tap SignUp button.
     let signUpTap: AnyPublisher<UINavigationController?,Never>
     
+    // Emit photo picker button tap event to viewModel.
+    let photoPickerTap: AnyPublisher<RegistrationController,Never>
+    
 }
