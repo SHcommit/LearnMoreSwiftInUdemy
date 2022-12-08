@@ -7,6 +7,10 @@
 
 import UIKit
 
+/**
+    ##TODO: Refactorign MVVM with combine : )
+ */
+
 class SearchController: UITableViewController {
     
     //MARK: - Properties
