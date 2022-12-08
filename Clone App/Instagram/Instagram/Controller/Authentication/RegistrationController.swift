@@ -7,6 +7,13 @@
 
 import UIKit
 
+/**
+ ### TODO: 회원가입 기능 combined 적용하기
+
+ RegistrationViewModel & RegistrationController
+ 
+ */
+
 class RegistrationController: UIViewController, UINavigationControllerDelegate {
     
     //MARK: - Properties
