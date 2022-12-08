@@ -84,31 +84,20 @@ extension LoginController {
         let input = LoginViewModelInput(tapLogin: tapLogin.eraseToAnyPublisher())
         viewModel.login(with: input)
         
-        textfieldNotificationPublisher(withTF: emailTextField)
+        CombineUtils.textfieldNotificationPublisher(withTF: emailTextField)
             .receive(on: RunLoop.main)
             .sink { [unowned self] text in
                 viewModel.email = text
                 viewModel.checkIsValidTextFields(withLogin: loginButton)
             }.store(in: &subscriptions)
             
-        textfieldNotificationPublisher(withTF: passwdTextField)
+        CombineUtils.textfieldNotificationPublisher(withTF: passwdTextField)
             .receive(on: RunLoop.main)
             .sink { [unowned self] text in
                 viewModel.passwd = text
                 viewModel.checkIsValidTextFields(withLogin: loginButton)
             }.store(in: &subscriptions)
 
-    }
-    
-    func textfieldNotificationPublisher(withTF textField: UITextField) -> AnyPublisher<String,NotificationCenter.Publisher.Failure> {
-        return NotificationCenter.default
-            .publisher(for: UITextField.textDidChangeNotification,object: textField)
-            .map {
-                guard let text = ($0.object as? UITextField)?.text else {
-                    return ""
-                }
-                return text
-            }.eraseToAnyPublisher()
     }
     
 }
