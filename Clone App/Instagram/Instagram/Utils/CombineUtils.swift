@@ -8,7 +8,7 @@
 import UIKit
 import Combine
 
-class ConbineUtils {
+class CombineUtils {
     
     static func textfieldNotificationPublisher(withTF textField: UITextField) -> AnyPublisher<String,NotificationCenter.Publisher.Failure> {
         return NotificationCenter.default
