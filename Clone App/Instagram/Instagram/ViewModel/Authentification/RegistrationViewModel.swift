@@ -6,53 +6,105 @@
 //
 
 import UIKit
-
+import Combine
 
 class RegistrationViewModel {
     
     //MARK: - Properties
-    var email = Dynamic("")
-    var password = Dynamic("")
-    var fullname = Dynamic("")
-    var username = Dynamic("")
-    var profileImage: UIImage?
+    @Published var email: String = ""
+    @Published var password: String = ""
+    @Published var fullname: String = ""
+    @Published var username: String = ""
+    @Published var profileImage: UIImage? = UIImage()
+    var subscriptions: Set<AnyCancellable> = Set<AnyCancellable>()
     
-    //MARK: - Helpers
-    var isValiedUserForm: Bool {
-        get {
-            return !(email.value.isEmpty) && !(password.value.isEmpty)
-            && !(fullname.value.isEmpty) && !(username.value.isEmpty)
-        }
-    }
+}
+
+//MARK: - RegistrationViewModelType
+extension RegistrationViewModel: RegistrationViewModelType {
+    
     
     func getUserInfoModel(uid: String, url: String) -> UserInfoModel {
-        return UserInfoModel(email: email.value,
-                                 fullname: fullname.value,
-                                 profileURL: url,
-                                 uid: uid,
-                                 username: username.value)
+        return UserInfoModel(email: email, fullname: fullname,
+                             profileURL: url, uid: uid,
+                             username: username)
+    }
+    
+    func bind(with input: RegistrationViewModelInput) {
+        input
+            .signUpTap
+            .receive(on: RunLoop.main)
+            .sink { [unowned self] navigationController in
+                navigationController?.startIndicator(indicator: indicator)
+                registerUser()
+                navigationController?.endIndicator(indicator: indicator)
+                navigationController?.popViewController(animated: true)
+            }.store(in: &subscriptions)
+
     }
     
 }
 
+//MARK: - RegistrationViewModelUserFormType
+extension RegistrationViewModel: RegistrationViewModelUserFormType {
+    
+    func isValidUserForm() -> AnyPublisher<Bool, Never> {
+        $email
+            .zip($fullname, $username, $password)
+            .map { (emailText, fullnameText, usernameText, passwordText) in
+                return !emailText.isEmpty && !fullnameText.isEmpty && !usernameText.isEmpty && !passwordText.isEmpty
+            }
+            .eraseToAnyPublisher()
+    }
+    
+    func checkIsValidTextFields(isValid: Bool, button: UIButton) {
+        isValid ? validUserForm(with: button) : notValidUserForm(with: button)
+    }
+    
+    func validUserForm(with button: UIButton) {
+        button.isEnabled = true
+        button.backgroundColor = UIColor.systemPink.withAlphaComponent(0.6)
+        button.titleLabel?.textColor.withAlphaComponent(1)
+    }
+    
+    func notValidUserForm(with button: UIButton) {
+        button.isEnabled = false
+        button.backgroundColor = UIColor.systemPink.withAlphaComponent(0.3)
+        button.titleLabel?.textColor.withAlphaComponent(0.2)
+    }
+    
+}
 
-// T value가 변할 때마다 listener?(value) 클로저를 실행한다.
-// 이때 이 값을 TextField UI에 갱신할 것이다.
-class Dynamic<T> {
-    typealias Listener = (T) -> Void
-    var listener: Listener?
-    var value: T {
-        didSet {
-            listener?(value)
+//MARK: - RegistrationViewModelNetworkServiceType
+extension RegistrationViewModel: RegistrationViewModelNetworkServiceType {
+    
+    func registerUser() {
+        Task() { [weak self] in
+            do {
+                try await self?.registerUserFromSignUp()
+            } catch {
+                self?.registerUserFromSignUpErrorHandling(error: error)
+            }
         }
     }
     
-    func bind(callback: @escaping Listener) {
-        listener = callback
+    
+    func registerUserFromSignUp() async throws {
+        try await AuthService.registerUser(withUserInfo: self)
     }
     
-    init(_ value: T) {
-        self.value = value
+    func registerUserFromSignUpErrorHandling(error: Error) {
+        switch error {
+        case AuthError.badImage:
+            print("DEBUG: Failure bind registerUser's info.profileImage")
+        case AuthError.invalidUserAccount:
+            print("DEBUG: Failure create user account")
+        case AuthError.invalidSetUserDataOnFireStore:
+            print("DEBUG: Failure add user Info in firestore")
+        default:
+            print("DEBUG: Unexcept error occured: \(error.localizedDescription)")
+        }
+
     }
     
 }

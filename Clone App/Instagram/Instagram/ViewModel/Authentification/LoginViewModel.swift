@@ -62,7 +62,7 @@ extension LoginViewModel: LoginViewModelType {
 }
 
 //MARK: - LoginViewModelAPIType
-extension LoginViewModel: LoginViewModelAPIType {
+extension LoginViewModel: LoginViewModelNetworkServiceType {
     
     func loginInputAccount(mainHomeTab vc: MainHomeTabController) {
         Task() {

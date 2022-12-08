@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Combine
 
 /**
  ### TODO: 회원가입 기능 combined 적용하기
@@ -19,22 +20,26 @@ class RegistrationController: UIViewController, UINavigationControllerDelegate {
     //MARK: - Properties
     private lazy var photoButton: UIButton = initialPhotoButton()
     private lazy var userInputStackView: UIStackView = initialUserInputStackView()
-    private var emailTextField: CustomTextField = initialEmailTextField()
-    private var passwordTextField: CustomTextField = initialPasswordTextField()
-    private var fullnameTextField: CustomTextField = initialFullnameTextField()
-    private var usernameTextField: CustomTextField = initialUsernameTextField()
+    private var emailTextField: UITextField = initialEmailTextField()
+    private var passwordTextField: UITextField = initialPasswordTextField()
+    private var fullnameTextField: UITextField = initialFullnameTextField()
+    private var usernameTextField: UITextField = initialUsernameTextField()
     private lazy var signUpButton: LoginButton = initialSignUpButton()
     private var readyLogInLineStackView: UIStackView = initialReadyLogInLineStackView()
     private var indicator: UIActivityIndicatorView = UIActivityIndicatorView(style: .medium)
+    private var viewModel = RegistrationViewModel()
+    private var subscriptions: Set<AnyCancellable> = Set<AnyCancellable>()
+    private var appear = PassthroughSubject<Void,Never>()
+    private var signUpTap = PassthroughSubject<UINavigationController?,Never>()
     
-    private var vm = RegistrationViewModel()
+
     //MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupUI()
-        setupLabelsBinding()
+        setupBinding()
     }
     
 }
@@ -63,24 +68,39 @@ extension RegistrationController {
         setupReadyLogInLineStackViewConstraints()
     }
     
-    func setupLabelsBinding() {
-        emailTextField.bind { [weak self] text in
-            self?.vm.email.value = text
-            self?.changeValidTextFields()
-        }
-        passwordTextField.bind { [weak self] text in
-            self?.vm.password.value = text
-            self?.changeValidTextFields()
-        }
-        fullnameTextField.bind { [weak self] text in
-            self?.vm.fullname.value = text
-            self?.changeValidTextFields()
-        }
-        usernameTextField.bind { [weak self] text in
-            self?.vm.username.value = text
-            self?.changeValidTextFields()
-        }
+    func setupBinding() {
         
+        let input = RegistrationViewModelInput(appear: appear.eraseToAnyPublisher(),
+                                               signUpTap: signUpTap.eraseToAnyPublisher())
+        
+        viewModel.bind(with: input)
+        
+        CombineUtils.textfieldNotificationPublisher(withTF: emailTextField)
+            .receive(on: DispatchQueue.main)
+            .sink { [unowned self] text in
+                viewModel.email = text
+            }.store(in: &subscriptions)
+        CombineUtils.textfieldNotificationPublisher(withTF: passwordTextField)
+            .receive(on: RunLoop.main)
+            .sink { [unowned self] text in
+                viewModel.password = text
+            }.store(in: &subscriptions)
+        CombineUtils.textfieldNotificationPublisher(withTF: fullnameTextField)
+            .receive(on: RunLoop.main)
+            .sink { [unowned self] text in
+                viewModel.fullname = text
+            }.store(in: &subscriptions)
+        CombineUtils.textfieldNotificationPublisher(withTF: usernameTextField)
+            .receive(on: RunLoop.main)
+            .sink { [unowned self] text in
+                viewModel.username = text
+            }.store(in: &subscriptions)
+        
+        viewModel.isValidUserForm()
+            .receive(on: RunLoop.main)
+            .sink { [unowned self] isValid in
+                viewModel.checkIsValidTextFields(isValid: isValid, button: signUpButton)
+            }.store(in: &subscriptions)
     }
     
     func updatePhotoButtonState(_ image: UIImage) {
@@ -90,22 +110,6 @@ extension RegistrationController {
         photoButton.layer.borderColor = UIColor.white.cgColor
         photoButton.clipsToBounds = true
         dismiss(animated: true)
-    }
-    
-    func changeValidTextFields() {
-        if vm.isValiedUserForm {
-            DispatchQueue.main.async {
-                self.signUpButton.isEnabled = true
-                self.signUpButton.backgroundColor = UIColor.systemPink.withAlphaComponent(0.6)
-                self.signUpButton.titleLabel?.textColor.withAlphaComponent(1)
-            }
-        } else {
-            DispatchQueue.main.async {
-                self.signUpButton.isEnabled = false
-                self.signUpButton.backgroundColor = UIColor.systemPink.withAlphaComponent(0.3)
-                self.signUpButton.titleLabel?.textColor.withAlphaComponent(0.2)
-            }
-        }
     }
 
 }
@@ -118,14 +122,7 @@ extension RegistrationController {
     }
     
     @objc func didTapSignUpButton(_ sender: Any) {
-        startIndicator(indicator: indicator)
-        Task() {
-            do {
-                try await registerUserFromSignUp()
-            }catch {
-                registerUserFromSignUpErrorHandling(error: error)
-            }
-        }
+        signUpTap.send(navigationController)
     }
     
     @objc func didTapPhotoButton(_ sender: Any) {
@@ -143,37 +140,11 @@ extension RegistrationController: UIImagePickerControllerDelegate {
 
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         guard let selectedImage = info[.editedImage] as? UIImage else { return }
-        vm.profileImage = selectedImage
+        viewModel.profileImage = selectedImage
         updatePhotoButtonState(selectedImage)
         
     }
 }
-
-
-//MARK: - API
-extension RegistrationController {
-    func registerUserFromSignUp() async throws {
-        try await AuthService.registerUser(withUserInfo: vm)
-        DispatchQueue.main.async {
-            self.endIndicator(indicator: self.indicator)
-            self.navigationController?.popViewController(animated: true)
-        }
-    }
-    func registerUserFromSignUpErrorHandling(error: Error) {
-        switch error {
-        case AuthError.badImage:
-            print("DEBUG: Failure bind registerUser's info.profileImage")
-        case AuthError.invalidUserAccount:
-            print("DEBUG: Failure create user account")
-        case AuthError.invalidSetUserDataOnFireStore:
-            print("DEBUG: Failure add user Info in firestore")
-        default:
-            print("DEBUG: Unexcept error occured: \(error.localizedDescription)")
-        }
-    }
-}
-
-
 
 //MARK: - Initial subviews
 extension RegistrationController {
