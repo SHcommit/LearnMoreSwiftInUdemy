@@ -236,7 +236,7 @@ extension MainHomeTabController {
     
     func presentLoginScene() {
         let controller = LoginController()
-        controller.authDelegate = self
+        controller.viewModel.authDelegate = self
         let nav = UINavigationController(rootViewController: controller)
         nav.modalPresentationStyle = .fullScreen
         self.present(nav,animated: false, completion: nil)
