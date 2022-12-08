@@ -8,18 +8,6 @@
 import UIKit
 import Combine
 
-protocol ProfileViewModelType {
-    func fetchData()
-}
-
-protocol ProfileViewModelAPIType {
-    func fetchToCheckIfUserIsFollowed()
-    func fetchUserStats()
-    func fetchImage(profileUrl url: String) async
-    func fetchImageFromUserProfileImageService(url: String) async throws
-    func fetchImageErrorHandling(withError error: Error)
-}
-
 class ProfileViewModel {
     //MARK: - Properties
     @Published var user: UserInfoModel
@@ -33,7 +21,7 @@ class ProfileViewModel {
     }
 }
 
-//MARK: - Helpers
+//MARK: - ProfileViewModelType
 extension ProfileViewModel: ProfileViewModelType {
     func fetchData() {
         fetchToCheckIfUserIsFollowed()
