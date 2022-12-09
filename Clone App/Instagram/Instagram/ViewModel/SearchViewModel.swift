@@ -7,7 +7,7 @@
 
 import UIKit
 
-class SearchUserViewModel {
+class SearchViewModel {
     
     //MARK: - Properties
     private var users = [UserInfoModel]()
@@ -18,7 +18,7 @@ class SearchUserViewModel {
 }
 
 //MARK: - get/set
-extension SearchUserViewModel {
+extension SearchViewModel {
     
     func getUserInfoModel() -> [UserInfoModel] {
         return users
@@ -26,7 +26,7 @@ extension SearchUserViewModel {
 }
 
 //MARK: - Return tableViewDataSource
-extension SearchUserViewModel {
+extension SearchViewModel {
     
     func numberOfRowsInSection(_ section: Int = 0) -> Int {
         if section == 0 {
