@@ -19,7 +19,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(windowScene: scene)
         
         
-        
         window?.rootViewController = MainHomeTabController()
         //window?.rootViewController = UINavigationController(rootViewController: LoginController())
         window?.makeKeyAndVisible()
