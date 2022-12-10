@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		150BD52A29138E9600B79158 /* SearchedUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 150BD52929138E9600B79158 /* SearchedUserCell.swift */; };
-		1518D2562913E14E003A2A48 /* SearchUserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1518D2552913E14E003A2A48 /* SearchUserViewModel.swift */; };
+		1518D2562913E14E003A2A48 /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1518D2552913E14E003A2A48 /* SearchViewModel.swift */; };
 		1518D258291624E0003A2A48 /* ProfileHeaderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1518D257291624E0003A2A48 /* ProfileHeaderViewModel.swift */; };
 		15486DC4291D1745008B98E6 /* UploadPostController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15486DC3291D1745008B98E6 /* UploadPostController.swift */; };
 		15486DC6291D1B74008B98E6 /* InputTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15486DC5291D1B74008B98E6 /* InputTextView.swift */; };
@@ -51,6 +51,7 @@
 		15E4E90E2940F2C30080A4FF /* LoginViewModelProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E4E90D2940F2C30080A4FF /* LoginViewModelProtocols.swift */; };
 		15E4E9102940F2E90080A4FF /* LoginViewModelInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E4E90F2940F2E90080A4FF /* LoginViewModelInput.swift */; };
 		15E4E912294181360080A4FF /* ProfileViewModelProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E4E911294181360080A4FF /* ProfileViewModelProtocols.swift */; };
+		15E5A736294250A300183B71 /* SearchViewModelProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E5A735294250A300183B71 /* SearchViewModelProtocols.swift */; };
 		15E8DB872917B370000EF639 /* UserStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E8DB862917B370000EF639 /* UserStats.swift */; };
 		15FDED99291FA8CE00DDAF2E /* PostViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15FDED98291FA8CE00DDAF2E /* PostViewModel.swift */; };
 		81BBDDEDACB63985F43988AC /* Pods_Instagram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B288DF44C633C67CA7F5E28 /* Pods_Instagram.framework */; };
@@ -58,7 +59,7 @@
 
 /* Begin PBXFileReference section */
 		150BD52929138E9600B79158 /* SearchedUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchedUserCell.swift; sourceTree = "<group>"; };
-		1518D2552913E14E003A2A48 /* SearchUserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchUserViewModel.swift; sourceTree = "<group>"; };
+		1518D2552913E14E003A2A48 /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
 		1518D257291624E0003A2A48 /* ProfileHeaderViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeaderViewModel.swift; sourceTree = "<group>"; };
 		15486DC3291D1745008B98E6 /* UploadPostController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadPostController.swift; sourceTree = "<group>"; };
 		15486DC5291D1B74008B98E6 /* InputTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputTextView.swift; sourceTree = "<group>"; };
@@ -103,6 +104,7 @@
 		15E4E90D2940F2C30080A4FF /* LoginViewModelProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModelProtocols.swift; sourceTree = "<group>"; };
 		15E4E90F2940F2E90080A4FF /* LoginViewModelInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModelInput.swift; sourceTree = "<group>"; };
 		15E4E911294181360080A4FF /* ProfileViewModelProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModelProtocols.swift; sourceTree = "<group>"; };
+		15E5A735294250A300183B71 /* SearchViewModelProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModelProtocols.swift; sourceTree = "<group>"; };
 		15E8DB862917B370000EF639 /* UserStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStats.swift; sourceTree = "<group>"; };
 		15FDED98291FA8CE00DDAF2E /* PostViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostViewModel.swift; sourceTree = "<group>"; };
 		5B288DF44C633C67CA7F5E28 /* Pods_Instagram.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Instagram.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -279,7 +281,7 @@
 			children = (
 				15C6F359293F99FF006A3587 /* Authentification */,
 				15C6F34A293F83BD006A3587 /* ProfileViewModel.swift */,
-				1518D2552913E14E003A2A48 /* SearchUserViewModel.swift */,
+				1518D2552913E14E003A2A48 /* SearchViewModel.swift */,
 				15C1848E2910D10F004EF35F /* UserInfoViewModel.swift */,
 				1518D257291624E0003A2A48 /* ProfileHeaderViewModel.swift */,
 				15FDED98291FA8CE00DDAF2E /* PostViewModel.swift */,
@@ -293,6 +295,7 @@
 				15E4E90D2940F2C30080A4FF /* LoginViewModelProtocols.swift */,
 				15E4E911294181360080A4FF /* ProfileViewModelProtocols.swift */,
 				156B304A294198DE003BC4EE /* RegistrationViewModelType.swift */,
+				15E5A735294250A300183B71 /* SearchViewModelProtocols.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -465,6 +468,7 @@
 				15ACA73E290D80040011E665 /* UserInfoModel.swift in Sources */,
 				15ACA727290D795C0011E665 /* LoginButton.swift in Sources */,
 				15ACA70C290D77780011E665 /* MainHomeTabController.swift in Sources */,
+				15E5A736294250A300183B71 /* SearchViewModelProtocols.swift in Sources */,
 				15D0DCB5291F523600ACF1ED /* PostModel.swift in Sources */,
 				15ACA737290D79FA0011E665 /* FeedCell.swift in Sources */,
 				15ACA728290D795C0011E665 /* UserHelpLabelAndButton.swift in Sources */,
@@ -474,7 +478,7 @@
 				15ACA72F290D796F0011E665 /* ProfileCell.swift in Sources */,
 				15C1848A290FF465004EF35F /* UserService.swift in Sources */,
 				15ACA716290D779B0011E665 /* SearchController.swift in Sources */,
-				1518D2562913E14E003A2A48 /* SearchUserViewModel.swift in Sources */,
+				1518D2562913E14E003A2A48 /* SearchViewModel.swift in Sources */,
 				15ACA71A290D79250011E665 /* RegistrationController.swift in Sources */,
 				156B304B294198DE003BC4EE /* RegistrationViewModelType.swift in Sources */,
 				15486DC6291D1B74008B98E6 /* InputTextView.swift in Sources */,

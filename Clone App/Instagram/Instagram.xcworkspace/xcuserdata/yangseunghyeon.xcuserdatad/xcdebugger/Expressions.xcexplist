@@ -3,61 +3,46 @@
    version = "1.0">
    <ContextStates>
       <ContextState
-         contextName = "SearchController.tableView(_:numberOfRowsInSection:):SearchController.swift">
+         contextName = "ProfileHeader.init(frame:):ProfileHeader.swift">
       </ContextState>
       <ContextState
-         contextName = "SearchController.tableView(_:didSelectRowAt:):SearchController.swift">
-      </ContextState>
-      <ContextState
-         contextName = "MainHomeTabController.userVM.didset:MainHomeTabController.swift">
-      </ContextState>
-      <ContextState
-         contextName = "MainHomeTabController.configureViewControllers():MainHomeTabController.swift">
+         contextName = "static AuthService.fetchUserProfile():AuthService.swift">
          <PersistentStrings>
             <PersistentString
-               value = "">
+               value = "print(userProfileUrl)">
+            </PersistentString>
+            <PersistentString
+               value = "print(userProfileinfo)">
+            </PersistentString>
+            <PersistentString
+               value = "MainHomeTabController.userProfileInfo">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "closure #1 in closure #1 in static AppDelegate.initialUserInfo():AppDelegate.swift">
+         contextName = "closure #1 in SearchViewModel.setupTableViewJust(with:):SearchViewModel.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "users">
+            </PersistentString>
+         </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "closure #1 in FeedController.fetchPosts():FeedController.swift">
-      </ContextState>
-      <ContextState
-         contextName = "SearchUserViewModel.numberOfRowsInSection(_:):SearchUserViewModel.swift">
-      </ContextState>
-      <ContextState
-         contextName = "ProfileHeader.init(frame:):ProfileHeader.swift">
-      </ContextState>
-      <ContextState
-         contextName = "SearchController.tableView(_:cellForRowAt:):SearchController.swift">
+         contextName = "closure #1 in SearchViewModel.setupUserViewModelInCell(with:_:):SearchViewModel.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "indexPath.row">
+            </PersistentString>
+         </PersistentStrings>
       </ContextState>
       <ContextState
          contextName = "FeedController.handleLogout():FeedController.swift">
       </ContextState>
       <ContextState
-         contextName = "closure #1 in closure #1 in static ProfileHeader.initialProfileIV():ProfileHeader.swift">
+         contextName = "closure #1 in static PostService.fetchPosts():PostService.swift">
          <PersistentStrings>
             <PersistentString
-               value = "info?.profileURL">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "FeedController.collectionView(_:cellForItemAt:):FeedController.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "print(&quot;\(indexPath.row)&quot;)">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "MainHomeTabController.authenticationCompletion(uid:):MainHomeTabController.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "print(appDelegate.pList.string(forKey: CURRENT_USER_UID))">
+               value = "print(post)">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -79,6 +64,67 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "MainHomeTabController.configureViewControllers():MainHomeTabController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in closure #1 in static ProfileHeader.initialProfileIV():ProfileHeader.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "info?.profileURL">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "SearchUserViewModel.numberOfRowsInSection(_:):SearchUserViewModel.swift">
+      </ContextState>
+      <ContextState
+         contextName = "FeedController.collectionView(_:cellForItemAt:):FeedController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "print(&quot;\(indexPath.row)&quot;)">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in FeedController.fetchPosts():FeedController.swift">
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in closure #1 in static AppDelegate.initialUserInfo():AppDelegate.swift">
+      </ContextState>
+      <ContextState
+         contextName = "static ProfileHeader.initialProfileIV():ProfileHeader.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "userInfo">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "MainHomeTabController.userVM.didset:MainHomeTabController.swift">
+      </ContextState>
+      <ContextState
+         contextName = "MainHomeTabController.authenticationCompletion(uid:):MainHomeTabController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "print(appDelegate.pList.string(forKey: CURRENT_USER_UID))">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "SearchController.tableView(_:numberOfRowsInSection:):SearchController.swift">
+      </ContextState>
+      <ContextState
+         contextName = "SearchController.tableView(_:didSelectRowAt:):SearchController.swift">
+      </ContextState>
+      <ContextState
+         contextName = "SearchController.tableView(_:cellForRowAt:):SearchController.swift">
+      </ContextState>
+      <ContextState
          contextName = "closure #1 in MainHomeTabController.authenticationCompletion():MainHomeTabController.swift">
          <PersistentStrings>
             <PersistentString
@@ -86,36 +132,6 @@
             </PersistentString>
             <PersistentString
                value = "CURRENT_USER?.uid">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "static AuthService.fetchUserProfile():AuthService.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "print(userProfileUrl)">
-            </PersistentString>
-            <PersistentString
-               value = "print(userProfileinfo)">
-            </PersistentString>
-            <PersistentString
-               value = "MainHomeTabController.userProfileInfo">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "closure #1 in static PostService.fetchPosts():PostService.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "print(post)">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "static ProfileHeader.initialProfileIV():ProfileHeader.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "userInfo">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
