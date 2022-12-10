@@ -11,7 +11,6 @@ import Combine
 final class LoginViewModel {
     
     //MARK: - Properties
-    weak var authDelegate: AuthentificationDelegate?
     @Published var email: String = ""
     @Published var passwd: String = ""
     var subscriptions: Set<AnyCancellable> = Set<AnyCancellable>()
@@ -20,56 +19,116 @@ final class LoginViewModel {
 
 //MARK: - LoginViewModelType
 extension LoginViewModel: LoginViewModelType {
-    
-    func isValidUserForm() -> AnyPublisher<Bool, Never> {
-        $email
-            .zip($passwd)
-            .map { (emailText, passwdText) in
-                return !emailText.isEmpty && !passwdText.isEmpty
-            }.eraseToAnyPublisher()
-    }
-    
-    func checkIsValidTextFields(withLogin button: UIButton) {
-        isValidUserForm()
-            .receive(on: RunLoop.main)
-            .sink{ isValied in
-                if isValied {
-                    button.isEnabled = true
-                    button.backgroundColor = UIColor.systemPink.withAlphaComponent(0.6)
-                    button.titleLabel?.textColor.withAlphaComponent(1)
-                } else {
-                    button.isEnabled = false
-                    button.backgroundColor = UIColor.systemPink.withAlphaComponent(0.3)
-                    button.titleLabel?.textColor.withAlphaComponent(0.2)
-                }
-            }.store(in: &subscriptions)
-    }
-    
-    func login(with input: LoginViewModelInput) {
+    func transform(with input: LoginViewModelInput) -> LoginViewModelOutput {
         subscriptions.forEach{ $0.cancel() }
         subscriptions.removeAll()
         
-        input
-            .tapLogin
-            .receive(on: RunLoop.main)
-            .sink { [unowned self] presentingVC in
-                guard let vc = presentingVC as? MainHomeTabController else { return }
-                vc.view.isHidden = false
-                loginInputAccount(mainHomeTab: vc)
-            }.store(in: &subscriptions)
+        //MARK: - Publiser's operator chains
+        let login = loginChains(with: input)
+        let signUp = signUpChains(with: input)
+        let emailNotification = emailNotificationChains(with: input)
+        let passwdNotification = passwdNotificationChains(with: input)
+        let isValidForm = isValidFormChains(with: input)
+        
+        //MARK: - Merge publishers
+        let sceneOutput: LoginViewModelOutput = Publishers.Merge(login,signUp).eraseToAnyPublisher()
+        let textNotificationOutput: LoginViewModelOutput = Publishers.Merge(emailNotification,passwdNotification).eraseToAnyPublisher()
+        let outputPublishers = Publishers.Merge(sceneOutput, textNotificationOutput).eraseToAnyPublisher()
+        
+        return Publishers.Merge(outputPublishers, isValidForm).eraseToAnyPublisher()
     }
 
 }
 
+//MARK: - LoginViweModelInputCase
+extension LoginViewModel: LoginViewModelInputCase {
+    
+    func loginChains(with input: LoginViewModelInput) -> LoginViewModelOutput {
+        return input.login
+            .receive(on: RunLoop.main)
+            .tryMap { [unowned self] viewType -> LoginControllerState in
+                guard
+                    let presentingVC = viewType.presentingVC as? MainHomeTabController,
+                    let currentVC = viewType.currentVC as? LoginController
+                else {
+                    throw LoginViewModelErrorType.loginPublishedOutputStreamNil
+                }
+                presentingVC.view.isHidden = false
+                loginInputAccount(currentVC: currentVC)
+                return .endIndicator
+            }.mapError{ error -> LoginViewModelErrorType in
+                return error as? LoginViewModelErrorType ?? .failed
+            }.eraseToAnyPublisher()
+    }
+    
+    func signUpChains(with input: LoginViewModelInput) -> LoginViewModelOutput {
+        return input.signUp
+            .receive(on: RunLoop.main)
+            .tryMap { navigationController -> LoginControllerState in
+                let registrationVC = RegistrationController()
+                guard let navigationController = navigationController else {
+                    throw LoginViewModelErrorType.signUpPublisedOutputStreamNil
+                }
+                navigationController.pushViewController(registrationVC, animated: true)
+                return .endIndicator
+            }.mapError{ error -> LoginViewModelErrorType in
+                return error as? LoginViewModelErrorType ?? .failed
+            }.eraseToAnyPublisher()
+    }
+    
+    func emailNotificationChains(with input: LoginViewModelInput) -> LoginViewModelOutput {
+        return input.emailNotification
+            .receive(on: RunLoop.main)
+            .map { [unowned self] text -> LoginControllerState in
+                email = text
+                return .none
+            }.mapError{ error -> LoginViewModelErrorType in
+                return error as? LoginViewModelErrorType ?? .failed
+            }.eraseToAnyPublisher()
+    }
+    
+    func passwdNotificationChains(with input: LoginViewModelInput) -> LoginViewModelOutput {
+        return input.passwdNotification
+            .receive(on: RunLoop.main)
+            .map { [unowned self] text -> LoginControllerState in
+                passwd = text
+                return .none
+            }.mapError{ error -> LoginViewModelErrorType in
+                return error as? LoginViewModelErrorType ?? .failed
+            }.eraseToAnyPublisher()
+    }
+    
+    func isValidFormChains(with input: LoginViewModelInput) -> LoginViewModelOutput {
+        return isValidUserForm()
+            .tryMap { isValid -> LoginControllerState in
+                return .checkIsValid(isValid)
+            }.mapError{ error -> LoginViewModelErrorType in
+                 return error as? LoginViewModelErrorType ?? .failed
+            }.eraseToAnyPublisher()
+    }
+    
+    func isValidUserForm() -> AnyPublisher<Bool, LoginViewModelErrorType> {
+        $email
+            .receive(on: RunLoop.main)
+            .combineLatest($passwd)
+            .tryMap { (emailText, passwdText) in
+                return !emailText.isEmpty && !passwdText.isEmpty
+            }.mapError{ error -> LoginViewModelErrorType in
+                return error as? LoginViewModelErrorType ?? .failed
+            }.eraseToAnyPublisher()
+    }
+    
+}
+
+
 //MARK: - LoginViewModelAPIType
 extension LoginViewModel: LoginViewModelNetworkServiceType {
     
-    func loginInputAccount(mainHomeTab vc: MainHomeTabController) {
+    func loginInputAccount(currentVC: LoginController) {
         Task() {
             do {
                 guard let authDataResult = try await AuthService.handleIsLoginAccount(email: email, pw: passwd) else { throw FetchUserError.invalidUserInfo }
-                await authDelegate?.authenticationCompletion(uid: authDataResult.user.uid)
-                await vc.endIndicator(indicator: indicator)
+                await currentVC.authDelegate?.authenticationCompletion(uid: authDataResult.user.uid)
             }catch FetchUserError.invalidUserInfo {
                 print("DEBUG: Fail to bind userInfo")
             }catch {
