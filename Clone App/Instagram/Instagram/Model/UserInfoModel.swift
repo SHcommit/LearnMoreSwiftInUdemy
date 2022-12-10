@@ -7,7 +7,7 @@
 
 import UIKit
 
-struct UserInfoModel: Codable {
+struct UserInfoModel: Codable, Equatable {
     var email: String
     var fullname: String
     var profileURL: String
@@ -28,6 +28,16 @@ struct UserInfoModel: Codable {
         case profileURL = "profileImageUrl"
         case uid
         case username
+    }
+    
+    static func ==( lhs: Self, rhs: Self) -> Bool {
+        let flag = lhs.email == rhs.email &&
+        lhs.fullname == rhs.fullname &&
+        lhs.uid == rhs.uid &&
+        lhs.username == rhs.username &&
+        lhs.isFollowed == rhs.isFollowed &&
+        lhs.isCurrentUser == rhs.isCurrentUser
+        return flag
     }
 }
 

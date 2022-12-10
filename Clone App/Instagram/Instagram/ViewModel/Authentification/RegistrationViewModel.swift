@@ -23,7 +23,6 @@ class RegistrationViewModel {
 //MARK: - RegistrationViewModelType
 extension RegistrationViewModel: RegistrationViewModelType {
     
-    
     func getUserInfoModel(uid: String, url: String) -> UserInfoModel {
         return UserInfoModel(email: email, fullname: fullname,
                              profileURL: url, uid: uid,
@@ -31,8 +30,8 @@ extension RegistrationViewModel: RegistrationViewModelType {
     }
     
     func bind(with input: RegistrationViewModelInput) {
-        input
-            .signUpTap
+        
+        input.signUpTap
             .receive(on: RunLoop.main)
             .sink { [unowned self] navigationController in
                 navigationController?.startIndicator(indicator: indicator)
@@ -41,6 +40,15 @@ extension RegistrationViewModel: RegistrationViewModelType {
                 navigationController?.popViewController(animated: true)
             }.store(in: &subscriptions)
 
+        input.photoPickerTap
+            .receive(on: RunLoop.main)
+            .sink { viewController in
+                let picker = UIImagePickerController()
+                picker.delegate = viewController
+                picker.allowsEditing = true
+                viewController.present(picker, animated: true)
+            }.store(in: &subscriptions)
+            
     }
     
 }

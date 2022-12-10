@@ -8,13 +8,6 @@
 import UIKit
 import Combine
 
-/**
- ### TODO: 회원가입 기능 combined 적용하기
-
- RegistrationViewModel & RegistrationController
- 
- */
-
 class RegistrationController: UIViewController, UINavigationControllerDelegate {
     
     //MARK: - Properties
@@ -31,13 +24,11 @@ class RegistrationController: UIViewController, UINavigationControllerDelegate {
     private var subscriptions: Set<AnyCancellable> = Set<AnyCancellable>()
     private var appear = PassthroughSubject<Void,Never>()
     private var signUpTap = PassthroughSubject<UINavigationController?,Never>()
-    
+    private var photoPickerTap = PassthroughSubject<RegistrationController, Never>()
 
     //MARK: - Lifecycle
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setupUI()
         setupBinding()
     }
@@ -70,8 +61,7 @@ extension RegistrationController {
     
     func setupBinding() {
         
-        let input = RegistrationViewModelInput(appear: appear.eraseToAnyPublisher(),
-                                               signUpTap: signUpTap.eraseToAnyPublisher())
+        let input = RegistrationViewModelInput(appear: appear.eraseToAnyPublisher(), signUpTap: signUpTap.eraseToAnyPublisher(), photoPickerTap: photoPickerTap.eraseToAnyPublisher())
         
         viewModel.bind(with: input)
         
@@ -126,10 +116,7 @@ extension RegistrationController {
     }
     
     @objc func didTapPhotoButton(_ sender: Any) {
-        let picker = UIImagePickerController()
-        picker.delegate = self
-        picker.allowsEditing = true
-        present(picker, animated: true)
+        photoPickerTap.send(self)
         
     }
 }
