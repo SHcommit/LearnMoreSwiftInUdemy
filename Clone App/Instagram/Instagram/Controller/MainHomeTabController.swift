@@ -232,8 +232,8 @@ extension MainHomeTabController {
     }
     
     func presentLoginScene() {
-        let controller = LoginController()
-        controller.viewModel.authDelegate = self
+        let controller = LoginController(viewModel: LoginViewModel())
+        controller.authDelegate = self
         let nav = UINavigationController(rootViewController: controller)
         nav.modalPresentationStyle = .fullScreen
         self.present(nav,animated: false, completion: nil)
@@ -250,6 +250,7 @@ extension MainHomeTabController: AuthentificationDelegate {
         ud.set(uid, forKey: CURRENT_USER_UID)
         do{
             try await fetchCurrentUserInfo(withUID: uid)
+            endIndicator(indicator: indicator)
         }catch {
             authenticationCompletionErrorHandling(error: error)
         }
