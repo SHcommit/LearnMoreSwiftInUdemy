@@ -79,10 +79,7 @@ extension MainHomeTabController {
         let layout = UICollectionViewFlowLayout()
         
         let feed = templateNavigationController(unselectedImage: .imageLiteral(name: "home_unselected"), selectedImage: .imageLiteral(name: "home_selected"), rootVC: FeedController(collectionViewLayout: layout))
-        let searchVC = SearchController()
-        Task() {
-            await searchVC.fetchAllUser()
-        }
+        let searchVC = SearchController(viewModel: SearchViewModel())
         let search = templateNavigationController(unselectedImage: .imageLiteral(name: "search_unselected"), selectedImage: .imageLiteral(name: "search_selected"), rootVC: searchVC)
         
         let imageSelector = templateNavigationController(unselectedImage: .imageLiteral(name: "plus_unselected"), selectedImage: .imageLiteral(name: "plus_unselected"), rootVC: ImageSelectorController())
