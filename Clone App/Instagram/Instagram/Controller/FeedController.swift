@@ -48,8 +48,8 @@ extension FeedController {
     }
     
     func presentLoginScene() {
-        let controller = LoginController()
-        controller.viewModel.authDelegate = tabBarController as? MainHomeTabController
+        let controller = LoginController(viewModel: LoginViewModel())
+        controller.authDelegate = tabBarController as? MainHomeTabController
         let nav = UINavigationController(rootViewController: controller)
         nav.modalPresentationStyle = .fullScreen
         self.present(nav,animated: false, completion: nil)
