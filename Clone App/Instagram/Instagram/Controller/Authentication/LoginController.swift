@@ -9,10 +9,10 @@ import UIKit
 import Firebase
 import Combine
 
-
 class LoginController: UIViewController {
     
     //MARK: - Properties
+    weak var authDelegate: AuthentificationDelegate?
     private let instagramIcon: UIImageView = initialInstagramIcon()
     private lazy var emailTextField: UITextField = initialEmailTextField()
     private lazy var passwdTextField: UITextField = initialPasswdTextField()
@@ -20,16 +20,32 @@ class LoginController: UIViewController {
     private lazy var forgotHelpLineStackView: UIStackView = initialForgotStackView()
     private lazy var signUpLineStackView: UIStackView = initialSignUpLineStackView()
     
-    var viewModel: LoginViewModel = LoginViewModel()
-    private var subscriptions: Set<AnyCancellable> = Set<AnyCancellable>()
-    private var tapLogin: PassthroughSubject<UIViewController,Never> = PassthroughSubject<UIViewController,Never>()
+    //MARK: - Combine Properties
+    var viewModel: LoginViewModelType
+    private var login = PassthroughSubject<LoginVMInputLoginOutputType, LoginViewModelErrorType>()
+    private var signUp = PassthroughSubject<UINavigationController?, LoginViewModelErrorType>()
+    private var emailNotification = PassthroughSubject<String, LoginViewModelErrorType>()
+    private var passwdNotification = PassthroughSubject<String, LoginViewModelErrorType>()
     
-    //MARK: - Life cycle
+    private var subscriptions: Set<AnyCancellable> = Set<AnyCancellable>()
+
+    
+    //MARK: - Life cycles
+    init(viewModel: LoginViewModelType) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         setupBindings()
     }
+    
 }
 
 //MARK: - View helpers
@@ -58,8 +74,7 @@ extension LoginController {
     
     @objc func didTapLoginButton(_ sender: Any) {
         startIndicator(indicator: indicator)
-        guard let presentingViewController = presentingViewController else { return }
-        tapLogin.send(presentingViewController)
+        login.send((presentingViewController, self))
     }
     
     @objc func didTapHelpButton(_ sender: Any) {
@@ -67,13 +82,12 @@ extension LoginController {
     }
     
     @objc func didTapSignUpButton(_ sender: Any) {
-        let registrationVC = RegistrationController()
-        navigationController?.pushViewController(registrationVC, animated: true)
+        signUp.send(navigationController)
     }
 
 }
 
-//MARK: - Helpers
+//MARK: - LoginViewModel bind
 extension LoginController {
     
     func setupBindings() {
@@ -81,23 +95,97 @@ extension LoginController {
         subscriptions.forEach { $0.cancel() }
         subscriptions.removeAll()
         
-        let input = LoginViewModelInput(tapLogin: tapLogin.eraseToAnyPublisher())
-        viewModel.login(with: input)
+        setupEmailTextFieldPublisherWithTextDidChanged()
+        setupPasswdTextFieldPublisherWithTextDidChanged()
         
+        let input = LoginViewModelInput(login: login.eraseToAnyPublisher(),
+                                        signUp: signUp.eraseToAnyPublisher(),
+                                        emailNotification: emailNotification.eraseToAnyPublisher(),
+                                        passwdNotification: passwdNotification.eraseToAnyPublisher())
+        
+        let output = viewModel.transform(with: input)
+        output.sink { [unowned self] result in
+            switch result {
+            case.finished:
+                break
+            case .failure(let error):
+                outputErrorHandling(with: error)
+                break
+            }
+        } receiveValue: { state in
+            self.render(in: state)
+        }.store(in: &subscriptions)
+
+    }
+    
+    func render(in state: LoginControllerState) {
+        switch state {
+        case .none:
+            break
+        case .endIndicator:
+            endIndicator(indicator: indicator)
+            break
+        case .checkIsValid(let isValid):
+            loginButtonSwitchHandler(with: isValid)
+            break
+        }
+    }
+    
+}
+
+//MARK: - Helpers
+extension LoginController {
+    
+    //MARK: - otuputErrorHandling
+    func outputErrorHandling(with error: LoginViewModelErrorType) {
+        switch error {
+        case .failed:
+            print(LoginViewModelErrorType.failed.errorDiscription)
+            break
+        case .loginPublishedOutputStreamNil:
+            print(LoginViewModelErrorType.loginPublishedOutputStreamNil.errorDiscription)
+            break
+        case .signUpPublisedOutputStreamNil:
+            print(LoginViewModelErrorType.signUpPublisedOutputStreamNil.errorDiscription)
+            break
+        }
+    }
+    
+    //MARK: - setupBindings Helpers
+    func loginButtonSwitchHandler(with isValid: Bool) {
+        if isValid {
+            enableLoginButton()
+        }else {
+            disableLoginButton()
+        }
+    }
+    
+    func enableLoginButton() {
+        loginButton.isEnabled = true
+        loginButton.backgroundColor = UIColor.systemPink.withAlphaComponent(0.6)
+        loginButton.titleLabel?.textColor.withAlphaComponent(1)
+    }
+    
+    func disableLoginButton() {
+        loginButton.isEnabled = false
+        loginButton.backgroundColor = UIColor.systemPink.withAlphaComponent(0.3)
+        loginButton.titleLabel?.textColor.withAlphaComponent(0.2)
+    }
+    
+    func setupEmailTextFieldPublisherWithTextDidChanged() {
         CombineUtils.textfieldNotificationPublisher(withTF: emailTextField)
             .receive(on: RunLoop.main)
             .sink { [unowned self] text in
-                viewModel.email = text
-                viewModel.checkIsValidTextFields(withLogin: loginButton)
+                emailNotification.send(text)
             }.store(in: &subscriptions)
-            
+    }
+    
+    func setupPasswdTextFieldPublisherWithTextDidChanged() {
         CombineUtils.textfieldNotificationPublisher(withTF: passwdTextField)
             .receive(on: RunLoop.main)
-            .sink { [unowned self] text in
-                viewModel.passwd = text
-                viewModel.checkIsValidTextFields(withLogin: loginButton)
+            .sink{ [unowned self] text in
+                passwdNotification.send(text)
             }.store(in: &subscriptions)
-
     }
     
 }
