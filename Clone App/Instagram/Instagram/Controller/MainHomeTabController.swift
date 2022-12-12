@@ -85,8 +85,8 @@ extension MainHomeTabController {
         let imageSelector = templateNavigationController(unselectedImage: .imageLiteral(name: "plus_unselected"), selectedImage: .imageLiteral(name: "plus_unselected"), rootVC: ImageSelectorController())
         let notifications = templateNavigationController(unselectedImage: .imageLiteral(name: "like_unselected"), selectedImage: .imageLiteral(name: "like_selected"), rootVC: NotificationController())
         
-        let profileVC = ProfileController(user: userVM.userInfoModel())
-
+        let profileVC = ProfileController(viewModel: ProfileViewModel(user: userVM.userInfoModel()))
+        
         let profile = templateNavigationController(unselectedImage: .imageLiteral(name: "profile_unselected"), selectedImage: .imageLiteral(name: "profile_selected"), rootVC: profileVC)
         
         viewControllers = [feed,search,imageSelector,notifications,profile]
