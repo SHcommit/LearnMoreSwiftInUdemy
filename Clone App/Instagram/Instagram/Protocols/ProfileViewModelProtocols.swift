@@ -8,9 +8,12 @@
 import Foundation
 import Combine
 
-protocol ProfileViewModelType {
+protocol ProfileViewModelGetSetType {
     
     var getUser: UserInfoModel { get set }
+}
+
+protocol ProfileViewModelType: ProfileViewModelGetSetType {
     
     func transform(input: ProfileViewModelInput) -> ProfileViewModelOutput
     
@@ -35,14 +38,19 @@ enum ProfileErrorType: Error {
 }
 
 struct ProfileViewModelInput {
+    
     let appear: AnyPublisher<Void,ProfileErrorType>
+    
     let cellConfigure: AnyPublisher<ProfileCell,ProfileErrorType>
+    
     let headerConfigure: AnyPublisher<ProfileHeader, ProfileErrorType>
+    
 }
 
 typealias ProfileViewModelOutput = AnyPublisher<ProfileControllerState, ProfileErrorType>
                                                   
 enum ProfileControllerState {
+    
     case reloadData,
          none
 }

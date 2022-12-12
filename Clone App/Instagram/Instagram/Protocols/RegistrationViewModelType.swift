@@ -8,15 +8,19 @@
 import UIKit
 import Combine
 
+protocol RegistrationViewModelGetSetType {
+    
+    /// Return UserInfoModel
+    func getUserInfoModel(uid: String, url: String) -> UserInfoModel
+    
+}
+
 protocol RegistrationViewModelType {
     
     /// 사용자의 특정 event를 input 타입으로 분리. RegistrationViewController로 부터 특정 event publish.
     func bind(with input: RegistrationViewModelInput)
     
-    /// Return UserInfoModel
-    func getUserInfoModel(uid: String, url: String) -> UserInfoModel
 }
-
 
 protocol RegistrationViewModelUserFormType {
     
