@@ -11,10 +11,6 @@ import Firebase
 import FirebaseFirestore
 import FirebaseFirestoreSwift
 
-protocol ProfileHeaderDelegate: class {
-    func header(_ profileHeader: ProfileHeader, didTapActionButtonFor user: UserInfoModel)
-}
-
 class ProfileHeader: UICollectionReusableView {
     
     //MARK: - Properties
@@ -92,8 +88,7 @@ extension ProfileHeader {
 extension ProfileHeader {
     
     @objc func didTapEditProfileFollow(_ sender: Any) {
-        guard let vm = vm else { return }
-        delegate?.header(self, didTapActionButtonFor: vm.getUserInfo())
+        delegate?.header(self)
     }
     
     @objc func didTapGridBtn(_ sender: Any) {

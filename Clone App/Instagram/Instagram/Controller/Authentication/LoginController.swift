@@ -140,13 +140,13 @@ extension LoginController {
     func outputErrorHandling(with error: LoginViewModelErrorType) {
         switch error {
         case .failed:
-            print(LoginViewModelErrorType.failed.errorDiscription)
+            print(LoginViewModelErrorType.failed.errorDiscription + " : \(error.localizedDescription)")
             break
         case .loginPublishedOutputStreamNil:
-            print(LoginViewModelErrorType.loginPublishedOutputStreamNil.errorDiscription)
+            print(LoginViewModelErrorType.loginPublishedOutputStreamNil.errorDiscription + " : \(error.localizedDescription)")
             break
         case .signUpPublisedOutputStreamNil:
-            print(LoginViewModelErrorType.signUpPublisedOutputStreamNil.errorDiscription)
+            print(LoginViewModelErrorType.signUpPublisedOutputStreamNil.errorDiscription + " : \(error.localizedDescription)")
             break
         }
     }
