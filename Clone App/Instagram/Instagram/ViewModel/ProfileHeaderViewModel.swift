@@ -8,6 +8,19 @@
 import UIKit
 import FirebaseFirestore
 
+
+/*
+    자 좋슴둥
+    프로필 헤더뷰모델이 초기화되면 setupBindings를 해야함둥.
+ 
+    이벤트는
+    editProfileFollow tap
+ 
+ -> 요기서 할 경우엔 tableView 인스턴스 필요해 reloadData 해야해서
+    gidbtn
+    listbtn
+    bookmark btn
+ */
 class ProfileHeaderViewModel {
     
     //MARK: - Properties
