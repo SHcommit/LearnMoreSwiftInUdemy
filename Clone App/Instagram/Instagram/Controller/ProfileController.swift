@@ -11,14 +11,19 @@ import Combine
 class ProfileController: UICollectionViewController {
     
     //MARK: - properties
-    let vm: ProfileViewModel
+    let viewModel: ProfileViewModelType
     var subscriptions = Set<AnyCancellable>()
     
+    //MARK: - ProfileViewModel input properties
+    let appear = PassthroughSubject<Void,ProfileErrorType>()
+    let cellConfigure = PassthroughSubject<ProfileCell, ProfileErrorType>()
+    let headerConfigure = PassthroughSubject<ProfileHeader, ProfileErrorType>()
+    
     //MARK: - Lifecycle
-    init(user: UserInfoModel) {
-        vm = ProfileViewModel(userInfo: user)
+    init(viewModel: ProfileViewModelType) {
+        self.viewModel = viewModel
         super.init(collectionViewLayout: UICollectionViewFlowLayout())
-        navigationItem.title = user.username
+        navigationItem.title = viewModel.getUser.username
     }
     
     required init?(coder: NSCoder) {
@@ -32,7 +37,7 @@ class ProfileController: UICollectionViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        vm.fetchUserStats()
+        appear.send()
     }
 
 }
@@ -47,24 +52,44 @@ extension ProfileController {
     }
     
     func setupBindings() {
-        vm.$user
+        let input = ProfileViewModelInput(appear: appear.eraseToAnyPublisher(),
+                                          cellConfigure: cellConfigure.eraseToAnyPublisher(),
+                                          headerConfigure: headerConfigure.eraseToAnyPublisher())
+        let output = viewModel.transform(input: input)
+        output
             .receive(on: RunLoop.main)
-            .sink { _ in
-            self.collectionView.reloadData()
-            }.store(in:&subscriptions)
-        
-        vm.$userStats
-            .receive(on: RunLoop.main)
-            .sink{ _ in
-                self.collectionView.reloadData()
+            .sink { result in
+                switch result {
+                case .finished:
+                    break
+                case .failure(let error):
+                    self.outputErrorHandling(with: error)
+                    break
+                }
+            } receiveValue: { state in
+                self.render(state)
             }.store(in: &subscriptions)
-        
-        vm.$profileImage
-            .receive(on: RunLoop.main)
-            .sink{ _ in
-            self.collectionView.reloadData()
-        }.store(in: &subscriptions)
-        
+    }
+    
+    func render(_ state: ProfileControllerState) {
+        switch state {
+        case .reloadData:
+            collectionView.reloadData()
+            break
+        case .none:
+            break
+        }
+    }
+    
+    func outputErrorHandling(with error: ProfileErrorType) {
+        switch error {
+        case .failed:
+            print(ProfileErrorType.failed.errorDiscription + " : \(error.localizedDescription)")
+        case .invalidUserProperties:
+            print(ProfileErrorType.invalidUserProperties.errorDiscription + " : \(error.localizedDescription)")
+        case .invalidInstance:
+            print(ProfileErrorType.invalidInstance.errorDiscription + " : \(error.localizedDescription)")
+        }
     }
 }
 
@@ -77,16 +102,13 @@ extension ProfileController {
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CELLREUSEABLEID, for: indexPath) as? ProfileCell else { fatalError() }
-        cell.backgroundColor = .systemPink
+        cellConfigure.send(cell)
         return cell
     }
-    
+
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         guard let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: COLLECTIONHEADERREUSEABLEID, for: indexPath) as? ProfileHeader else { fatalError() }
-        headerView.delegate = self
-        headerView.vm = ProfileHeaderViewModel(user: vm.user)
-        headerView.vm?.profileImage = vm.profileImage
-        headerView.vm?.userStats = vm.userStats
+        headerConfigure.send(headerView)
         return headerView
     }
 
@@ -112,34 +134,4 @@ extension ProfileController: UICollectionViewDelegateFlowLayout{
         return CGSize(width: view.frame.width, height: view.frame.height/7 * 2)
     }
     
-}
-
-//MARK: - ProfileHeaderDelegate
-extension ProfileController: ProfileHeaderDelegate {
-    func header(_ profileHeader: ProfileHeader, didTapActionButtonFor user: UserInfoModel) {
-        
-        if user.isCurrentUser {
-            print("DEBUG: Show edit profile here..")
-        }else if user.isFollowed {
-            DispatchQueue.main.async {
-                UserService.unfollow(uid: user.uid) { _ in
-                    self.vm.user.isFollowed = false
-                    UserService.fetchUserStats(uid: user.uid) { stats in
-                        self.vm.userStats = stats
-                        self.collectionView.reloadData()
-                    }
-                }
-            }
-        }else {
-            DispatchQueue.main.async {
-                UserService.follow(uid: user.uid) { _ in
-                    self.vm.user.isFollowed = true
-                    UserService.fetchUserStats(uid: user.uid) { stats in
-                        self.vm.userStats = stats
-                        self.collectionView.reloadData()
-                    }
-                }
-            }
-        }
-    }
 }

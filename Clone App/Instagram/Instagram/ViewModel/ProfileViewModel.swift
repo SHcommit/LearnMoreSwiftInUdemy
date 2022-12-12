@@ -10,19 +10,158 @@ import Combine
 
 class ProfileViewModel {
     //MARK: - Properties
-    @Published var user: UserInfoModel
+    @Published var user = UserInfoModel(email: "", fullname: "", profileURL: "", uid: "", username: "")
     @Published var userStats: Userstats?
     @Published var profileImage: UIImage?
     
     //MARK: - Lifecycles
-    init(userInfo: UserInfoModel) {
-        user = userInfo
+    init(user: UserInfoModel) {
+        self.user = user
         fetchData()
     }
+    
 }
 
 //MARK: - ProfileViewModelType
 extension ProfileViewModel: ProfileViewModelType {
+        
+    var getUser: UserInfoModel {
+        get {
+            return user
+        }
+        set {
+            user = newValue
+        }
+    }
+    
+    func transform(input: ProfileViewModelInput) -> ProfileViewModelOutput {
+        
+        let appear = appearChains(with: input)
+        
+        let headerConfigure = headerConfigureChains(with: input)
+        
+        let cellConfigure = cellConfigureChains(with: input)
+        
+        let input = Publishers.Merge3(appear, headerConfigure, cellConfigure).eraseToAnyPublisher()
+        
+        return Publishers.Merge(input,
+                                viewModelPropertiesPublisherValueChanged()).eraseToAnyPublisher()
+    }
+        
+}
+
+//MARK: - ProfileViewModelInputChainCase
+extension ProfileViewModel: ProfileViewModelInputChainCase {
+    
+    func appearChains(with input: ProfileViewModelInput) -> ProfileViewModelOutput {
+        return input.appear
+            .receive(on: RunLoop.main)
+            .tryMap { _ -> ProfileControllerState in
+                return .reloadData
+            }.mapError{ error -> ProfileErrorType in
+                return error as? ProfileErrorType ?? .failed
+            }.eraseToAnyPublisher()
+    }
+    
+    func headerConfigureChains(with input: ProfileViewModelInput) -> ProfileViewModelOutput {
+        return input.headerConfigure
+            .receive(on: RunLoop.main)
+            .tryMap { [unowned self] headerView -> ProfileControllerState in
+                headerView.delegate = self
+                headerView.vm = ProfileHeaderViewModel(user: user)
+                headerView.vm?.profileImage = profileImage
+                headerView.vm?.userStats = userStats
+                return .none
+            }.mapError { error -> ProfileErrorType in
+                return error as? ProfileErrorType ?? .failed
+            }.eraseToAnyPublisher()
+    }
+    
+    func cellConfigureChains(with input: ProfileViewModelInput) -> ProfileViewModelOutput {
+        return input.cellConfigure
+            .receive(on: RunLoop.main)
+            .tryMap { cell -> ProfileControllerState in
+                cell.backgroundColor = .systemPink
+                return .none
+            }.mapError { error -> ProfileErrorType in
+                return error as? ProfileErrorType ?? .failed
+            }.eraseToAnyPublisher()
+    }
+    
+}
+    
+//MARK: - ProfileVMInnerPropertiesPublisherChainType
+extension ProfileViewModel: ProfileVMInnerPropertiesPublisherChainType {
+    
+    func viewModelPropertiesPublisherValueChanged() -> ProfileViewModelOutput {
+        return Publishers.Merge3(userChains(),
+                                 profileImageChains(),
+                                 userStatsChains()).eraseToAnyPublisher()
+    }
+    
+    func userChains() -> ProfileViewModelOutput {
+        return $user
+            .setFailureType(to: ProfileErrorType.self)
+            .tryMap { _ -> ProfileControllerState in return .reloadData }
+            .mapError { error -> ProfileErrorType in
+                return error as? ProfileErrorType ?? .invalidUserProperties
+            }.eraseToAnyPublisher()
+    }
+    
+    func profileImageChains() -> ProfileViewModelOutput {
+        return $profileImage
+            .compactMap{ $0 }
+            .setFailureType(to: ProfileErrorType.self)
+            .tryMap{ _ -> ProfileControllerState in return .reloadData }
+            .mapError { error -> ProfileErrorType in
+                return error as? ProfileErrorType ?? .invalidUserProperties
+            }.eraseToAnyPublisher()
+    }
+    
+    func userStatsChains() -> ProfileViewModelOutput {
+        return $userStats
+            .compactMap { $0 }
+            .setFailureType(to: ProfileErrorType.self)
+            .tryMap{ _ -> ProfileControllerState in return .reloadData }
+            .mapError{ error -> ProfileErrorType in
+                return error as? ProfileErrorType ?? .invalidUserProperties
+            }.eraseToAnyPublisher()
+    }
+
+
+}
+
+//MARK: - ProfileHeaderDelegate
+extension ProfileViewModel: ProfileHeaderDelegate {
+    func header(_ profileHeader: ProfileHeader) {
+        if user.isCurrentUser {
+            print("DEBUG: Show edit profile here..")
+        }else if user.isFollowed {
+            DispatchQueue.main.async {
+                UserService.unfollow(uid: self.getUser.uid) { _ in
+                    self.user.isFollowed = false
+                    UserService.fetchUserStats(uid: self.getUser.uid) { stats in
+                        self.userStats = stats
+                    }
+                }
+            }
+        }else {
+            DispatchQueue.main.async {
+                UserService.follow(uid: self.getUser.uid) { _ in
+                    self.user.isFollowed = true
+                    UserService.fetchUserStats(uid: self.getUser.uid) { stats in
+                        self.userStats = stats
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+//MARK: - ProfileViewModelAPIType
+extension ProfileViewModel: ProfileViewModelAPIType {
+    
     func fetchData() {
         fetchToCheckIfUserIsFollowed()
         fetchUserStats()
@@ -30,10 +169,7 @@ extension ProfileViewModel: ProfileViewModelType {
             await fetchImage(profileUrl: user.profileURL)
         }
     }
-}
-
-//MARK: - API
-extension ProfileViewModel: ProfileViewModelAPIType {
+    
     func fetchToCheckIfUserIsFollowed() {
         UserService.checkIfUserIsFollowd(uid: user.uid) { [unowned self] isFollowed in
             user.isFollowed = isFollowed
