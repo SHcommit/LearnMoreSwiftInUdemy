@@ -11,10 +11,6 @@ import Firebase
 import FirebaseFirestore
 import FirebaseFirestoreSwift
 
-protocol ProfileHeaderDelegate: class {
-    func header(_ profileHeader: ProfileHeader, didTapActionButtonFor user: UserInfoModel)
-}
-
 class ProfileHeader: UICollectionReusableView {
     
     //MARK: - Properties
@@ -30,20 +26,20 @@ class ProfileHeader: UICollectionReusableView {
     private lazy var gridBtn: UIButton = initialGridBtn()
     private lazy var listBtn: UIButton = initialListBtn()
     private lazy var bookMarkBtn: UIButton = initialBookMarkBtn()
-    
     weak var delegate: ProfileHeaderDelegate?
-    var vm: ProfileHeaderViewModel? {
+    var viewModel: ProfileHeaderViewModelType? {
         didSet {
             setupBindings()
         }
     }
     var subscriptions = Set<AnyCancellable>()
-    
+
     //MARK: - LifeCycle
     override init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = .white
         setupSubview()
+        
     }
     
     required init?(coder: NSCoder) {
@@ -57,43 +53,70 @@ class ProfileHeader: UICollectionReusableView {
 extension ProfileHeader {
     
     func setupBindings() {
-        vm?.$user
-            .receive(on: RunLoop.main)
-            .sink { [unowned self] _ in
-                configureUI()
-            }.store(in: &subscriptions)
-        vm?.$profileImage
-            .receive(on: RunLoop.main)
-            .sink { [unowned self] image in
-                profileIV.image = image
-            }.store(in: &subscriptions)
-        vm?.$userStats
-            .receive(on: RunLoop.main)
-            .sink{ [unowned self] stats in
-                followersLabel.attributedText = vm?.numberOfFollowers()
-                followingLabel.attributedText = vm?.numberOfFollowing()
-            }.store(in: &subscriptions)
+        let output = viewModel?.transform()
+        output?.sink { result in
+            switch result {
+            case .finished:
+                break
+            case .failure(let error):
+                switch error {
+                case .fail:
+                    print("DEBUG: " + error.errorDescription)
+                    break
+                }
+                break
+            }
+        } receiveValue: { state in
+            self.render(in: state)
+        }.store(in: &subscriptions)
     }
     
-    func configureUI() {
-        guard let vm = vm else { return }
-        nameLabel.text = vm.username()
-        editProfileFollowButton.setTitle(vm.followButtonText(), for: .normal)
-        editProfileFollowButton.setTitleColor(vm.followButtonTextColor(), for: .normal)
-        editProfileFollowButton.backgroundColor = vm.followButtonBackgroundColor()
-        postLabel.attributedText = vm.numberOfPosts()
-        followersLabel.attributedText = vm.numberOfFollowers()
-        followingLabel.attributedText = vm.numberOfFollowing()
+    func render(in state: ProfileHeaderState) {
+        switch state {
+        case .none:
+            break
+        case .configureFollowUI:
+            configureFollow()
+            break
+        case .configureProfile:
+            configureProfile()
+            break
+        case .configureUserInfoUI:
+            configureUI()
+            break
+        }
     }
     
 }
+
+//MARK: - Configure
+extension ProfileHeader {
+    func configureUI() {
+        nameLabel.text = viewModel?.userName
+        editProfileFollowButton.setTitle(viewModel?.followButtonText(), for: .normal)
+        editProfileFollowButton.setTitleColor(viewModel?.followButtonTextColor(), for: .normal)
+        editProfileFollowButton.backgroundColor = viewModel?.followButtonBackgroundColor()
+        postLabel.attributedText = viewModel?.numberOfPosts
+        followersLabel.attributedText = viewModel?.numberOfFollowers
+        followingLabel.attributedText = viewModel?.numberOfFollowing
+    }
+    
+    func configureProfile() {
+        profileIV.image = viewModel?.profileImage
+    }
+    
+    func configureFollow() {
+        followersLabel.attributedText = viewModel?.numberOfFollowers
+        followingLabel.attributedText = viewModel?.numberOfFollowing
+    }
+}
+
 
 //MARK: - event handler
 extension ProfileHeader {
     
     @objc func didTapEditProfileFollow(_ sender: Any) {
-        guard let vm = vm else { return }
-        delegate?.header(self, didTapActionButtonFor: vm.getUserInfo())
+        delegate?.header(self)
     }
     
     @objc func didTapGridBtn(_ sender: Any) {

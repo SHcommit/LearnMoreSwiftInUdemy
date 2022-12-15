@@ -8,12 +8,8 @@
 import UIKit
 import Combine
 
-protocol SearchViewModelType {
-    //MARK: - Input/Output
-    /// SearchController's input -> viewModel's output
-    func transform(input: SearchViewModelInput) -> SearchViewModelOutput
+protocol SearchViewModelGetSetType {
     
-    //MARK: - Get/Set
     /// Is searchController activated?
     func isSearchMode(withSearch viewController: UISearchController) -> Bool
     
@@ -27,6 +23,13 @@ protocol SearchViewModelType {
     func filteredCount() -> Int
     
     func getUsers() -> [UserInfoModel]
+    
+}
+
+protocol SearchViewModelType: SearchViewModelGetSetType {
+    //MARK: - Input/Output
+    /// SearchController's input -> viewModel's output
+    func transform(input: SearchViewModelInput) -> SearchViewModelOutput
     
 }
 

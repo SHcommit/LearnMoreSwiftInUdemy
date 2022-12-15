@@ -107,7 +107,8 @@ extension SearchViewModel: SearchViewModelInputCase {
             .receive(on: RunLoop.main)
             .map { tableInfo -> SearchControllerState in
                 guard let  user = tableInfo.cell.userVM else { return .failure }
-                let vc = ProfileController(user: user.userInfoModel())
+                let vc = ProfileController(viewModel: ProfileViewModel(user: user.userInfoModel()))
+                //let vc = ProfileController(user: user.userInfoModel())
                 return .success(vc)
             }.eraseToAnyPublisher()
     }
