@@ -68,9 +68,7 @@ extension ProfileViewModel: ProfileViewModelInputChainCase {
             .receive(on: RunLoop.main)
             .tryMap { [unowned self] headerView -> ProfileControllerState in
                 headerView.delegate = self
-                headerView.vm = ProfileHeaderViewModel(user: user)
-                headerView.vm?.profileImage = profileImage
-                headerView.vm?.userStats = userStats
+                headerView.viewModel = ProfileHeaderViewModel(user: user, profileImage: profileImage, userStats: userStats)
                 return .none
             }.mapError { error -> ProfileErrorType in
                 return error as? ProfileErrorType ?? .failed
