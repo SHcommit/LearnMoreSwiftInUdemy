@@ -24,16 +24,7 @@ class ProfileViewModel {
 
 //MARK: - ProfileViewModelType
 extension ProfileViewModel: ProfileViewModelType {
-        
-    var getUser: UserInfoModel {
-        get {
-            return user
-        }
-        set {
-            user = newValue
-        }
-    }
-    
+            
     func transform(input: ProfileViewModelInput) -> ProfileViewModelOutput {
         
         let appear = appearChains(with: input)
@@ -48,6 +39,20 @@ extension ProfileViewModel: ProfileViewModelType {
                                 viewModelPropertiesPublisherValueChanged()).eraseToAnyPublisher()
     }
         
+}
+
+//MARK: - ProfileViewModel Get/Set
+extension ProfileViewModel {
+    
+    var getUser: UserInfoModel {
+        get {
+            return user
+        }
+        set {
+            user = newValue
+        }
+    }
+
 }
 
 //MARK: - ProfileViewModelInputChainCase
@@ -126,11 +131,11 @@ extension ProfileViewModel: ProfileVMInnerPropertiesPublisherChainType {
             }.eraseToAnyPublisher()
     }
 
-
 }
 
 //MARK: - ProfileHeaderDelegate
 extension ProfileViewModel: ProfileHeaderDelegate {
+    
     func header(_ profileHeader: ProfileHeader) {
         if user.isCurrentUser {
             print("DEBUG: Show edit profile here..")
@@ -154,6 +159,7 @@ extension ProfileViewModel: ProfileHeaderDelegate {
             }
         }
     }
+    
 }
 
 
