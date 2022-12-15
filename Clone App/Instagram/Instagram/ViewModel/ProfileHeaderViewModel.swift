@@ -6,66 +6,150 @@
 //
 
 import UIKit
+import Combine
 import FirebaseFirestore
 
-class ProfileHeaderViewModel {
+final class ProfileHeaderViewModel {
     
     //MARK: - Properties
-    @Published var user: UserInfoModel
-    @Published var profileImage : UIImage?
-    @Published var userStats: Userstats?
+    @Published private var _user: UserInfoModel
+    @Published private var _profileImage : UIImage?
+    @Published private var _userStats: Userstats?
     
     //MARK: - LifeCycle
-    init(user: UserInfoModel, profileImage image: UIImage? = nil, userStats: Userstats? = nil) {
-        self.user = user
-        self.userStats = userStats
-        self.profileImage = profileImage
-    }
-    
-    func initProfileImage(image: UIImage?) {
-        profileImage = image
+    init(user: UserInfoModel, profileImage: UIImage? = nil, userStats: Userstats? = nil) {
+        _user = user
+        _userStats = userStats
+        _profileImage = profileImage
     }
     
 }
 
+//MARK: - ProfileHeaderViewModelType
+extension ProfileHeaderViewModel: ProfileHeaderViewModelType {
+    
+    func transform() -> ProfileHeaderViewModelOutput {
+        let user = userChains()
+        let userStats = userStatsChains()
+        let profileImage = profileImageChains()
+        
+        return Publishers
+            .Merge3(user.eraseToAnyPublisher(),
+                                 userStats.eraseToAnyPublisher(),
+                                 profileImage.eraseToAnyPublisher())
+            .eraseToAnyPublisher()
+    }
+    
+}
 
-//MARK: - Get data
+//MARK: - ProfileHeaderViewModelInnerPublisherChainType
+extension ProfileHeaderViewModel: ProfileHeaderVMInnerPublisherChainType {
+    
+    func userChains() -> ProfileHeaderViewModelOutput {
+        return $_user
+            .receive(on: RunLoop.main)
+            .setFailureType(to: ProfileHeaderErrorType.self)
+            .tryMap { _ -> ProfileHeaderState in
+                return .configureUserInfoUI
+            }.mapError { error -> ProfileHeaderErrorType in
+                return error as? ProfileHeaderErrorType ?? .fail
+            }.eraseToAnyPublisher()
+    }
+    
+    func profileImageChains() -> ProfileHeaderViewModelOutput {
+        return $_userStats
+            .receive(on: RunLoop.main)
+            .setFailureType(to: ProfileHeaderErrorType.self)
+            .tryMap { _ -> ProfileHeaderState in
+                return .configureFollowUI
+            }.mapError { error in
+                return error as? ProfileHeaderErrorType ?? .fail
+            }.eraseToAnyPublisher()
+
+    }
+    
+    func userStatsChains() -> ProfileHeaderViewModelOutput {
+        return $_profileImage
+            .receive(on: RunLoop.main)
+            .setFailureType(to: ProfileHeaderErrorType.self)
+            .tryMap { _ -> ProfileHeaderState in
+                return .configureProfile
+            }.mapError { error -> ProfileHeaderErrorType in
+                return error as? ProfileHeaderErrorType ?? .fail
+            }.eraseToAnyPublisher()
+    }
+    
+}
+
+//MARK: - ProfileHeaderViweModel Get Set
 extension ProfileHeaderViewModel {
     
-    func profileURL() -> String {
-        return user.profileURL
+    var user: UserInfoModel {
+        get {
+            return _user
+        }
+        set {
+            _user = newValue
+        }
     }
     
-    func image() -> UIImage? {
-        return profileImage
+    var profileImage: UIImage? {
+        get {
+            return _profileImage
+        }
+        set {
+            _profileImage = newValue
+        }
     }
     
-    func username() -> String {
-        return user.username
+    var userStats: Userstats? {
+        get  {
+            return _userStats
+        }
+        set {
+            _userStats = newValue
+        }
     }
     
-    func getUserInfo() -> UserInfoModel {
-        return user
+    var profileURL: String {
+        get {
+            user.profileURL
+        }
+        set {
+            user.profileURL = newValue
+        }
     }
     
-    func numberOfFollowers() -> NSAttributedString {
-        return attributedStatText(value: userStats?.followers ?? 0, label: "followers")
+    var userName: String {
+        get {
+            user.username
+        }
+        set {
+            user.username = newValue
+        }
     }
     
-    func numberOfFollowing() -> NSAttributedString {
-        return attributedStatText(value: userStats?.following ?? 0, label: "following")
+    var numberOfFollowers: NSAttributedString {
+        get {
+            return attributedStatText(value: userStats?.followers ?? 0, label: "followers")
+        }
     }
     
-    func numberOfPosts() -> NSAttributedString {
-        //guard let userStats = userStats else { fatalError() }
-        return attributedStatText(value: 5, label: "posts")
+    var numberOfFollowing: NSAttributedString {
+        get {
+            return attributedStatText(value: userStats?.following ?? 0, label: "following")
+        }
     }
     
-}
+    var numberOfPosts: NSAttributedString {
+        attributedStatText(value: 5, label: "posts")
+    }
 
+}
 
 //MARK: - Helpers
 extension ProfileHeaderViewModel {
+    
     func followButtonText() -> String {
         if user.isCurrentUser {
             return "Edit Profile"
