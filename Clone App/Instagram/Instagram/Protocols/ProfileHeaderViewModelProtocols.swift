@@ -20,6 +20,16 @@ protocol ProfileHeaderViewModelGetSetType {
     var profileImage: UIImage? { get set }
     
     var userStats: Userstats? { get set }
+    
+    var profileURL: String { get set }
+    
+    var userName: String { get set }
+    
+    var numberOfFollowers: NSAttributedString { get }
+    
+    var numberOfFollowing: NSAttributedString { get }
+    
+    var numberOfPosts: NSAttributedString { get }
 }
 
 
@@ -56,5 +66,6 @@ enum ProfileHeaderErrorType: Error {
 
 protocol ProfileHeaderViewModelType: ProfileHeaderViewModelGetSetType {
     
-    func transform(input: ProfileHeaderViewModelInput)
+    func transform(input: ProfileHeaderViewModelInput) -> ProfileHeaderViewModelOutput
+    
 }
