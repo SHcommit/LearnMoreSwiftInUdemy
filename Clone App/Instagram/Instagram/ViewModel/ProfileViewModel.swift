@@ -24,16 +24,7 @@ class ProfileViewModel {
 
 //MARK: - ProfileViewModelType
 extension ProfileViewModel: ProfileViewModelType {
-        
-    var getUser: UserInfoModel {
-        get {
-            return user
-        }
-        set {
-            user = newValue
-        }
-    }
-    
+            
     func transform(input: ProfileViewModelInput) -> ProfileViewModelOutput {
         
         let appear = appearChains(with: input)
@@ -48,6 +39,20 @@ extension ProfileViewModel: ProfileViewModelType {
                                 viewModelPropertiesPublisherValueChanged()).eraseToAnyPublisher()
     }
         
+}
+
+//MARK: - ProfileViewModel Get/Set
+extension ProfileViewModel {
+    
+    var getUser: UserInfoModel {
+        get {
+            return user
+        }
+        set {
+            user = newValue
+        }
+    }
+
 }
 
 //MARK: - ProfileViewModelInputChainCase
@@ -68,9 +73,7 @@ extension ProfileViewModel: ProfileViewModelInputChainCase {
             .receive(on: RunLoop.main)
             .tryMap { [unowned self] headerView -> ProfileControllerState in
                 headerView.delegate = self
-                headerView.vm = ProfileHeaderViewModel(user: user)
-                headerView.vm?.profileImage = profileImage
-                headerView.vm?.userStats = userStats
+                headerView.viewModel = ProfileHeaderViewModel(user: user, profileImage: profileImage, userStats: userStats)
                 return .none
             }.mapError { error -> ProfileErrorType in
                 return error as? ProfileErrorType ?? .failed
@@ -128,11 +131,11 @@ extension ProfileViewModel: ProfileVMInnerPropertiesPublisherChainType {
             }.eraseToAnyPublisher()
     }
 
-
 }
 
 //MARK: - ProfileHeaderDelegate
 extension ProfileViewModel: ProfileHeaderDelegate {
+    
     func header(_ profileHeader: ProfileHeader) {
         if user.isCurrentUser {
             print("DEBUG: Show edit profile here..")
@@ -156,6 +159,7 @@ extension ProfileViewModel: ProfileHeaderDelegate {
             }
         }
     }
+    
 }
 
 
