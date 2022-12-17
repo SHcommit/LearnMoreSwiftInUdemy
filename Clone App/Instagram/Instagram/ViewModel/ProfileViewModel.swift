@@ -20,7 +20,6 @@ class ProfileViewModel {
     //MARK: - Lifecycles
     init(user: UserInfoModel) {
         self.user = user
-        fetchData()
     }
     
 }
@@ -75,7 +74,8 @@ extension ProfileViewModel: ProfileViewModelInputChainCase {
         return input.appear
             .receive(on: RunLoop.main)
             .tryMap { _ -> ProfileControllerState in
-                return .reloadData
+                self.fetchData()
+                return .none
             }.mapError{ error -> ProfileErrorType in
                 return error as? ProfileErrorType ?? .failed
             }.eraseToAnyPublisher()
