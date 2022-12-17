@@ -4,7 +4,9 @@
 //
 //  Created by 양승현 on 2022/10/10.
 //
-
+/**
+    TODO: api async, await로 전부 바꿀것! 
+ */
 import Firebase
 import FirebaseFirestore
 
