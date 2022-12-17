@@ -39,4 +39,15 @@ struct PostService {
         return posts
         
     }
+    
+    //post.id = $.documentID를 왜해야하지?
+    static func fetchPosts<T: Codable>(type : T.Type, forUser uid: String) async throws -> [T] {
+        let querySnapshot = try await COLLECTION_POSTS
+            .order(by: "timestamp", descending: true)
+            .whereField("ownerUid", isEqualTo: uid)
+            .getDocuments()
+        return try querySnapshot
+            .documents
+            .map{ try $0.data(as: type.self) }
+    }
 }
