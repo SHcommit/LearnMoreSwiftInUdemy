@@ -4,7 +4,7 @@
 
 - [x] 레이아웃
 
-- [ ] Combine, Combine으로 바인딩 하는 방법
+- [x] Combine, Combine으로 바인딩 하는 방법
 
 - [ ] TDD
 
