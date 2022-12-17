@@ -13,6 +13,9 @@ class ProfileViewModel {
     @Published var user = UserInfoModel(email: "", fullname: "", profileURL: "", uid: "", username: "")
     @Published var userStats: Userstats?
     @Published var profileImage: UIImage?
+    @Published var postsInfo = [PostModel]()
+    @Published var posts = [UIImage]()
+    var subscriptions = Set<AnyCancellable>()
     
     //MARK: - Lifecycles
     init(user: UserInfoModel) {
@@ -29,11 +32,15 @@ extension ProfileViewModel: ProfileViewModelType {
         
         let appear = appearChains(with: input)
         
+        let concurrencyFetchPostsNotification = bindPostsToPostsImage()
+        
+        let appears = Publishers.Merge(appear, concurrencyFetchPostsNotification)
+        
         let headerConfigure = headerConfigureChains(with: input)
         
         let cellConfigure = cellConfigureChains(with: input)
         
-        let input = Publishers.Merge3(appear, headerConfigure, cellConfigure).eraseToAnyPublisher()
+        let input = Publishers.Merge3(appears, headerConfigure, cellConfigure).eraseToAnyPublisher()
         
         return Publishers.Merge(input,
                                 viewModelPropertiesPublisherValueChanged()).eraseToAnyPublisher()
@@ -53,6 +60,12 @@ extension ProfileViewModel {
         }
     }
 
+    var getPostsCount: Int {
+        get {
+            return posts.count
+        }
+    }
+    
 }
 
 //MARK: - ProfileViewModelInputChainCase
@@ -83,8 +96,8 @@ extension ProfileViewModel: ProfileViewModelInputChainCase {
     func cellConfigureChains(with input: ProfileViewModelInput) -> ProfileViewModelOutput {
         return input.cellConfigure
             .receive(on: RunLoop.main)
-            .tryMap { cell -> ProfileControllerState in
-                cell.backgroundColor = .systemPink
+            .tryMap { [unowned self] (cell, index) -> ProfileControllerState in
+                cell.postIV.image = posts[index]
                 return .none
             }.mapError { error -> ProfileErrorType in
                 return error as? ProfileErrorType ?? .failed
@@ -130,7 +143,23 @@ extension ProfileViewModel: ProfileVMInnerPropertiesPublisherChainType {
                 return error as? ProfileErrorType ?? .invalidUserProperties
             }.eraseToAnyPublisher()
     }
-
+    
+    func bindPostsToPostsImage() -> ProfileViewModelOutput {
+        $postsInfo
+            .sink { users in
+                self.fetchPostsConcurrency()
+            }.store(in: &subscriptions)
+        
+        return $posts
+            .setFailureType(to: ProfileErrorType.self)
+            .receive(on: RunLoop.main)
+            .tryMap { _ -> ProfileControllerState in return .reloadData }
+            .mapError{ error -> ProfileErrorType in
+                return error as? ProfileErrorType ?? .invalidInstance
+            }.eraseToAnyPublisher()
+        
+    }
+    
 }
 
 //MARK: - ProfileHeaderDelegate
@@ -171,7 +200,8 @@ extension ProfileViewModel: ProfileViewModelAPIType {
         fetchToCheckIfUserIsFollowed()
         fetchUserStats()
         Task() {
-            await fetchImage(profileUrl: user.profileURL)
+            await [fetchImage(profileUrl: user.profileURL),
+                   fetchSpecificUserPostsInfo()]
         }
     }
     
@@ -200,10 +230,44 @@ extension ProfileViewModel: ProfileViewModelAPIType {
         profileImage = image
     }
     
-    func fetchPosts() async throws {
-        let posts = try await PostService.fetchPosts(type: UserInfoModel.self, forUser: user.uid)
-        
+    func fetchSpecificUserPostsInfo() async {
+        do {
+            self.postsInfo = try await PostService.fetchSpecificUserPostsInfo(type: PostModel.self, forUser: user.uid)
+        } catch let error {
+            guard let error = error as? FetchPostError else { return }
+            fetchPostsErrorHandling(with: error)
+        }
     }
+    
+    func fetchSpecificPost(with url: String) async -> UIImage {
+        do {
+            return try await UserProfileImageService.fetchUserProfile(userProfile: url)
+        }catch {
+            print("DEBUG: 각각의 상황에 대한 오류 처리 해야 함 :\(error.localizedDescription)")
+            return UIImage()
+        }
+    }
+    
+    func fetchPostsConcurrency() {
+        Task() {
+            posts = await withTaskGroup(of: UIImage.self) { group in
+                var images = [UIImage]()
+                
+                postsInfo.forEach { post in
+                    group.addTask{
+                        return await self.fetchSpecificPost(with: post.imageUrl)
+                    }
+                }
+                
+                for await img in group {
+                    images.append(img)
+                }
+                return images
+            }
+        }
+    }
+    
+    
     
     func fetchImageErrorHandling(withError error: Error) {
         switch error {
@@ -211,6 +275,22 @@ extension ProfileViewModel: ProfileViewModelAPIType {
             print("DEBUG: Failure invalid user profile image instance")
         default:
             print("DEBUG: Unexpected error occured  :\(error.localizedDescription)")
+        }
+    }
+    
+    func fetchPostsErrorHandling(with error: FetchPostError) {
+        switch error {
+        case .invalidPostsGetDocuments:
+            print("DEBUG: " + FetchPostError.invalidPostsGetDocuments.errorDescription + " : " + "\(error.localizedDescription)")
+        case .failToEncodePost:
+            print("DEBUG: " + FetchPostError.failToEncodePost.errorDescription + " : " + "\(error.localizedDescription)")
+        case .failToRequestPostData:
+            print("DEBUG: " + FetchPostError.failToRequestPostData.errorDescription + " : " + "\(error.localizedDescription)")
+        case .invalidUserPostData:
+            print("DEBUG: " + FetchPostError.invalidUserPostData.errorDescription + " : " + "\(error.localizedDescription)")
+        default:
+            print("DEBUG: failed fetch Posts : \(error.localizedDescription)")
+
         }
     }
     

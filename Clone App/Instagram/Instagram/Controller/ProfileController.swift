@@ -16,7 +16,7 @@ class ProfileController: UICollectionViewController {
     
     //MARK: - ProfileViewModel input properties
     let appear = PassthroughSubject<Void,ProfileErrorType>()
-    let cellConfigure = PassthroughSubject<ProfileCell, ProfileErrorType>()
+    let cellConfigure = PassthroughSubject<(ProfileCell,index: Int), ProfileErrorType>()
     let headerConfigure = PassthroughSubject<ProfileHeader, ProfileErrorType>()
     
     //MARK: - Lifecycle
@@ -97,12 +97,12 @@ extension ProfileController {
 extension ProfileController {
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 20
+        return viewModel.getPostsCount
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CELLREUSEABLEID, for: indexPath) as? ProfileCell else { fatalError() }
-        cellConfigure.send(cell)
+        cellConfigure.send((cell,indexPath.row))
         return cell
     }
 

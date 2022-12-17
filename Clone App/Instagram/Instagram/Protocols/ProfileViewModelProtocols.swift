@@ -5,12 +5,14 @@
 //  Created by 양승현 on 2022/12/08.
 //
 
-import Foundation
+import UIKit
 import Combine
 
 protocol ProfileViewModelGetSetType {
     
     var getUser: UserInfoModel { get set }
+    
+    var getPostsCount: Int { get }
 }
 
 protocol ProfileViewModelType: ProfileViewModelGetSetType {
@@ -64,7 +66,7 @@ struct ProfileViewModelInput {
     
     let appear: AnyPublisher<Void,ProfileErrorType>
     
-    let cellConfigure: AnyPublisher<ProfileCell,ProfileErrorType>
+    let cellConfigure: AnyPublisher<(ProfileCell, index: Int),ProfileErrorType>
     
     let headerConfigure: AnyPublisher<ProfileHeader, ProfileErrorType>
     
@@ -102,6 +104,9 @@ protocol ProfileVMInnerPropertiesPublisherChainType {
     
     func userStatsChains() -> ProfileViewModelOutput
     
+    //각각 동시에 받은 이미지 cell에 갱신.
+    func bindPostsToPostsImage() -> ProfileViewModelOutput
+    
 }
 
 protocol ProfileViewModelAPIType {
@@ -115,8 +120,12 @@ protocol ProfileViewModelAPIType {
     func fetchImage(profileUrl url: String) async
     
     func fetchImageFromUserProfileImageService(url: String) async throws
+
+    func fetchSpecificUserPostsInfo() async
     
-    func fetchPosts() async throws
+    func fetchPostsConcurrency()
+
+    func fetchSpecificPost(with url: String) async -> UIImage
     
     func fetchImageErrorHandling(withError error: Error)
     

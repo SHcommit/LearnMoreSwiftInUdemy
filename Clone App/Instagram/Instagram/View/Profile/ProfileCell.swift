@@ -10,7 +10,7 @@ import UIKit
 class ProfileCell: UICollectionViewCell {
     
     //MARK: - Properties
-    private let postIV: UIImageView = initialPostIV()
+    let postIV: UIImageView = initialPostIV()
     
     //MARK: - LifeCycle
     
