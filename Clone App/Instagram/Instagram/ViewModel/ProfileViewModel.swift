@@ -166,6 +166,7 @@ extension ProfileViewModel: ProfileHeaderDelegate {
 //MARK: - ProfileViewModelAPIType
 extension ProfileViewModel: ProfileViewModelAPIType {
     
+    
     func fetchData() {
         fetchToCheckIfUserIsFollowed()
         fetchUserStats()
@@ -197,6 +198,11 @@ extension ProfileViewModel: ProfileViewModelAPIType {
     func fetchImageFromUserProfileImageService(url: String) async throws {
         let image = try await UserProfileImageService.fetchUserProfile(userProfile: url)
         profileImage = image
+    }
+    
+    func fetchPosts() async throws {
+        let posts = try await PostService.fetchPosts(type: UserInfoModel.self, forUser: user.uid)
+        
     }
     
     func fetchImageErrorHandling(withError error: Error) {

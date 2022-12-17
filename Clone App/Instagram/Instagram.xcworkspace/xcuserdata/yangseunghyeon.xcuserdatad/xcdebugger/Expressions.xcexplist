@@ -64,6 +64,14 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "FeedController.handleRefresh():FeedController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "posts">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "MainHomeTabController.configureViewControllers():MainHomeTabController.swift">
          <PersistentStrings>
             <PersistentString
@@ -85,6 +93,9 @@
       <ContextState
          contextName = "FeedController.collectionView(_:cellForItemAt:):FeedController.swift">
          <PersistentStrings>
+            <PersistentString
+               value = "posts">
+            </PersistentString>
             <PersistentString
                value = "print(&quot;\(indexPath.row)&quot;)">
             </PersistentString>
