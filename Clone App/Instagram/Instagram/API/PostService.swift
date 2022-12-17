@@ -14,6 +14,21 @@ enum FetchPostError: Error {
     case invalidPostsGetDocuments
     case failToEncodePost
     case invalidUserPostData
+    
+    var errorDescription: String {
+        switch self {
+        case .invalidUserPostData:
+            return "invalid user post data"
+        case .failToRequestPostData:
+            return "fail to request post data"
+        case .failToEncodePost:
+            return "fail to encoding post"
+        case .invalidPostsGetDocuments:
+            return "invalid posts get documents in firestore"
+        case .failToRequestUploadImage:
+            return "fail to requeset upload image"
+        }
+    }
 }
 
 struct PostService {
