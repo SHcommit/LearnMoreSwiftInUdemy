@@ -119,4 +119,6 @@ protocol ProfileViewModelAPIType {
     func fetchPosts() async throws
     
     func fetchImageErrorHandling(withError error: Error)
+    
+    func fetchPostsErrorHandling(with error: FetchPostError)
 }
