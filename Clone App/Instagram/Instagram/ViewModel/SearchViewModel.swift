@@ -86,9 +86,7 @@ extension SearchViewModel: SearchViewModelInputCase {
     }
     
     func fetchUserStats(in cell: SearchedUserCell) {
-        DispatchQueue.main.async {
-            cell.userVM?.fetchUserStats { }
-        }
+        cell.userVM?.fetchUserStats()
     }
     
     func fetchUserImage(in cell: SearchedUserCell) {

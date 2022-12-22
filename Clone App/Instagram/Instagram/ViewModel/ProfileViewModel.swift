@@ -62,6 +62,7 @@ extension ProfileViewModel: ProfileViewModelInputChainCase {
         return input.appear
             .receive(on: RunLoop.main)
             .tryMap { _ -> ProfileControllerState in
+                self.fetchData()
                 return .reloadData
             }.mapError{ error -> ProfileErrorType in
                 return error as? ProfileErrorType ?? .failed
@@ -139,24 +140,55 @@ extension ProfileViewModel: ProfileHeaderDelegate {
     func header(_ profileHeader: ProfileHeader) {
         if user.isCurrentUser {
             print("DEBUG: Show edit profile here..")
-        }else if user.isFollowed {
-            DispatchQueue.main.async {
-                UserService.unfollow(uid: self.getUser.uid) { _ in
+            return
+        }
+        switch user.isFollowed {
+        case true:
+            Task() {
+                await unFollow(someone: self.getUser.uid)
+                let userStats = await fetchUserStats(uid: self.getUser.uid)
+                DispatchQueue.main.async {
                     self.user.isFollowed = false
-                    UserService.fetchUserStats(uid: self.getUser.uid) { stats in
-                        self.userStats = stats
-                    }
+                    self.userStats = userStats
                 }
             }
-        }else {
-            DispatchQueue.main.async {
-                UserService.follow(uid: self.getUser.uid) { _ in
+            break
+        case false:
+            Task() {
+                await follow(someone: getUser.uid)
+                let userStats = await fetchUserStats(uid: self.getUser.uid)
+                DispatchQueue.main.async {
                     self.user.isFollowed = true
-                    UserService.fetchUserStats(uid: self.getUser.uid) { stats in
-                        self.userStats = stats
-                    }
+                    self.userStats = userStats
                 }
             }
+            break
+        }
+    }
+    
+    func fetchUserStats(uid: String) async -> Userstats {
+        do {
+            return try await UserService.fetchUserStats(uid: uid)
+        }catch {
+            fetchUserStatsErrorHandling(with: error as! FetchUserStatsError)
+            return Userstats(followers: 0, following: 0)
+        }
+    }
+    
+    func follow(someone uid: String) async {
+        do {
+            try await UserService.follow(someone: uid)
+        }catch {
+           followErrorHandling(with: error)
+        }
+    }
+    
+    
+    func unFollow(someone uid: String) async {
+        do {
+            try await UserService.unfollow(someone: self.getUser.uid)
+        }catch {
+            unFollowErrorHandling(error: error)
         }
     }
     
@@ -167,44 +199,97 @@ extension ProfileViewModel: ProfileHeaderDelegate {
 extension ProfileViewModel: ProfileViewModelAPIType {
     
     func fetchData() {
-        fetchToCheckIfUserIsFollowed()
-        fetchUserStats()
         Task() {
-            await fetchImage(profileUrl: user.profileURL)
+            user.isFollowed = await fetchToCheckIfUserIsFollowed()
+            userStats = await fetchUserStats()
+            profileImage = await fetchImage(profileUrl: user.profileURL)
         }
     }
     
-    func fetchToCheckIfUserIsFollowed() {
-        UserService.checkIfUserIsFollowd(uid: user.uid) { [unowned self] isFollowed in
-            user.isFollowed = isFollowed
+    func fetchToCheckIfUserIsFollowed() async -> Bool {
+        do{
+            return try await UserService.checkIfUserIsFollowd(uid: user.uid)
+        }catch {
+            fetchToCheckIfUserIsFollowedErrorHandling(with: error as! CheckUserFollowedError)
+            return false
         }
     }
     
-    func fetchUserStats() {
-        UserService.fetchUserStats(uid: user.uid) { [unowned self] stats in
-            userStats = stats
-        }
-    }
-    
-    func fetchImage(profileUrl url: String) async {
+    func fetchUserStats() async -> Userstats {
         do {
-            try await fetchImageFromUserProfileImageService(url: url)
+            return try await UserService.fetchUserStats(uid: user.uid)
+            
+        }catch {
+            fetchUserStatsErrorHandling(with: error as! FetchUserStatsError)
+            return Userstats(followers: 0, following: 0)
+        }
+        
+    }
+    
+    func fetchImage(profileUrl url: String) async -> UIImage {
+        do {
+            return try await UserProfileImageService.fetchUserProfile(userProfile: url)
         } catch {
             fetchImageErrorHandling(withError: error)
+            return UIImage()
         }
     }
-    
-    func fetchImageFromUserProfileImageService(url: String) async throws {
-        let image = try await UserProfileImageService.fetchUserProfile(userProfile: url)
-        profileImage = image
-    }
-    
+}
+
+//MARK: - ProfileViewModelAPIErrorHandlingType
+extension ProfileViewModel: ProfileViewModelAPIErrorHandlingType {
     func fetchImageErrorHandling(withError error: Error) {
         switch error {
         case FetchUserError.invalidUserProfileImage :
             print("DEBUG: Failure invalid user profile image instance")
         default:
             print("DEBUG: Unexpected error occured  :\(error.localizedDescription)")
+        }
+    }
+    
+    func fetchUserStatsErrorHandling(with error: FetchUserStatsError) {
+        switch error {
+        case .invalidSpecificUSerFollowingDocuemnt:
+            print("DEBUG: \(FetchUserStatsError.invalidSpecificUSerFollowingDocuemnt)")
+        case .invalidSpecificUserFollowersDocument:
+            print("DEBUG: \(FetchUserStatsError.invalidSpecificUSerFollowingDocuemnt)")
+        }
+    }
+    
+    func fetchToCheckIfUserIsFollowedErrorHandling(with error: CheckUserFollowedError) {
+        switch error {
+        case .invalidCurrentUserUIDInUserDefaultsStandard:
+            print("DEBUG: \(CheckUserFollowedError.invalidCurrentUserUIDInUserDefaultsStandard)")
+            break
+        case .invalidSpecificUserInfo:
+            print("DEBUG: \(CheckUserFollowedError.invalidSpecificUserInfo)")
+        }
+    }
+
+    func followErrorHandling(with error: Error) {
+        guard let error = error as? FollowServiceError else { return }
+        switch error {
+        case .invalidCurrentUserUIDInUserDefaultsStandard:
+            print("DEBUG: \(FollowServiceError.invalidCurrentUserUIDInUserDefaultsStandard) : \(error.localizedDescription)")
+        case .failedFollowerToSetData:
+            print("DEBUG: \(FollowServiceError.failedFollowerToSetData) : \(error.localizedDescription)")
+        case .failedFollowingToSetData:
+            print("DEBUG: \(FollowServiceError.failedFollowingToSetData) : \(error.localizedDescription)")
+        }
+    }
+    
+    func unFollowErrorHandling(error: Error) {
+        guard let error = error as? UnFollowServiceError else { return }
+        switch error {
+        case .invalidCurrentUserUIDInUserDefaultsStandard:
+            print("DEBUG: \(UnFollowServiceError.invalidCurrentUserUIDInUserDefaultsStandard) : \(error.localizedDescription)")
+            break
+        case .failedUnFollowLoginUserFromSpecificUser:
+            print("DEBUG: \(UnFollowServiceError.failedUnFollowLoginUserFromSpecificUser) : \(error.localizedDescription)")
+            break
+        case .failedUnFollowSpecificUserFromLoginUser:
+            print("DEBUG: \(UnFollowServiceError.failedUnFollowSpecificUserFromLoginUser) : \(error.localizedDescription)")
+            break
         }
     }
     

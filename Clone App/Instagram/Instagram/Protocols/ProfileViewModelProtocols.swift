@@ -5,7 +5,7 @@
 //  Created by 양승현 on 2022/12/08.
 //
 
-import Foundation
+import UIKit
 import Combine
 
 protocol ProfileViewModelGetSetType {
@@ -108,13 +108,24 @@ protocol ProfileViewModelAPIType {
     
     func fetchData()
     
-    func fetchToCheckIfUserIsFollowed()
+    func fetchToCheckIfUserIsFollowed() async -> Bool
     
-    func fetchUserStats()
+    func fetchUserStats() async -> Userstats
     
-    func fetchImage(profileUrl url: String) async
-    
-    func fetchImageFromUserProfileImageService(url: String) async throws
+    func fetchImage(profileUrl url: String) async -> UIImage
     
     func fetchImageErrorHandling(withError error: Error)
+}
+
+protocol ProfileViewModelAPIErrorHandlingType {
+    
+    func fetchImageErrorHandling(withError error: Error)
+    
+    func fetchUserStatsErrorHandling(with error: FetchUserStatsError)
+    
+    func fetchToCheckIfUserIsFollowedErrorHandling(with error: CheckUserFollowedError)
+    
+    func followErrorHandling(with error: Error)
+    
+    func unFollowErrorHandling(error: Error)
 }

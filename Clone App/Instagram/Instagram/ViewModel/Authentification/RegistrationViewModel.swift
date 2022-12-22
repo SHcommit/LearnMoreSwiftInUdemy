@@ -98,7 +98,7 @@ extension RegistrationViewModel: RegistrationViewModelNetworkServiceType {
     
     
     func registerUserFromSignUp() async throws {
-        try await AuthService.registerUser(withUserInfo: self)
+        try await AuthService.registerUser(with: self)
     }
     
     func registerUserFromSignUpErrorHandling(error: Error) {
