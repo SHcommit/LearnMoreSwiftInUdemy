@@ -13,6 +13,21 @@ enum FetchPostError: Error {
     case invalidPostsGetDocuments
     case failToEncodePost
     case invalidUserPostData
+    
+    var errorDescription: String {
+        switch self {
+        case .failToRequestPostData:
+            return "Failed to request post data"
+        case .failToRequestUploadImage:
+            return "Failed to request upload image"
+        case .invalidPostsGetDocuments:
+            return "Invalid to get posts docuemnt"
+        case .failToEncodePost:
+            return "Failed to endoce post"
+        case .invalidUserPostData:
+            return "Inalid user post data"
+        }
+    }
 }
 
 protocol PostServiceType {
