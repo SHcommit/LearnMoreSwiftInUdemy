@@ -83,3 +83,13 @@ class Dynamic<T> {
     }
     
 }
+
+//MAKR: Extension
+extension UserService {
+    
+    static func encodeToNSDictionary(codableType info: Codable) -> [String : Any] {
+        guard let dataDictionary = info.encodeToDictionary else { fatalError() }
+        return dataDictionary
+    }
+    
+}
