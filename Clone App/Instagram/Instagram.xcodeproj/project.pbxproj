@@ -11,6 +11,10 @@
 		150BD52A29138E9600B79158 /* SearchedUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 150BD52929138E9600B79158 /* SearchedUserCell.swift */; };
 		1518D2562913E14E003A2A48 /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1518D2552913E14E003A2A48 /* SearchViewModel.swift */; };
 		1518D258291624E0003A2A48 /* ProfileHeaderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1518D257291624E0003A2A48 /* ProfileHeaderViewModel.swift */; };
+		151FA67D2954563600D45825 /* AuthServiceProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 151FA67C2954563600D45825 /* AuthServiceProtocols.swift */; };
+		151FA67F295457FE00D45825 /* UserServiceProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 151FA67E295457FE00D45825 /* UserServiceProtocols.swift */; };
+		152BD5642954A21C000AA1B2 /* ImageServiceProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 152BD5632954A21C000AA1B2 /* ImageServiceProtocols.swift */; };
+		152BD5662954A668000AA1B2 /* PostServiceProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 152BD5652954A668000AA1B2 /* PostServiceProtocols.swift */; };
 		15486DC4291D1745008B98E6 /* UploadPostController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15486DC3291D1745008B98E6 /* UploadPostController.swift */; };
 		15486DC6291D1B74008B98E6 /* InputTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15486DC5291D1B74008B98E6 /* InputTextView.swift */; };
 		156A4BFA29477C7B002B820B /* ProfileHeaderViewModelProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 156A4BF929477C7B002B820B /* ProfileHeaderViewModelProtocols.swift */; };
@@ -62,6 +66,10 @@
 		150BD52929138E9600B79158 /* SearchedUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchedUserCell.swift; sourceTree = "<group>"; };
 		1518D2552913E14E003A2A48 /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
 		1518D257291624E0003A2A48 /* ProfileHeaderViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeaderViewModel.swift; sourceTree = "<group>"; };
+		151FA67C2954563600D45825 /* AuthServiceProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthServiceProtocols.swift; sourceTree = "<group>"; };
+		151FA67E295457FE00D45825 /* UserServiceProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserServiceProtocols.swift; sourceTree = "<group>"; };
+		152BD5632954A21C000AA1B2 /* ImageServiceProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageServiceProtocols.swift; sourceTree = "<group>"; };
+		152BD5652954A668000AA1B2 /* PostServiceProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostServiceProtocols.swift; sourceTree = "<group>"; };
 		15486DC3291D1745008B98E6 /* UploadPostController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadPostController.swift; sourceTree = "<group>"; };
 		15486DC5291D1B74008B98E6 /* InputTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputTextView.swift; sourceTree = "<group>"; };
 		156A4BF929477C7B002B820B /* ProfileHeaderViewModelProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeaderViewModelProtocols.swift; sourceTree = "<group>"; };
@@ -124,6 +132,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		151FA67B295455C100D45825 /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				151FA67C2954563600D45825 /* AuthServiceProtocols.swift */,
+				151FA67E295457FE00D45825 /* UserServiceProtocols.swift */,
+				152BD5632954A21C000AA1B2 /* ImageServiceProtocols.swift */,
+				152BD5652954A668000AA1B2 /* PostServiceProtocols.swift */,
+			);
+			path = Protocols;
+			sourceTree = "<group>";
+		};
 		156E22DC290D6EBD0026B0C3 = {
 			isa = PBXGroup;
 			children = (
@@ -214,8 +233,9 @@
 		15ACA71C290D79310011E665 /* API */ = {
 			isa = PBXGroup;
 			children = (
-				15ACA71E290D793D0011E665 /* AuthService.swift */,
+				151FA67B295455C100D45825 /* Protocols */,
 				15ACA71D290D793D0011E665 /* ImageService.swift */,
+				15ACA71E290D793D0011E665 /* AuthService.swift */,
 				15C18489290FF465004EF35F /* UserService.swift */,
 				15D0DCB2291F4C9700ACF1ED /* PostService.swift */,
 			);
@@ -443,6 +463,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				15C1848C290FF76E004EF35F /* Constants.swift in Sources */,
+				152BD5642954A21C000AA1B2 /* ImageServiceProtocols.swift in Sources */,
+				151FA67F295457FE00D45825 /* UserServiceProtocols.swift in Sources */,
 				15ACA71B290D79250011E665 /* LoginController.swift in Sources */,
 				15ACA711290D77960011E665 /* ProfileController.swift in Sources */,
 				15C6F354293F9064006A3587 /* RegistrationViewModel.swift in Sources */,
@@ -463,6 +485,7 @@
 				15E4E90E2940F2C30080A4FF /* LoginViewModelProtocols.swift in Sources */,
 				15ACA713290D77960011E665 /* NotificationsController.swift in Sources */,
 				15D0DCB3291F4C9700ACF1ED /* PostService.swift in Sources */,
+				152BD5662954A668000AA1B2 /* PostServiceProtocols.swift in Sources */,
 				15C2C4692942006D00052CDF /* RegistrationViewModelInput.swift in Sources */,
 				15ACA712290D77960011E665 /* ImageSelectorController.swift in Sources */,
 				15E4E912294181360080A4FF /* ProfileViewModelProtocols.swift in Sources */,
@@ -475,6 +498,7 @@
 				15ACA728290D795C0011E665 /* UserHelpLabelAndButton.swift in Sources */,
 				15C1848F2910D10F004EF35F /* UserInfoViewModel.swift in Sources */,
 				15486DC4291D1745008B98E6 /* UploadPostController.swift in Sources */,
+				151FA67D2954563600D45825 /* AuthServiceProtocols.swift in Sources */,
 				15ACA736290D79FA0011E665 /* Extensions.swift in Sources */,
 				15ACA72F290D796F0011E665 /* ProfileCell.swift in Sources */,
 				15C1848A290FF465004EF35F /* UserService.swift in Sources */,
