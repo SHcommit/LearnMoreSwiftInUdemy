@@ -70,6 +70,8 @@ struct ProfileViewModelInput {
     
     let headerConfigure: AnyPublisher<ProfileHeader, ProfileErrorType>
     
+    let didTapCell: AnyPublisher<Int, ProfileErrorType>
+    
 }
 
 typealias ProfileViewModelOutput = AnyPublisher<ProfileControllerState, ProfileErrorType>
@@ -77,6 +79,7 @@ typealias ProfileViewModelOutput = AnyPublisher<ProfileControllerState, ProfileE
 enum ProfileControllerState {
     
     case reloadData,
+         showSpecificUser(feed: FeedController),
          none
 }
 
@@ -91,6 +94,8 @@ protocol ProfileViewModelInputChainCase {
     /// cellConfigure Input publisher's stream chains
     func cellConfigureChains(with input: ProfileViewModelInput) -> ProfileViewModelOutput
     
+    /// present specific user's detail profileController
+    func didTapCellChains(with input: ProfileViewModelInput) -> ProfileViewModelOutput
 }
 
 //MARK: - ViewModel 's inner publisher's upstream chaining funcs

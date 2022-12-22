@@ -18,6 +18,7 @@ class ProfileController: UICollectionViewController {
     let appear = PassthroughSubject<Void,ProfileErrorType>()
     let cellConfigure = PassthroughSubject<(ProfileCell,index: Int), ProfileErrorType>()
     let headerConfigure = PassthroughSubject<ProfileHeader, ProfileErrorType>()
+    let didTapCell = PassthroughSubject<Int,ProfileErrorType>()
     
     //MARK: - Lifecycle
     init(viewModel: ProfileViewModelType) {
@@ -54,7 +55,8 @@ extension ProfileController {
     func setupBindings() {
         let input = ProfileViewModelInput(appear: appear.eraseToAnyPublisher(),
                                           cellConfigure: cellConfigure.eraseToAnyPublisher(),
-                                          headerConfigure: headerConfigure.eraseToAnyPublisher())
+                                          headerConfigure: headerConfigure.eraseToAnyPublisher(),
+                                          didTapCell: didTapCell.eraseToAnyPublisher())
         let output = viewModel.transform(input: input)
         output
             .receive(on: RunLoop.main)
@@ -73,11 +75,16 @@ extension ProfileController {
     
     func render(_ state: ProfileControllerState) {
         switch state {
+        case .none:
+            break
         case .reloadData:
             collectionView.reloadData()
             break
-        case .none:
-            break
+        case .showSpecificUser(feed: let feed):
+            let nav = UINavigationController(rootViewController: feed)
+            feed.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: feed, action: #selector(feed.cancel))
+            nav.modalPresentationStyle = .fullScreen
+            present(nav, animated: true)
         }
     }
     
@@ -135,4 +142,12 @@ extension ProfileController: UICollectionViewDelegateFlowLayout{
         return CGSize(width: view.frame.width, height: view.frame.height/7 * 2)
     }
     
+}
+
+
+//MARK: - UICollectionViewDelegate
+extension ProfileController {
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        didTapCell.send(indexPath.row)
+    }
 }

@@ -39,7 +39,9 @@ extension ProfileViewModel: ProfileViewModelType {
         
         let cellConfigure = cellConfigureChains(with: input)
         
-        let input = Publishers.Merge3(appears, headerConfigure, cellConfigure).eraseToAnyPublisher()
+        let didTapCell = didTapCellChains(with: input)
+        
+        let input = Publishers.Merge4(appears, headerConfigure, cellConfigure, didTapCell).eraseToAnyPublisher()
         
         return Publishers.Merge(input,
                                 viewModelPropertiesPublisherValueChanged()).eraseToAnyPublisher()
@@ -99,6 +101,18 @@ extension ProfileViewModel: ProfileViewModelInputChainCase {
             .tryMap { [unowned self] (cell, index) -> ProfileControllerState in
                 cell.postIV.image = posts[index]
                 return .none
+            }.mapError { error -> ProfileErrorType in
+                return error as? ProfileErrorType ?? .failed
+            }.eraseToAnyPublisher()
+    }
+    
+    func didTapCellChains(with input: ProfileViewModelInput) -> ProfileViewModelOutput {
+        return input.didTapCell
+            .receive(on: RunLoop.main)
+            .tryMap { index in
+                let feed = FeedController(collectionViewLayout: UICollectionViewLayout())
+                feed.post = self.postsInfo[index]
+                return .showSpecificUser(feed: feed)
             }.mapError { error -> ProfileErrorType in
                 return error as? ProfileErrorType ?? .failed
             }.eraseToAnyPublisher()

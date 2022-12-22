@@ -126,6 +126,7 @@ extension LoginController {
             endIndicator(indicator: indicator)
             break
         case .checkIsValid(let isValid):
+            endIndicator(indicator: indicator)
             loginButtonSwitchHandler(with: isValid)
             break
         }
