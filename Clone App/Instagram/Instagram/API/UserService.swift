@@ -33,19 +33,15 @@ struct UserService {
         try await userDocument.updateData(encodedUserModel)
     }
     
-    static func fetchUserInfo(withUid uid: String) async throws -> UserInfoModel? {
+    static func fetchUserInfo<T: Codable>(type: T.Type, withUid uid: String) async throws -> T? {
         let result = try await COLLECTION_USERS.document(uid).getDocument()
-        
-        if result.exists {
-            return try result.data(as: UserInfoModel.self)
-        }else {
-            throw FetchUserError.invalidGetDocumentUserUID
-        }
+        if !result.exists { throw FetchUserError.invalidGetDocumentUserUID }
+        return try result.data(as: type.self)
     }
     
-    static func fetchCurrentUserInfo() async throws -> UserInfoModel? {
+    static func fetchCurrentUserInfo<T: Codable>(type: T.Type) async throws -> T? {
         let currentUserUID = try currentUserLogindUID()
-        return try await fetchUserInfo(withUid: currentUserUID)
+        return try await fetchUserInfo(type: type.self, withUid: currentUserUID)
     }
     
     static func currentUserLogindUID() throws -> String {
@@ -70,12 +66,11 @@ extension UserService {
 //MARK: - SearchController API
 extension UserService {
     
-    static func fetchUserList() async throws -> [UserInfoModel]? {
+    static func fetchUserList<T: Codable>(type: T.Type) async throws -> [T]? {
         let docuemts = try await COLLECTION_USERS.getDocuments().documents
-        let users = try docuemts.map{
-            try $0.data(as: UserInfoModel.self)
+        return try docuemts.map{
+            try $0.data(as: type.self)
         }
-        return users
     }
     
 }

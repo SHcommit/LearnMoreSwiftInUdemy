@@ -11,12 +11,19 @@ import Firebase
 import FirebaseFirestore
 
 enum AuthError: Error {
-    case invalidUserIDPW
-    case badImage
-    case invalidCurrentImage
-    case invalidDownloadUrl
-    case invalidUserAccount
+    case invalidProfileImage
+    case failedUploadImage
+    case failedUserAccount
     case invalidSetUserDataOnFireStore
+    
+    var errorDescription: String {
+        switch self {
+        case .invalidProfileImage: return "Invalid profile image instance"
+        case .failedUploadImage: return "Failed to upload user's profile image on firebase's storage"
+        case .failedUserAccount: return "Failed to create user account in firebase's Auth"
+        case .invalidSetUserDataOnFireStore: return "Invalid to set user data in fireStore's USERS document"
+        }
+    }
 }
 
 struct AuthService {
@@ -26,9 +33,9 @@ struct AuthService {
     }
     
     static func registerUser(withUserInfo info: RegistrationViewModel) async throws {
-        guard let image = info.profileImage else { throw AuthError.badImage }
-        guard let imageUrl = try? await UserProfileImageService.uploadImage(image: image) else { throw AuthError.badImage }
-        guard let result = try? await AUTH.createUser(withEmail: info.email, password: info.password) else { throw AuthError.invalidUserAccount }
+        guard let image = info.profileImage else { throw AuthError.invalidProfileImage }
+        guard let imageUrl = try? await UserProfileImageService.uploadImage(image: image) else { throw AuthError.failedUploadImage }
+        guard let result = try? await AUTH.createUser(withEmail: info.email, password: info.password) else { throw AuthError.failedUserAccount }
         let userUID = result.user.uid
         let user = info.getUserInfoModel(uid: userUID, url: imageUrl)
         let encodedUserModel = encodeToNSDictionary(codableType: user)
