@@ -23,6 +23,7 @@ class FeedController: UICollectionViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         collectionView.register(FeedCell.self, forCellWithReuseIdentifier: FEEDCELLRESUIDENTIFIER  )
+        fetchPosts()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -65,6 +66,7 @@ extension FeedController {
 //MARK: - API
 extension FeedController {
     func fetchPosts() {
+        guard post == nil else { return }
         Task() {
             do {
                 var posts = try await PostService.fetchPosts()
@@ -109,7 +111,7 @@ extension FeedController {
     }
     
     @objc func cancel() {
-        self.dismiss(animated: true)
+        navigationController?.popViewController(animated: false)
     }
 }
 

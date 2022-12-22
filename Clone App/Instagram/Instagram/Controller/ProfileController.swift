@@ -81,10 +81,10 @@ extension ProfileController {
             collectionView.reloadData()
             break
         case .showSpecificUser(feed: let feed):
-            let nav = UINavigationController(rootViewController: feed)
+            
+            
             feed.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: feed, action: #selector(feed.cancel))
-            nav.modalPresentationStyle = .fullScreen
-            present(nav, animated: true)
+            navigationController?.pushViewController(feed, animated: true)
         }
     }
     

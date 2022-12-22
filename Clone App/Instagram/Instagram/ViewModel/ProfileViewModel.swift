@@ -110,7 +110,7 @@ extension ProfileViewModel: ProfileViewModelInputChainCase {
         return input.didTapCell
             .receive(on: RunLoop.main)
             .tryMap { index in
-                let feed = FeedController(collectionViewLayout: UICollectionViewLayout())
+                let feed = FeedController(collectionViewLayout: UICollectionViewFlowLayout())
                 feed.post = self.postsInfo[index]
                 return .showSpecificUser(feed: feed)
             }.mapError { error -> ProfileErrorType in
