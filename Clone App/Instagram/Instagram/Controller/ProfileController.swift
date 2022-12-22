@@ -81,8 +81,6 @@ extension ProfileController {
             collectionView.reloadData()
             break
         case .showSpecificUser(feed: let feed):
-            
-            
             feed.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: feed, action: #selector(feed.cancel))
             navigationController?.pushViewController(feed, animated: true)
         }
