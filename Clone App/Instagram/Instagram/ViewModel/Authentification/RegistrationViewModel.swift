@@ -103,10 +103,10 @@ extension RegistrationViewModel: RegistrationViewModelNetworkServiceType {
     
     func registerUserFromSignUpErrorHandling(error: Error) {
         switch error {
-        case AuthError.badImage:
-            print("DEBUG: Failure bind registerUser's info.profileImage")
-        case AuthError.invalidUserAccount:
-            print("DEBUG: Failure create user account")
+        case AuthError.invalidProfileImage:
+            print("DEBUG: \(AuthError.invalidProfileImage) : \( error.localizedDescription)")
+        case AuthError.failedUserAccount:
+            print("DEBUG: \(AuthError.failedUserAccount) : \(error.localizedDescription)")
         case AuthError.invalidSetUserDataOnFireStore:
             print("DEBUG: Failure add user Info in firestore")
         default:

@@ -189,13 +189,13 @@ extension MainHomeTabController {
     }
     func fetchUserInfoFromUserService(withUID uid: String? = nil) async throws {
         guard let uid = uid else {
-            guard let userInfo = try await UserService.fetchCurrentUserInfo() else { throw FetchUserError.invalidUserInfo }
+            guard let userInfo = try await UserService.fetchCurrentUserInfo(type: UserInfoModel.self) else { throw FetchUserError.invalidUserInfo }
             DispatchQueue.main.async {
                 self.userVM = UserInfoViewModel(user: userInfo)
             }
             return
         }
-        guard let userInfo = try await UserService.fetchUserInfo(withUid: uid) else { throw FetchUserError.invalidUserInfo }
+        guard let userInfo = try await UserService.fetchUserInfo(type: UserInfoModel.self, withUid: uid) else { throw FetchUserError.invalidUserInfo }
         self.userVM = UserInfoViewModel(user: userInfo, profileImage: nil)
     }
     func fetchCurrentUserInfoErrorHandling(withError error: Error) {
@@ -258,7 +258,7 @@ extension MainHomeTabController: AuthentificationDelegate {
     }
     
     func fetchCurrentUserInfo(withUID id: String) async throws {
-        let userInfo = try await UserService.fetchUserInfo(withUid: id)
+        let userInfo = try await UserService.fetchUserInfo(type: UserInfoModel.self, withUid: id)
         guard let userInfo = userInfo else { throw FetchUserError.invalidUserInfo }
         self.userVM = UserInfoViewModel(user: userInfo, profileImage: nil)
     }
