@@ -55,7 +55,7 @@ extension UserService: UserServiceAboutSearchType {
 extension UserService: UserServiceAboutProfileType {
     
     static func follow(someone uid: String) async throws {
-        guard let currentUid = Utils.pList?.string(forKey: CURRENT_USER_UID) else { throw FollowServiceError.invalidCurrentUserUIDInUserDefaultsStandard }
+        guard let currentUid = Utils.pList.string(forKey: CURRENT_USER_UID) else { throw FollowServiceError.invalidCurrentUserUIDInUserDefaultsStandard }
         return await withThrowingTaskGroup(of: Void.self) { group in
             group.addTask {
                 guard let _ = try? await COLLECTION_FOLLOWING.document(currentUid).collection("user-following")
@@ -71,7 +71,7 @@ extension UserService: UserServiceAboutProfileType {
     }
     
     static func unfollow(someone uid: String) async throws {
-        guard let currentUid = Utils.pList?.string(forKey: CURRENT_USER_UID) else { throw
+        guard let currentUid = Utils.pList.string(forKey: CURRENT_USER_UID) else { throw
             UnFollowServiceError.invalidCurrentUserUIDInUserDefaultsStandard }
         return await withThrowingTaskGroup(of: Void.self) { group in
             group.addTask {
@@ -93,7 +93,7 @@ extension UserService: UserServiceAboutProfileType {
     
     static func checkIfUserIsFollowd(uid: String) async throws -> Bool {
         
-        guard let currentUid = Utils.pList?.string(forKey: CURRENT_USER_UID) else {
+        guard let currentUid = Utils.pList.string(forKey: CURRENT_USER_UID) else {
             throw CheckUserFollowedError.invalidCurrentUserUIDInUserDefaultsStandard }
         guard let docSanps = try? await COLLECTION_FOLLOWING
             .document(currentUid).collection("user-following")
