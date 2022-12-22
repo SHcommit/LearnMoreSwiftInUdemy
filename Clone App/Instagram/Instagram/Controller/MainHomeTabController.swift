@@ -199,32 +199,24 @@ extension MainHomeTabController {
         self.userVM = UserInfoViewModel(user: userInfo, profileImage: nil)
     }
     func fetchCurrentUserInfoErrorHandling(withError error: Error) {
+        guard let error = error as? FetchUserError else { return }
         switch error {
-        case FetchUserError.invalidUserInfo:
-            print("DEBUG: Fail to bind userInfo instance.")
-        case FetchUserError.invalidGetDocumentUserUID:
-            print("DEBUG: Fail to get user document with UID. 이경우 로그인됬는데 uid를 찾을 수 없음 -> 파이어베이스 사용자 UID 잘못 등록됨.")
-            DispatchQueue.main.async {
-                self.presentLoginScene()
-            }
-        case SystemError.invalidCurrentUserUID:
-            print("DEBUG: Fail to find user's UID value")
-        case SystemError.invalidAppDelegateInstance:
-            print("DEBUG: Fail to bind AppDelegate instance")
-        default:
-            print("DEBUG: An error occured: \(error.localizedDescription)")
+        case .invalidGetDocumentUserUID:
+            print("DEBUG: Invalid get docuemnt specific user's uid")
+            break
+        case .invalidUserInfo:
+            print("DEBUG: Invalid user's instance")
+            break
+        default :
+            print("DEBUG: Unexpected error occured")
+            break
         }
-
     }
     
     
     //MARK: - API. check user's membership
     func isUserLogined() -> Bool {
-        
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return false }
-        appDelegate.pList.synchronize()
-        let currentUserUid = appDelegate.pList.string(forKey: CURRENT_USER_UID)
-        
+        let currentUserUid = Utils.pList.string(forKey: CURRENT_USER_UID)
         if Auth.auth().currentUser == nil || currentUserUid == nil{
             return false
         }
