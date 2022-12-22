@@ -8,15 +8,7 @@
 import UIKit
 import Firebase
 
-enum FetchPostError: Error {
-    case failToRequestPostData
-    case failToRequestUploadImage
-    case invalidPostsGetDocuments
-    case failToEncodePost
-    case invalidUserPostData
-}
-
-struct PostService {
+struct PostService: PostServiceType {
     
     static func uploadPost(caption: String, image: UIImage, ownerProfileUrl ownerUrl: String, ownerUsername ownerName: String) async throws {
         let ud = UserDefaults.standard
@@ -24,7 +16,7 @@ struct PostService {
         guard let userUID = ud.string(forKey: CURRENT_USER_UID) else { throw FetchUserError.invalidGetDocumentUserUID }
         let url = try await uploadImage(with: image)
         let post = PostModel(caption: caption, timestamp: Timestamp(date: Date()), likes: 0, imageUrl: url, ownerUid: userUID, ownerImageUrl: ownerUrl, ownerUsername: ownerName)
-        let encodedPost = UserService.encodeToNSDictionary(codableType: post)
+        let encodedPost = UserService.encodeToNSDictionary(info: post)
         guard let _ = try? await COLLECTION_POSTS.addDocument(data: encodedPost) else { throw FetchPostError.failToRequestPostData}
         
     }
@@ -38,11 +30,8 @@ struct PostService {
         }
         return posts
     }
-}
-
-extension PostService {
-    // uploadPost에 사용됨.
-    private static func uploadImage(with image: UIImage) async throws -> String {
+    
+    internal static func uploadImage(with image: UIImage) async throws -> String {
         do {
             let url = try await UserProfileImageService.uploadImage(image: image)
             return url
@@ -51,6 +40,9 @@ extension PostService {
             throw FetchPostError.failToRequestUploadImage
         }
     }
+}
+
+extension PostService: ProstServiceErrorType {
     
     static func uploadImageErrorHandling(with error: ImageServiceError){
         switch error {
