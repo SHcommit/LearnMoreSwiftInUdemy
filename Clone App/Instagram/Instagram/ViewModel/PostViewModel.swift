@@ -10,7 +10,7 @@ import Firebase
 
 class PostViewModel {
     //MARK: - Properties
-    private var post: PostModel
+    var post: PostModel
     private var postImage: UIImage?
     private var userProfile: UIImage?
     
