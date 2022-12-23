@@ -5,12 +5,14 @@
 //  Created by 양승현 on 2022/12/08.
 //
 
-import Foundation
+import UIKit
 import Combine
 
 protocol ProfileViewModelGetSetType {
     
     var getUser: UserInfoModel { get set }
+    
+    var getPostsCount: Int { get }
 }
 
 protocol ProfileViewModelType: ProfileViewModelGetSetType {
@@ -64,9 +66,11 @@ struct ProfileViewModelInput {
     
     let appear: AnyPublisher<Void,ProfileErrorType>
     
-    let cellConfigure: AnyPublisher<ProfileCell,ProfileErrorType>
+    let cellConfigure: AnyPublisher<(ProfileCell, index: Int),ProfileErrorType>
     
     let headerConfigure: AnyPublisher<ProfileHeader, ProfileErrorType>
+    
+    let didTapCell: AnyPublisher<Int, ProfileErrorType>
     
 }
 
@@ -75,6 +79,7 @@ typealias ProfileViewModelOutput = AnyPublisher<ProfileControllerState, ProfileE
 enum ProfileControllerState {
     
     case reloadData,
+         showSpecificUser(feed: FeedController),
          none
 }
 
@@ -89,6 +94,8 @@ protocol ProfileViewModelInputChainCase {
     /// cellConfigure Input publisher's stream chains
     func cellConfigureChains(with input: ProfileViewModelInput) -> ProfileViewModelOutput
     
+    /// present specific user's detail profileController
+    func didTapCellChains(with input: ProfileViewModelInput) -> ProfileViewModelOutput
 }
 
 //MARK: - ViewModel 's inner publisher's upstream chaining funcs
@@ -102,19 +109,41 @@ protocol ProfileVMInnerPropertiesPublisherChainType {
     
     func userStatsChains() -> ProfileViewModelOutput
     
+    //각각 동시에 받은 이미지 cell에 갱신.
+    func bindPostsToPostsImage() -> ProfileViewModelOutput
+    
 }
 
 protocol ProfileViewModelAPIType {
+    //MARK: - configure
     
-    func fetchData()
+    func fetchDataConcurrencyConfigure()
     
-    func fetchToCheckIfUserIsFollowed()
+    func fetchPostsConcurrencyConfigure()
     
-    func fetchUserStats()
+    //MARK: - ProfileVM API Types
     
-    func fetchImage(profileUrl url: String) async
+    func fetchToCheckIfUserIsFollowed() async -> Bool
     
-    func fetchImageFromUserProfileImageService(url: String) async throws
+    func fetchUserStats() async -> Userstats
+    
+    func fetchImage(profileUrl url: String) async -> UIImage
+
+    func fetchSpecificUserPostsInfo() async -> [PostModel]
+
+    func fetchSpecificPost(with url: String) async -> UIImage
+
+}
+
+protocol ProfileViewModelAPIErrorHandlingType {
     
     func fetchImageErrorHandling(withError error: Error)
+    
+    func fetchUserStatsErrorHandling(with error: FetchUserStatsError)
+    
+    func fetchToCheckIfUserIsFollowedErrorHandling(with error: CheckUserFollowedError)
+    
+    func followErrorHandling(with error: Error)
+    
+    func unFollowErrorHandling(error: Error)
 }

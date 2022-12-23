@@ -11,7 +11,14 @@ import Firebase
 class FeedController: UICollectionViewController {
     
     //MARK: - Properties
-    private var posts = [PostModel]()
+    var posts = [PostModel]()
+    
+    // specific user's specific CollectionViewcell post info
+    var post: PostModel? {
+        didSet {
+            collectionView.reloadData()
+        }
+    }
     
     //MARK: - LifeCycle
     override func viewDidLoad() {
@@ -60,6 +67,7 @@ extension FeedController {
 //MARK: - API
 extension FeedController {
     func fetchPosts() {
+        guard post == nil else { return }
         Task() {
             do {
                 var posts = try await PostService.fetchPosts()
@@ -102,20 +110,29 @@ extension FeedController {
         collectionView.reloadData()
         fetchPosts()
     }
+    
+    @objc func cancel() {
+        navigationController?.popViewController(animated: false)
+    }
 }
 
 //MARK: - UICollectionView DataSource
 extension FeedController {
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return posts.count
+        return post != nil ? 1 : posts.count
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FEEDCELLRESUIDENTIFIER, for: indexPath) as? FeedCell else {
             fatalError()
         }
-        cell.viewModel = PostViewModel(post: posts[indexPath.row])
+        if let post = post {
+            cell.viewModel = PostViewModel(post: post)
+        }else {
+            cell.viewModel = PostViewModel(post: posts[indexPath.row])
+        }
+        
         DispatchQueue.main.async {
             cell.configure()
         }
@@ -152,11 +169,14 @@ extension FeedController: UICollectionViewDelegateFlowLayout {
 extension FeedController {
     
     func setupLogoutBarButton() {
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout",
-                                                            style: .plain,
-                                                            target: self,
-                                                            action: #selector(handleLogout)
-                                                       )
+        guard let _ = navigationItem.leftBarButtonItem else {
+            navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout",
+                                                                style: .plain,
+                                                                target: self,
+                                                                action: #selector(handleLogout))
+            return
+        }
+        
     }
     
 }

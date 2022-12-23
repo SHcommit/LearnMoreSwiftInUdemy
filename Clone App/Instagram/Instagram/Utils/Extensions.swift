@@ -83,3 +83,28 @@ class Dynamic<T> {
     }
     
 }
+
+protocol ServiceExtensionType {
+    
+    static func encodeToNSDictionary(info: Codable) -> [String:Any]
+    
+}
+
+extension ServiceExtensionType {
+    
+    static func encodeToNSDictionary(info: Codable) -> [String : Any] {
+        guard let dataDictionary = info.encodeToDictionary else { fatalError() }
+        return dataDictionary
+    }
+    
+}
+
+struct Utils {
+    static var pList: UserDefaults {
+        get {
+            let pList = UserDefaults.standard
+            pList.synchronize()
+            return pList
+        }
+    }
+}

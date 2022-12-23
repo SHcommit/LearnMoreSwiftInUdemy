@@ -10,7 +10,7 @@ import UIKit
 class ProfileCell: UICollectionViewCell {
     
     //MARK: - Properties
-    private let postIV: UIImageView = initialPostIV()
+    let postIV: UIImageView = initialPostIV()
     
     //MARK: - LifeCycle
     
@@ -23,6 +23,10 @@ class ProfileCell: UICollectionViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) not implement")
     }
+    
+    override func prepareForReuse() {
+        postIV.image = nil
+    }
 }
 
 //MARK: - Initial subviews
@@ -30,7 +34,6 @@ extension ProfileCell {
     
     static func initialPostIV() -> UIImageView {
         let iv = UIImageView()
-        iv.image = UIImage(imageLiteralResourceName: "moscow")
         iv.contentMode = .scaleAspectFill
         iv.clipsToBounds = true
         iv.translatesAutoresizingMaskIntoConstraints = false

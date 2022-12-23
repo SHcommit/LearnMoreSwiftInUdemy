@@ -20,6 +20,17 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "FeedController.collectionView(_:numberOfItemsInSection:):FeedController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "post">
+            </PersistentString>
+            <PersistentString
+               value = "print(&quot;\(post?.ownerUid != nil ? 1 : posts.count)&quot;)">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "closure #1 in SearchViewModel.setupTableViewJust(with:):SearchViewModel.swift">
          <PersistentStrings>
             <PersistentString
@@ -64,6 +75,14 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "FeedController.handleRefresh():FeedController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "posts">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "MainHomeTabController.configureViewControllers():MainHomeTabController.swift">
          <PersistentStrings>
             <PersistentString
@@ -86,7 +105,13 @@
          contextName = "FeedController.collectionView(_:cellForItemAt:):FeedController.swift">
          <PersistentStrings>
             <PersistentString
+               value = "posts">
+            </PersistentString>
+            <PersistentString
                value = "print(&quot;\(indexPath.row)&quot;)">
+            </PersistentString>
+            <PersistentString
+               value = "post">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

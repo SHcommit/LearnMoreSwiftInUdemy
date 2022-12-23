@@ -109,10 +109,12 @@ extension UserInfoViewModel {
     }
     
 
-    func fetchUserStats(completion: @escaping () -> Void) {
-        UserService.fetchUserStats(uid: user.uid) { stats in
-            self.userStats = stats
-            completion()
+    func fetchUserStats() {
+        Task() {
+            let userStats = try await UserService.fetchUserStats(uid: user.uid)
+            DispatchQueue.main.async {
+                self.userStats = userStats
+            }
         }
     }
 

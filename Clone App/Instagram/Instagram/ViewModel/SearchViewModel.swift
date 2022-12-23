@@ -86,9 +86,7 @@ extension SearchViewModel: SearchViewModelInputCase {
     }
     
     func fetchUserStats(in cell: SearchedUserCell) {
-        DispatchQueue.main.async {
-            cell.userVM?.fetchUserStats { }
-        }
+        cell.userVM?.fetchUserStats()
     }
     
     func fetchUserImage(in cell: SearchedUserCell) {
@@ -162,7 +160,7 @@ extension SearchViewModel: SearchViewModelNetworkServiceType {
     }
     
     func fetchAllUserDefaultInfo() async throws {
-        guard let users = try await UserService.fetchUserList() else { throw FetchUserError.invalidUsers }
+        guard let users = try await UserService.fetchUserList(type: UserInfoModel.self) else { throw FetchUserError.invalidUsers }
         DispatchQueue.main.async {
             self.users = users
         }

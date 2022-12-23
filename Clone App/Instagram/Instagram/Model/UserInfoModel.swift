@@ -15,10 +15,7 @@ struct UserInfoModel: Codable, Equatable {
     var username: String
     var isFollowed = false
     var isCurrentUser: Bool {
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError() }
-        appDelegate.pList.synchronize()
-        guard let currentUserUid = appDelegate.pList.string(forKey: CURRENT_USER_UID) else { return false }
-                
+        guard let currentUserUid = Utils.pList.string(forKey: CURRENT_USER_UID) else { return false }
         return currentUserUid == uid
     }
     

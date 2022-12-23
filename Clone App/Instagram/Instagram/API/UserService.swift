@@ -8,124 +8,113 @@
 import Firebase
 import FirebaseFirestore
 
-enum FetchUserError: Error {
-    case invalidGetDocumentUserUID
-    case invalidUserInfo
-    case invalidUserProfileImage
-    case invalidUserStats
-    //userAllList
-    case invalidDocuemnts
-    case invalidUserData
-    case invalidUsers
-}
-
-enum SystemError: Error {
-    case invalidAppDelegateInstance
-    case invalidCurrentUserUID
-}
-
 //MARK: - Firestore user default info
-struct UserService {
+struct UserService: ServiceExtensionType, UserServiceDefaultType {
     
     static func updateCurrentUserInfo(CodableType info: UserInfoModel) async throws {
-        let encodedUserModel = encodeToNSDictionary(codableType: info)
+        let encodedUserModel = encodeToNSDictionary(info: info)
         let userDocument = COLLECTION_USERS.document(info.uid)
         try await userDocument.updateData(encodedUserModel)
     }
     
-    static func fetchUserInfo(withUid uid: String) async throws -> UserInfoModel? {
-        let result = try await COLLECTION_USERS.document(uid).getDocument()
-        
-        if result.exists {
-            return try result.data(as: UserInfoModel.self)
-        }else {
+    static func fetchUserInfo<T: Codable>(type: T.Type, withUid uid: String) async throws -> T? {
+        guard let result = try? await COLLECTION_USERS.document(uid).getDocument() else {
             throw FetchUserError.invalidGetDocumentUserUID
         }
+        if !result.exists { throw FetchUserError.invalidGetDocumentUserUID }
+        return try result.data(as: type.self)
     }
     
-    static func fetchCurrentUserInfo() async throws -> UserInfoModel? {
+    static func fetchCurrentUserInfo<T: Codable>(type: T.Type) async throws -> T? {
         let currentUserUID = try currentUserLogindUID()
-        return try await fetchUserInfo(withUid: currentUserUID)
+        return try await fetchUserInfo(type: type.self, withUid: currentUserUID)
     }
     
     static func currentUserLogindUID() throws -> String {
         let ud = UserDefaults.standard
         ud.synchronize()
-        guard let userUID = ud.string(forKey: CURRENT_USER_UID) else { throw SystemError.invalidCurrentUserUID }
+        guard let userUID = ud.string(forKey: CURRENT_USER_UID) else { throw FetchUserError.invalidCurrentUserUIDInUserDefaultsStandard }
         return userUID
     }
 
 }
 
-//MAKR: Extension
-extension UserService {
-    
-    static func encodeToNSDictionary(codableType info: Codable) -> [String : Any] {
-        guard let dataDictionary = info.encodeToDictionary else { fatalError() }
-        return dataDictionary
-    }
-    
-}
-
 //MARK: - SearchController API
-extension UserService {
+extension UserService: UserServiceAboutSearchType {
     
-    static func fetchUserList() async throws -> [UserInfoModel]? {
+    static func fetchUserList<T: Codable>(type: T.Type) async throws -> [T]? {
         let docuemts = try await COLLECTION_USERS.getDocuments().documents
-        let users = try docuemts.map{
-            try $0.data(as: UserInfoModel.self)
+        return try docuemts.map{
+            try $0.data(as: type.self)
         }
-        return users
     }
     
 }
 
 //MARK: - ProfileController API.
-extension UserService {
+extension UserService: UserServiceAboutProfileType {
     
-    static func follow(uid: String, completion: @escaping(FiresotreCompletion)) {
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
-        appDelegate.pList.synchronize()
-        guard let currentUid = appDelegate.pList.string(forKey: CURRENT_USER_UID) else { return }
-        
-        COLLECTION_FOLLOWING.document(currentUid).collection("user-following").document(uid).setData([:]) { _ in
-            COLLECTION_FOLLOWERS.document(uid).collection("user-followers").document(currentUid).setData([:], completion: completion)
+    static func follow(someone uid: String) async throws {
+        guard let currentUid = Utils.pList.string(forKey: CURRENT_USER_UID) else { throw FollowServiceError.invalidCurrentUserUIDInUserDefaultsStandard }
+        return await withThrowingTaskGroup(of: Void.self) { group in
+            group.addTask {
+                guard let _ = try? await COLLECTION_FOLLOWING.document(currentUid).collection("user-following")
+                    .document(uid).setData([:]) else { throw FollowServiceError.failedFollowingToSetData }
+            }
             
-        }
-    }
-    
-    static func unfollow(uid: String, completion: @escaping(FiresotreCompletion)) {
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
-        appDelegate.pList.synchronize()
-        guard let currentUid = appDelegate.pList.string(forKey: CURRENT_USER_UID) else { return }
-        
-        COLLECTION_FOLLOWING.document(currentUid).collection("user-following").document(uid).delete() { _ in
-            COLLECTION_FOLLOWERS.document(uid).collection("user-followers").document(currentUid).delete(completion: completion)
-            
-        }
-    }
-    
-    
-    static func checkIfUserIsFollowd(uid: String, completion: @escaping(Bool) -> Void) {
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
-        appDelegate.pList.synchronize()
-        guard let currentUid = appDelegate.pList.string(forKey: CURRENT_USER_UID) else { return }
-        
-        COLLECTION_FOLLOWING.document(currentUid).collection("user-following").document(uid).getDocument() { document, _ in
-            guard let isFollowd = document?.exists else { return }
-            completion(isFollowd)
-        }
-    }
-    
-    static func fetchUserStats(uid: String, completion: @escaping(Userstats) -> Void) {
-        COLLECTION_FOLLOWERS.document(uid).collection("user-followers").getDocuments() { document, error in
-            let followers = document?.documents.count ?? 0
-            
-            COLLECTION_FOLLOWING.document(uid).collection("user-following").getDocuments() { document, error in
-                let following = document?.documents.count ?? 0
-                
-                completion(Userstats(followers: followers, following: following))
+            group.addTask {
+                guard let _ = try? await COLLECTION_FOLLOWERS.document(uid).collection("user-followers")
+                    .document(currentUid).setData([:]) else {
+                    throw FollowServiceError.failedFollowerToSetData }
             }
         }
     }
+    
+    static func unfollow(someone uid: String) async throws {
+        guard let currentUid = Utils.pList.string(forKey: CURRENT_USER_UID) else { throw
+            UnFollowServiceError.invalidCurrentUserUIDInUserDefaultsStandard }
+        return await withThrowingTaskGroup(of: Void.self) { group in
+            group.addTask {
+                guard let _ = try? await COLLECTION_FOLLOWING
+                    .document(currentUid).collection("user-following")
+                    .document(uid).delete() else {
+                    throw UnFollowServiceError.failedUnFollowSpecificUserFromLoginUser
+                }
+            }
+            group.addTask {
+                guard let _ = try? await COLLECTION_FOLLOWERS
+                    .document(uid).collection("user-followers")
+                    .document(currentUid).delete() else {
+                    throw UnFollowServiceError.failedUnFollowLoginUserFromSpecificUser
+                }
+            }
+        }
+    }
+    
+    static func checkIfUserIsFollowd(uid: String) async throws -> Bool {
+        
+        guard let currentUid = Utils.pList.string(forKey: CURRENT_USER_UID) else {
+            throw CheckUserFollowedError.invalidCurrentUserUIDInUserDefaultsStandard }
+        guard let docSanps = try? await COLLECTION_FOLLOWING
+            .document(currentUid).collection("user-following")
+            .document(uid).getDocument() else {
+            throw CheckUserFollowedError.invalidSpecificUserInfo }
+        return docSanps.exists
+    }
+    
+    static func fetchUserStats(uid: String) async throws -> Userstats {
+    
+        guard let followerQuery = try? await COLLECTION_FOLLOWERS
+            .document(uid).collection("user-followers")
+            .getDocuments() else {
+            throw FetchUserStatsError.invalidSpecificUserFollowersDocument
+        }
+        guard let followingQuery = try? await COLLECTION_FOLLOWING
+            .document(uid).collection("user-following")
+            .getDocuments() else {
+            throw FetchUserStatsError.invalidSpecificUSerFollowingDocuemnt
+        }
+        return Userstats(followers: followerQuery.count, following: followingQuery.count)
+    }
+    
 }
