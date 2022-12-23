@@ -6,12 +6,14 @@
 //
 
 import UIKit
+import Combine
 import Firebase
 
 class FeedController: UICollectionViewController {
     
     //MARK: - Properties
     var posts = [PostModel]()
+    var subscriptions = Set<AnyCancellable>()
     
     // specific user's specific CollectionViewcell post info
     var post: PostModel? {
@@ -132,6 +134,8 @@ extension FeedController {
         }else {
             cell.viewModel = PostViewModel(post: posts[indexPath.row])
         }
+        
+        cell.subscribeFromDidTapPublisher(navigationController)
         
         DispatchQueue.main.async {
             cell.configure()

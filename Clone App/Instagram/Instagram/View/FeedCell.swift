@@ -7,6 +7,7 @@
 
 import UIKit
 import Firebase
+import Combine
 
 class FeedCell: UICollectionViewCell {
     
@@ -20,6 +21,9 @@ class FeedCell: UICollectionViewCell {
     private lazy var likeButton: UIButton = initialLikeButton()
     private lazy var commentButton: UIButton = initialCommentButton()
     private lazy var shareButton: UIButton = initialShareButton()
+    
+    @Published var didTapPublisher: PostModel?
+    private var subscriptions = Set<AnyCancellable>()
     
     private var isSelectedLikeButton: Bool = false
     
@@ -141,7 +145,7 @@ extension FeedCell {
         let btn = UIButton(type: .system)
         btn.translatesAutoresizingMaskIntoConstraints = false
         btn.setImage(.imageLiteral(name: "comment"), for: .normal)
-        btn.addTarget(self, action: #selector(didTapLikeButton(_:)), for: .touchUpInside)
+        btn.addTarget(self, action: #selector(didTapComment(_:)), for: .touchUpInside)
         btn.setContentCompressionResistancePriority(UILayoutPriority(999), for: .vertical)
         btn.tintColor = .black
         return btn
@@ -274,5 +278,20 @@ extension FeedCell {
         }
         isSelectedLikeButton = false
         likeButton.setImage(.imageLiteral(name: "like_unselected"), for: .normal)
+    }
+    
+    @objc func didTapComment(_ sender: Any) {
+        guard let post = viewModel?.post else { return }
+        didTapPublisher = post
+    }
+    
+    func subscribeFromDidTapPublisher(_ navigationController: UINavigationController?) {
+        $didTapPublisher
+            .receive(on: RunLoop.main)
+            .sink { _ in
+                guard let _ = self.didTapPublisher else { return }
+                let controller = CommentController(collectionViewLayout: UICollectionViewFlowLayout())
+                navigationController?.pushViewController(controller, animated: true)
+            }.store(in: &subscriptions)
     }
 }
