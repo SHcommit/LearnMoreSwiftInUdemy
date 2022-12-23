@@ -16,8 +16,9 @@ class ProfileController: UICollectionViewController {
     
     //MARK: - ProfileViewModel input properties
     let appear = PassthroughSubject<Void,ProfileErrorType>()
-    let cellConfigure = PassthroughSubject<ProfileCell, ProfileErrorType>()
+    let cellConfigure = PassthroughSubject<(ProfileCell,index: Int), ProfileErrorType>()
     let headerConfigure = PassthroughSubject<ProfileHeader, ProfileErrorType>()
+    let didTapCell = PassthroughSubject<Int,ProfileErrorType>()
     
     //MARK: - Lifecycle
     init(viewModel: ProfileViewModelType) {
@@ -54,7 +55,8 @@ extension ProfileController {
     func setupBindings() {
         let input = ProfileViewModelInput(appear: appear.eraseToAnyPublisher(),
                                           cellConfigure: cellConfigure.eraseToAnyPublisher(),
-                                          headerConfigure: headerConfigure.eraseToAnyPublisher())
+                                          headerConfigure: headerConfigure.eraseToAnyPublisher(),
+                                          didTapCell: didTapCell.eraseToAnyPublisher())
         let output = viewModel.transform(input: input)
         output
             .receive(on: RunLoop.main)
@@ -73,11 +75,14 @@ extension ProfileController {
     
     func render(_ state: ProfileControllerState) {
         switch state {
+        case .none:
+            break
         case .reloadData:
             collectionView.reloadData()
             break
-        case .none:
-            break
+        case .showSpecificUser(feed: let feed):
+            feed.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: feed, action: #selector(feed.cancel))
+            navigationController?.pushViewController(feed, animated: true)
         }
     }
     
@@ -97,12 +102,12 @@ extension ProfileController {
 extension ProfileController {
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 20
+        return viewModel.getPostsCount
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CELLREUSEABLEID, for: indexPath) as? ProfileCell else { fatalError() }
-        cellConfigure.send(cell)
+        cellConfigure.send((cell,indexPath.row))
         return cell
     }
 
@@ -135,4 +140,12 @@ extension ProfileController: UICollectionViewDelegateFlowLayout{
         return CGSize(width: view.frame.width, height: view.frame.height/7 * 2)
     }
     
+}
+
+
+//MARK: - UICollectionViewDelegate
+extension ProfileController {
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        didTapCell.send(indexPath.row)
+    }
 }

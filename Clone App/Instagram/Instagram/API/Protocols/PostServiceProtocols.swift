@@ -37,6 +37,8 @@ protocol PostServiceType {
     
     static func uploadImage(with image: UIImage) async throws -> String
     
+    static func fetchSpecificUserPostsInfo(forUser uid: String) async throws -> [PostModel]
+    
 }
 
 protocol ProstServiceErrorType {

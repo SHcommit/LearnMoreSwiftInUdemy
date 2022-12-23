@@ -40,6 +40,21 @@ struct PostService: PostServiceType {
             throw FetchPostError.failToRequestUploadImage
         }
     }
+    
+    static func fetchSpecificUserPostsInfo(forUser uid: String) async throws -> [PostModel] {
+        let querySnapshot = try await COLLECTION_POSTS
+            .whereField("ownerUid", isEqualTo: uid)
+            .getDocuments()
+        
+        return try querySnapshot
+            .documents
+            .map{
+                var post = try $0.data(as: PostModel.self)
+                post.postId = $0.documentID
+                return post
+            }
+    }
+    
 }
 
 extension PostService: ProstServiceErrorType {
@@ -56,4 +71,5 @@ extension PostService: ProstServiceErrorType {
             print("DEBUG: \(ImageServiceError.failedGetImageInstance) : \(error.localizedDescription)")
         }
     }
+    
 }
