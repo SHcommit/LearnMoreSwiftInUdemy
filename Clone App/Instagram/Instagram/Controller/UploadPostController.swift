@@ -139,6 +139,7 @@ extension UploadPostController {
         tv.placeholderText = "Enter caption.."
         tv.font = UIFont.systemFont(ofSize: 16)
         tv.textDelegate = self
+        tv.placeholderShouldCenter = false
         return tv
     }
     

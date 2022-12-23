@@ -23,6 +23,20 @@ class InputTextView: UITextView {
         
     }
     
+    var placeholderShouldCenter = true {
+        didSet {
+            if placeholderShouldCenter {
+                NSLayoutConstraint.activate([
+                    placeholderLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
+                    placeholderLabel.centerYAnchor.constraint(equalTo: centerYAnchor)])
+            }else {
+                NSLayoutConstraint.activate([
+                    placeholderLabel.topAnchor.constraint(equalTo: topAnchor, constant: 6),
+                    placeholderLabel.leadingAnchor.constraint(equalTo: leadingAnchor,constant: 8)])
+            }
+        }
+    }
+    
     //MARK: - Lifecycle
     override init(frame: CGRect, textContainer: NSTextContainer?) {
         super.init(frame: frame, textContainer: textContainer)
