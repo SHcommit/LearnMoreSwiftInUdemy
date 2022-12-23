@@ -6,3 +6,10 @@
 //
 
 import Foundation
+
+class CommentViewModel {
+    
+    //MARK: - Properties
+    
+    //MARK: - Lifecycles
+}
