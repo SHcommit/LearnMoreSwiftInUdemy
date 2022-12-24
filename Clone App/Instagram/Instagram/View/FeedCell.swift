@@ -289,8 +289,10 @@ extension FeedCell {
         $didTapPublisher
             .receive(on: RunLoop.main)
             .sink { _ in
-                guard let _ = self.didTapPublisher else { return }
-                let controller = CommentController(collectionViewLayout: UICollectionViewFlowLayout())
+                guard let _ = self.didTapPublisher,
+                      let post = self.viewModel?.post else { return }
+                self.didTapPublisher = nil
+                let controller = CommentController(viewModel: CommentViewModel(post: post))
                 navigationController?.pushViewController(controller, animated: true)
             }.store(in: &subscriptions)
     }

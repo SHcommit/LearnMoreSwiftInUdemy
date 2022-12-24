@@ -15,26 +15,41 @@ class CommentController: UICollectionViewController {
     //MARK: - Properties
     private lazy var commentInputView = initCommentInputView()
     
+    private var viewModel: CommentViewModelType
     
     let appear = PassthroughSubject<Void,Never>()
-    let numberOfItems = PassthroughSubject<Int,Never>()
-    let cellForItem = PassthroughSubject<CommentCell,Never>()
+    let reloadData = PassthroughSubject<Void,Never>()
+    let cellForItem = PassthroughSubject<CommentCellInfo,Never>()
+    
+    var subscriptions = Set<AnyCancellable>()
+    
     //MARK: - Lifecycles
+    init(viewModel: CommentViewModelType) {
+        self.viewModel = viewModel
+        super.init(collectionViewLayout: UICollectionViewFlowLayout())
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configureCollectionView()
         configureUI()
+        setupBindings()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.tabBarController?.tabBar.isHidden = true
+        appear.send()
     }
     
     override func viewWillDisappear(_ aniamted: Bool) {
         super.viewWillDisappear(aniamted)
         self.tabBarController?.tabBar.isHidden = false
+        
     }
     
     override var inputAccessoryView: UIView? {
@@ -73,18 +88,36 @@ extension CommentController {
         commentInputViewConstraints()
     }
     
+    func setupBindings() {
+        let input = CommentViewModelInput(appear: appear.eraseToAnyPublisher(),
+                                          reloadData: reloadData.eraseToAnyPublisher(),
+                                          cellForItem: cellForItem.eraseToAnyPublisher())
+        let output = viewModel.transform(input: input)
+        output.sink { self.render($0)}.store(in: &subscriptions)
+    }
+    
+    private func render(_ state: CommentControllerState) {
+        switch state {
+        case .none:
+            break
+        case .updateUI:
+            print("reload")
+            collectionView.reloadData()
+            break
+        }
+    }
 }
 
 //MARK: - UICollectionViewDataSource
 extension CommentController {
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 2
+        return viewModel.comments.count
         
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as? CommentCell else { fatalError() }
-        cellForItem.send(cell)
+        cellForItem.send((cell,indexPath.row))
         return cell
     }
 }
@@ -123,7 +156,15 @@ extension CommentController {
 //MARK: - CommentInputAccessoryViewDelegate
 extension CommentController: CommentInputAccessoryViewDelegate {
     func inputView(_ inputView: CommentInputAccessoryView, wantsToUploadComment comment: String) {
-        print("DEBUG: comment: \( comment )")
+        indicator.startAnimating()
+        guard let vc = tabBarController as? MainHomeTabController else { return }
+        guard let user = vc.getUserVM?.userInfoModel() else { return }
+        guard let postId = viewModel.post.postId else { return }
+        let input = UploadCommentInputModel(comment: comment,
+                                            postID: postId,
+                                            user: user)
+        (viewModel as? CommentViewModelNetworkServiceType)?.uploadComment(withInputModel: input)
         inputView.clearCommentTextView()
+        indicator.stopAnimating()
     }
 }

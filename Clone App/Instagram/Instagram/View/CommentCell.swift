@@ -10,8 +10,9 @@ import UIKit
 class CommentCell: UICollectionViewCell {
     
     //MARK: - Properties
-    private let profileImageView = initialProfileImageView()
-    private let commentLabel = initialCommentLabel()
+    let profileImageView = initialProfileImageView()
+    let commentLabel = initialCommentLabel()
+    
     //MARK: - Lifecycles
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -59,7 +60,7 @@ extension CommentCell {
     static func initialCommentLabel() -> UILabel {
         let lb = UILabel()
         lb.translatesAutoresizingMaskIntoConstraints = false
-        let attrStr = NSMutableAttributedString(string: "haha ", attributes: [.font: UIFont.boldSystemFont(ofSize: 14)])
+        let attrStr = NSMutableAttributedString(string: "username ", attributes: [.font: UIFont.boldSystemFont(ofSize: 14)])
         attrStr.append(NSAttributedString(string: "Some test comment need...", attributes: [.font: UIFont.systemFont(ofSize: 14)]))
         lb.attributedText = attrStr
         

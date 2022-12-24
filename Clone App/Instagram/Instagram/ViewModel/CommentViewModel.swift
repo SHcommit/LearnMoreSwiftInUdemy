@@ -5,11 +5,167 @@
 //  Created by 양승현 on 2022/12/23.
 //
 
-import Foundation
+import UIKit
+import Combine
 
 class CommentViewModel {
     
     //MARK: - Properties
+    private var _post: PostModel
+    private var _comments = [CommentModel]()
+    
+    //MARK: - CombineProperties
+    let newComment = PassthroughSubject<Void,Never>()
     
     //MARK: - Lifecycles
+    init(post: PostModel) {
+        _post = post
+        fetchComments()
+    }
+}
+
+//MARK: - CommentViewModelComputedPropery
+extension CommentViewModel: CommentViewModelComputedPropery {
+    
+    var post: PostModel {
+        get {
+            return _post
+        }
+        set {
+            _post = newValue
+        }
+    }
+    
+    var comments: [CommentModel] {
+        get {
+            return _comments
+        }
+        set {
+            _comments = newValue
+        }
+    }
+    
+}
+
+//MARK: - CommentViewModelType
+extension CommentViewModel: CommentViewModelType {
+    
+    func transform(input: CommentViewModelInput) -> CommentViewModelOutput {
+        let newComment = newCommentChains()
+        
+        let appear = appearChains(with: input)
+        
+        let reloadData = reloadDataChains(with: input)
+        
+        let cell = cellForItemChains(with: input)
+        
+        return Publishers
+            .Merge4(appear.eraseToAnyPublisher(),
+                    reloadData.eraseToAnyPublisher(),
+                    cell.eraseToAnyPublisher(), newComment.eraseToAnyPublisher())
+            .eraseToAnyPublisher()
+    }
+    
+}
+
+//MARK: - CommentViewModelInputCase
+extension CommentViewModel: CommentViewModelInputCase {
+    
+    func newCommentChains() -> CommentViewModelOutput {
+        return newComment
+            .receive(on: RunLoop.main)
+            .map{ _ -> CommentControllerState in return .updateUI }
+            .eraseToAnyPublisher()
+    }
+    
+    func appearChains(with input: CommentViewModelInput) -> CommentViewModelOutput {
+        return input
+            .appear
+            .receive(on: RunLoop.main)
+            .map{ _ -> CommentControllerState in return .updateUI }
+            .eraseToAnyPublisher()
+            
+    }
+    
+    func reloadDataChains(with input: CommentViewModelInput) -> CommentViewModelOutput {
+        return input
+            .reloadData
+            .receive(on: RunLoop.main)
+            .map { _ -> CommentControllerState in
+                return .updateUI
+            }.eraseToAnyPublisher()
+    }
+    
+    func cellForItemChains(with input: CommentViewModelInput) -> CommentViewModelOutput {
+        return input
+            .cellForItem
+            .receive(on: RunLoop.main)
+            .map { [unowned self] info -> CommentControllerState in
+                let attributedString = NSMutableAttributedString(string: "\(_comments[info.index].username) ", attributes: [.font: UIFont.boldSystemFont(ofSize: 14)])
+                attributedString.append(
+                    NSAttributedString(string: _comments[info.index].comment,
+                                       attributes: [.font : UIFont.systemFont(ofSize: 14)]))
+                
+                info.cell.commentLabel.attributedText = attributedString
+                fetchUserImage(with: info.cell.profileImageView, index: info.index)
+                return .none
+            }.eraseToAnyPublisher()
+    }
+    
+    
+}
+
+//MARK: - CommentViewModelNetworkServiceType
+extension CommentViewModel: CommentViewModelNetworkServiceType {
+    
+    func uploadComment(withInputModel input: UploadCommentInputModel) {
+        do {
+            try CommentService.uploadComment(inputModel: input)
+        }catch {
+            guard let error = error as? CommentServiceError else { return }
+            switch error {
+            case .failedEncoding:
+                print("DEBUG: \(CommentServiceError.failedEncoding.errorDescription)")
+            case .failedDecoding:
+                print("DEBGU: none")
+            }
+        }
+    }
+    
+    func fetchComments() {
+        guard let postId = post.postId else { return }
+        CommentService.fetchComment(postID: postId) { comments in
+            self.comments = comments
+            self.newComment.send()
+        }
+    }
+    
+    func fetchUserImage(with imageView: UIImageView, index: Int) {
+        Task(priority: .medium) {
+            do {
+                let image = try await fetchProfileFromImageService(index: index)
+                DispatchQueue.main.async {
+                    imageView.image = image
+                }
+            }catch {
+                fetchImageErrorHandling(error: error)
+            }
+        }
+    }
+    
+    func fetchProfileFromImageService(index: Int) async throws -> UIImage {
+        return try await UserProfileImageService.fetchUserProfile(userProfile: _comments[index].profileImageUrl)
+    }
+    
+    func fetchImageErrorHandling(error: Error) {
+        switch error {
+        case FetchUserError.invalidUserProfileImage:
+            print("DEBUG: Failure invalid user profile image instance")
+            break
+        default:
+            print("DEBUG: Failure occured unexpected error: \(error.localizedDescription)")
+        }
+
+    }
+    
 }

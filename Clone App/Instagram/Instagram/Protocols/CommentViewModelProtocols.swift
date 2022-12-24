@@ -8,14 +8,57 @@
 import UIKit
 import Combine
 
+typealias CommentCellInfo = (cell: CommentCell, index: Int)
+
 struct CommentViewModelInput {
     
     let appear: AnyPublisher<Void,Never>
-    
-    //추후 셀 커스텀하면 그거에맞게 변경
-    let cellForItem: AnyPublisher<UICollectionViewCell,Never>    
+    let reloadData: AnyPublisher<Void,Never>
+    let cellForItem: AnyPublisher<CommentCellInfo,Never>
 }
 
-protocol CommentViewModelGetSet {
+typealias CommentViewModelOutput = AnyPublisher<CommentControllerState,Never>
+
+enum CommentControllerState {
+    case none
+    case updateUI
+}
+
+protocol CommentViewModelComputedPropery {
+    
+    var post: PostModel { get set }
+    var comments: [CommentModel] { get set }
+    
+}
+
+protocol CommentViewModelType: CommentViewModelComputedPropery {
+    
+    func transform(input: CommentViewModelInput) -> CommentViewModelOutput
+    
+}
+
+protocol CommentViewModelInputCase {
+    
+    func newCommentChains() -> CommentViewModelOutput
+    
+    func appearChains(with input: CommentViewModelInput) -> CommentViewModelOutput
+    
+    func reloadDataChains(with input: CommentViewModelInput) -> CommentViewModelOutput
+    
+    func cellForItemChains(with input: CommentViewModelInput) -> CommentViewModelOutput
+    
+}
+
+protocol CommentViewModelNetworkServiceType {
+    
+    func uploadComment(withInputModel input: UploadCommentInputModel )
+    
+    func fetchComments()
+    
+    func fetchUserImage(with imageView: UIImageView, index: Int)
+    
+    func fetchProfileFromImageService(index: Int) async throws -> UIImage
+    
+    func fetchImageErrorHandling(error: Error)
     
 }
