@@ -14,7 +14,7 @@ protocol InputTextCountDelegate {
 class InputTextView: UITextView {
     
     //MARK: - Properties
-    private let placeholderLabel: UILabel = initPlaceholderLabel()
+    let placeholderLabel: UILabel = initPlaceholderLabel()
     var textDelegate: InputTextCountDelegate?
     var placeholderText: String? {
         didSet {

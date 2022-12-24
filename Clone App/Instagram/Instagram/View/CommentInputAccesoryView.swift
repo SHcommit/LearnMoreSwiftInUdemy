@@ -7,11 +7,16 @@
 
 import UIKit
 
+protocol CommentInputAccessoryViewDelegate: class {
+    func inputView(_ inputView: CommentInputAccessoryView, wantsToUploadComment comment: String)
+}
+
 class CommentInputAccessoryView: UIView {
     
     //MARK: - Properties
     private lazy var commentTextView: InputTextView = initCommentTextView()
     private lazy var postButton: UIButton = initPostButton()
+    weak var delegate: CommentInputAccessoryViewDelegate?
     //MARK: - Lifecycles
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -32,6 +37,7 @@ extension CommentInputAccessoryView {
     
     func configureUI() {
         autoresizingMask = .flexibleHeight
+        backgroundColor = .white
         addSubviews()
         constraintsSubviews()
         
@@ -48,28 +54,23 @@ extension CommentInputAccessoryView {
         postButtonConstraints()
     }
     
-    func setupDivider() {
-        let divider = UIView()
-        divider.translatesAutoresizingMaskIntoConstraints = false
-        divider.backgroundColor = .lightGray
-        addSubview(divider)
-        NSLayoutConstraint.activate([
-            divider.topAnchor.constraint(equalTo: topAnchor),
-            divider.leadingAnchor.constraint(equalTo: leadingAnchor),
-            divider.trailingAnchor.constraint(equalTo: trailingAnchor),
-            divider.heightAnchor.constraint(equalToConstant: 0.5)])
+    func clearCommentTextView() {
+        commentTextView.text = nil
+        commentTextView.placeholderLabel.isHidden = false
     }
+    
 }
 
 //MARK: - Event Handler
 extension CommentInputAccessoryView {
     @objc func didTapPost() {
-        
+        delegate?.inputView(self, wantsToUploadComment: commentTextView.text)
     }
 }
 
 //MARK: - Init subViews
 extension CommentInputAccessoryView {
+    
     func initCommentTextView() -> InputTextView {
         let tv = InputTextView()
         tv.placeholderText = "Enter comment.."
@@ -88,9 +89,23 @@ extension CommentInputAccessoryView {
         pb.setTitleColor(.black, for: .normal)
         pb.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
         pb.addTarget(self, action: #selector(didTapPost), for: .touchUpInside)
+        pb.setTitleColor(.lightText, for: .highlighted)
         //pb.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         return pb
     }
+    
+    func setupDivider() {
+        let divider = UIView()
+        divider.translatesAutoresizingMaskIntoConstraints = false
+        divider.backgroundColor = .lightGray
+        addSubview(divider)
+        NSLayoutConstraint.activate([
+            divider.topAnchor.constraint(equalTo: topAnchor),
+            divider.leadingAnchor.constraint(equalTo: leadingAnchor),
+            divider.trailingAnchor.constraint(equalTo: trailingAnchor),
+            divider.heightAnchor.constraint(equalToConstant: 0.5)])
+    }
+    
 }
 
 //MARK: - Constraint subview's auto layout

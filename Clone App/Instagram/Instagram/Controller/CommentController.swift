@@ -55,6 +55,8 @@ extension CommentController {
         collectionView.backgroundColor = .white
         collectionView.register(CommentCell.self, forCellWithReuseIdentifier: reuseIdentifier)
         navigationItem.title = "Comments"
+        collectionView.alwaysBounceVertical = true
+        collectionView.keyboardDismissMode = .interactive
     }
     
     func configureUI() {
@@ -76,14 +78,13 @@ extension CommentController {
 //MARK: - UICollectionViewDataSource
 extension CommentController {
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 5
+        return 2
         
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as? CommentCell else { fatalError() }
         cellForItem.send(cell)
-        
         return cell
     }
 }
@@ -102,6 +103,7 @@ extension CommentController {
     
     func initCommentInputView() -> CommentInputAccessoryView {
         let iv = CommentInputAccessoryView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 50))
+        iv.delegate = self
         return iv
     }
     
@@ -118,3 +120,10 @@ extension CommentController {
     }
 }
 
+//MARK: - CommentInputAccessoryViewDelegate
+extension CommentController: CommentInputAccessoryViewDelegate {
+    func inputView(_ inputView: CommentInputAccessoryView, wantsToUploadComment comment: String) {
+        print("DEBUG: comment: \( comment )")
+        inputView.clearCommentTextView()
+    }
+}
