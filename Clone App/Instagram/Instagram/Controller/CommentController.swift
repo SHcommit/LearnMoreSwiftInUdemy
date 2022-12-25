@@ -12,6 +12,7 @@ class CommentController: UICollectionViewController {
     
     //MARK: - Constants
     private let reuseIdentifier = "CommentCellID"
+    
     //MARK: - Properties
     private lazy var commentInputView = initCommentInputView()
     
@@ -20,6 +21,7 @@ class CommentController: UICollectionViewController {
     let appear = PassthroughSubject<Void,Never>()
     let reloadData = PassthroughSubject<Void,Never>()
     let cellForItem = PassthroughSubject<CommentCellInfo,Never>()
+    let didSelect = PassthroughSubject<CommentCellSelectInfo,Never>()
     
     var subscriptions = Set<AnyCancellable>()
     
@@ -91,7 +93,8 @@ extension CommentController {
     func setupBindings() {
         let input = CommentViewModelInput(appear: appear.eraseToAnyPublisher(),
                                           reloadData: reloadData.eraseToAnyPublisher(),
-                                          cellForItem: cellForItem.eraseToAnyPublisher())
+                                          cellForItem: cellForItem.eraseToAnyPublisher(),
+                                          didSelected: didSelect.eraseToAnyPublisher())
         let output = viewModel.transform(input: input)
         output.sink { self.render($0)}.store(in: &subscriptions)
     }
@@ -129,6 +132,13 @@ extension CommentController: UICollectionViewDelegateFlowLayout {
         return CGSize(width: view.frame.width, height: height)
     }
     
+}
+
+//MARK: - UICollectionViewDelegate
+extension CommentController {
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        didSelect.send((navigationController,indexPath.row))
+    }
 }
 
 

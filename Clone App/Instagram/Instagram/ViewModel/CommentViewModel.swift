@@ -59,10 +59,14 @@ extension CommentViewModel: CommentViewModelType {
         
         let cell = cellForItemChains(with: input)
         
+        let didSelected = didSelectedChains(with: input)
+        
         return Publishers
-            .Merge4(appear.eraseToAnyPublisher(),
+            .Merge5(appear.eraseToAnyPublisher(),
                     reloadData.eraseToAnyPublisher(),
-                    cell.eraseToAnyPublisher(), newComment.eraseToAnyPublisher())
+                    cell.eraseToAnyPublisher(),
+                    newComment.eraseToAnyPublisher(),
+                    didSelected.eraseToAnyPublisher())
             .eraseToAnyPublisher()
     }
     
@@ -117,6 +121,26 @@ extension CommentViewModel: CommentViewModelInputCase {
                 
                 info.cell.commentLabel.attributedText = attributedString
                 fetchUserImage(with: info.cell.profileImageView, index: info.index)
+                return .none
+            }.eraseToAnyPublisher()
+    }
+    
+    func didSelectedChains(with input: CommentViewModelInput) -> CommentViewModelOutput {
+        return input
+            .didSelected
+            .receive(on: RunLoop.main)
+            .map { [unowned self] cellInfo -> CommentControllerState in
+                
+                let uid = _comments[cellInfo.index].uid
+                
+                Task(priority: .high) {
+                    do {
+                        guard let user = try await UserService.fetchUserInfo(type: UserInfoModel.self, withUid: uid) else { return }
+                        DispatchQueue.main.async {
+                            cellInfo.nav?.pushViewController(ProfileController(viewModel: ProfileViewModel(user: user)), animated: true)
+                        }
+                    } catch {}
+                }
                 return .none
             }.eraseToAnyPublisher()
     }

@@ -9,12 +9,14 @@ import UIKit
 import Combine
 
 typealias CommentCellInfo = (cell: CommentCell, index: Int)
+typealias CommentCellSelectInfo = (nav: UINavigationController?, index: Int)
 
 struct CommentViewModelInput {
     
     let appear: AnyPublisher<Void,Never>
     let reloadData: AnyPublisher<Void,Never>
     let cellForItem: AnyPublisher<CommentCellInfo,Never>
+    let didSelected: AnyPublisher<CommentCellSelectInfo,Never>
 }
 
 typealias CommentViewModelOutput = AnyPublisher<CommentControllerState,Never>
@@ -48,6 +50,8 @@ protocol CommentViewModelInputCase {
     func reloadDataChains(with input: CommentViewModelInput) -> CommentViewModelOutput
     
     func cellForItemChains(with input: CommentViewModelInput) -> CommentViewModelOutput
+    
+    func didSelectedChains(with input: CommentViewModelInput) -> CommentViewModelOutput
     
 }
 
