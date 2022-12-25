@@ -14,13 +14,27 @@ protocol InputTextCountDelegate {
 class InputTextView: UITextView {
     
     //MARK: - Properties
-    private let placeholderLabel: UILabel = initPlaceholderLabel()
+    let placeholderLabel: UILabel = initPlaceholderLabel()
     var textDelegate: InputTextCountDelegate?
     var placeholderText: String? {
         didSet {
             placeholderLabel.text = placeholderText
         }
         
+    }
+    
+    var placeholderShouldCenter = true {
+        didSet {
+            if placeholderShouldCenter {
+                NSLayoutConstraint.activate([
+                    placeholderLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
+                    placeholderLabel.centerYAnchor.constraint(equalTo: centerYAnchor)])
+            }else {
+                NSLayoutConstraint.activate([
+                    placeholderLabel.topAnchor.constraint(equalTo: topAnchor, constant: 6),
+                    placeholderLabel.leadingAnchor.constraint(equalTo: leadingAnchor,constant: 8)])
+            }
+        }
     }
     
     //MARK: - Lifecycle

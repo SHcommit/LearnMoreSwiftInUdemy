@@ -23,10 +23,13 @@ struct PostService: PostServiceType {
     
     static func fetchPosts() async throws -> [PostModel]{
         guard let documents = try? await COLLECTION_POSTS.getDocuments().documents else { throw FetchPostError.invalidPostsGetDocuments }
-        let posts = try documents.map {
+        var posts: [PostModel] = try documents.map {
             var post = try $0.data(as: PostModel.self)
             post.postId = $0.documentID
             return post
+        }
+        posts.sort{
+            return $0.timestamp.seconds > $1.timestamp.seconds
         }
         return posts
     }
