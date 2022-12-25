@@ -35,6 +35,8 @@ protocol CommentViewModelType: CommentViewModelComputedPropery {
     
     func transform(input: CommentViewModelInput) -> CommentViewModelOutput
     
+    func size(forWidth width: CGFloat, index: Int) -> CGSize
+    
 }
 
 protocol CommentViewModelInputCase {

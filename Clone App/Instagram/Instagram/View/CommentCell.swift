@@ -31,6 +31,7 @@ extension CommentCell {
         
         addSubviews()
         constraintsSubviews()
+        commentLabel.numberOfLines = 0
     }
     
     func addSubviews() {
@@ -82,6 +83,7 @@ extension CommentCell {
     func commentLabelConstraints() {
         NSLayoutConstraint.activate([
             commentLabel.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 8),
-            commentLabel.centerYAnchor.constraint(equalTo: profileImageView.centerYAnchor)])
+            commentLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant:  -8),
+            commentLabel.topAnchor.constraint(equalTo: profileImageView.centerYAnchor, constant: -8)])
     }
 }

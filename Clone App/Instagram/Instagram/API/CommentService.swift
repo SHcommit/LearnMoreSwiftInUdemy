@@ -56,11 +56,15 @@ struct CommentService {
 extension CommentService {
     
     static func createCommentModel(withUploadCommentInput info: UploadCommentInputModel) -> CommentModel {
+        let comment = deleteLineBreaksInComment(with: info.comment)
         return CommentModel(uid: info.user.uid,
-                            comment: info.comment,
+                            comment: comment,
                             timestamp: Timestamp(date: Date()),
                             username: info.user.username,
                             profileImageUrl: info.user.profileURL)
     }
     
+    static func deleteLineBreaksInComment(with comment: String) -> String {
+        return comment.replacingOccurrences(of: "\n\n*", with: "\n", options: .regularExpression)
+    }
 }

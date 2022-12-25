@@ -66,6 +66,15 @@ extension CommentViewModel: CommentViewModelType {
             .eraseToAnyPublisher()
     }
     
+    func size(forWidth width: CGFloat, index: Int) -> CGSize  {
+        let lb = UILabel()
+        lb.numberOfLines = 0
+        lb.text = comments[index].comment
+        lb.lineBreakMode = .byWordWrapping
+        lb.widthAnchor.constraint(equalToConstant: width).isActive = true
+        return lb.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
+    }
+    
 }
 
 //MARK: - CommentViewModelInputCase
