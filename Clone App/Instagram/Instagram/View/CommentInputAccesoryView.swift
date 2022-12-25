@@ -7,7 +7,7 @@
 
 import UIKit
 
-protocol CommentInputAccessoryViewDelegate: class {
+protocol CommentInputAccessoryViewDelegate: AnyObject {
     func inputView(_ inputView: CommentInputAccessoryView, wantsToUploadComment comment: String)
 }
 
