@@ -87,7 +87,7 @@ extension CommentController {
     }
     
     func constraintsSubviews() {
-        commentInputViewConstraints()
+        
     }
     
     func setupBindings() {
