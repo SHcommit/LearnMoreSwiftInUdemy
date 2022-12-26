@@ -90,6 +90,7 @@ extension CommentController {
         
     }
     
+    
     func setupBindings() {
         let input = CommentViewModelInput(appear: appear.eraseToAnyPublisher(),
                                           reloadData: reloadData.eraseToAnyPublisher(),
