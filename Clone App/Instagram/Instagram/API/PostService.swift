@@ -58,6 +58,50 @@ struct PostService: PostServiceType {
             }
     }
     
+    static func likePost(post: PostModel) async {
+        guard let currentUid = Utils.pList.string(forKey: CURRENT_USER_UID),
+              let postId = post.postId else { return }
+        
+        do {
+            try await COLLECTION_POSTS.document(postId).updateData(["likes": post.likes + 1])
+            
+            try await COLLECTION_POSTS
+                .document(postId)
+                .collection("post-likes")
+                .document(currentUid).setData([:])
+            try await COLLECTION_USERS
+                .document(currentUid)
+                .collection("user-likes")
+                .document(postId)
+                .setData([:])
+        }catch { print("DEBUG: \(error.localizedDescription)")}
+        
+        
+    }
+    
+    static func unlikePost(post: PostModel) async {
+        guard let currentUid = Utils.pList.string(forKey: CURRENT_USER_UID),
+              let postId = post.postId else { return }
+        
+        do {
+            try await COLLECTION_POSTS.document(postId).updateData(["likes" : post.likes - 1])
+            try await COLLECTION_POSTS.document(postId).collection("post-likes").document(currentUid).delete()
+            try await COLLECTION_USERS.document(currentUid).collection("user-likes").document(postId).delete()
+        } catch { print("DEBUG: \(error.localizedDescription)")}
+    }
+    
+    static func checkIfUserLikedPost(post: PostModel) async -> Bool {
+        guard let currentUid = Utils.pList.string(forKey: CURRENT_USER_UID),
+              let postId = post.postId else { fatalError() }
+        do {
+            let snapshot = try await COLLECTION_USERS.document(currentUid).collection("user-likes").document(postId).getDocument()
+            return snapshot.exists
+        }catch {
+            print("DEBUG: \(error.localizedDescription)")
+            return false
+        }
+        
+    }
 }
 
 extension PostService: ProstServiceErrorType {

@@ -12,7 +12,11 @@ import Firebase
 class FeedController: UICollectionViewController {
     
     //MARK: - Properties
-    var posts = [PostModel]()
+    var posts = [PostModel]() {
+        didSet {
+            collectionView.reloadData()
+        }
+    }
     var subscriptions = Set<AnyCancellable>()
     
     // specific user's specific CollectionViewcell post info
@@ -27,6 +31,7 @@ class FeedController: UICollectionViewController {
         super.viewDidLoad()
         collectionView.register(FeedCell.self, forCellWithReuseIdentifier: FEEDCELLRESUIDENTIFIER  )
         fetchPosts()
+        checkIfUserLikePosts()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -63,6 +68,16 @@ extension FeedController {
         nav.modalPresentationStyle = .fullScreen
         self.present(nav,animated: false, completion: nil)
     }
+    func checkIfUserLikePosts() {
+        self.posts.forEach { post in
+            Task() {
+                let didLike = await PostService.checkIfUserLikedPost(post: post)
+                if let index = self.posts.firstIndex(where: {$0.postId == post.postId}) {
+                    self.posts[index].didLike = true
+                }
+            }
+        }
+    }
     
 }
 
@@ -76,7 +91,6 @@ extension FeedController {
                 posts.sort() {
                     $0.timestamp.seconds > $1.timestamp.seconds
                 }
-                
                 DispatchQueue.main.async {
                     self.posts = posts
                     print("DEBUG: Did refresh feed posts")
@@ -134,9 +148,8 @@ extension FeedController {
         }else {
             cell.viewModel = PostViewModel(post: posts[indexPath.row])
         }
-        
-        cell.subscribeFromDidTapPublisher(navigationController)
-        
+        cell.subscribeFromDidTapCommentPublisher(navigationController)
+        cell.subscribeFromDidTapLikePublisher(collectionView, index: indexPath.row)
         DispatchQueue.main.async {
             cell.configure()
         }
