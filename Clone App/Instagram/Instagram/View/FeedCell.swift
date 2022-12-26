@@ -75,7 +75,65 @@ extension FeedCell {
         addSubview(captionLabel)
         addSubview(postTimeLabel)
     }
+    
+    func setupBinding() {
+        viewModel?.likeChanged.receive(on: RunLoop.main).sink { [unowned self] _ in
+            print("\(viewModel!.postLikes)")
+            
+            likeLabel.text = viewModel?.postLikes
+        }.store(in: &subscriptions)
+    }
 }
+
+
+//MARK: - Setup event handler
+extension FeedCell {
+    
+    @objc func didTapUsername(_ sender: Any) {
+        print("DEBUG : did tap username")
+    }
+    
+    @objc func didTapLikeButton(_ sender: Any) {
+        didTapLikePublisher.send()
+    }
+    
+    @objc func didTapComment(_ sender: Any) {
+        didTapCommentPublisher.send()
+    }
+    
+    func subscribeFromDidTapCommentPublisher(_ navigationController: UINavigationController?) {
+        didTapCommentPublisher
+            .receive(on: RunLoop.main)
+            .sink { _ in
+                guard let post = self.viewModel?.post else { return }
+                let controller = CommentController(viewModel: CommentViewModel(post: post))
+                navigationController?.pushViewController(controller, animated: true)
+                self.didTapCommentPublisher = PassthroughSubject<Void,Never>()
+            }.store(in: &subscriptions)
+    }
+    
+    func subscribeFromDidTapLikePublisher(_ collectionView: UICollectionView?, index: Int) {
+        didTapLikePublisher
+            .receive(on: RunLoop.main)
+            .sink { _ in
+                guard let post = self.viewModel?.post,
+                      let didLike = post.didLike else { return }
+                Task(priority: .medium) {
+                    if !didLike {
+                        await PostService.likePost(post: post)
+                    }else {
+                        await PostService.unlikePost(post: post)
+                    }
+                    DispatchQueue.main.async {
+                        self.viewModel?.setupLike(button: self.likeButton)
+                        self.viewModel?.post.didLike?.toggle()
+                        self.viewModel?.likeChanged.send()
+                    }
+                }
+            }.store(in: &subscriptions)
+    }
+}
+
 
 //MARK: - Helpers
 extension FeedCell {
@@ -88,6 +146,21 @@ extension FeedCell {
         let date = Date(timeIntervalSince1970: TimeInterval(viewModel.postTime.seconds))
         postTimeLabel.text = "\(date)"
         viewModel.post.didLike = false
+        
+        Task(priority: .medium) {
+            let didLike = await PostService.checkIfUserLikedPost(post: viewModel.post)
+            viewModel.post.didLike = didLike
+            DispatchQueue.main.async {
+                if didLike {
+                    self.likeButton.setImage(.imageLiteral(name: "like_selected"), for: .normal)
+                    self.likeButton.tintColor = .red
+                }else {
+                    self.likeButton.setImage(.imageLiteral(name: "like_unselected"), for: .normal)
+                    self.likeButton.tintColor = .black
+                }
+            }
+            
+        }
     }
     
     func configureProfileImage() {
@@ -99,6 +172,10 @@ extension FeedCell {
         guard let viewModel = viewModel else { return }
         postImageView.image = viewModel.image
     }
+}
+
+//MARK: - Init properites
+extension FeedCell {
     
     //MARK: - Initial properties
     static func initialProfileImageVIew() -> UIImageView {
@@ -261,71 +338,5 @@ extension FeedCell {
             postTimeLabel.topAnchor.constraint(equalTo: captionLabel.bottomAnchor, constant: 12),
             postTimeLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
             postTimeLabel.bottomAnchor.constraint(equalTo: bottomAnchor)])
-    }
-}
-
-
-//MARK: - Setup event handler
-extension FeedCell {
-    
-    @objc func didTapUsername(_ sender: Any) {
-        print("DEBUG : did tap username")
-    }
-    
-    @objc func didTapLikeButton(_ sender: Any) {
-        didTapLikePublisher.send()
-    }
-    
-    @objc func didTapComment(_ sender: Any) {
-        didTapCommentPublisher.send()
-    }
-    
-    func subscribeFromDidTapCommentPublisher(_ navigationController: UINavigationController?) {
-        didTapCommentPublisher
-            .receive(on: RunLoop.main)
-            .sink { _ in
-                guard let post = self.viewModel?.post else { return }
-                let controller = CommentController(viewModel: CommentViewModel(post: post))
-                navigationController?.pushViewController(controller, animated: true)
-                self.didTapCommentPublisher = PassthroughSubject<Void,Never>()
-            }.store(in: &subscriptions)
-                
-            
-
-    }
-    
-    func subscribeFromDidTapLikePublisher(_ collectionView: UICollectionView?, index: Int) {
-        didTapLikePublisher
-            .receive(on: RunLoop.main)
-            .sink { _ in
-                guard let post = self.viewModel?.post,
-                      let didLike = post.didLike else { return }
-                if !didLike {
-                    print("DEBUG: Like post here")
-                    Task(priority: .medium) {
-                        await PostService.likePost(post: post)
-                        DispatchQueue.main.async {
-                            print("DEBUG: Like post did complete")
-                            self.likeButton.setImage(.imageLiteral(name: "like_selected"), for: .normal)
-                            self.likeButton.tintColor = .red
-                            self.viewModel?.post.likes = post.likes + 1
-                        }
-                    }
-                }else {
-                    print("DEBUG: Unlike post here")
-                    Task(priority: .medium) {
-                        await PostService.unlikePost(post: post)
-                        DispatchQueue.main.async {
-                            print("DEBUG: Unlike post did complete")
-                            self.likeButton.setImage(.imageLiteral(name: "like_unselected"), for: .normal)
-                            self.likeButton.tintColor = .black
-                            self.viewModel?.post.likes = post.likes - 1
-                        }
-                    }
-                }
-                self.viewModel?.post.didLike?.toggle()
-                let indexPath = IndexPath(row: index, section: 0)
-                collectionView?.reloadItems(at: [indexPath])
-            }.store(in: &subscriptions)
     }
 }

@@ -64,7 +64,6 @@ struct PostService: PostServiceType {
         
         do {
             try await COLLECTION_POSTS.document(postId).updateData(["likes": post.likes + 1])
-            
             try await COLLECTION_POSTS
                 .document(postId)
                 .collection("post-likes")

@@ -148,6 +148,7 @@ extension FeedController {
         }else {
             cell.viewModel = PostViewModel(post: posts[indexPath.row])
         }
+        cell.setupBinding()
         cell.subscribeFromDidTapCommentPublisher(navigationController)
         cell.subscribeFromDidTapLikePublisher(collectionView, index: indexPath.row)
         DispatchQueue.main.async {

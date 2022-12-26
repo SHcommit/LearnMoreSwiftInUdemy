@@ -7,12 +7,14 @@
 
 import UIKit
 import Firebase
+import Combine
 
 class PostViewModel {
     //MARK: - Properties
     var post: PostModel
     private var postImage: UIImage?
     private var userProfile: UIImage?
+    var likeChanged = PassthroughSubject<Void,Never>()
     
     //MARK: - LifeCycles
     init(post: PostModel) {
@@ -100,5 +102,23 @@ extension PostViewModel {
             return likes < 2 ? "\(likes) like" : "\(likes) likes"
         }
     }
+    
+    var didLike: Bool {
+        get {
+            guard let didLike = post.didLike else { return false }
+            return didLike
+        }
+    }
 
+    func setupLike(button: UIButton) {
+        if !didLike {
+            button.setImage(.imageLiteral(name: "like_selected"), for: .normal)
+            button.tintColor = .red
+            post.likes += 1
+        }else {
+            button.setImage(.imageLiteral(name: "like_unselected"), for: .normal)
+            button.tintColor = .black
+            post.likes -= 1
+        }
+    }
 }
