@@ -151,9 +151,7 @@ extension FeedController {
         cell.setupBinding()
         cell.subscribeFromDidTapCommentPublisher(navigationController)
         cell.subscribeFromDidTapLikePublisher(collectionView, index: indexPath.row)
-        DispatchQueue.main.async {
-            cell.configure()
-        }
+        DispatchQueue.main.async {cell.configure()}
         Task() {
             await cell.viewModel?.fetchPostImage()
             await cell.viewModel?.fetchUserProfile()
