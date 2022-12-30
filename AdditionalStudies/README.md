@@ -11,6 +11,7 @@
 - <a href="https://dev-with-precious-dreams.tistory.com/144">Firebase db document에 codable 타입으로 reuqest, resonse 방법 정리</a>
 - <a href="https://dev-with-precious-dreams.tistory.com/145">Escaping, non-escaping closure 생명주기. 개념과 차이 탐구</a>
 - <a href="https://dev-with-precious-dreams.tistory.com/146">NSAttributedString vs NSMutableAttributedString 차이점 탐구</a>
+- <a href="https://dev-with-precious-dreams.tistory.com/149">CustomStringConvertible 탐구!</a>
 - <a href="https://github.com/SHcommit/LearnMoreSwiftInUdemy/issues/27">Combine 적용 예 with MVVM pattern</a>
 - <a href="https://dev-with-precious-dreams.tistory.com/147">Combine 전반적인 개념 파해치기 #1</a>
 
