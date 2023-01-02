@@ -17,5 +17,5 @@ struct PostModel: Codable {
     var postId: String?
     var ownerImageUrl: String
     var ownerUsername: String
-    
+    var didLike: Bool?
 }
