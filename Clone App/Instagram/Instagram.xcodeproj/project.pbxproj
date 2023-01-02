@@ -15,6 +15,7 @@
 		151FA67F295457FE00D45825 /* UserServiceProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 151FA67E295457FE00D45825 /* UserServiceProtocols.swift */; };
 		152BD5642954A21C000AA1B2 /* ImageServiceProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 152BD5632954A21C000AA1B2 /* ImageServiceProtocols.swift */; };
 		152BD5662954A668000AA1B2 /* PostServiceProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 152BD5652954A668000AA1B2 /* PostServiceProtocols.swift */; };
+		153171FE29632DDB005390B0 /* FeedCellViewModelProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 153171FD29632DDB005390B0 /* FeedCellViewModelProtocols.swift */; };
 		15486DC4291D1745008B98E6 /* UploadPostController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15486DC3291D1745008B98E6 /* UploadPostController.swift */; };
 		15486DC6291D1B74008B98E6 /* InputTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15486DC5291D1B74008B98E6 /* InputTextView.swift */; };
 		1564FA9D2956A55500B17E5F /* CommentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1564FA9C2956A55500B17E5F /* CommentService.swift */; };
@@ -77,6 +78,7 @@
 		151FA67E295457FE00D45825 /* UserServiceProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserServiceProtocols.swift; sourceTree = "<group>"; };
 		152BD5632954A21C000AA1B2 /* ImageServiceProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageServiceProtocols.swift; sourceTree = "<group>"; };
 		152BD5652954A668000AA1B2 /* PostServiceProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostServiceProtocols.swift; sourceTree = "<group>"; };
+		153171FD29632DDB005390B0 /* FeedCellViewModelProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedCellViewModelProtocols.swift; sourceTree = "<group>"; };
 		15486DC3291D1745008B98E6 /* UploadPostController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadPostController.swift; sourceTree = "<group>"; };
 		15486DC5291D1B74008B98E6 /* InputTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputTextView.swift; sourceTree = "<group>"; };
 		1564FA9C2956A55500B17E5F /* CommentService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentService.swift; sourceTree = "<group>"; };
@@ -337,6 +339,7 @@
 				15E5A735294250A300183B71 /* SearchViewModelProtocols.swift */,
 				156A4BF929477C7B002B820B /* ProfileHeaderViewModelProtocols.swift */,
 				15B5F8C629558E2B00D95A46 /* CommentViewModelProtocols.swift */,
+				153171FD29632DDB005390B0 /* FeedCellViewModelProtocols.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -494,6 +497,7 @@
 				156E22E9290D6EBD0026B0C3 /* AppDelegate.swift in Sources */,
 				156A4BFA29477C7B002B820B /* ProfileHeaderViewModelProtocols.swift in Sources */,
 				15E8DB872917B370000EF639 /* UserStats.swift in Sources */,
+				153171FE29632DDB005390B0 /* FeedCellViewModelProtocols.swift in Sources */,
 				15C6F35B293F9A14006A3587 /* LoginViewModel.swift in Sources */,
 				15B5F8C729558E2B00D95A46 /* CommentViewModelProtocols.swift in Sources */,
 				15B5F8C529558E0200D95A46 /* CommentViewModel.swift in Sources */,
