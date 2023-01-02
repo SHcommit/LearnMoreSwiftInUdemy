@@ -22,16 +22,12 @@ class FeedCell: UICollectionViewCell {
     private lazy var commentButton: UIButton = initialCommentButton()
     private lazy var shareButton: UIButton = initialShareButton()
 
-    var didTapCommentPublisher = PassthroughSubject<Void,Never>()
-    var didTapLikePublisher = PassthroughSubject<Void,Never>()
+    var didTapCommentPublisher = PassthroughSubject<UINavigationController?,Never>()
+    var didTapLikePublisher = PassthroughSubject<UIButton,Never>()
     private var subscriptions = Set<AnyCancellable>()
+    var feedControllerNavigationController: UINavigationController?
     
-    
-    var viewModel: PostViewModel? {
-        didSet {
-            configure()
-        }
-    }
+    var viewModel: FeedCellViewModelType?
     //MARK: - Lifecycle
     
     override init(frame: CGRect) {
@@ -76,15 +72,19 @@ extension FeedCell {
         addSubview(postTimeLabel)
     }
     
-    func setupBinding() {
-        viewModel?.likeChanged.receive(on: RunLoop.main).sink { [unowned self] _ in
-            print("\(viewModel!.postLikes)")
-            
-            likeLabel.text = viewModel?.postLikes
+    func setupBinding(with navigationController: UINavigationController?) {
+        feedControllerNavigationController = navigationController
+        
+        let input = FeedCellViewModelInput(didTapComment: didTapCommentPublisher.eraseToAnyPublisher(),
+                               didTapLike: didTapLikePublisher.eraseToAnyPublisher())
+        
+        let output = viewModel?.transform(input: input)
+        output? .sink { state in
+            self.render(state)
         }.store(in: &subscriptions)
     }
+    
 }
-
 
 //MARK: - Setup event handler
 extension FeedCell {
@@ -94,62 +94,46 @@ extension FeedCell {
     }
     
     @objc func didTapLikeButton(_ sender: Any) {
-        didTapLikePublisher.send()
+        didTapLikePublisher.send(likeButton)
     }
     
     @objc func didTapComment(_ sender: Any) {
-        didTapCommentPublisher.send()
+        didTapCommentPublisher.send(feedControllerNavigationController)
     }
     
-    func subscribeFromDidTapCommentPublisher(_ navigationController: UINavigationController?) {
-        didTapCommentPublisher
-            .receive(on: RunLoop.main)
-            .sink { _ in
-                guard let post = self.viewModel?.post else { return }
-                let controller = CommentController(viewModel: CommentViewModel(post: post))
-                navigationController?.pushViewController(controller, animated: true)
-                self.didTapCommentPublisher = PassthroughSubject<Void,Never>()
-            }.store(in: &subscriptions)
-    }
-    
-    func subscribeFromDidTapLikePublisher(_ collectionView: UICollectionView?, index: Int) {
-        didTapLikePublisher
-            .receive(on: RunLoop.main)
-            .sink { _ in
-                guard let post = self.viewModel?.post,
-                      let didLike = post.didLike else { return }
-                Task(priority: .medium) {
-                    if !didLike {
-                        await PostService.likePost(post: post)
-                    }else {
-                        await PostService.unlikePost(post: post)
-                    }
-                    DispatchQueue.main.async {
-                        self.viewModel?.setupLike(button: self.likeButton)
-                        self.viewModel?.post.didLike?.toggle()
-                        self.viewModel?.likeChanged.send()
-                    }
-                }
-            }.store(in: &subscriptions)
-    }
 }
 
 
 //MARK: - Helpers
 extension FeedCell {
     
+    func render(_ state: FeedCellState) {
+        switch state {
+        case .none:
+            break
+        case .present(let navigationController):
+            guard let post = self.viewModel?.post else { return }
+            let controller = CommentController(viewModel: CommentViewModel(post: post))
+            navigationController?.pushViewController(controller, animated: true)
+            break
+        case .updateLikeLabel:
+            self.likeLabel.text = self.viewModel?.postLikes
+            break
+        }
+    }
+    
     func configure() {
-        guard let viewModel = viewModel else { return }
+        guard var viewModel = viewModel else { return }
         captionLabel.text = viewModel.caption
         usernameButton.setTitle(viewModel.username, for: .normal)
         likeLabel.text = viewModel.postLikes
         let date = Date(timeIntervalSince1970: TimeInterval(viewModel.postTime.seconds))
         postTimeLabel.text = "\(date)"
-        viewModel.post.didLike = false
+        viewModel.didLike = false
         
-        Task(priority: .medium) {
+        Task(priority: .high) {
             let didLike = await PostService.checkIfUserLikedPost(post: viewModel.post)
-            viewModel.post.didLike = didLike
+            viewModel.didLike = didLike
             DispatchQueue.main.async {
                 if didLike {
                     self.likeButton.setImage(.imageLiteral(name: "like_selected"), for: .normal)
@@ -159,7 +143,14 @@ extension FeedCell {
                     self.likeButton.tintColor = .black
                 }
             }
-            
+        }
+        Task(priority: .high) {
+            await viewModel.fetchPostImage()
+            await viewModel.fetchUserProfile()
+            DispatchQueue.main.async {
+                self.configurePostImage()
+                self.configureProfileImage()
+            }
         }
     }
     

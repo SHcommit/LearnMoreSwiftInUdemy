@@ -148,18 +148,8 @@ extension FeedController {
         }else {
             cell.viewModel = PostViewModel(post: posts[indexPath.row])
         }
-        cell.setupBinding()
-        cell.subscribeFromDidTapCommentPublisher(navigationController)
-        cell.subscribeFromDidTapLikePublisher(collectionView, index: indexPath.row)
-        DispatchQueue.main.async {cell.configure()}
-        Task() {
-            await cell.viewModel?.fetchPostImage()
-            await cell.viewModel?.fetchUserProfile()
-            DispatchQueue.main.async {
-                cell.configurePostImage()
-                cell.configureProfileImage()
-            }
-        }
+        cell.configure()
+        cell.setupBinding(with: navigationController)
         return cell
     }
 }
