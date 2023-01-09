@@ -20,6 +20,7 @@ protocol FeedCellViewModelComputedProperty {
     var postLikes: String { get }
     var didLike: Bool { get set }
     var post: PostModel { get set }
+    var userUID: String { get }
 }
 
 protocol FeedCellViewModelAPIs {
@@ -28,6 +29,7 @@ protocol FeedCellViewModelAPIs {
 }
 
 struct FeedCellViewModelInput {
+    var didTapProfile: AnyPublisher<String,Never>
     var didTapComment: AnyPublisher<UINavigationController?,Never>
     var didTapLike: AnyPublisher<UIButton,Never>
 }
@@ -37,6 +39,7 @@ enum FeedCellState {
     case none
     case present(UINavigationController?)
     case updateLikeLabel
+    case fetchUserInfo(String)
 }
 
 protocol FeedCellViewModelType: FeedCellViewModelComputedProperty, FeedCellViewModelAPIs {
@@ -47,4 +50,5 @@ protocol FeedCellViewModelSubscriptionChains {
     func didTapCommentChains(with input: FeedCellViewModelInput) -> FeedCellViewModelOutput
     func didTapLikeChains(with input: FeedCellViewModelInput) -> FeedCellViewModelOutput
     func likeSubscriptionChains() -> FeedCellViewModelOutput
+    func didTapUserProfileChains(with input: FeedCellViewModelInput) -> FeedCellViewModelOutput
 }

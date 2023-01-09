@@ -25,6 +25,12 @@ class PostViewModel {
 //MARK: - FeedCellViewModelComputedProperty
 extension PostViewModel: FeedCellViewModelComputedProperty {
     
+    var userUID: String {
+        get {
+            return postModel.ownerUid
+        }
+    }
+     
     var post: PostModel {
         get {
             return postModel
@@ -143,17 +149,26 @@ extension PostViewModel: FeedCellViewModelAPIs {
 //MARK: - FeedCellViewModelType
 extension PostViewModel: FeedCellViewModelType {
     func transform(input: FeedCellViewModelInput) -> FeedCellViewModelOutput {
+        let didTapUserProfile = didTapUserProfileChains(with: input)
         let didTapComment = didTapCommentChains(with: input)
         let didTapLike = didTapLikeChains(with: input)
         let likeSubscription = likeSubscriptionChains()
         return Publishers
-            .Merge3(didTapLike,didTapComment,likeSubscription)
+            .Merge4(didTapLike,didTapComment,likeSubscription,didTapUserProfile)
             .eraseToAnyPublisher()
     }
 }
 
 //MARK: - FeedCellViewModelSubscriptionChains
 extension PostViewModel: FeedCellViewModelSubscriptionChains {
+    
+    func didTapUserProfileChains(with input: FeedCellViewModelInput) -> FeedCellViewModelOutput {
+        input.didTapProfile
+            .map{ uid -> FeedCellState in
+                return .fetchUserInfo(uid)
+            }.eraseToAnyPublisher()
+    }
+    
     func didTapCommentChains(with input: FeedCellViewModelInput) -> FeedCellViewModelOutput {
         input.didTapComment
             .map { navigationController -> FeedCellState in

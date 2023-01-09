@@ -22,6 +22,7 @@ class FeedCell: UICollectionViewCell {
     private lazy var commentButton: UIButton = initialCommentButton()
     private lazy var shareButton: UIButton = initialShareButton()
 
+    var didTapUserProfile = PassthroughSubject<String,Never>()
     var didTapCommentPublisher = PassthroughSubject<UINavigationController?,Never>()
     var didTapLikePublisher = PassthroughSubject<UIButton,Never>()
     private var subscriptions = Set<AnyCancellable>()
@@ -75,8 +76,10 @@ extension FeedCell {
     func setupBinding(with navigationController: UINavigationController?) {
         feedControllerNavigationController = navigationController
         
-        let input = FeedCellViewModelInput(didTapComment: didTapCommentPublisher.eraseToAnyPublisher(),
-                               didTapLike: didTapLikePublisher.eraseToAnyPublisher())
+        let input = FeedCellViewModelInput(
+            didTapProfile: didTapUserProfile.eraseToAnyPublisher(),
+            didTapComment: didTapCommentPublisher.eraseToAnyPublisher(),
+            didTapLike: didTapLikePublisher.eraseToAnyPublisher())
         
         let output = viewModel?.transform(input: input)
         output? .sink { state in
@@ -90,7 +93,7 @@ extension FeedCell {
 extension FeedCell {
     
     @objc func didTapUsername(_ sender: Any) {
-        print("DEBUG : did tap username")
+        didTapUserProfile.send(viewModel?.userUID ?? "")
     }
     
     @objc func didTapLikeButton(_ sender: Any) {
@@ -118,6 +121,16 @@ extension FeedCell {
             break
         case .updateLikeLabel:
             self.likeLabel.text = self.viewModel?.postLikes
+            break
+        case .fetchUserInfo(let uid):
+            Task() {
+                let userInfo = try await UserService.fetchUserInfo(type: UserInfoModel.self, withUid: uid)
+                guard let userInfo = userInfo else { return }
+                DispatchQueue.main.async {
+                    let controller = ProfileController(viewModel: ProfileViewModel(user: userInfo))
+                    self.feedControllerNavigationController?.pushViewController(controller, animated: true)
+                }
+            }
             break
         }
     }
