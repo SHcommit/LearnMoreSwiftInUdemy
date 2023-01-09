@@ -12,7 +12,7 @@ import Combine
 class FeedCell: UICollectionViewCell {
     
     //MARK: - Properties
-    private let profileImageView: UIImageView = initialProfileImageVIew()
+    private lazy var profileImageView: UIImageView = initialProfileImageVIew()
     private let postImageView: UIImageView = initialPostImageView()
     private let likeLabel: UILabel = initialLikeLabel()
     private let captionLabel: UILabel = initialCaptionLabel()
@@ -92,7 +92,7 @@ extension FeedCell {
 //MARK: - Setup event handler
 extension FeedCell {
     
-    @objc func didTapUsername(_ sender: Any) {
+    @objc func didTapUsername(sender: AnyObject?) {
         didTapUserProfile.send(viewModel?.userUID ?? "")
     }
     
@@ -182,7 +182,7 @@ extension FeedCell {
 extension FeedCell {
     
     //MARK: - Initial properties
-    static func initialProfileImageVIew() -> UIImageView {
+    func initialProfileImageVIew() -> UIImageView {
         let iv = UIImageView()
         iv.translatesAutoresizingMaskIntoConstraints = false
         iv.contentMode = .scaleAspectFill
@@ -191,6 +191,9 @@ extension FeedCell {
         iv.backgroundColor = .lightGray
         iv.layer.cornerRadius = 40/2
         iv.setContentCompressionResistancePriority(UILayoutPriority(999), for: .vertical)
+        let tap = UITapGestureRecognizer(target: self, action: #selector(didTapUsername))
+        iv.isUserInteractionEnabled = true
+        iv.addGestureRecognizer(tap)
         return iv
     }
     
@@ -199,7 +202,7 @@ extension FeedCell {
         btn.translatesAutoresizingMaskIntoConstraints = false
         btn.setTitleColor(.black, for: .normal)
         btn.titleLabel?.font = UIFont.boldSystemFont(ofSize: 13)
-        btn.addTarget(self, action: #selector(didTapUsername(_:)), for: .touchUpInside)
+        btn.addTarget(self, action: #selector(didTapUsername), for: .touchUpInside)
         btn.setContentCompressionResistancePriority(UILayoutPriority(999), for: .vertical)
         return btn
     }
