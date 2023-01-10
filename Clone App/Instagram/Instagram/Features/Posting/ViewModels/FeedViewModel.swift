@@ -9,7 +9,7 @@ import UIKit
 import Firebase
 import Combine
 
-class PostViewModel {
+class FeedViewModel {
     //MARK: - Properties
     private var postModel: PostModel
     private var postImage: UIImage?
@@ -23,7 +23,7 @@ class PostViewModel {
 }
 
 //MARK: - FeedCellViewModelComputedProperty
-extension PostViewModel: FeedCellViewModelComputedProperty {
+extension FeedViewModel: FeedCellViewModelComputedProperty {
     
     var userUID: String {
         get {
@@ -119,7 +119,7 @@ extension PostViewModel: FeedCellViewModelComputedProperty {
 }
 
 //MARK: - FeedCellViewModelAPIs
-extension PostViewModel: FeedCellViewModelAPIs {
+extension FeedViewModel: FeedCellViewModelAPIs {
     
     func fetchPostImage() async {
         do {
@@ -147,7 +147,7 @@ extension PostViewModel: FeedCellViewModelAPIs {
 }
 
 //MARK: - FeedCellViewModelType
-extension PostViewModel: FeedCellViewModelType {
+extension FeedViewModel: FeedCellViewModelType {
     func transform(input: FeedCellViewModelInput) -> FeedCellViewModelOutput {
         let didTapUserProfile = didTapUserProfileChains(with: input)
         let didTapComment = didTapCommentChains(with: input)
@@ -160,7 +160,7 @@ extension PostViewModel: FeedCellViewModelType {
 }
 
 //MARK: - FeedCellViewModelSubscriptionChains
-extension PostViewModel: FeedCellViewModelSubscriptionChains {
+extension FeedViewModel: FeedCellViewModelSubscriptionChains {
     
     func didTapUserProfileChains(with input: FeedCellViewModelInput) -> FeedCellViewModelOutput {
         input.didTapProfile

@@ -32,5 +32,5 @@ struct NotificationModel: Codable {
     var postId: String?
     let timestamp: Timestamp
     let type: NotificationType
-    
+    let id: String
 }
