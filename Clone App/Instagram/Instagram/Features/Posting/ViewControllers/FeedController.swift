@@ -73,7 +73,7 @@ extension FeedController {
             Task() {
                 let didLike = await PostService.checkIfUserLikedPost(post: post)
                 if let index = self.posts.firstIndex(where: {$0.postId == post.postId}) {
-                    self.posts[index].didLike = true
+                    self.posts[index].didLike = didLike
                 }
             }
         }
@@ -144,9 +144,9 @@ extension FeedController {
             fatalError()
         }
         if let post = post {
-            cell.viewModel = PostViewModel(post: post)
+            cell.viewModel = FeedViewModel(post: post)
         }else {
-            cell.viewModel = PostViewModel(post: posts[indexPath.row])
+            cell.viewModel = FeedViewModel(post: posts[indexPath.row])
         }
         cell.configure()
         cell.setupBinding(with: navigationController)

@@ -185,6 +185,10 @@ extension FeedViewModel: FeedCellViewModelSubscriptionChains {
                 Task(priority: .high) {
                     if !didLike {
                         await PostService.likePost(post: post)
+                        NotificationService.uploadNotification(to: UploadNotificationModel(uid: post.ownerUid,
+                                                                                           profileImageUrl: post.ownerImageUrl,
+                                                                                           username: post.ownerUsername),
+                                                               type: .like, post: post)
                     }else {
                         await PostService.unlikePost(post: post)
                     }

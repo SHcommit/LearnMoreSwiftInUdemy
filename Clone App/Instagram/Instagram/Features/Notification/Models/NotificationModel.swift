@@ -27,10 +27,10 @@ extension NotificationType: CustomStringConvertible {
 }
 
 struct NotificationModel: Codable {
-    let uid: String
     var postImageUrl: String?
     var postId: String?
     let timestamp: Timestamp
     let type: NotificationType
     let id: String
+    let specificUserInfo: UploadNotificationModel
 }

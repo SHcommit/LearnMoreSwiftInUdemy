@@ -6,38 +6,28 @@
 //
 
 import UIKit
-
-//MARK: - Constants
-private let NotificationCellReusableId = "NotificationCell"
+import Combine
 
 class NotificationController: UITableViewController {
     
-    //MARK: - Properties
+    //MARK: - Constants
+    let NotificationCellReusableId = "NotificationCell"
     
+    //MARK: - Properties
+    let viewWillAppear = PassthroughSubject<Void,Never>()
+    var vm: NotificationsViewModelType = NotificationsViewModel()
+    var scriptions = Set<AnyCancellable>()
     //MARK: - Lifecycles
     override func viewDidLoad() {
         super.viewDidLoad()
         configureTableView()
-        
-    }
-}
-
-//MARK: - Helpers
-extension NotificationController {
-    
-    func configureTableView() {
-        view.backgroundColor = .white
-        navigationItem.title = "Notificaitons"
-        
-        tableView.register(NotificationCell.self, forCellReuseIdentifier: NotificationCellReusableId)
-        tableView.separatorStyle = .none
     }
 }
 
 extension NotificationController {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 10
+        return vm.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
