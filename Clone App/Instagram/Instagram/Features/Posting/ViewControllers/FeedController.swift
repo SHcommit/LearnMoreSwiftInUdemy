@@ -73,7 +73,7 @@ extension FeedController {
             Task() {
                 let didLike = await PostService.checkIfUserLikedPost(post: post)
                 if let index = self.posts.firstIndex(where: {$0.postId == post.postId}) {
-                    self.posts[index].didLike = true
+                    self.posts[index].didLike = didLike
                 }
             }
         }
@@ -143,10 +143,12 @@ extension FeedController {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FEEDCELLRESUIDENTIFIER, for: indexPath) as? FeedCell else {
             fatalError()
         }
+        guard let tab = tabBarController as? MainHomeTabController else { fatalError() }
+        guard let user = tab.getUserVM?.getUser else { fatalError() }
         if let post = post {
-            cell.viewModel = PostViewModel(post: post)
+            cell.viewModel = FeedViewModel(post: post, user: user)
         }else {
-            cell.viewModel = PostViewModel(post: posts[indexPath.row])
+            cell.viewModel = FeedViewModel(post: posts[indexPath.row], user: user)
         }
         cell.configure()
         cell.setupBinding(with: navigationController)

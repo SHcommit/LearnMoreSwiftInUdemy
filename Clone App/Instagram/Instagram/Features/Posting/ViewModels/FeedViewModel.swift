@@ -9,22 +9,30 @@ import UIKit
 import Firebase
 import Combine
 
-class PostViewModel {
+class FeedViewModel {
     //MARK: - Properties
     private var postModel: PostModel
     private var postImage: UIImage?
     private var userProfile: UIImage?
     var likeChanged = PassthroughSubject<Void,Never>()
+    private var user: UserInfoModel
     
     //MARK: - LifeCycles
-    init(post: PostModel) {
+    init(post: PostModel, user: UserInfoModel) {
         self.postModel = post
+        self.user = user
     }
 }
 
 //MARK: - FeedCellViewModelComputedProperty
-extension PostViewModel: FeedCellViewModelComputedProperty {
+extension FeedViewModel: FeedCellViewModelComputedProperty {
     
+    var userUID: String {
+        get {
+            return postModel.ownerUid
+        }
+    }
+     
     var post: PostModel {
         get {
             return postModel
@@ -113,7 +121,7 @@ extension PostViewModel: FeedCellViewModelComputedProperty {
 }
 
 //MARK: - FeedCellViewModelAPIs
-extension PostViewModel: FeedCellViewModelAPIs {
+extension FeedViewModel: FeedCellViewModelAPIs {
     
     func fetchPostImage() async {
         do {
@@ -141,19 +149,28 @@ extension PostViewModel: FeedCellViewModelAPIs {
 }
 
 //MARK: - FeedCellViewModelType
-extension PostViewModel: FeedCellViewModelType {
+extension FeedViewModel: FeedCellViewModelType {
     func transform(input: FeedCellViewModelInput) -> FeedCellViewModelOutput {
+        let didTapUserProfile = didTapUserProfileChains(with: input)
         let didTapComment = didTapCommentChains(with: input)
         let didTapLike = didTapLikeChains(with: input)
         let likeSubscription = likeSubscriptionChains()
         return Publishers
-            .Merge3(didTapLike,didTapComment,likeSubscription)
+            .Merge4(didTapLike,didTapComment,likeSubscription,didTapUserProfile)
             .eraseToAnyPublisher()
     }
 }
 
 //MARK: - FeedCellViewModelSubscriptionChains
-extension PostViewModel: FeedCellViewModelSubscriptionChains {
+extension FeedViewModel: FeedCellViewModelSubscriptionChains {
+    
+    func didTapUserProfileChains(with input: FeedCellViewModelInput) -> FeedCellViewModelOutput {
+        input.didTapProfile
+            .map{ uid -> FeedCellState in
+                return .fetchUserInfo(uid)
+            }.eraseToAnyPublisher()
+    }
+    
     func didTapCommentChains(with input: FeedCellViewModelInput) -> FeedCellViewModelOutput {
         input.didTapComment
             .map { navigationController -> FeedCellState in
@@ -163,13 +180,21 @@ extension PostViewModel: FeedCellViewModelSubscriptionChains {
     }
     
     func didTapLikeChains(with input: FeedCellViewModelInput) -> FeedCellViewModelOutput {
+        
         input.didTapLike
             .subscribe(on: RunLoop.main)
             .map{ [unowned self] likeButton -> FeedCellState in
                 guard let didLike = post.didLike else { return .none}
                 Task(priority: .high) {
                     if !didLike {
+                        let uploadModel = UploadNotificationModel(
+                            uid: user.uid,
+                            profileImageUrl: user.profileURL,
+                            username: user.username)
                         await PostService.likePost(post: post)
+                        NotificationService.uploadNotification(toUid: post.ownerUid, to: uploadModel,
+                                                               type: .like,
+                                                               post: post)
                     }else {
                         await PostService.unlikePost(post: post)
                     }

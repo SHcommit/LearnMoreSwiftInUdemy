@@ -57,3 +57,6 @@ let INPUT_TEXT_VIEW_DEFAULT_MARGIN: CGFloat = 4
 
 //MARK: - PostService
 let COLLECTION_POSTS = Firestore.firestore().collection("posts")
+
+//MARK: - Notification
+let COLLECTION_NOTIFICATION = Firestore.firestore().collection("notifications")

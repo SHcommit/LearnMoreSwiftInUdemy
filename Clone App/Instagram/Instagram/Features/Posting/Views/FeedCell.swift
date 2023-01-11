@@ -12,7 +12,7 @@ import Combine
 class FeedCell: UICollectionViewCell {
     
     //MARK: - Properties
-    private let profileImageView: UIImageView = initialProfileImageVIew()
+    private lazy var profileImageView: UIImageView = initialProfileImageVIew()
     private let postImageView: UIImageView = initialPostImageView()
     private let likeLabel: UILabel = initialLikeLabel()
     private let captionLabel: UILabel = initialCaptionLabel()
@@ -22,6 +22,7 @@ class FeedCell: UICollectionViewCell {
     private lazy var commentButton: UIButton = initialCommentButton()
     private lazy var shareButton: UIButton = initialShareButton()
 
+    var didTapUserProfile = PassthroughSubject<String,Never>()
     var didTapCommentPublisher = PassthroughSubject<UINavigationController?,Never>()
     var didTapLikePublisher = PassthroughSubject<UIButton,Never>()
     private var subscriptions = Set<AnyCancellable>()
@@ -75,8 +76,10 @@ extension FeedCell {
     func setupBinding(with navigationController: UINavigationController?) {
         feedControllerNavigationController = navigationController
         
-        let input = FeedCellViewModelInput(didTapComment: didTapCommentPublisher.eraseToAnyPublisher(),
-                               didTapLike: didTapLikePublisher.eraseToAnyPublisher())
+        let input = FeedCellViewModelInput(
+            didTapProfile: didTapUserProfile.eraseToAnyPublisher(),
+            didTapComment: didTapCommentPublisher.eraseToAnyPublisher(),
+            didTapLike: didTapLikePublisher.eraseToAnyPublisher())
         
         let output = viewModel?.transform(input: input)
         output? .sink { state in
@@ -89,8 +92,8 @@ extension FeedCell {
 //MARK: - Setup event handler
 extension FeedCell {
     
-    @objc func didTapUsername(_ sender: Any) {
-        print("DEBUG : did tap username")
+    @objc func didTapUsername(sender: AnyObject?) {
+        didTapUserProfile.send(viewModel?.userUID ?? "")
     }
     
     @objc func didTapLikeButton(_ sender: Any) {
@@ -118,6 +121,16 @@ extension FeedCell {
             break
         case .updateLikeLabel:
             self.likeLabel.text = self.viewModel?.postLikes
+            break
+        case .fetchUserInfo(let uid):
+            Task() {
+                let userInfo = try await UserService.fetchUserInfo(type: UserInfoModel.self, withUid: uid)
+                guard let userInfo = userInfo else { return }
+                DispatchQueue.main.async {
+                    let controller = ProfileController(viewModel: ProfileViewModel(user: userInfo))
+                    self.feedControllerNavigationController?.pushViewController(controller, animated: true)
+                }
+            }
             break
         }
     }
@@ -169,7 +182,7 @@ extension FeedCell {
 extension FeedCell {
     
     //MARK: - Initial properties
-    static func initialProfileImageVIew() -> UIImageView {
+    func initialProfileImageVIew() -> UIImageView {
         let iv = UIImageView()
         iv.translatesAutoresizingMaskIntoConstraints = false
         iv.contentMode = .scaleAspectFill
@@ -178,6 +191,9 @@ extension FeedCell {
         iv.backgroundColor = .lightGray
         iv.layer.cornerRadius = 40/2
         iv.setContentCompressionResistancePriority(UILayoutPriority(999), for: .vertical)
+        let tap = UITapGestureRecognizer(target: self, action: #selector(didTapUsername))
+        iv.isUserInteractionEnabled = true
+        iv.addGestureRecognizer(tap)
         return iv
     }
     
@@ -186,7 +202,7 @@ extension FeedCell {
         btn.translatesAutoresizingMaskIntoConstraints = false
         btn.setTitleColor(.black, for: .normal)
         btn.titleLabel?.font = UIFont.boldSystemFont(ofSize: 13)
-        btn.addTarget(self, action: #selector(didTapUsername(_:)), for: .touchUpInside)
+        btn.addTarget(self, action: #selector(didTapUsername), for: .touchUpInside)
         btn.setContentCompressionResistancePriority(UILayoutPriority(999), for: .vertical)
         return btn
     }
