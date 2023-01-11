@@ -9,18 +9,18 @@ import UIKit
 import Combine
 
 struct NotificationCellViewModelInput {
-    var viewWillAppear: AnyPublisher<Void,Never>
+    var initialization: AnyPublisher<UIImageView,Never>
 }
 
-typealias NotificationCellViewModelOutput = AnyPublisher<NotificationsCellState,Never>
+typealias NotificationCellViewModelOutput = AnyPublisher<NotificationCellState,Never>
 
-enum NotificationsCellState {
+enum NotificationCellState {
     case none
-    case updateTableView
+    case updateImage(UIImage)
+    case configure
 }
 
 protocol NotificationCellVMComputedProperties {
-    var count: Int { get }
     
     var postImageUrl: URL? { get }
     

@@ -38,7 +38,17 @@ extension NotificationsViewModel: NotificationsViewModelType {
             return .updateTableView
         }.eraseToAnyPublisher()
         
-        return Publishers.Merge(updateTableView, noti).eraseToAnyPublisher()
+        let specificCellInit = input
+            .specificCellInit
+            .receive(on: DispatchQueue.main)
+            .map { (cell, index) -> NotificationsControllerState in
+                cell.vm = NotificationCellViewModel(notification: notifications.value[index])
+                return .none
+            }
+            .eraseToAnyPublisher()
+        
+        
+        return Publishers.Merge3(updateTableView, noti, specificCellInit).eraseToAnyPublisher()
         
     }
 }
@@ -48,7 +58,6 @@ extension NotificationsViewModel: NotificationsVMComputedProperties {
     var count: Int {
         notifications.value.count
     }
-    
     
 }
 

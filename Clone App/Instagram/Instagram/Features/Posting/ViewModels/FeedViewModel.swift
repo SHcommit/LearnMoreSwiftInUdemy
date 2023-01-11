@@ -15,10 +15,12 @@ class FeedViewModel {
     private var postImage: UIImage?
     private var userProfile: UIImage?
     var likeChanged = PassthroughSubject<Void,Never>()
+    private var user: UserInfoModel
     
     //MARK: - LifeCycles
-    init(post: PostModel) {
+    init(post: PostModel, user: UserInfoModel) {
         self.postModel = post
+        self.user = user
     }
 }
 
@@ -178,17 +180,21 @@ extension FeedViewModel: FeedCellViewModelSubscriptionChains {
     }
     
     func didTapLikeChains(with input: FeedCellViewModelInput) -> FeedCellViewModelOutput {
+        
         input.didTapLike
             .subscribe(on: RunLoop.main)
             .map{ [unowned self] likeButton -> FeedCellState in
                 guard let didLike = post.didLike else { return .none}
                 Task(priority: .high) {
                     if !didLike {
+                        let uploadModel = UploadNotificationModel(
+                            uid: user.uid,
+                            profileImageUrl: user.profileURL,
+                            username: user.username)
                         await PostService.likePost(post: post)
-                        NotificationService.uploadNotification(to: UploadNotificationModel(uid: post.ownerUid,
-                                                                                           profileImageUrl: post.ownerImageUrl,
-                                                                                           username: post.ownerUsername),
-                                                               type: .like, post: post)
+                        NotificationService.uploadNotification(toUid: post.ownerUid, to: uploadModel,
+                                                               type: .like,
+                                                               post: post)
                     }else {
                         await PostService.unlikePost(post: post)
                     }

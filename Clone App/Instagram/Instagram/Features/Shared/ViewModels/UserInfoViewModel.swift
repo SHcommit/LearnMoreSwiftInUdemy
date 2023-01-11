@@ -26,6 +26,11 @@ class UserInfoViewModel {
 
 extension UserInfoViewModel {
     
+    var getUser: UserInfoModel {
+        return user
+    }
+    
+    
     var stats: Userstats {
         get {
             guard let userStats = userStats else { return Userstats(followers: -1, following: -1) }

@@ -19,7 +19,8 @@ extension NotificationController {
     }
     
     func setupBindings() {
-        let input = NotificationsViewModelInput(viewWillAppear: viewWillAppear.eraseToAnyPublisher())
+        let input = NotificationsViewModelInput(viewWillAppear: viewWillAppear.eraseToAnyPublisher(), specificCellInit: specificCellInit.eraseToAnyPublisher())
+        
         let output = vm.transform(with: input)
         output.sink { completion in
             switch completion {

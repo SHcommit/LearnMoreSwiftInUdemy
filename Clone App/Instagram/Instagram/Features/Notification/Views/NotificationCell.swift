@@ -6,18 +6,29 @@
 //
 
 import UIKit
+import Combine
 
 class NotificationCell: UITableViewCell {
     //MARK: - Properties
     private let profileImageView: UIImageView = initProfileImageView()
     private let infoLabel: UILabel = initInfoLabel()
-    private let postImageView: UIImageView = initPostImageView()
+    private var postImageView: UIImageView = initPostImageView()
     private lazy var followButton: UIButton = initFollowButton()
+    
+    @Published var vm: NotificationCellViewModelType?
+    var initalization = PassthroughSubject<UIImageView,Never>()
+    var subscriptions = Set<AnyCancellable>()
     
     //MARK: - Lifecycles
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         configureUI()
+        setupBindings()
+        $vm
+            .receive(on: DispatchQueue.main)
+            .sink { _ in
+                self.initalization.send(self.postImageView)
+            }.store(in: &subscriptions)
     }
     required init?(coder: NSCoder) {
         fatalError("구현x")
@@ -31,6 +42,25 @@ extension NotificationCell {
         setupConstraints()
         selectionStyle = .none
         followButton.isHidden = true
+    }
+    
+    func setupBindings() {
+        let notificationInput = NotificationCellViewModelInput(initialization: initalization.eraseToAnyPublisher())
+        let output = vm?.transform(with: notificationInput)
+        output?.sink{ state in
+            self.render(state)
+        }.store(in: &subscriptions)
+    }
+    
+    func render(_ state: NotificationCellState) {
+        switch state {
+        case .none: break
+        case .configure: break
+        case .updateImage(let image):
+            print(image)
+            self.profileImageView.image = image
+        
+        }
     }
 }
 

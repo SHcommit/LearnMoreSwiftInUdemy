@@ -143,10 +143,12 @@ extension FeedController {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FEEDCELLRESUIDENTIFIER, for: indexPath) as? FeedCell else {
             fatalError()
         }
+        guard let tab = tabBarController as? MainHomeTabController else { fatalError() }
+        guard let user = tab.getUserVM?.getUser else { fatalError() }
         if let post = post {
-            cell.viewModel = FeedViewModel(post: post)
+            cell.viewModel = FeedViewModel(post: post, user: user)
         }else {
-            cell.viewModel = FeedViewModel(post: posts[indexPath.row])
+            cell.viewModel = FeedViewModel(post: posts[indexPath.row], user: user)
         }
         cell.configure()
         cell.setupBinding(with: navigationController)

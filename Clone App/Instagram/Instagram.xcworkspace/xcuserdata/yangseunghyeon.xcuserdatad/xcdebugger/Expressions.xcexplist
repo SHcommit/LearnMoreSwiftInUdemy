@@ -6,6 +6,17 @@
          contextName = "ProfileHeader.init(frame:):ProfileHeader.swift">
       </ContextState>
       <ContextState
+         contextName = "FeedController.collectionView(_:numberOfItemsInSection:):FeedController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "post">
+            </PersistentString>
+            <PersistentString
+               value = "print(&quot;\(post?.ownerUid != nil ? 1 : posts.count)&quot;)">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "static AuthService.fetchUserProfile():AuthService.swift">
          <PersistentStrings>
             <PersistentString
@@ -16,17 +27,6 @@
             </PersistentString>
             <PersistentString
                value = "MainHomeTabController.userProfileInfo">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "FeedController.collectionView(_:numberOfItemsInSection:):FeedController.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "post">
-            </PersistentString>
-            <PersistentString
-               value = "print(&quot;\(post?.ownerUid != nil ? 1 : posts.count)&quot;)">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -137,6 +137,14 @@
          <PersistentStrings>
             <PersistentString
                value = "print(appDelegate.pList.string(forKey: CURRENT_USER_UID))">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "NotificationController.tableView(_:numberOfRowsInSection:):NotificationsController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "vm.count">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

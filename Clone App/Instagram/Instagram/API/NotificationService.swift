@@ -26,15 +26,15 @@ extension NotificationServiceError: CustomStringConvertible {
 
 struct NotificationService {
     
-    static func uploadNotification(to uploadUserInfo: UploadNotificationModel, type: NotificationType, post: PostModel? = nil) {
+    static func uploadNotification(toUid uid: String,to uploadUserInfo: UploadNotificationModel, type: NotificationType, post: PostModel? = nil) {
         guard let currentUid = Utils.pList.string(forKey: CURRENT_USER_UID) else { return }
-        guard uploadUserInfo.uid != currentUid else { return }
-        let doc = COLLECTION_NOTIFICATION.document(uploadUserInfo.uid).collection("user-notifications").document()
+        guard uid != currentUid else { return }
+        let doc = COLLECTION_NOTIFICATION.document(uid).collection("user-notifications").document()
         var data = NotificationModel(timestamp: Timestamp(date: Date()),
                                      type: NotificationType(rawValue: type.rawValue) ?? .like,
                                      id: doc.documentID,
                                      specificUserInfo:
-                                        UploadNotificationModel(uid: currentUid,
+                                        UploadNotificationModel(uid: uploadUserInfo.uid,
                                                                 profileImageUrl: uploadUserInfo.profileImageUrl,
                                                                 username: uploadUserInfo.username))
         
