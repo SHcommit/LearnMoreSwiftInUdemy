@@ -16,8 +16,7 @@ typealias NotificationCellViewModelOutput = AnyPublisher<NotificationCellState,N
 
 enum NotificationCellState {
     case none
-    case updateImage(UIImage)
-    case configure
+    case configure(String)
 }
 
 protocol NotificationCellVMComputedProperties {
@@ -25,6 +24,8 @@ protocol NotificationCellVMComputedProperties {
     var postImageUrl: URL? { get }
     
     var profileImageUrl: URL? { get }
+    
+    var specificUsernameToNotify: String { get }
 }
 
 protocol NotificationCellViewModelType: NotificationCellVMComputedProperties {

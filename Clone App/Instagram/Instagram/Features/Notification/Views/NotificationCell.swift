@@ -14,7 +14,6 @@ class NotificationCell: UITableViewCell {
     private let infoLabel: UILabel = initInfoLabel()
     private var postImageView: UIImageView = initPostImageView()
     private lazy var followButton: UIButton = initFollowButton()
-    
     @Published var vm: NotificationCellViewModelType?
     var initalization = PassthroughSubject<UIImageView,Never>()
     var subscriptions = Set<AnyCancellable>()
@@ -23,15 +22,17 @@ class NotificationCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         configureUI()
-        setupBindings()
-        $vm
-            .receive(on: DispatchQueue.main)
-            .sink { _ in
-                self.initalization.send(self.postImageView)
-            }.store(in: &subscriptions)
     }
     required init?(coder: NSCoder) {
         fatalError("구현x")
+    }
+    override func prepareForReuse() {
+        _=subscriptions.map{$0.cancel()}
+        $vm
+            .receive(on: DispatchQueue.main)
+            .sink { _ in
+                self.initalization.send(self.profileImageView)
+            }.store(in: &subscriptions)
     }
 }
 
@@ -47,7 +48,9 @@ extension NotificationCell {
     func setupBindings() {
         let notificationInput = NotificationCellViewModelInput(initialization: initalization.eraseToAnyPublisher())
         let output = vm?.transform(with: notificationInput)
-        output?.sink{ state in
+        output?
+            .receive(on: DispatchQueue.main)
+            .sink{ state in
             self.render(state)
         }.store(in: &subscriptions)
     }
@@ -55,11 +58,10 @@ extension NotificationCell {
     func render(_ state: NotificationCellState) {
         switch state {
         case .none: break
-        case .configure: break
-        case .updateImage(let image):
-            print(image)
-            self.profileImageView.image = image
-        
+        case .configure(let specificUser):
+            //대상 image는 vm안에서 비동기로함.
+            infoLabel.text = specificUser
+            break
         }
     }
 }
@@ -105,7 +107,7 @@ extension NotificationCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.boldSystemFont(ofSize: 14)
-        label.text = "biiou"
+        label.text = ""
         return label
     }
     

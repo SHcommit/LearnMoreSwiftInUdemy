@@ -27,42 +27,64 @@ extension  NotificationsViewModel {
 
 //MARK: - NotificationViewModelType
 extension NotificationsViewModel: NotificationsViewModelType {
-    func transform(with input: NotificationsViewModelInput) -> NotificationViewModelOutput {
-        let updateTableView = input
-            .viewWillAppear
-            .map{ _ -> NotificationsControllerState in
-            return .updateTableView
-            }.eraseToAnyPublisher()
-        
-        let noti = notifications.map { _ -> NotificationsControllerState in
-            return .updateTableView
-        }.eraseToAnyPublisher()
-        
-        let specificCellInit = input
-            .specificCellInit
-            .receive(on: DispatchQueue.main)
-            .map { (cell, index) -> NotificationsControllerState in
-                cell.vm = NotificationCellViewModel(notification: notifications.value[index])
-                return .none
-            }
-            .eraseToAnyPublisher()
-        
-        
-        return Publishers.Merge3(updateTableView, noti, specificCellInit).eraseToAnyPublisher()
-        
+    
+    func transform(with input: NotificationsViewModelInput) -> NotificationsViewModelOutput {
+        let viewWillAppear = viewWillAppearChains(with: input)
+        let noti = notificationsChains(with: input)
+        let specificCellInit = specificCellInit(with: input)
+        return Publishers.Merge3(viewWillAppear, noti, specificCellInit).eraseToAnyPublisher()
     }
+    
 }
 
+//MARK: - NotificationsVMComputedProperties
 extension NotificationsViewModel: NotificationsVMComputedProperties {
     
     var count: Int {
-        notifications.value.count
+        get {
+            notifications.value.count
+        }
     }
     
+}
+
+//MARK: - NotificationViewModelType subscription chains
+extension NotificationsViewModel {
+    
+    func viewWillAppearChains(with input: NotificationsViewModelInput) -> NotificationsViewModelOutput {
+        return input
+            .viewWillAppear
+            .subscribe(on: DispatchQueue.main)
+            .map{ _ -> NotificationsControllerState in
+            return .updateTableView
+            }.eraseToAnyPublisher()
+    }
+    
+    func notificationsChains(with input: NotificationsViewModelInput) -> NotificationsViewModelOutput {
+        return notifications
+            .subscribe(on: DispatchQueue.main)
+            .map { _ -> NotificationsControllerState in
+            return .updateTableView
+        }.eraseToAnyPublisher()
+    }
+    
+    func specificCellInit(with input: NotificationsViewModelInput) -> NotificationsViewModelOutput {
+        return input
+            .specificCellInit
+            .subscribe(on: DispatchQueue.main)
+            .map { (cell, index) -> NotificationsControllerState in
+                cell.vm = NotificationCellViewModel(notification: notifications.value[index])
+                cell.setupBindings()
+                return .none
+            }
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
+    }
 }
 
 //MARK: - APIs
 extension NotificationsViewModel {
+    
     func fetchNotifications() {
         Task(priority: .high) {
             do {
@@ -73,6 +95,7 @@ extension NotificationsViewModel {
             }
         }
     }
+    
     func fetchNotificationsErrorHandling(with error: Swift.Error) {
         guard let error = error as? NotificationServiceError else { return }
         switch error {
@@ -83,9 +106,6 @@ extension NotificationsViewModel {
         case .invalidDocuments:
             print("DEBUG: \(error)")
         }
-        
     }
+    
 }
-
-
-

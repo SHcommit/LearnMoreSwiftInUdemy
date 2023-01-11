@@ -20,28 +20,46 @@ struct NotificationCellViewModel {
     
 }
 
-
+//MARK: - NotificationCellVMComputedProperties
 extension NotificationCellViewModel: NotificationCellVMComputedProperties {
     
     var postImageUrl: URL? {
-        return URL(string: notification.postImageUrl ?? "")
+        get {
+            return URL(string: notification.postImageUrl ?? "")
+        }
     }
     
     var profileImageUrl: URL? {
-        URL(string: notification.specificUserInfo.profileImageUrl)
+        get {
+            URL(string: notification.specificUserInfo.profileImageUrl)
+        }
+    }
+    
+    var specificUsernameToNotify: String {
+        get {
+            notification.specificUserInfo.username
+        }
     }
        
 }
 
+//MARK: - NotificationCellViewModelType
 extension NotificationCellViewModel: NotificationCellViewModelType {
     func transform(with input: NotificationCellViewModelInput) -> NotificationCellViewModelOutput {
-        
-        return input
-            .initialization
+        let initializaiton = initializationChains(with: input)
+        return initializaiton
+    }
+}
+
+//MARK: NotificationCellViewModelType subscription chains
+extension NotificationCellViewModel {
+    
+    func initializationChains(with input: NotificationCellViewModelInput) -> NotificationCellViewModelOutput {
+        return input.initialization
+            .first()
             .map { iv -> NotificationCellState in
-                print("a")
                 URLSession.shared.dataTask(with: profileImageUrl!) { data,_,error in
-                    guard error != nil else{
+                    guard error == nil else{
                         print("DEBUG: data task error")
                         return
                     }
@@ -49,12 +67,11 @@ extension NotificationCellViewModel: NotificationCellViewModelType {
                     DispatchQueue.main.async {
                         iv.image = UIImage(data: data)!
                     }
-                    
-                }
-                
-                return .none
+                }.resume()
+                return .configure(specificUsernameToNotify)
             }
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
+    
 }

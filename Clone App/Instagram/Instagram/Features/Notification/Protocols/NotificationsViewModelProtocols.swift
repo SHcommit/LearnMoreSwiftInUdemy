@@ -13,7 +13,7 @@ struct NotificationsViewModelInput {
     var specificCellInit: AnyPublisher<(cell: NotificationCell, index: Int),Never>
 }
 
-typealias NotificationViewModelOutput = AnyPublisher<NotificationsControllerState,Never>
+typealias NotificationsViewModelOutput = AnyPublisher<NotificationsControllerState,Never>
 
 enum NotificationsControllerState {
     case none
@@ -25,5 +25,6 @@ protocol NotificationsVMComputedProperties {
 }
 
 protocol NotificationsViewModelType: NotificationsVMComputedProperties {
-    func transform(with input: NotificationsViewModelInput) -> NotificationViewModelOutput
+    func transform(with input: NotificationsViewModelInput) -> NotificationsViewModelOutput
 }
+
