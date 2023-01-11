@@ -9,7 +9,7 @@ import UIKit
 import Combine
 
 struct NotificationCellViewModelInput {
-    var initialization: AnyPublisher<UIImageView,Never>
+    var initialization: AnyPublisher<(profile: UIImageView, post: UIImageView),Never>
 }
 
 typealias NotificationCellViewModelOutput = AnyPublisher<NotificationCellState,Never>

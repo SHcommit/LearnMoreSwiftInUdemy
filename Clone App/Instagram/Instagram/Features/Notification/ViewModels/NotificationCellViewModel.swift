@@ -8,11 +8,11 @@
 import UIKit
 import Combine
 
-struct NotificationCellViewModel {
+class NotificationCellViewModel {
     
     //MARK: - Properties
     private let notification: NotificationModel
-    
+    var subscriptions = Set<AnyCancellable>()
     //MARK: - Lifecycles
     init(notification: NotificationModel) {
         self.notification = notification
@@ -57,21 +57,66 @@ extension NotificationCellViewModel {
     func initializationChains(with input: NotificationCellViewModelInput) -> NotificationCellViewModelOutput {
         return input.initialization
             .first()
-            .map { iv -> NotificationCellState in
-                URLSession.shared.dataTask(with: profileImageUrl!) { data,_,error in
-                    guard error == nil else{
-                        print("DEBUG: data task error")
-                        return
-                    }
-                    guard let data = data else { return }
-                    DispatchQueue.main.async {
-                        iv.image = UIImage(data: data)!
-                    }
-                }.resume()
-                return .configure(specificUsernameToNotify)
+            .map { ivs -> NotificationCellState in
+                self.fetchImage(with: self.profileImageUrl!)
+                    .sink {
+                        print("DEBUG: \($0)")
+                    } receiveValue: { image in
+                        ivs.profile.image = image
+                    }.store(in: &self.subscriptions)
+                self.fetchImage(with: self.postImageUrl!)
+                    .sink { print("DEBUG: \($0)")
+                        
+                    } receiveValue: { image in
+                        ivs.post.image = image
+                        print("haha")
+                    }.store(in: &self.subscriptions)
+                
+                return .configure(self.specificUsernameToNotify)
             }
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
     
+}
+
+//MARK: - APIs
+extension NotificationCellViewModel {
+    
+    enum NotificationCellFetchImageError: Error, CustomStringConvertible{
+        
+        case network(URLError)
+        case invalidData
+        case unknown
+        
+        var description: String {
+            switch self {
+            case .network(let error): return "Network error occured: \(error.localizedDescription)"
+            case .invalidData: return "Invalid data"
+            case .unknown: return "Unknown error occured"
+            }
+        }
+    }
+    
+    
+    func fetchImage(with url: URL) -> AnyPublisher<UIImage,NotificationCellFetchImageError> {
+        return URLSession
+            .shared
+            .dataTaskPublisher(for: url)
+            .tryMap{ data,_ -> UIImage in
+                guard let image = UIImage(data: data) else {
+                    throw NotificationCellFetchImageError.invalidData
+                }
+                return image
+            }.mapError{
+                switch $0 {
+                case is URLError:
+                    return NotificationCellFetchImageError.network($0 as! URLError)
+                default:
+                    return $0 as! NotificationCellFetchImageError
+                }
+            }
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
+    }
 }

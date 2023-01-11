@@ -15,7 +15,7 @@ class NotificationCell: UITableViewCell {
     private var postImageView: UIImageView = initPostImageView()
     private lazy var followButton: UIButton = initFollowButton()
     @Published var vm: NotificationCellViewModelType?
-    var initalization = PassthroughSubject<UIImageView,Never>()
+    var initalization = PassthroughSubject<(profile: UIImageView, post: UIImageView),Never>()
     var subscriptions = Set<AnyCancellable>()
     
     //MARK: - Lifecycles
@@ -31,7 +31,7 @@ class NotificationCell: UITableViewCell {
         $vm
             .receive(on: DispatchQueue.main)
             .sink { _ in
-                self.initalization.send(self.profileImageView)
+                self.initalization.send((self.profileImageView,self.postImageView))
             }.store(in: &subscriptions)
     }
 }
