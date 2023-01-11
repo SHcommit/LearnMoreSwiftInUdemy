@@ -40,6 +40,19 @@ extension NotificationCellViewModel: NotificationCellVMComputedProperties {
             notification.specificUserInfo.username
         }
     }
+    
+    var notificationMessage: NSAttributedString {
+        get {
+            let username = specificUsernameToNotify
+            let message = notification.type.description
+            let attrText = NSMutableAttributedString(string: username, attributes: [.font: UIFont.boldSystemFont(ofSize: 14)])
+            attrText.append(NSAttributedString(string: message, attributes: [.font: UIFont.systemFont(ofSize: 14)]))
+            attrText.append(NSAttributedString(string: " 1min",
+                                               attributes: [.font:UIFont.boldSystemFont(ofSize: 12),
+                                                            .foregroundColor: UIColor.lightGray]))
+            return attrText
+        }
+    }
        
 }
 
@@ -57,22 +70,12 @@ extension NotificationCellViewModel {
     func initializationChains(with input: NotificationCellViewModelInput) -> NotificationCellViewModelOutput {
         return input.initialization
             .first()
-            .map { ivs -> NotificationCellState in
-                self.fetchImage(with: self.profileImageUrl!)
-                    .sink {
-                        print("DEBUG: \($0)")
-                    } receiveValue: { image in
-                        ivs.profile.image = image
-                    }.store(in: &self.subscriptions)
-                self.fetchImage(with: self.postImageUrl!)
-                    .sink { print("DEBUG: \($0)")
-                        
-                    } receiveValue: { image in
-                        ivs.post.image = image
-                        print("haha")
-                    }.store(in: &self.subscriptions)
+            .map {[unowned self] ivs -> NotificationCellState in
+                _=[(ivs.profile, profileImageUrl!),
+                   (ivs.post, postImageUrl!)]
+                    .map{ updateImageView($0.0, withUrl: $0.1)}
                 
-                return .configure(self.specificUsernameToNotify)
+                return .configure(self.notificationMessage)
             }
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
@@ -83,7 +86,7 @@ extension NotificationCellViewModel {
 //MARK: - APIs
 extension NotificationCellViewModel {
     
-    enum NotificationCellFetchImageError: Error, CustomStringConvertible{
+    private enum NotificationCellFetchImageError: Error, CustomStringConvertible{
         
         case network(URLError)
         case invalidData
@@ -98,8 +101,7 @@ extension NotificationCellViewModel {
         }
     }
     
-    
-    func fetchImage(with url: URL) -> AnyPublisher<UIImage,NotificationCellFetchImageError> {
+    private func fetchImage(with url: URL) -> AnyPublisher<UIImage,NotificationCellFetchImageError> {
         return URLSession
             .shared
             .dataTaskPublisher(for: url)
@@ -118,5 +120,21 @@ extension NotificationCellViewModel {
             }
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
+    }
+}
+
+//MARK: - Helpers
+extension NotificationCellViewModel {
+    private func updateImageView(_ imageView: UIImageView, withUrl url: URL) {
+        self.fetchImage(with: url)
+            .sink {
+                switch $0 {
+                case .finished: break
+                case .failure(let error):  print("DEBUG:\(error)")
+                }
+            } receiveValue: { image in
+                imageView.image = image
+            }.store(in: &self.subscriptions)
+
     }
 }

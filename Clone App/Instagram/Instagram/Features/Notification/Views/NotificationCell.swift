@@ -58,9 +58,9 @@ extension NotificationCell {
     func render(_ state: NotificationCellState) {
         switch state {
         case .none: break
-        case .configure(let specificUser):
+        case .configure(let attrText):
             //대상 image는 vm안에서 비동기로함.
-            infoLabel.text = specificUser
+            infoLabel.attributedText = attrText
             break
         }
     }
@@ -76,10 +76,8 @@ extension NotificationCell {
 //MARK: - UI
 extension NotificationCell {
     func addSubviews() {
-        addSubview(profileImageView)
-        addSubview(infoLabel)
-        addSubview(postImageView)
-        addSubview(followButton)
+        _=[profileImageView,infoLabel,
+           postImageView,followButton].map{addSubview($0)}
     }
     
     func setupConstraints() {
@@ -107,7 +105,7 @@ extension NotificationCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.boldSystemFont(ofSize: 14)
-        label.text = ""
+        label.numberOfLines = 0
         return label
     }
     
