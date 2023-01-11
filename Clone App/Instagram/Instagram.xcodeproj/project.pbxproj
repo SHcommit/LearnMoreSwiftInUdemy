@@ -483,8 +483,8 @@
 		1552C5A7296D9941001D8E48 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
-				155E1D73296DCA220036653F /* NotificationsViewModel.swift */,
 				155E1D7B296DE1160036653F /* NotificationCellViewModel.swift */,
+				155E1D73296DCA220036653F /* NotificationsViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -500,8 +500,8 @@
 		1552C5A9296D9958001D8E48 /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
-				155E1D76296DD5DB0036653F /* NotificationsViewModelProtocols.swift */,
 				155E1D7D296DE1780036653F /* NotificationCellViewModelProtocols.swift */,
+				155E1D76296DD5DB0036653F /* NotificationsViewModelProtocols.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
