@@ -7,7 +7,7 @@
 
 import UIKit
 
-protocol UploadPostControllerDelegate: class {
+protocol UploadPostControllerDelegate: AnyObject {
     func controllerDidFinishUploadingPost(_ controller: UploadPostController)
 }
 
@@ -16,7 +16,7 @@ class UploadPostController: UIViewController {
     //MARK: - Properties
     private let photoImageView: UIImageView = initPhotoImageView()
     private lazy var contentsTextView: InputTextView = initContentsTextView()
-    private var charCountLabel: UILabel = initCharCountLabel()
+    private var charCountLabel:  UILabel = initCharCountLabel()
     var selectedImage: UIImage? {
         didSet { photoImageView.image = selectedImage }
     }

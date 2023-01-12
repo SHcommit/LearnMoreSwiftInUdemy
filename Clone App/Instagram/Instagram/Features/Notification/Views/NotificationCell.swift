@@ -21,14 +21,15 @@ class NotificationCell: UITableViewCell {
     var initalization = PassthroughSubject<(profile: UIImageView, post: UIImageView),Never>()
     var subscriptions = Set<AnyCancellable>()
     
+    //MARK: - Delegate
     var delegate = NotificationCellDelegate()
     
     //MARK: - Lifecycles
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        addSubviews()
         setupLayouts()
         configureUI()
-        
     }
     required init?(coder: NSCoder) {
         fatalError("구현x")
@@ -67,11 +68,16 @@ extension NotificationCell {
         }
     }
     
+    private func addSubviews() {
+        _=[profileImageView, infoLabel,
+           postImageView,followButton].map{contentView.addSubview($0)}
+    }
+    
     private func setupLayouts() {
         setupProfileImageViewLayout()
         setupInfoLabelLayout()
-        initPostImageView()
-        initFollowButton()
+        setupPostImageView()
+        setupFollowButton()
     }
     
     private func configureUI() {
@@ -97,16 +103,18 @@ extension NotificationCell {
 //MARK: - Event handler
 extension NotificationCell {
     
+    @objc func didTapProfile() {
+        print("tap profile")
+    }
+    
     @objc func didTapFollowButton() {
         guard let id = vm?.notification.id else { return }
         delegate.send(with: (self,id, .follow))
     }
     
     @objc func didTapPostArea() {
-        print("didTapFollowButton 3")
-        guard let postId = vm?.notification.postId else { return }
-        print("didTapFollowButton 4")
-        delegate.send(with: (self, postId, .comment))
+        //guard let postId = vm?.notification.postId else { return }
+        delegate.send(with: (self, "임시", .comment))
     }
     
 }
@@ -116,21 +124,20 @@ extension NotificationCell {
 extension NotificationCell {
     
     private func setupProfileImageViewLayout() {
-        addSubview(profileImageView)
-        
         profileImageView.translatesAutoresizingMaskIntoConstraints = false
         profileImageView.contentMode = .scaleAspectFill
         profileImageView.clipsToBounds = true
         profileImageView.backgroundColor = .lightGray
         profileImageView.image = UIImage()
         profileImageView.layer.cornerRadius = 48/2
+        let tap = UITapGestureRecognizer(target: self, action: #selector(didTapProfile))
+        profileImageView.isUserInteractionEnabled = true
+        profileImageView.addGestureRecognizer(tap)
         
         setupProfileImageViewConstraints()
     }
 
     private func setupInfoLabelLayout() {
-        addSubview(infoLabel)
-        
         infoLabel.translatesAutoresizingMaskIntoConstraints = false
         infoLabel.font = UIFont.boldSystemFont(ofSize: 14)
         infoLabel.numberOfLines = 0
@@ -138,23 +145,19 @@ extension NotificationCell {
         setupInfoLabelConstraints()
     }
     
-    private func initPostImageView(){
-        addSubview(postImageView)
-        
+    private func setupPostImageView(){
         postImageView.translatesAutoresizingMaskIntoConstraints = false
         postImageView.contentMode = .scaleAspectFill
         postImageView.clipsToBounds = true
         postImageView.backgroundColor = .lightGray
-        let tap = UIGestureRecognizer(target: self, action: #selector(didTapPostArea))
+        let tap = UITapGestureRecognizer(target: self, action: #selector(didTapPostArea))
         postImageView.isUserInteractionEnabled = true
         postImageView.addGestureRecognizer(tap)
-        
+
         setupPostImageViewConstraints()
     }
     
-    private func initFollowButton() {
-        addSubview(followButton)
-        
+    private func setupFollowButton() {
         followButton.translatesAutoresizingMaskIntoConstraints = false
         followButton.setTitle("Loading", for: .normal)
         followButton.layer.cornerRadius = 3
@@ -163,7 +166,6 @@ extension NotificationCell {
         followButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
         followButton.setTitleColor(.black, for: .normal)
         followButton.addTarget(self, action: #selector(didTapFollowButton), for: .touchUpInside)
-        
         setupFollowButtonConstraints()
     }
 }

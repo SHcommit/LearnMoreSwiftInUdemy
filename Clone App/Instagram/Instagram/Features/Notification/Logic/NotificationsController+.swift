@@ -47,7 +47,8 @@ extension NotificationController {
 //MARK: - Notification cell's delegate
 extension NotificationController {
     func setupNotificationCellDelegate(_ cell: NotificationCell) {
-        cell.delegate.receive().sink {
+        cell.delegate.receive()
+            .sink {
             switch $0.type {
             case .follow:
                 print("DEBUG: Follow hi")
