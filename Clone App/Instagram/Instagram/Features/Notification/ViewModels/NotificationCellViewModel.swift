@@ -11,11 +11,11 @@ import Combine
 class NotificationCellViewModel {
     
     //MARK: - Properties
-    private let notification: NotificationModel
+    private let _notification: NotificationModel
     var subscriptions = Set<AnyCancellable>()
     //MARK: - Lifecycles
     init(notification: NotificationModel) {
-        self.notification = notification
+        self._notification = notification
     }
     
 }
@@ -25,32 +25,62 @@ extension NotificationCellViewModel: NotificationCellVMComputedProperties {
     
     var postImageUrl: URL? {
         get {
-            return URL(string: notification.postImageUrl ?? "")
+            return URL(string: _notification.postImageUrl ?? "")
         }
     }
     
     var profileImageUrl: URL? {
         get {
-            URL(string: notification.specificUserInfo.profileImageUrl)
+            URL(string: _notification.specificUserInfo.profileImageUrl)
         }
     }
     
     var specificUsernameToNotify: String {
         get {
-            notification.specificUserInfo.username
+            _notification.specificUserInfo.username
         }
     }
     
     var notificationMessage: NSAttributedString {
         get {
             let username = specificUsernameToNotify
-            let message = notification.type.description
+            let message = _notification.type.description
             let attrText = NSMutableAttributedString(string: username, attributes: [.font: UIFont.boldSystemFont(ofSize: 14)])
             attrText.append(NSAttributedString(string: message, attributes: [.font: UIFont.systemFont(ofSize: 14)]))
             attrText.append(NSAttributedString(string: " 1min",
                                                attributes: [.font:UIFont.boldSystemFont(ofSize: 12),
                                                             .foregroundColor: UIColor.lightGray]))
             return attrText
+        }
+    }
+    
+    var shouldHidePostImage: Bool {
+        get {
+            return self._notification.type == .follow
+        }
+    }
+    
+    var notification: NotificationModel {
+        get {
+            return _notification
+        }
+    }
+    
+    var followButtonText: String {
+        get {
+            notification.userIsFollowed ? "Following" : "Follow"
+        }
+    }
+    
+    var followButtonBackgroundColor: UIColor {
+        get {
+            return notification.userIsFollowed ? .white : .systemBlue
+        }
+    }
+    
+    var followButtonTextColor: UIColor {
+        get {
+            return notification.userIsFollowed ? .black : .white
         }
     }
        
@@ -72,7 +102,7 @@ extension NotificationCellViewModel {
             .first()
             .map {[unowned self] ivs -> NotificationCellState in
                 _=[(ivs.profile, profileImageUrl!),
-                   (ivs.post, postImageUrl!)]
+                   (ivs.post, postImageUrl)]
                     .map{ updateImageView($0.0, withUrl: $0.1)}
                 
                 return .configure(self.notificationMessage)
@@ -125,7 +155,8 @@ extension NotificationCellViewModel {
 
 //MARK: - Helpers
 extension NotificationCellViewModel {
-    private func updateImageView(_ imageView: UIImageView, withUrl url: URL) {
+    private func updateImageView(_ imageView: UIImageView, withUrl url: URL?) {
+        guard let url = url else { return }
         self.fetchImage(with: url)
             .sink {
                 switch $0 {
@@ -135,6 +166,5 @@ extension NotificationCellViewModel {
             } receiveValue: { image in
                 imageView.image = image
             }.store(in: &self.subscriptions)
-
     }
 }

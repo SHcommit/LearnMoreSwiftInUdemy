@@ -9,19 +9,26 @@ import UIKit
 import Combine
 
 class NotificationCell: UITableViewCell {
+    
     //MARK: - Properties
-    private let profileImageView: UIImageView = initProfileImageView()
-    private let infoLabel: UILabel = initInfoLabel()
-    private var postImageView: UIImageView = initPostImageView()
-    private lazy var followButton: UIButton = initFollowButton()
+    private lazy var profileImageView = UIImageView()
+    private let infoLabel = UILabel()
+    private lazy var postImageView = UIImageView()
+    private lazy var followButton = UIButton()
+    
+    //MARK: - Combine properties
     @Published var vm: NotificationCellViewModelType?
     var initalization = PassthroughSubject<(profile: UIImageView, post: UIImageView),Never>()
     var subscriptions = Set<AnyCancellable>()
     
+    var delegate = NotificationCellDelegate()
+    
     //MARK: - Lifecycles
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        setupLayouts()
         configureUI()
+        
     }
     required init?(coder: NSCoder) {
         fatalError("구현x")
@@ -30,20 +37,15 @@ class NotificationCell: UITableViewCell {
         _=subscriptions.map{$0.cancel()}
         $vm
             .receive(on: DispatchQueue.main)
-            .sink { _ in
-                self.initalization.send((self.profileImageView,self.postImageView))
+            .sink { [unowned self] _ in
+                initalization.send((profileImageView, postImageView))
+                lazyConfigure()
             }.store(in: &subscriptions)
     }
 }
 
 //MARK: - Helpers
 extension NotificationCell {
-    func configureUI() {
-        addSubviews()
-        setupConstraints()
-        selectionStyle = .none
-        followButton.isHidden = true
-    }
     
     func setupBindings() {
         let notificationInput = NotificationCellViewModelInput(initialization: initalization.eraseToAnyPublisher())
@@ -55,101 +57,129 @@ extension NotificationCell {
         }.store(in: &subscriptions)
     }
     
-    func render(_ state: NotificationCellState) {
+    private func render(_ state: NotificationCellState) {
         switch state {
         case .none: break
         case .configure(let attrText):
-            //대상 image는 vm안에서 비동기로함.
+            //image는 vm안에서 비동기로함.
             infoLabel.attributedText = attrText
             break
         }
+    }
+    
+    private func setupLayouts() {
+        setupProfileImageViewLayout()
+        setupInfoLabelLayout()
+        initPostImageView()
+        initFollowButton()
+    }
+    
+    private func configureUI() {
+        selectionStyle = .none
+    }
+    
+    private func lazyConfigure() {
+        guard let vm = vm else { return }
+        followButton.isHidden = !vm.shouldHidePostImage
+        postImageView.isHidden = vm.shouldHidePostImage
+        if !followButton.isHidden {
+            bringSubviewToFront(followButton)
+        } else {
+            bringSubviewToFront(postImageView)
+        }
+        
+        followButton.setTitle(vm.followButtonText, for: .normal)
+        followButton.backgroundColor = vm.followButtonBackgroundColor
+        followButton.setTitleColor(vm.followButtonTextColor, for: .normal)
     }
 }
 
 //MARK: - Event handler
 extension NotificationCell {
+    
     @objc func didTapFollowButton() {
-        
-    }
-}
-
-//MARK: - UI
-extension NotificationCell {
-    func addSubviews() {
-        _=[profileImageView,infoLabel,
-           postImageView,followButton].map{addSubview($0)}
+        guard let id = vm?.notification.id else { return }
+        delegate.send(with: (self,id, .follow))
     }
     
-    func setupConstraints() {
+    @objc func didTapPostArea() {
+        print("didTapFollowButton 3")
+        guard let postId = vm?.notification.postId else { return }
+        print("didTapFollowButton 4")
+        delegate.send(with: (self, postId, .comment))
+    }
+    
+}
+
+
+//MARK: - Setup UI layout
+extension NotificationCell {
+    
+    private func setupProfileImageViewLayout() {
+        addSubview(profileImageView)
+        
+        profileImageView.translatesAutoresizingMaskIntoConstraints = false
+        profileImageView.contentMode = .scaleAspectFill
+        profileImageView.clipsToBounds = true
+        profileImageView.backgroundColor = .lightGray
+        profileImageView.image = UIImage()
+        profileImageView.layer.cornerRadius = 48/2
+        
         setupProfileImageViewConstraints()
+    }
+
+    private func setupInfoLabelLayout() {
+        addSubview(infoLabel)
+        
+        infoLabel.translatesAutoresizingMaskIntoConstraints = false
+        infoLabel.font = UIFont.boldSystemFont(ofSize: 14)
+        infoLabel.numberOfLines = 0
+        
         setupInfoLabelConstraints()
+    }
+    
+    private func initPostImageView(){
+        addSubview(postImageView)
+        
+        postImageView.translatesAutoresizingMaskIntoConstraints = false
+        postImageView.contentMode = .scaleAspectFill
+        postImageView.clipsToBounds = true
+        postImageView.backgroundColor = .lightGray
+        let tap = UIGestureRecognizer(target: self, action: #selector(didTapPostArea))
+        postImageView.isUserInteractionEnabled = true
+        postImageView.addGestureRecognizer(tap)
+        
         setupPostImageViewConstraints()
+    }
+    
+    private func initFollowButton() {
+        addSubview(followButton)
+        
+        followButton.translatesAutoresizingMaskIntoConstraints = false
+        followButton.setTitle("Loading", for: .normal)
+        followButton.layer.cornerRadius = 3
+        followButton.layer.borderColor = UIColor.lightGray.cgColor
+        followButton.layer.borderWidth = 0.5
+        followButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
+        followButton.setTitleColor(.black, for: .normal)
+        followButton.addTarget(self, action: #selector(didTapFollowButton), for: .touchUpInside)
+        
         setupFollowButtonConstraints()
     }
 }
 
-//MARK: - UI properties init
+//MARK: - Setup UI constriants
 extension NotificationCell {
-    static func initProfileImageView() -> UIImageView {
-        let iv = UIImageView()
-        iv.translatesAutoresizingMaskIntoConstraints = false
-        iv.contentMode = .scaleAspectFill
-        iv.clipsToBounds = true
-        iv.backgroundColor = .lightGray
-        iv.image = UIImage()
-        iv.layer.cornerRadius = 48/2
-        return iv
-    }
-
-    static func initInfoLabel() -> UILabel {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.boldSystemFont(ofSize: 14)
-        label.numberOfLines = 0
-        return label
-    }
     
-    static func initPostImageView() -> UIImageView {
-        let iv = UIImageView()
-        iv.translatesAutoresizingMaskIntoConstraints = false
-        iv.contentMode = .scaleAspectFill
-        iv.clipsToBounds = true
-        iv.backgroundColor = .lightGray
-        let tap = UIGestureRecognizer(target: self, action: #selector(didTapFollowButton))
-        iv.isUserInteractionEnabled = true
-        iv.addGestureRecognizer(tap)
-        return iv
-    }
-    func initFollowButton() -> UIButton {
-        let button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Loading", for: .normal)
-        button.layer.cornerRadius = 3
-        button.layer.borderColor = UIColor.lightGray.cgColor
-        button.layer.borderWidth = 0.5
-        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
-        button.setTitleColor(.black, for: .normal)
-        button.addTarget(self, action: #selector(didTapFollowButton), for: .touchUpInside)
-        return button
-    }
-}
-
-//MARK: - UI properties setup constriants
-extension NotificationCell {
-    func setupProfileImageViewConstraints() {
+    private func setupProfileImageViewConstraints() {
         NSLayoutConstraint.activate([
             profileImageView.widthAnchor.constraint(equalToConstant: 48),
             profileImageView.heightAnchor.constraint(equalToConstant: 48),
             profileImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
             profileImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12)])
     }
-    func setupInfoLabelConstraints() {
-        NSLayoutConstraint.activate([
-            infoLabel.centerYAnchor.constraint(equalTo: profileImageView.centerYAnchor),
-            infoLabel.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 8)
-            ])
-    }
-    func setupPostImageViewConstraints() {
+    
+    private func setupPostImageViewConstraints() {
         NSLayoutConstraint.activate([
             postImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
             postImageView.trailingAnchor.constraint(equalTo: trailingAnchor,constant: -12),
@@ -157,13 +187,20 @@ extension NotificationCell {
             postImageView.heightAnchor.constraint(equalToConstant: 64)])
     }
     
-    func setupFollowButtonConstraints() {
+    private func setupFollowButtonConstraints() {
         NSLayoutConstraint.activate([
             followButton.centerYAnchor.constraint(equalTo: centerYAnchor),
             followButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12),
-            followButton.widthAnchor.constraint(equalToConstant: 100),
+            followButton.widthAnchor.constraint(equalToConstant: 88),
             followButton.heightAnchor.constraint(equalToConstant: 32)])
     }
     
+    private func setupInfoLabelConstraints() {
+        NSLayoutConstraint.activate([
+            infoLabel.centerYAnchor.constraint(equalTo: profileImageView.centerYAnchor),
+            infoLabel.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 8),
+            infoLabel.trailingAnchor.constraint(equalTo: followButton.leadingAnchor, constant: -4)
+            ])
+    }
     
 }

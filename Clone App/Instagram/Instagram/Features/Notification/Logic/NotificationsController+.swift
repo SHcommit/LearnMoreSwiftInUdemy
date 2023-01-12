@@ -30,7 +30,7 @@ extension NotificationController {
             }
         } receiveValue: {
             self.render($0)
-        }.store(in: &scriptions)
+        }.store(in: &subscriptions)
     }
     
     private func render(_ state: NotificationsControllerState) {
@@ -40,5 +40,25 @@ extension NotificationController {
         case .updateTableView:
             tableView.reloadData()
         }
+    }
+    
+}
+
+//MARK: - Notification cell's delegate
+extension NotificationController {
+    func setupNotificationCellDelegate(_ cell: NotificationCell) {
+        cell.delegate.receive().sink {
+            switch $0.type {
+            case .follow:
+                print("DEBUG: Follow hi")
+                break
+            case .comment:
+                print("DEBUG: Comment hi")
+                break
+            case .like:
+                print("DEBUG: Like hi")
+                break
+            }
+        }.store(in: &subscriptions)
     }
 }

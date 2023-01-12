@@ -90,8 +90,29 @@ extension NotificationsViewModel {
             do {
                 let list = try await NotificationService.fetchNotifications()
                 self.notifications.value = list
-            }catch {
-                fetchNotificationsErrorHandling(with: error)
+                try self.checkIfUserIsFollowed()
+            } catch {
+                switch error {
+                case is NotificationServiceError:
+                    fetchNotificationsErrorHandling(with: error)
+                case is CheckUserFollowedError:
+                    fetchNotificationsFollowErrorHandling(with: error)
+                default:
+                    print("DEBUG: Unknown error occured: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+    
+    func checkIfUserIsFollowed() throws {
+        notifications.value.forEach{ notification in
+            Task(priority: .high) {
+                guard notification.type == .follow else { return }
+                let isFollowed = try await UserService.checkIfUserIsFollowd(uid: notification.id)
+                guard let idx = notifications.value.firstIndex(where: {$0.id == notification.id}) else {
+                    return
+                }
+                self.notifications.value[idx].userIsFollowed = isFollowed
             }
         }
     }
@@ -105,6 +126,16 @@ extension NotificationsViewModel {
             print("DEBUG: \(error)")
         case .invalidDocuments:
             print("DEBUG: \(error)")
+        }
+    }
+    
+    func fetchNotificationsFollowErrorHandling(with error: Error) {
+        guard let error = error as? CheckUserFollowedError else {
+            return
+        }
+        switch error {
+        case .invalidSpecificUserInfo: return print("DEBUG: \(error.errorDescription)")
+        case .invalidCurrentUserUIDInUserDefaultsStandard: return print("DEBUG: \(error.errorDescription)")
         }
     }
     

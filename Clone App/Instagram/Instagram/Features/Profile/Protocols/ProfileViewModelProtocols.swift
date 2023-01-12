@@ -13,6 +13,9 @@ protocol ProfileViewModelGetSetType {
     var getUser: UserInfoModel { get set }
     
     var getPostsCount: Int { get }
+    
+    var tabBarController: UITabBarController? { get set }
+    
 }
 
 protocol ProfileViewModelType: ProfileViewModelGetSetType {

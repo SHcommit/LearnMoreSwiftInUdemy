@@ -177,6 +177,8 @@ extension CommentController: CommentInputAccessoryViewDelegate {
                                             postID: postId,
                                             user: user)
         (viewModel as? CommentViewModelNetworkServiceType)?.uploadComment(withInputModel: input)
+        let uploadModel = UploadNotificationModel(uid: user.uid, profileImageUrl: user.profileURL, username: user.username)
+        NotificationService.uploadNotification(toUid: viewModel.post.ownerUid, to: uploadModel, type: .comment,post: viewModel.post)
         inputView.clearCommentTextView()
         indicator.stopAnimating()
     }

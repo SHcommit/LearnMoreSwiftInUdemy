@@ -16,6 +16,7 @@ class ProfileViewModel {
     @Published var postsInfo = [PostModel]()
     @Published var posts = [UIImage]()
     var subscriptions = Set<AnyCancellable>()
+    private var tab: UITabBarController?
     
     //MARK: - Lifecycles
     init(user: UserInfoModel) {
@@ -64,6 +65,15 @@ extension ProfileViewModel {
     var getPostsCount: Int {
         get {
             return posts.count
+        }
+    }
+    
+    var tabBarController: UITabBarController? {
+        get {
+            return tab
+        }
+        set {
+            tab = newValue
         }
     }
     
@@ -184,6 +194,8 @@ extension ProfileViewModel: ProfileHeaderDelegate {
             print("DEBUG: Show edit profile here..")
             return
         }
+        guard let tab = tabBarController as? MainHomeTabController else { return }
+        guard let currentUser = tab.getUserVM?.getUser else { return }
         switch user.isFollowed {
         case true:
             Task() {
@@ -203,6 +215,12 @@ extension ProfileViewModel: ProfileHeaderDelegate {
                     self.user.isFollowed = true
                     self.userStats = userStats
                 }
+                NotificationService.uploadNotification(
+                    toUid: user.uid,
+                    to: UploadNotificationModel(uid: currentUser.uid,
+                                                profileImageUrl: currentUser.profileURL,
+                                                username: currentUser.username),
+                    type: .follow)
             }
             break
         }

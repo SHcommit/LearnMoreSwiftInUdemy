@@ -8,6 +8,24 @@
 import UIKit
 import Combine
 
+//MARK: - NotificationCell delegate
+struct NotificationCellDelegate {
+    typealias Element = (cell: NotificationCell, uid: String, type: NotificationType)
+    
+    private var pub = PassthroughSubject<Element,Never>()
+    
+    func send(with element: Element) {
+        pub.send(element)
+    }
+    func receive() -> AnyPublisher<Element,Never> {
+        return pub
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
+    }
+}
+
+
+//MARK: - NotificationCellViewModel Combine types
 struct NotificationCellViewModelInput {
     var initialization: AnyPublisher<(profile: UIImageView, post: UIImageView),Never>
 }
@@ -28,6 +46,16 @@ protocol NotificationCellVMComputedProperties {
     var specificUsernameToNotify: String { get }
     
     var notificationMessage: NSAttributedString { get }
+    
+    var shouldHidePostImage: Bool { get }
+    
+    var notification: NotificationModel { get }
+    
+    var followButtonText: String { get }
+    
+    var followButtonBackgroundColor: UIColor { get }
+    
+    var followButtonTextColor: UIColor { get }
 }
 
 protocol NotificationCellViewModelType: NotificationCellVMComputedProperties {

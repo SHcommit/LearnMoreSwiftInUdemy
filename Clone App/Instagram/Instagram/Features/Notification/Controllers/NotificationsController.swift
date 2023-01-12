@@ -17,7 +17,7 @@ class NotificationController: UITableViewController {
     let viewWillAppear = PassthroughSubject<Void,Never>()
     var specificCellInit = PassthroughSubject<(cell: NotificationCell, index: Int),Never>()
     var vm: NotificationsViewModelType = NotificationsViewModel()
-    var scriptions = Set<AnyCancellable>()
+    var subscriptions = Set<AnyCancellable>()
     
     //MARK: - Lifecycles
     override func viewDidLoad() {
@@ -39,6 +39,7 @@ extension NotificationController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: NotificationCellReusableId, for: indexPath) as! NotificationCell
         specificCellInit.send((cell,indexPath.row))
+        setupNotificationCellDelegate(cell)
         return cell
     }
     
