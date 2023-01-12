@@ -14,12 +14,15 @@ struct NotificationCellDelegate {
     
     private var pub = PassthroughSubject<Element,Never>()
     
+    func completion() {
+        pub.send(completion: .finished)
+    }
+    
     func send(with element: Element) {
         pub.send(element)
     }
     func receive() -> AnyPublisher<Element,Never> {
         return pub
-            .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
 }

@@ -48,18 +48,21 @@ extension NotificationController {
 extension NotificationController {
     func setupNotificationCellDelegate(_ cell: NotificationCell) {
         cell.delegate.receive()
-            .sink {
-            switch $0.type {
-            case .follow:
-                print("DEBUG: Follow hi")
-                break
-            case .comment:
-                print("DEBUG: Comment hi")
-                break
-            case .like:
-                print("DEBUG: Like hi")
-                break
-            }
-        }.store(in: &subscriptions)
+            .sink { _ in
+                print("complete")
+            } receiveValue:  {
+                switch $0.type {
+                case .follow:
+                    print("DEBUG: Follow hi")
+                    break
+                case .comment:
+                    print("DEBUG: Comment hi")
+                    break
+                case .like:
+                    print("DEBUG: Like hi")
+                    break
+                }
+            }.store(in: &delegateSubscription)
+
     }
 }

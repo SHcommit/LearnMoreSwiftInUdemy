@@ -56,7 +56,7 @@ extension NotificationsViewModel {
             .viewWillAppear
             .subscribe(on: DispatchQueue.main)
             .map{ _ -> NotificationsControllerState in
-            return .updateTableView
+            return .none
             }.eraseToAnyPublisher()
     }
     

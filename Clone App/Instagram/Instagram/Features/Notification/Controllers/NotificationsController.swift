@@ -18,6 +18,7 @@ class NotificationController: UITableViewController {
     var specificCellInit = PassthroughSubject<(cell: NotificationCell, index: Int),Never>()
     var vm: NotificationsViewModelType = NotificationsViewModel()
     var subscriptions = Set<AnyCancellable>()
+    var delegateSubscription = [AnyCancellable]()
     
     //MARK: - Lifecycles
     override func viewDidLoad() {
@@ -25,14 +26,17 @@ class NotificationController: UITableViewController {
         configureTableView()
         setupBindings()
     }
+    
     override func viewWillAppear(_ animated: Bool) {
-        tableView.reloadData()
+        delegateSubscription.map{$0.cancel()}
+        setupBindings()
     }
 }
 
 extension NotificationController {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        delegateSubscription.map{$0.cancel()}
         return vm.count
     }
     
