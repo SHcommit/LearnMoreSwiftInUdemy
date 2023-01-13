@@ -105,7 +105,7 @@ extension NotificationsViewModel {
             print("DEBUG: \(error)")
         case .invalidDocuments:
             print("DEBUG: \(error)")
-        }
+        }// 
     }
     
 }
