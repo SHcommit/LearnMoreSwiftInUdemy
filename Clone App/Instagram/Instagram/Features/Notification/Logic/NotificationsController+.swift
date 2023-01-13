@@ -96,6 +96,5 @@ extension NotificationController {
                     break
                 }
             }.store(in: &delegateSubscription)
-
     }
 }

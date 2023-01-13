@@ -13,6 +13,7 @@ class NotificationCellViewModel {
     //MARK: - Properties
     private var _notification: NotificationModel
     var subscriptions = Set<AnyCancellable>()
+    private var isUpdatedFollow = PassthroughSubject<Void,Never>()
     //MARK: - Lifecycles
     init(notification: NotificationModel) {
         self._notification = notification
@@ -102,7 +103,12 @@ extension NotificationCellViewModel: NotificationCellVMComputedProperties {
 extension NotificationCellViewModel: NotificationCellViewModelType {
     func transform(with input: NotificationCellViewModelInput) -> NotificationCellViewModelOutput {
         let initializaiton = initializationChains(with: input)
+        
+        let updatedFollow = isUpdatedFollowChains()
+        
         return initializaiton
+            .merge(with: updatedFollow)
+            .eraseToAnyPublisher()
     }
 }
 
@@ -116,10 +122,19 @@ extension NotificationCellViewModel {
                 _=[(ivs.profile, profileImageUrl!),
                    (ivs.post, postImageUrl)]
                     .map{ updateImageView($0.0, withUrl: $0.1)}
+                ///Notification내부에서 팔로우하거나 끊기는 가능한데 유저 노티피 탭 한 이후 서치에서 특정 상대 검색후 팔로우하고 다시 노티피케이션으로 오면 prepare만 동작한다. 이땐 서버에서 내가 사용자 팔로우했는지 갱신 여부 안받아오기 때문에 아래 함수로 받아오게 했다.
+                checkIfUserIsFollowed()
                 return .configure(self.notificationMessage)
             }
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
+    }
+    
+    func isUpdatedFollowChains() -> NotificationCellViewModelOutput {
+        return isUpdatedFollow
+            .map{ _ -> NotificationCellState in
+                return .updatedFollow
+            }.eraseToAnyPublisher()
     }
     
 }
@@ -161,6 +176,21 @@ extension NotificationCellViewModel {
             }
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
+    }
+    
+    private func checkIfUserIsFollowed() {
+        Task(priority: .high) {
+            do {
+                let isFollowed = try await UserService.checkIfUserIsFollowd(uid: _notification.specificUserInfo.uid)
+                _notification
+                    .specificUserInfo
+                    .userIsFollowed = isFollowed
+                isUpdatedFollow.send()
+            } catch {
+                print("DEBUG: \(error)")
+            }
+            
+        }
     }
 }
 

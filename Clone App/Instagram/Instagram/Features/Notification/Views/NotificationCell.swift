@@ -41,12 +41,14 @@ class NotificationCell: UITableViewCell {
                 initalization.send((profileImageView, postImageView))
                 
             }.store(in: &subscriptions)
+        
     }
 }
 
 //MARK: - Helpers
 extension NotificationCell {
     
+    //MARK: - Binding helpers
     func setupBindings() {
         let notificationInput = NotificationCellViewModelInput(initialization: initalization.eraseToAnyPublisher())
         let output = vm?.transform(with: notificationInput)
@@ -65,9 +67,13 @@ extension NotificationCell {
             infoLabel.attributedText = attrText
             lazyConfigure()
             break
+        case .updatedFollow:
+            updateFollowButtonUI()
+            break
         }
     }
     
+    //MARK: - UI helpers
     private func addSubviews() {
         _=[profileImageView, infoLabel,
            postImageView,followButton].map{contentView.addSubview($0)}
@@ -90,11 +96,13 @@ extension NotificationCell {
         postImageView.isHidden = vm.shouldHidePostImage
         if !followButton.isHidden {
             bringSubviewToFront(followButton)
+            updateFollowButtonUI()
         } else {
             bringSubviewToFront(postImageView)
         }
     }
     
+    ///NotificationsController setup cell's delegate completion call
     func updateFollowButtonUI() {
         guard let vm = vm else { return }
         followButton.setTitle(vm.followButtonText, for: .normal)
@@ -117,7 +125,6 @@ extension NotificationCell {
         } else {
             delegate.send(with: (self,vm.notification.specificUserInfo.uid, .wantsToFollow))
         }
-        print(vm.userIsFollowed)
         updateFollowButtonUI()
     }
     

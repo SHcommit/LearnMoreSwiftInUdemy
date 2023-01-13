@@ -45,6 +45,7 @@ typealias NotificationCellViewModelOutput = AnyPublisher<NotificationCellState,N
 enum NotificationCellState {
     case none
     case configure(NSAttributedString)
+    case updatedFollow
 }
 
 protocol NotificationCellVMComputedProperties {
