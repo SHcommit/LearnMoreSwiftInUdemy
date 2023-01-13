@@ -9,7 +9,7 @@ import UIKit
 import Combine
 
 struct NotificationsViewModelInput {
-    var viewWillAppear: AnyPublisher<Void,Never>
+    var appear: AnyPublisher<Void,Never>
     var specificCellInit: AnyPublisher<(cell: NotificationCell, index: Int),Never>
 }
 
@@ -17,11 +17,14 @@ typealias NotificationsViewModelOutput = AnyPublisher<NotificationsControllerSta
 
 enum NotificationsControllerState {
     case none
+    case viewWillAppear
     case updateTableView
 }
 
 protocol NotificationsVMComputedProperties {
     var count: Int { get }
+    
+    var notifications: [NotificationModel] { get }
 }
 
 protocol NotificationsViewModelType: NotificationsVMComputedProperties {

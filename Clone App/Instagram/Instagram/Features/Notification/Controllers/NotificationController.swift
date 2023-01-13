@@ -1,25 +1,83 @@
 //
-//  NotificationsController+.swift
+//  NotificationController.swift
 //  Instagram
 //
-//  Created by 양승현 on 2023/01/11.
+//  Created by 양승현 on 2022/09/30.
 //
 
 import UIKit
+import Combine
+
+class NotificationController: UITableViewController {
+    
+    //MARK: - Constants
+    fileprivate let NotificationCellReusableId = "NotificationCell"
+    
+    //MARK: - Properties
+    fileprivate let appear = PassthroughSubject<Void,Never>()
+    fileprivate var specificCellInit = PassthroughSubject<(cell: NotificationCell, index: Int),Never>()
+    var vm: NotificationsViewModelType = NotificationsViewModel()
+    fileprivate var subscriptions = Set<AnyCancellable>()
+    var delegateSubscription = Set<AnyCancellable>()
+    
+    //MARK: - Lifecycles
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        configureTableView()
+        setupBindings()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        appear.send()
+    }
+}
+
+//MARK: - UITableViewDataSource
+extension NotificationController {
+    
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        _=delegateSubscription.map{$0.cancel()}
+        return vm.count
+    }
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: NotificationCellReusableId, for: indexPath) as! NotificationCell
+        specificCellInit.send((cell,indexPath.row))
+        setupNotificationCellDelegate(cell)
+        return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 80
+    }
+    
+}
+
+//MARK: - UITableViewDelegate
+extension NotificationController {
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let uid = vm.notifications[indexPath.row].specificUserInfo.uid
+        Task(priority: .medium) {
+            guard let user = try? await UserService
+                .fetchUserInfo(type: UserInfoModel.self, withUid: uid) else {
+                print("DEBUG: Failure get user info")
+                return
+            }
+            let controller = ProfileController(viewModel: ProfileViewModel(user: user))
+            DispatchQueue.main.async {
+                self.navigationController?.pushViewController(controller, animated: true)
+            }
+        }
+    }
+    
+}
 
 //MARK: - Helpers
 extension NotificationController {
     
-    func configureTableView() {
-        view.backgroundColor = .white
-        navigationItem.title = "Notificaitons"
-        
-        tableView.register(NotificationCell.self, forCellReuseIdentifier: NotificationCellReusableId)
-        tableView.separatorStyle = .none
-    }
-    
     func setupBindings() {
-        let input = NotificationsViewModelInput(viewWillAppear: viewWillAppear.eraseToAnyPublisher(), specificCellInit: specificCellInit.eraseToAnyPublisher())
+        let input = NotificationsViewModelInput(appear: appear.eraseToAnyPublisher(), specificCellInit: specificCellInit.eraseToAnyPublisher())
         
         let output = vm.transform(with: input)
         output.sink { completion in
@@ -39,6 +97,11 @@ extension NotificationController {
             break
         case .updateTableView:
             tableView.reloadData()
+            break
+        case .viewWillAppear:
+            _=delegateSubscription.map{$0.cancel()}
+            _=subscriptions.map{$0.cancel()}
+            setupBindings()
         }
     }
     
@@ -98,3 +161,15 @@ extension NotificationController {
             }.store(in: &delegateSubscription)
     }
 }
+
+//MARK: - Config
+extension NotificationController {
+    func configureTableView() {
+        view.backgroundColor = .white
+        navigationItem.title = "Notificaitons"
+        
+        tableView.register(NotificationCell.self, forCellReuseIdentifier: NotificationCellReusableId)
+        tableView.separatorStyle = .none
+    }
+}
+

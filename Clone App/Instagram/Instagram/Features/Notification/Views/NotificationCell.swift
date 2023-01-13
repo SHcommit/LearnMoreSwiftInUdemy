@@ -14,7 +14,7 @@ class NotificationCell: UITableViewCell {
     typealias InitElement = (profile: UIImageView, post: UIImageView)
     
     //MARK: - Properties
-    private lazy var profileImageView = UIImageView()
+    private var profileImageView = UIImageView()
     private let infoLabel = UILabel()
     private lazy var postImageView = UIImageView()
     private lazy var followButton = UIButton()
@@ -75,8 +75,8 @@ extension NotificationCell {
     
     //MARK: - UI helpers
     private func addSubviews() {
-        _=[profileImageView, infoLabel,
-           postImageView,followButton].map{contentView.addSubview($0)}
+        addSubview(profileImageView)
+        _=[infoLabel, postImageView, followButton].map{contentView.addSubview($0)}
     }
     
     private func setupLayouts() {
@@ -114,10 +114,6 @@ extension NotificationCell {
 //MARK: - Event handler
 extension NotificationCell {
     
-    @objc func didTapProfile() {
-        print("tap profile")
-    }
-    
     @objc func didTapFollowButton() {
         guard let vm = vm else { return }
         if vm.userIsFollowed {
@@ -146,9 +142,6 @@ extension NotificationCell {
         profileImageView.backgroundColor = .lightGray
         profileImageView.image = UIImage()
         profileImageView.layer.cornerRadius = 48/2
-        let tap = UITapGestureRecognizer(target: self, action: #selector(didTapProfile))
-        profileImageView.isUserInteractionEnabled = true
-        profileImageView.addGestureRecognizer(tap)
         
         setupProfileImageViewConstraints()
     }

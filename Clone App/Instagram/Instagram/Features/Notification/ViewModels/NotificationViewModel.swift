@@ -10,7 +10,7 @@ import Combine
 
 struct NotificationsViewModel {
     //MARK: - Properties
-    private var notifications = CurrentValueSubject<[NotificationModel],Never>([NotificationModel]())
+    private var _notifications = CurrentValueSubject<[NotificationModel],Never>([NotificationModel]())
     
     //MARK: - Lifecycels
     init() {
@@ -29,10 +29,13 @@ extension  NotificationsViewModel {
 extension NotificationsViewModel: NotificationsViewModelType {
     
     func transform(with input: NotificationsViewModelInput) -> NotificationsViewModelOutput {
-        let viewWillAppear = viewWillAppearChains(with: input)
+        let appear = appearChains(with: input)
         let noti = notificationsChains(with: input)
         let specificCellInit = specificCellInit(with: input)
-        return Publishers.Merge3(viewWillAppear, noti, specificCellInit).eraseToAnyPublisher()
+        return Publishers
+            .Merge3(appear, noti, specificCellInit)
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
     }
     
 }
@@ -42,8 +45,12 @@ extension NotificationsViewModel: NotificationsVMComputedProperties {
     
     var count: Int {
         get {
-            notifications.value.count
+            _notifications.value.count
         }
+    }
+    
+    var notifications: [NotificationModel] {
+        return _notifications.value
     }
     
 }
@@ -51,9 +58,9 @@ extension NotificationsViewModel: NotificationsVMComputedProperties {
 //MARK: - NotificationViewModelType subscription chains
 extension NotificationsViewModel {
     
-    func viewWillAppearChains(with input: NotificationsViewModelInput) -> NotificationsViewModelOutput {
+    func appearChains(with input: NotificationsViewModelInput) -> NotificationsViewModelOutput {
         return input
-            .viewWillAppear
+            .appear
             .subscribe(on: DispatchQueue.main)
             .map{ _ -> NotificationsControllerState in
             return .none
@@ -61,7 +68,7 @@ extension NotificationsViewModel {
     }
     
     func notificationsChains(with input: NotificationsViewModelInput) -> NotificationsViewModelOutput {
-        return notifications
+        return _notifications
             .subscribe(on: DispatchQueue.main)
             .map { _ -> NotificationsControllerState in
             return .updateTableView
@@ -73,12 +80,11 @@ extension NotificationsViewModel {
             .specificCellInit
             .subscribe(on: DispatchQueue.main)
             .map { (cell, index) -> NotificationsControllerState in
-                cell.vm = NotificationCellViewModel(notification: notifications.value[index])
+                cell.vm = NotificationCellViewModel(notification: _notifications.value[index])
                 cell.setupBindings()
                 cell.didTapFollowButton()
                 return .none
             }
-            .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
 }
@@ -90,7 +96,7 @@ extension NotificationsViewModel {
         Task(priority: .high) {
             do {
                 let list = try await NotificationService.fetchNotifications()
-                self.notifications.value = list
+                self._notifications.value = list
                 try self.checkIfUserIsFollowed()
             } catch {
                 switch error {
@@ -106,14 +112,14 @@ extension NotificationsViewModel {
     }
     
     func checkIfUserIsFollowed() throws {
-        notifications.value.forEach{ notification in
+        _notifications.value.forEach{ notification in
             Task(priority: .high) {
                 guard notification.type == .follow else { return }
                 let isFollowed = try await UserService.checkIfUserIsFollowd(uid: notification.specificUserInfo.uid)
-                guard let idx = notifications.value.firstIndex(where: {$0.id == notification.id}) else {
+                guard let idx = _notifications.value.firstIndex(where: {$0.id == notification.id}) else {
                     return
                 }
-                self.notifications.value[idx].specificUserInfo.userIsFollowed = isFollowed
+                self._notifications.value[idx].specificUserInfo.userIsFollowed = isFollowed
             }
         }
     }
