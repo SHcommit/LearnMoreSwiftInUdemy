@@ -28,7 +28,7 @@ class NotificationController: UITableViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        delegateSubscription.map{$0.cancel()}
+        _=delegateSubscription.map{$0.cancel()}
         setupBindings()
     }
 }
@@ -36,7 +36,7 @@ class NotificationController: UITableViewController {
 extension NotificationController {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        delegateSubscription.map{$0.cancel()}
+        _=delegateSubscription.map{$0.cancel()}
         return vm.count
     }
     

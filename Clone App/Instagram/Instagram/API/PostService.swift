@@ -10,6 +10,16 @@ import Firebase
 
 struct PostService: PostServiceType {
     
+    static func fetchPost(withPostId id: String) async throws -> PostModel {
+        guard let snapshot = try? await COLLECTION_POSTS.document(id).getDocument() else {
+            throw FetchPostError.failToRequestPostData
+        }
+        guard let post = try? snapshot.data(as: PostModel.self) else {
+            throw FetchPostError.invalidUserPostData
+        }
+        return post
+    }
+    
     static func uploadPost(caption: String, image: UIImage, ownerProfileUrl ownerUrl: String, ownerUsername ownerName: String) async throws {
         let ud = UserDefaults.standard
         ud.synchronize()
