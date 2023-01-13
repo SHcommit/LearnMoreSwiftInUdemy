@@ -190,7 +190,8 @@ extension FeedViewModel: FeedCellViewModelSubscriptionChains {
                         let uploadModel = UploadNotificationModel(
                             uid: user.uid,
                             profileImageUrl: user.profileURL,
-                            username: user.username)
+                            username: user.username,
+                            userIsFollowed: user.isFollowed)
                         await PostService.likePost(post: post)
                         NotificationService.uploadNotification(toUid: post.ownerUid, to: uploadModel,
                                                                type: .like,

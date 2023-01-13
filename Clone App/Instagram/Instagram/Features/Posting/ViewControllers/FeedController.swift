@@ -187,4 +187,9 @@ extension FeedController {
         
     }
     
+    func setupPrevBarButton() {
+        let back = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(cancel))
+        navigationItem.leftBarButtonItem = back
+    }
+    
 }

@@ -10,18 +10,17 @@ import Combine
 
 class NotificationCell: UITableViewCell {
     
+    //MARK: - Constants
+    typealias InitElement = (profile: UIImageView, post: UIImageView)
+    
     //MARK: - Properties
     private lazy var profileImageView = UIImageView()
     private let infoLabel = UILabel()
     private lazy var postImageView = UIImageView()
     private lazy var followButton = UIButton()
-    
-    //MARK: - Combine properties
     @Published var vm: NotificationCellViewModelType?
-    var initalization = PassthroughSubject<(profile: UIImageView, post: UIImageView),Never>()
-    var subscriptions = Set<AnyCancellable>()
-    
-    //MARK: - Delegate
+    var initalization = PassthroughSubject<InitElement,Never>()
+    private var subscriptions = Set<AnyCancellable>()
     var delegate = NotificationCellDelegate()
     
     //MARK: - Lifecycles
@@ -40,7 +39,7 @@ class NotificationCell: UITableViewCell {
             .receive(on: DispatchQueue.main)
             .sink { [unowned self] _ in
                 initalization.send((profileImageView, postImageView))
-                lazyConfigure()
+                
             }.store(in: &subscriptions)
     }
 }
@@ -64,6 +63,7 @@ extension NotificationCell {
         case .configure(let attrText):
             //image는 vm안에서 비동기로함.
             infoLabel.attributedText = attrText
+            lazyConfigure()
             break
         }
     }
@@ -93,7 +93,10 @@ extension NotificationCell {
         } else {
             bringSubviewToFront(postImageView)
         }
-        
+    }
+    
+    func updateFollowButtonUI() {
+        guard let vm = vm else { return }
         followButton.setTitle(vm.followButtonText, for: .normal)
         followButton.backgroundColor = vm.followButtonBackgroundColor
         followButton.setTitleColor(vm.followButtonTextColor, for: .normal)
@@ -108,13 +111,19 @@ extension NotificationCell {
     }
     
     @objc func didTapFollowButton() {
-        guard let id = vm?.notification.id else { return }
-        delegate.send(with: (self,id, .follow))
+        guard let vm = vm else { return }
+        if vm.userIsFollowed {
+            delegate.send(with: (self,vm.notification.specificUserInfo.uid,.wantsToUnfollow))
+        } else {
+            delegate.send(with: (self,vm.notification.specificUserInfo.uid, .wantsToFollow))
+        }
+        print(vm.userIsFollowed)
+        updateFollowButtonUI()
     }
     
     @objc func didTapPostArea() {
-        //guard let postId = vm?.notification.postId else { return }
-        delegate.send(with: (self, "임시", .comment))
+        guard let postId = vm?.notification.postId else { return }
+        delegate.send(with: (self, postId, .wantsToViewPost))
     }
     
 }

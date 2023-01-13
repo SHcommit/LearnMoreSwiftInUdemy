@@ -29,6 +29,7 @@ class NotificationController: UITableViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         _=delegateSubscription.map{$0.cancel()}
+        _=subscriptions.map{$0.cancel()}
         setupBindings()
     }
 }

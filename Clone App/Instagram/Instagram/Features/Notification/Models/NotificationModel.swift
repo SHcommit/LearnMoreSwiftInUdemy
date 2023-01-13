@@ -32,6 +32,5 @@ struct NotificationModel: Codable {
     let timestamp: Timestamp
     let type: NotificationType
     let id: String
-    let specificUserInfo: UploadNotificationModel
-    var userIsFollowed = false
+    var specificUserInfo: UploadNotificationModel
 }

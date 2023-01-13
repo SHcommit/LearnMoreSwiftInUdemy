@@ -33,10 +33,7 @@ struct NotificationService {
         var data = NotificationModel(timestamp: Timestamp(date: Date()),
                                      type: NotificationType(rawValue: type.rawValue) ?? .like,
                                      id: doc.documentID,
-                                     specificUserInfo:
-                                        UploadNotificationModel(uid: uploadUserInfo.uid,
-                                                                profileImageUrl: uploadUserInfo.profileImageUrl,
-                                                                username: uploadUserInfo.username))
+                                     specificUserInfo: uploadUserInfo)
         
         if let post = post {
             data.postId = post.postId

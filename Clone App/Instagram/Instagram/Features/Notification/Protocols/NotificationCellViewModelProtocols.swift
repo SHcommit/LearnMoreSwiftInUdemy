@@ -9,8 +9,15 @@ import UIKit
 import Combine
 
 //MARK: - NotificationCell delegate
+
+enum NotificationCellDelegateType {
+    case wantsToViewPost
+    case wantsToUnfollow
+    case wantsToFollow
+}
+
 struct NotificationCellDelegate {
-    typealias Element = (cell: NotificationCell, uid: String, type: NotificationType)
+    typealias Element = (cell: NotificationCell, uid: String, type: NotificationCellDelegateType)
     
     private var pub = PassthroughSubject<Element,Never>()
     
@@ -52,13 +59,15 @@ protocol NotificationCellVMComputedProperties {
     
     var shouldHidePostImage: Bool { get }
     
-    var notification: NotificationModel { get }
+    var notification: NotificationModel { get set }
     
     var followButtonText: String { get }
     
     var followButtonBackgroundColor: UIColor { get }
     
     var followButtonTextColor: UIColor { get }
+    
+    var userIsFollowed: Bool { get set }
 }
 
 protocol NotificationCellViewModelType: NotificationCellVMComputedProperties {

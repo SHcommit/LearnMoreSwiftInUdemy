@@ -11,7 +11,7 @@ import Combine
 class NotificationCellViewModel {
     
     //MARK: - Properties
-    private let _notification: NotificationModel
+    private var _notification: NotificationModel
     var subscriptions = Set<AnyCancellable>()
     //MARK: - Lifecycles
     init(notification: NotificationModel) {
@@ -22,6 +22,15 @@ class NotificationCellViewModel {
 
 //MARK: - NotificationCellVMComputedProperties
 extension NotificationCellViewModel: NotificationCellVMComputedProperties {
+    
+    var userIsFollowed: Bool {
+        get {
+            _notification.specificUserInfo.userIsFollowed
+        }
+        set {
+            _notification.specificUserInfo.userIsFollowed = newValue
+        }
+    }
     
     var postImageUrl: URL? {
         get {
@@ -64,23 +73,26 @@ extension NotificationCellViewModel: NotificationCellVMComputedProperties {
         get {
             return _notification
         }
+        set {
+            _notification = newValue
+        }
     }
     
     var followButtonText: String {
         get {
-            notification.userIsFollowed ? "Following" : "Follow"
+            notification.specificUserInfo.userIsFollowed ? "Following" : "Follow"
         }
     }
     
     var followButtonBackgroundColor: UIColor {
         get {
-            return notification.userIsFollowed ? .white : .systemBlue
+            return notification.specificUserInfo.userIsFollowed ? .white : .systemBlue
         }
     }
     
     var followButtonTextColor: UIColor {
         get {
-            return notification.userIsFollowed ? .black : .white
+            return notification.specificUserInfo.userIsFollowed ? .black : .white
         }
     }
        
@@ -104,7 +116,6 @@ extension NotificationCellViewModel {
                 _=[(ivs.profile, profileImageUrl!),
                    (ivs.post, postImageUrl)]
                     .map{ updateImageView($0.0, withUrl: $0.1)}
-                
                 return .configure(self.notificationMessage)
             }
             .receive(on: DispatchQueue.main)

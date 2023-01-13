@@ -5,7 +5,7 @@
 //  Created by 양승현 on 2023/01/11.
 //
 
-import Foundation
+import UIKit
 
 //MARK: - Helpers
 extension NotificationController {
@@ -50,16 +50,49 @@ extension NotificationController {
         cell.delegate.receive()
             .sink { _ in
                 print("complete")
-            } receiveValue:  {
-                switch $0.type {
-                case .follow:
-                    print("DEBUG: Follow hi")
+            } receiveValue:  { element in
+                switch element.type {
+                case .wantsToUnfollow:
+                    Task(priority: .high) {
+                        do{
+                            try await UserService.unfollow(someone: element.uid)
+                            DispatchQueue.main.async {
+                                element.cell.vm?.userIsFollowed = false
+                                element.cell.updateFollowButtonUI()
+                            }
+                        } catch {
+                            print("DEBUG: \(error.localizedDescription)")
+                        }
+                    }
                     break
-                case .comment:
-                    print("DEBUG: Comment hi")
+                case .wantsToFollow:
+                    Task(priority: .high) {
+                        do {
+                            try await UserService.follow(someone: element.uid)
+                            DispatchQueue.main.async {
+                                element.cell.vm?.userIsFollowed = true
+                                element.cell.updateFollowButtonUI()
+                            }
+                        }catch {
+                            print("DEBUG: \(error.localizedDescription)")
+                        }
+                    }
                     break
-                case .like:
-                    print("DEBUG: Like hi")
+                case .wantsToViewPost:
+                    Task(priority: .high) {
+                        do {
+                            let post = try await PostService.fetchPost(withPostId: element.uid)
+                            DispatchQueue.main.async {
+                                let controller = FeedController(collectionViewLayout: UICollectionViewFlowLayout())
+                                controller.post = post
+                                controller.post?.postId = element.uid
+                                controller.setupPrevBarButton()
+                                self.navigationController?.pushViewController(controller, animated: true)
+                            }
+                        } catch {
+                            print("DEBUG: \(error.localizedDescription)")
+                        }
+                    }
                     break
                 }
             }.store(in: &delegateSubscription)

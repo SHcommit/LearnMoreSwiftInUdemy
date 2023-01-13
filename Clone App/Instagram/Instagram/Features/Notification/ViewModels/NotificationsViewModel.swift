@@ -75,6 +75,7 @@ extension NotificationsViewModel {
             .map { (cell, index) -> NotificationsControllerState in
                 cell.vm = NotificationCellViewModel(notification: notifications.value[index])
                 cell.setupBindings()
+                cell.didTapFollowButton()
                 return .none
             }
             .receive(on: DispatchQueue.main)
@@ -108,11 +109,11 @@ extension NotificationsViewModel {
         notifications.value.forEach{ notification in
             Task(priority: .high) {
                 guard notification.type == .follow else { return }
-                let isFollowed = try await UserService.checkIfUserIsFollowd(uid: notification.id)
+                let isFollowed = try await UserService.checkIfUserIsFollowd(uid: notification.specificUserInfo.uid)
                 guard let idx = notifications.value.firstIndex(where: {$0.id == notification.id}) else {
                     return
                 }
-                self.notifications.value[idx].userIsFollowed = isFollowed
+                self.notifications.value[idx].specificUserInfo.userIsFollowed = isFollowed
             }
         }
     }

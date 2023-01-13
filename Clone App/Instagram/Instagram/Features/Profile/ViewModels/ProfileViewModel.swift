@@ -215,11 +215,14 @@ extension ProfileViewModel: ProfileHeaderDelegate {
                     self.user.isFollowed = true
                     self.userStats = userStats
                 }
+                let uploadNoti = UploadNotificationModel(
+                    uid: currentUser.uid,
+                    profileImageUrl: currentUser.profileURL,
+                    username: currentUser.username,
+                    userIsFollowed: currentUser.isFollowed)
                 NotificationService.uploadNotification(
                     toUid: user.uid,
-                    to: UploadNotificationModel(uid: currentUser.uid,
-                                                profileImageUrl: currentUser.profileURL,
-                                                username: currentUser.username),
+                    to: uploadNoti,
                     type: .follow)
             }
             break
