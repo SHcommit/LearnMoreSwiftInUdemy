@@ -23,7 +23,7 @@ extension UIViewController {
     func startIndicator(indicator: UIActivityIndicatorView) {
         
         setupIndicatorConstraints(indicator: indicator)
-        
+        self.view.isUserInteractionEnabled = false
         DispatchQueue.main.async {
             self.view.bringSubviewToFront(indicator)
             indicator.isHidden = false
@@ -32,6 +32,7 @@ extension UIViewController {
     }
     
     func endIndicator(indicator: UIActivityIndicatorView) {
+        self.view.isUserInteractionEnabled = true
         DispatchQueue.main.async {
             indicator.isHidden = true
             indicator.stopAnimating()
@@ -40,10 +41,12 @@ extension UIViewController {
     
     func setupIndicatorConstraints(indicator: UIActivityIndicatorView) {
         view.addSubview(indicator)
-        indicator.hidesWhenStopped = true 
-        indicator.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([indicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-                                     indicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)])
+        
+        NSLayoutConstraint.activate([
+            indicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            indicator.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -110),
+            indicator.widthAnchor.constraint(equalToConstant: 88),
+            indicator.heightAnchor.constraint(equalToConstant: 88)])
     }
 }
 

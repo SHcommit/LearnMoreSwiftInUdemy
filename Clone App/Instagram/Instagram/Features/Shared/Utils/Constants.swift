@@ -9,7 +9,14 @@ import Firebase
 
 // Constant properties
 
-var indicator: UIActivityIndicatorView = UIActivityIndicatorView(style: .medium)
+var indicator: UIActivityIndicatorView = {
+    let indicate = UIActivityIndicatorView(style: .large)
+    indicate.translatesAutoresizingMaskIntoConstraints = false
+    indicate.backgroundColor = UIColor(red: 0.87, green: 0.90, blue: 0.91, alpha: 1.00)
+    indicate.hidesWhenStopped = true
+    indicate.layer.cornerRadius = 15
+    return indicate
+}()
 
 //MARK: - profile subview's ID
 let COLLECTIONHEADERREUSEABLEID = "UserProfileCollectionHeaderView"
