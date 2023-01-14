@@ -6,7 +6,55 @@
 //
 import UIKit
 
+//MARK: - Custom indicator
+fileprivate var _indicator = {
+    let _indicator = UIActivityIndicatorView(style: .large)
+    _indicator.translatesAutoresizingMaskIntoConstraints = false
+    _indicator.backgroundColor = UIColor(red: 0.87, green: 0.90, blue: 0.91, alpha: 1.00)
+    _indicator.hidesWhenStopped = true
+    _indicator.layer.cornerRadius = 15
+    return _indicator
+}()
+
 extension UIViewController {
+    fileprivate var indicator: UIActivityIndicatorView {
+        get {
+            return _indicator
+        }
+    }
+
+    func startIndicator() {
+        view.addSubview(indicator)
+        setupIndicatorConstraints()
+        self.view.isUserInteractionEnabled = false
+        DispatchQueue.main.async {
+            self.view.bringSubviewToFront(self.indicator)
+            self.indicator.isHidden = false
+            self.indicator.startAnimating()
+        }
+    }
+    
+    func endIndicator() {
+        self.view.isUserInteractionEnabled = true
+        DispatchQueue.main.async {
+            self.indicator.isHidden = true
+            self.indicator.stopAnimating()
+        }
+    }
+    
+    fileprivate func setupIndicatorConstraints() {
+        NSLayoutConstraint.activate([
+            indicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            indicator.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -110),
+            indicator.widthAnchor.constraint(equalToConstant: 88),
+            indicator.heightAnchor.constraint(equalToConstant: 88)])
+    }
+    
+}
+
+//MARK: - Custom gradient background in Authentication scnene
+extension UIViewController {
+    
     func setupViewGradientBackground() {
         let gradient = CAGradientLayer()
         gradient.frame = view.bounds
@@ -20,34 +68,6 @@ extension UIViewController {
         view.layer.addSublayer(gradient)
     }
     
-    func startIndicator(indicator: UIActivityIndicatorView) {
-        
-        setupIndicatorConstraints(indicator: indicator)
-        self.view.isUserInteractionEnabled = false
-        DispatchQueue.main.async {
-            self.view.bringSubviewToFront(indicator)
-            indicator.isHidden = false
-            indicator.startAnimating()
-        }
-    }
-    
-    func endIndicator(indicator: UIActivityIndicatorView) {
-        self.view.isUserInteractionEnabled = true
-        DispatchQueue.main.async {
-            indicator.isHidden = true
-            indicator.stopAnimating()
-        }
-    }
-    
-    func setupIndicatorConstraints(indicator: UIActivityIndicatorView) {
-        view.addSubview(indicator)
-        
-        NSLayoutConstraint.activate([
-            indicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            indicator.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -110),
-            indicator.widthAnchor.constraint(equalToConstant: 88),
-            indicator.heightAnchor.constraint(equalToConstant: 88)])
-    }
 }
 
 
@@ -87,6 +107,7 @@ class Dynamic<T> {
     
 }
 
+//MARK: - Network service extension
 protocol ServiceExtensionType {
     
     static func encodeToNSDictionary(info: Codable) -> [String:Any]
@@ -102,6 +123,7 @@ extension ServiceExtensionType {
     
 }
 
+//MARK: - Utils
 struct Utils {
     static var pList: UserDefaults {
         get {

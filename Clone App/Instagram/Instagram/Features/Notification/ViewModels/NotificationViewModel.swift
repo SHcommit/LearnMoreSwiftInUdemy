@@ -8,7 +8,7 @@
 import UIKit
 import Combine
 
-struct NotificationsViewModel {
+class NotificationsViewModel {
     //MARK: - Properties
     fileprivate var _notifications = CurrentValueSubject<[NotificationModel],Never>([NotificationModel]())
     
@@ -28,12 +28,13 @@ extension  NotificationsViewModel {
 //MARK: - NotificationViewModelType
 extension NotificationsViewModel: NotificationsViewModelType {
     
-    func transform(with input: NotificationsViewModelInput) -> NotificationsViewModelOutput {
+    func transform(with input: NotificationViewModelInput) -> NotificationViewModelOutput {
         let appear = appearChains(with: input)
         let noti = notificationsChains(with: input)
         let specificCellInit = specificCellInit(with: input)
+        let refresh = refreshChains(with: input)
         return Publishers
-            .Merge3(appear, noti, specificCellInit)
+            .Merge4(appear, noti, specificCellInit,refresh)
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
@@ -50,7 +51,12 @@ extension NotificationsViewModel: NotificationsVMComputedProperties {
     }
     
     var notifications: [NotificationModel] {
-        return _notifications.value
+        get {
+            return _notifications.value
+        }
+        set {
+            _notifications.value = newValue
+        }
     }
     
 }
@@ -58,34 +64,44 @@ extension NotificationsViewModel: NotificationsVMComputedProperties {
 //MARK: - NotificationViewModelType subscription chains
 extension NotificationsViewModel {
     
-    fileprivate func appearChains(with input: NotificationsViewModelInput) -> NotificationsViewModelOutput {
+    fileprivate func appearChains(with input: NotificationViewModelInput) -> NotificationViewModelOutput {
         return input
             .appear
             .subscribe(on: DispatchQueue.main)
-            .map{ _ -> NotificationsControllerState in
-            return .viewWillAppear
+            .map{ _ -> NotificationControllerState in
+            return .appear
             }.eraseToAnyPublisher()
     }
     
-    fileprivate func notificationsChains(with input: NotificationsViewModelInput) -> NotificationsViewModelOutput {
+    fileprivate func notificationsChains(with input: NotificationViewModelInput) -> NotificationViewModelOutput {
         return _notifications
             .subscribe(on: DispatchQueue.main)
-            .map { _ -> NotificationsControllerState in
+            .map { _ -> NotificationControllerState in
             return .updateTableView
         }.eraseToAnyPublisher()
     }
     
-    fileprivate func specificCellInit(with input: NotificationsViewModelInput) -> NotificationsViewModelOutput {
+    fileprivate func specificCellInit(with input: NotificationViewModelInput) -> NotificationViewModelOutput {
         return input
             .specificCellInit
             .subscribe(on: DispatchQueue.main)
-            .map { (cell, index) -> NotificationsControllerState in
+            .map { [unowned self] (cell, index) -> NotificationControllerState in
                 cell.vm = NotificationCellViewModel(notification: _notifications.value[index])
                 cell.setupBindings()
                 cell.didTapFollowButton()
                 return .none
-            }
-            .eraseToAnyPublisher()
+            }.eraseToAnyPublisher()
+    }
+    
+    fileprivate func refreshChains(with input: NotificationViewModelInput) -> NotificationViewModelOutput {
+        return input
+            .refresh
+            .subscribe(on: DispatchQueue.main)
+            .map { [unowned self] _ -> NotificationControllerState in
+                notifications.removeAll()
+                configure()
+                return .refresh
+            }.eraseToAnyPublisher()
     }
 }
 

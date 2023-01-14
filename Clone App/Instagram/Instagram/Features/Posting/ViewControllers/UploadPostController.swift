@@ -61,13 +61,14 @@ extension UploadPostController {
     }
     
     @objc func didTapShare() {
-        startIndicator(indicator: indicator)
+        startIndicator()
         Task() {
             do {
                 try await uploadPostFromDidTapShareEvent()
                 uploadPostCompletionHandler()
+                endIndicator()
             }catch {
-                endIndicator(indicator: indicator)
+                endIndicator()
                 uploadPostErrorHandling(error: error)
             }
         }
@@ -84,7 +85,7 @@ extension UploadPostController {
     
     func uploadPostCompletionHandler() {
         DispatchQueue.main.async {
-            self.endIndicator(indicator: self.indicator)
+            self.endIndicator()
             self.didFinishDelegate?.controllerDidFinishUploadingPost(self)
         }
     }

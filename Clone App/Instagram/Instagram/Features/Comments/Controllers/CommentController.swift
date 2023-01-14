@@ -169,9 +169,16 @@ extension CommentController {
 //MARK: - CommentInputAccessoryViewDelegate
 extension CommentController: CommentInputAccessoryViewDelegate {
     func inputView(_ inputView: CommentInputAccessoryView, wantsToUploadComment comment: String) {
-        indicator.startAnimating()
-        guard let vc = tabBarController as? MainHomeTabController else { return }
-        guard let user = vc.getUserVM?.userInfoModel() else { return }
+        startIndicator()
+        defer {
+            endIndicator()
+        }
+        guard let vc = tabBarController as? MainHomeTabController else {
+            return
+        }
+        guard let user = vc.getUserVM?.userInfoModel() else {
+            return
+        }
         guard let postId = viewModel.post.postId else { return }
         let input = UploadCommentInputModel(comment: comment,
                                             postID: postId,
@@ -180,6 +187,5 @@ extension CommentController: CommentInputAccessoryViewDelegate {
         let uploadModel = UploadNotificationModel(uid: user.uid, profileImageUrl: user.profileURL, username: user.username, userIsFollowed: user.isFollowed)
         NotificationService.uploadNotification(toUid: viewModel.post.ownerUid, to: uploadModel, type: .comment,post: viewModel.post)
         inputView.clearCommentTextView()
-        indicator.stopAnimating()
     }
 }

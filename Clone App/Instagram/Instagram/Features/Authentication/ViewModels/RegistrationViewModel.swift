@@ -34,9 +34,9 @@ extension RegistrationViewModel: RegistrationViewModelType {
         input.signUpTap
             .receive(on: RunLoop.main)
             .sink { [unowned self] navigationController in
-                navigationController?.startIndicator(indicator: indicator)
+                navigationController?.startIndicator()
                 registerUser()
-                navigationController?.endIndicator(indicator: indicator)
+                navigationController?.endIndicator()
                 navigationController?.popViewController(animated: true)
             }.store(in: &subscriptions)
 

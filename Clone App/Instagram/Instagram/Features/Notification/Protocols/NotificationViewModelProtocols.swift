@@ -8,26 +8,28 @@
 import UIKit
 import Combine
 
-struct NotificationsViewModelInput {
+struct NotificationViewModelInput {
     var appear: AnyPublisher<Void,Never>
     var specificCellInit: AnyPublisher<(cell: NotificationCell, index: Int),Never>
+    var refresh: AnyPublisher<Void,Never>
 }
 
-typealias NotificationsViewModelOutput = AnyPublisher<NotificationsControllerState,Never>
+typealias NotificationViewModelOutput = AnyPublisher<NotificationControllerState,Never>
 
-enum NotificationsControllerState {
+enum NotificationControllerState {
     case none
-    case viewWillAppear
+    case appear
     case updateTableView
+    case refresh
 }
 
 protocol NotificationsVMComputedProperties {
     var count: Int { get }
     
-    var notifications: [NotificationModel] { get }
+    var notifications: [NotificationModel] { get set }
 }
 
 protocol NotificationsViewModelType: NotificationsVMComputedProperties {
-    func transform(with input: NotificationsViewModelInput) -> NotificationsViewModelOutput
+    func transform(with input: NotificationViewModelInput) -> NotificationViewModelOutput
 }
 

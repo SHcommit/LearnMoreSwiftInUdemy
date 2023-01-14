@@ -73,7 +73,7 @@ extension LoginController {
 extension LoginController {
     
     @objc func didTapLoginButton(_ sender: Any) {
-        startIndicator(indicator: indicator)
+        startIndicator()
         login.send((presentingViewController, self))
     }
     
@@ -123,10 +123,10 @@ extension LoginController {
         case .none:
             break
         case .endIndicator:
-            endIndicator(indicator: indicator)
+            endIndicator()
             break
         case .checkIsValid(let isValid):
-            endIndicator(indicator: indicator)
+            endIndicator()
             loginButtonSwitchHandler(with: isValid)
             break
         }

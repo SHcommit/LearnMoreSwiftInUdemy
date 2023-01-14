@@ -14,8 +14,10 @@ class NotificationController: UITableViewController {
     fileprivate let NotificationCellReusableId = "NotificationCell"
     
     //MARK: - Properties
+    private let refresher = UIRefreshControl()
     fileprivate let appear = PassthroughSubject<Void,Never>()
     fileprivate var specificCellInit = PassthroughSubject<(cell: NotificationCell, index: Int),Never>()
+    fileprivate var refresh = PassthroughSubject<Void,Never>()
     fileprivate var vm: NotificationsViewModelType = NotificationsViewModel()
     fileprivate var subscriptions = Set<AnyCancellable>()
     fileprivate var delegateSubscription = Set<AnyCancellable>()
@@ -24,6 +26,7 @@ class NotificationController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureTableView()
+        configureRefresher()
         setupBindings()
     }
     
@@ -57,27 +60,39 @@ extension NotificationController {
 extension NotificationController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        startIndicator()
         let uid = vm.notifications[indexPath.row].specificUserInfo.uid
         Task(priority: .medium) {
             guard let user = try? await UserService
                 .fetchUserInfo(type: UserInfoModel.self, withUid: uid) else {
                 print("DEBUG: Failure get user info")
+                endIndicator()
                 return
             }
             let controller = ProfileController(viewModel: ProfileViewModel(user: user))
             DispatchQueue.main.async {
                 self.navigationController?.pushViewController(controller, animated: true)
+                self.endIndicator()
             }
         }
     }
     
 }
 
+//MARK: - Actions
+extension NotificationController {
+    @objc func handleRefresh() {
+        vm.notifications.removeAll()
+        refresh.send()
+    }
+}
+
 //MARK: - Helpers
 extension NotificationController {
     
     func setupBindings() {
-        let input = NotificationsViewModelInput(appear: appear.eraseToAnyPublisher(), specificCellInit: specificCellInit.eraseToAnyPublisher())
+        let input = NotificationViewModelInput(appear: appear.eraseToAnyPublisher(), specificCellInit: specificCellInit.eraseToAnyPublisher(),
+            refresh: refresh.eraseToAnyPublisher())
         
         let output = vm.transform(with: input)
         output.sink { completion in
@@ -91,18 +106,25 @@ extension NotificationController {
         }.store(in: &subscriptions)
     }
     
-    fileprivate func render(_ state: NotificationsControllerState) {
+    fileprivate func render(_ state: NotificationControllerState) {
         switch state {
         case .none:
             break
         case .updateTableView:
             tableView.reloadData()
             break
-        case .viewWillAppear:
-            _=delegateSubscription.map{$0.cancel()}
-            _=subscriptions.map{$0.cancel()}
-            setupBindings()
+        case .appear:
+            setupDefaultNotificationControllerBindings()
+        case .refresh :
+            setupDefaultNotificationControllerBindings()
+            refresher.endRefreshing()
         }
+    }
+    
+    func setupDefaultNotificationControllerBindings() {
+        _=delegateSubscription.map{$0.cancel()}
+        _=subscriptions.map{$0.cancel()}
+        setupBindings()
     }
     
 }
@@ -130,35 +152,42 @@ extension NotificationController {
     }
     
     private func wantsToUnfollow(with element: NotificationCellDelegate.Element) {
+        startIndicator()
         Task(priority: .high) {
             do{
                 try await UserService.unfollow(someone: element.uid)
                 DispatchQueue.main.async {
                     element.cell.vm?.userIsFollowed = false
                     element.cell.updateFollowButtonUI()
+                    self.endIndicator()
                 }
             } catch {
                 print("DEBUG: \(error.localizedDescription)")
+                endIndicator()
             }
         }
     }
     
     private func wantsToFollow(with element: NotificationCellDelegate.Element) {
+        startIndicator()
         Task(priority: .high) {
             do {
                 try await UserService.follow(someone: element.uid)
                 DispatchQueue.main.async {
                     element.cell.vm?.userIsFollowed = true
                     element.cell.updateFollowButtonUI()
+                    self.endIndicator()
                 }
             }catch {
                 print("DEBUG: \(error.localizedDescription)")
+                endIndicator()
             }
         }
     }
     
     private func wantsToViewPost(with element: NotificationCellDelegate.Element) {
         Task(priority: .high) {
+            startIndicator()
             do {
                 let post = try await PostService.fetchPost(withPostId: element.uid)
                 DispatchQueue.main.async {
@@ -166,10 +195,12 @@ extension NotificationController {
                     controller.post = post
                     controller.post?.postId = element.uid
                     controller.setupPrevBarButton()
+                    self.endIndicator()
                     self.navigationController?.pushViewController(controller, animated: true)
                 }
             } catch {
                 print("DEBUG: \(error.localizedDescription)")
+                endIndicator()
             }
         }
     }
@@ -184,5 +215,9 @@ extension NotificationController {
         tableView.register(NotificationCell.self, forCellReuseIdentifier: NotificationCellReusableId)
         tableView.separatorStyle = .none
     }
+    
+    fileprivate func configureRefresher() {
+        refresher.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
+        tableView.refreshControl = refresher
+    }
 }
-
