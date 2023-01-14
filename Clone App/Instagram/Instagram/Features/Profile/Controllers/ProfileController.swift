@@ -59,7 +59,6 @@ extension ProfileController {
 
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         guard let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: COLLECTIONHEADERREUSEABLEID, for: indexPath) as? ProfileHeader else { fatalError() }
-        
         headerConfigure.send(headerView)
         return headerView
     }
@@ -112,7 +111,7 @@ extension ProfileController {
                                           didTapCell: didTapCell.eraseToAnyPublisher())
         let output = viewModel.transform(input: input)
         output
-            .receive(on: RunLoop.main)
+            .receive(on: DispatchQueue.main)
             .sink { result in
                 switch result {
                 case .finished:
@@ -136,6 +135,13 @@ extension ProfileController {
         case .showSpecificUser(feed: let feed):
             feed.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: feed, action: #selector(feed.cancel))
             navigationController?.pushViewController(feed, animated: true)
+            break
+        case .startIndicator:
+            startIndicator()
+            break
+        case .endIndicator:
+            endIndicator()
+            break
         }
     }
     

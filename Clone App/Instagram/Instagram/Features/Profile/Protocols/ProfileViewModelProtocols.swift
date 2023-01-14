@@ -83,6 +83,8 @@ enum ProfileControllerState {
     
     case reloadData,
          showSpecificUser(feed: FeedController),
+         startIndicator,
+         endIndicator,
          none
 }
 

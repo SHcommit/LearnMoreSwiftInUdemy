@@ -7,6 +7,12 @@
 import UIKit
 
 //MARK: - Custom indicator
+
+enum IndicatorState {
+    case start
+    case end
+}
+
 fileprivate var _indicator = {
     let _indicator = UIActivityIndicatorView(style: .large)
     _indicator.translatesAutoresizingMaskIntoConstraints = false
@@ -45,7 +51,7 @@ extension UIViewController {
     fileprivate func setupIndicatorConstraints() {
         NSLayoutConstraint.activate([
             indicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            indicator.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -110),
+            indicator.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -40),
             indicator.widthAnchor.constraint(equalToConstant: 88),
             indicator.heightAnchor.constraint(equalToConstant: 88)])
     }
