@@ -41,13 +41,13 @@ extension NotificationCellViewModel: NotificationCellVMComputedProperties {
     
     var profileImageUrl: URL? {
         get {
-            URL(string: _notification.specificUserInfo.profileImageUrl)
+            return URL(string: _notification.specificUserInfo.profileImageUrl)
         }
     }
     
     var specificUsernameToNotify: String {
         get {
-            _notification.specificUserInfo.username
+            return _notification.specificUserInfo.username
         }
     }
     
@@ -115,7 +115,7 @@ extension NotificationCellViewModel: NotificationCellViewModelType {
 //MARK: NotificationCellViewModelType subscription chains
 extension NotificationCellViewModel {
     
-    func initializationChains(with input: NotificationCellViewModelInput) -> NotificationCellViewModelOutput {
+    fileprivate func initializationChains(with input: NotificationCellViewModelInput) -> NotificationCellViewModelOutput {
         return input.initialization
             .first()
             .map {[unowned self] ivs -> NotificationCellState in
@@ -130,7 +130,7 @@ extension NotificationCellViewModel {
             .eraseToAnyPublisher()
     }
     
-    func isUpdatedFollowChains() -> NotificationCellViewModelOutput {
+    fileprivate func isUpdatedFollowChains() -> NotificationCellViewModelOutput {
         return isUpdatedFollow
             .map{ _ -> NotificationCellState in
                 return .updatedFollow
@@ -182,10 +182,12 @@ extension NotificationCellViewModel {
         Task(priority: .high) {
             do {
                 let isFollowed = try await UserService.checkIfUserIsFollowd(uid: _notification.specificUserInfo.uid)
-                _notification
-                    .specificUserInfo
-                    .userIsFollowed = isFollowed
-                isUpdatedFollow.send()
+                DispatchQueue.main.async {
+                    self._notification
+                        .specificUserInfo
+                        .userIsFollowed = isFollowed
+                    self.isUpdatedFollow.send()
+                }
             } catch {
                 print("DEBUG: \(error)")
             }

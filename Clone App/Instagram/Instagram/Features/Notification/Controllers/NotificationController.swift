@@ -16,9 +16,9 @@ class NotificationController: UITableViewController {
     //MARK: - Properties
     fileprivate let appear = PassthroughSubject<Void,Never>()
     fileprivate var specificCellInit = PassthroughSubject<(cell: NotificationCell, index: Int),Never>()
-    var vm: NotificationsViewModelType = NotificationsViewModel()
+    fileprivate var vm: NotificationsViewModelType = NotificationsViewModel()
     fileprivate var subscriptions = Set<AnyCancellable>()
-    var delegateSubscription = Set<AnyCancellable>()
+    fileprivate var delegateSubscription = Set<AnyCancellable>()
     
     //MARK: - Lifecycles
     override func viewDidLoad() {
@@ -91,7 +91,7 @@ extension NotificationController {
         }.store(in: &subscriptions)
     }
     
-    private func render(_ state: NotificationsControllerState) {
+    fileprivate func render(_ state: NotificationsControllerState) {
         switch state {
         case .none:
             break
@@ -109,62 +109,75 @@ extension NotificationController {
 
 //MARK: - Notification cell's delegate
 extension NotificationController {
+    
     func setupNotificationCellDelegate(_ cell: NotificationCell) {
         cell.delegate.receive()
-            .sink { _ in
-                print("complete")
-            } receiveValue:  { element in
+            .sink {
+                print("DEBUG: \($0)")
+            } receiveValue:  { [unowned self] element in
                 switch element.type {
                 case .wantsToUnfollow:
-                    Task(priority: .high) {
-                        do{
-                            try await UserService.unfollow(someone: element.uid)
-                            DispatchQueue.main.async {
-                                element.cell.vm?.userIsFollowed = false
-                                element.cell.updateFollowButtonUI()
-                            }
-                        } catch {
-                            print("DEBUG: \(error.localizedDescription)")
-                        }
-                    }
+                    wantsToUnfollow(with: element)
                     break
                 case .wantsToFollow:
-                    Task(priority: .high) {
-                        do {
-                            try await UserService.follow(someone: element.uid)
-                            DispatchQueue.main.async {
-                                element.cell.vm?.userIsFollowed = true
-                                element.cell.updateFollowButtonUI()
-                            }
-                        }catch {
-                            print("DEBUG: \(error.localizedDescription)")
-                        }
-                    }
+                    wantsToFollow(with: element)
                     break
                 case .wantsToViewPost:
-                    Task(priority: .high) {
-                        do {
-                            let post = try await PostService.fetchPost(withPostId: element.uid)
-                            DispatchQueue.main.async {
-                                let controller = FeedController(collectionViewLayout: UICollectionViewFlowLayout())
-                                controller.post = post
-                                controller.post?.postId = element.uid
-                                controller.setupPrevBarButton()
-                                self.navigationController?.pushViewController(controller, animated: true)
-                            }
-                        } catch {
-                            print("DEBUG: \(error.localizedDescription)")
-                        }
-                    }
+                    wantsToViewPost(with: element)
                     break
                 }
             }.store(in: &delegateSubscription)
+    }
+    
+    private func wantsToUnfollow(with element: NotificationCellDelegate.Element) {
+        Task(priority: .high) {
+            do{
+                try await UserService.unfollow(someone: element.uid)
+                DispatchQueue.main.async {
+                    element.cell.vm?.userIsFollowed = false
+                    element.cell.updateFollowButtonUI()
+                }
+            } catch {
+                print("DEBUG: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    private func wantsToFollow(with element: NotificationCellDelegate.Element) {
+        Task(priority: .high) {
+            do {
+                try await UserService.follow(someone: element.uid)
+                DispatchQueue.main.async {
+                    element.cell.vm?.userIsFollowed = true
+                    element.cell.updateFollowButtonUI()
+                }
+            }catch {
+                print("DEBUG: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    private func wantsToViewPost(with element: NotificationCellDelegate.Element) {
+        Task(priority: .high) {
+            do {
+                let post = try await PostService.fetchPost(withPostId: element.uid)
+                DispatchQueue.main.async {
+                    let controller = FeedController(collectionViewLayout: UICollectionViewFlowLayout())
+                    controller.post = post
+                    controller.post?.postId = element.uid
+                    controller.setupPrevBarButton()
+                    self.navigationController?.pushViewController(controller, animated: true)
+                }
+            } catch {
+                print("DEBUG: \(error.localizedDescription)")
+            }
+        }
     }
 }
 
 //MARK: - Config
 extension NotificationController {
-    func configureTableView() {
+    fileprivate func configureTableView() {
         view.backgroundColor = .white
         navigationItem.title = "Notificaitons"
         

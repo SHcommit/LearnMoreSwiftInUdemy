@@ -39,7 +39,6 @@ class NotificationCell: UITableViewCell {
             .receive(on: DispatchQueue.main)
             .sink { [unowned self] _ in
                 initalization.send((profileImageView, postImageView))
-                
             }.store(in: &subscriptions)
         
     }
@@ -121,7 +120,6 @@ extension NotificationCell {
         } else {
             delegate.send(with: (self,vm.notification.specificUserInfo.uid, .wantsToFollow))
         }
-        updateFollowButtonUI()
     }
     
     @objc func didTapPostArea() {
