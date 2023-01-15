@@ -14,20 +14,19 @@ class NotificationCell: UITableViewCell {
     typealias InitElement = (profile: UIImageView, post: UIImageView)
     
     //MARK: - Properties
-    private var profileImageView = UIImageView()
-    private let infoLabel = UILabel()
-    private lazy var postImageView = UIImageView()
-    private lazy var followButton = UIButton()
+    fileprivate var profileImageView: UIImageView!
+    fileprivate var infoLabel: UILabel!
+    fileprivate var postImageView: UIImageView!
+    fileprivate var followButton: UIButton!
     @Published var vm: NotificationCellViewModelType?
-    var initalization = PassthroughSubject<InitElement,Never>()
-    private var subscriptions = Set<AnyCancellable>()
-    var delegate = NotificationCellDelegate()
+    internal var initalization = PassthroughSubject<InitElement,Never>()
+    fileprivate var subscriptions = Set<AnyCancellable>()
+    internal var delegate = NotificationCellDelegate()
     
     //MARK: - Lifecycles
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        addSubviews()
-        setupLayouts()
+        configureSubviews()
         configureUI()
     }
     required init?(coder: NSCoder) {
@@ -73,18 +72,6 @@ extension NotificationCell {
     }
     
     //MARK: - UI helpers
-    private func addSubviews() {
-        addSubview(profileImageView)
-        _=[infoLabel, postImageView, followButton].map{contentView.addSubview($0)}
-    }
-    
-    private func setupLayouts() {
-        setupProfileImageViewLayout()
-        setupInfoLabelLayout()
-        setupPostImageView()
-        setupFollowButton()
-    }
-    
     private func configureUI() {
         selectionStyle = .none
     }
@@ -130,6 +117,35 @@ extension NotificationCell {
 }
 
 
+//MARK: - Configure subviews
+extension NotificationCell {
+    
+    private func configureSubviews() {
+        createSubviews()
+        addSubviews()
+        setupLayouts()
+    }
+    
+    private func createSubviews() {
+        profileImageView = UIImageView()
+        infoLabel = UILabel()
+        postImageView = UIImageView()
+        followButton = UIButton()
+    }
+    
+    private func addSubviews() {
+        addSubview(profileImageView)
+        _=[infoLabel, postImageView, followButton].map{contentView.addSubview($0)}
+    }
+    
+    private func setupLayouts() {
+        setupProfileImageViewLayout()
+        setupInfoLabelLayout()
+        setupPostImageView()
+        setupFollowButton()
+    }
+}
+
 //MARK: - Setup UI layout
 extension NotificationCell {
     
@@ -140,7 +156,6 @@ extension NotificationCell {
         profileImageView.backgroundColor = .lightGray
         profileImageView.image = UIImage()
         profileImageView.layer.cornerRadius = 48/2
-        
         setupProfileImageViewConstraints()
     }
 
@@ -148,7 +163,6 @@ extension NotificationCell {
         infoLabel.translatesAutoresizingMaskIntoConstraints = false
         infoLabel.font = UIFont.boldSystemFont(ofSize: 14)
         infoLabel.numberOfLines = 0
-        
         setupInfoLabelConstraints()
     }
     
@@ -160,7 +174,6 @@ extension NotificationCell {
         let tap = UITapGestureRecognizer(target: self, action: #selector(didTapPostArea))
         postImageView.isUserInteractionEnabled = true
         postImageView.addGestureRecognizer(tap)
-
         setupPostImageViewConstraints()
     }
     
