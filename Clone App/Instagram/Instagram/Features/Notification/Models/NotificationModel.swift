@@ -23,7 +23,6 @@ extension NotificationType: CustomStringConvertible {
         }
     }
     
-    
 }
 
 struct NotificationModel: Codable {

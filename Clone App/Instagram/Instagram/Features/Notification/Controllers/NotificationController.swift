@@ -12,9 +12,10 @@ class NotificationController: UITableViewController {
     
     //MARK: - Constants
     fileprivate let NotificationCellReusableId = "NotificationCell"
+    fileprivate let cellHeight = CGFloat(80)
     
     //MARK: - Properties
-    private let refresher = UIRefreshControl()
+    fileprivate let refresher = UIRefreshControl()
     fileprivate let appear = PassthroughSubject<Void,Never>()
     fileprivate var specificCellInit = PassthroughSubject<(cell: NotificationCell, index: Int),Never>()
     fileprivate var refresh = PassthroughSubject<Void,Never>()
@@ -51,7 +52,7 @@ extension NotificationController {
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 80
+        return cellHeight
     }
     
 }

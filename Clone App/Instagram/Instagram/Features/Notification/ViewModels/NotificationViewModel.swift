@@ -9,6 +9,7 @@ import UIKit
 import Combine
 
 class NotificationsViewModel {
+    
     //MARK: - Properties
     fileprivate var _notifications = CurrentValueSubject<[NotificationModel],Never>([NotificationModel]())
     
@@ -16,13 +17,16 @@ class NotificationsViewModel {
     init() {
         configure()
     }
+    
 }
 
 //MARK: - Helpers
 extension  NotificationsViewModel {
+    
     fileprivate func configure() {
         fetchNotifications()
     }
+    
 }
 
 //MARK: - NotificationViewModelType
@@ -45,9 +49,7 @@ extension NotificationsViewModel: NotificationsViewModelType {
 extension NotificationsViewModel: NotificationsVMComputedProperties {
     
     var count: Int {
-        get {
-            _notifications.value.count
-        }
+        _notifications.value.count
     }
     
     var notifications: [NotificationModel] {
@@ -64,7 +66,7 @@ extension NotificationsViewModel: NotificationsVMComputedProperties {
 //MARK: - NotificationViewModelType subscription chains
 extension NotificationsViewModel {
     
-    fileprivate func appearChains(with input: NotificationViewModelInput) -> NotificationViewModelOutput {
+    private func appearChains(with input: NotificationViewModelInput) -> NotificationViewModelOutput {
         return input
             .appear
             .subscribe(on: DispatchQueue.main)
@@ -73,7 +75,7 @@ extension NotificationsViewModel {
             }.eraseToAnyPublisher()
     }
     
-    fileprivate func notificationsChains(with input: NotificationViewModelInput) -> NotificationViewModelOutput {
+    private func notificationsChains(with input: NotificationViewModelInput) -> NotificationViewModelOutput {
         return _notifications
             .subscribe(on: DispatchQueue.main)
             .map { _ -> NotificationControllerState in
@@ -81,7 +83,7 @@ extension NotificationsViewModel {
         }.eraseToAnyPublisher()
     }
     
-    fileprivate func specificCellInit(with input: NotificationViewModelInput) -> NotificationViewModelOutput {
+    private func specificCellInit(with input: NotificationViewModelInput) -> NotificationViewModelOutput {
         return input
             .specificCellInit
             .subscribe(on: DispatchQueue.main)
@@ -93,7 +95,7 @@ extension NotificationsViewModel {
             }.eraseToAnyPublisher()
     }
     
-    fileprivate func refreshChains(with input: NotificationViewModelInput) -> NotificationViewModelOutput {
+    private func refreshChains(with input: NotificationViewModelInput) -> NotificationViewModelOutput {
         return input
             .refresh
             .subscribe(on: DispatchQueue.main)
@@ -108,7 +110,7 @@ extension NotificationsViewModel {
 //MARK: - APIs
 extension NotificationsViewModel {
     
-    fileprivate func fetchNotifications() {
+    private func fetchNotifications() {
         Task(priority: .high) {
             do {
                 let list = try await NotificationService.fetchNotifications()
@@ -127,7 +129,7 @@ extension NotificationsViewModel {
         }
     }
     
-    fileprivate func checkIfUserIsFollowed() throws {
+    private func checkIfUserIsFollowed() throws {
         _notifications.value.forEach{ notification in
             Task(priority: .high) {
                 guard notification.type == .follow else { return }
@@ -140,7 +142,7 @@ extension NotificationsViewModel {
         }
     }
     
-    fileprivate func fetchNotificationsErrorHandling(with error: Swift.Error) {
+    private func fetchNotificationsErrorHandling(with error: Swift.Error) {
         guard let error = error as? NotificationServiceError else { return }
         switch error {
         case .invalidNotificationList:
@@ -152,7 +154,7 @@ extension NotificationsViewModel {
         }
     }
     
-    fileprivate func fetchNotificationsFollowErrorHandling(with error: Error) {
+    private func fetchNotificationsFollowErrorHandling(with error: Error) {
         guard let error = error as? CheckUserFollowedError else {
             return
         }
