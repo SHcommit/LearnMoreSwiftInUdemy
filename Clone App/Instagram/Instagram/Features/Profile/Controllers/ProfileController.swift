@@ -15,10 +15,10 @@ class ProfileController: UICollectionViewController {
     var subscriptions = Set<AnyCancellable>()
     
     //MARK: - ProfileViewModel input properties
-    let appear = PassthroughSubject<Void,ProfileErrorType>()
-    let cellConfigure = PassthroughSubject<(ProfileCell,index: Int), ProfileErrorType>()
-    let headerConfigure = PassthroughSubject<ProfileHeader, ProfileErrorType>()
-    let didTapCell = PassthroughSubject<Int,ProfileErrorType>()
+    private let appear = PassthroughSubject<Void,ProfileErrorType>()
+    private let cellConfigure = PassthroughSubject<(ProfileCell,index: Int), ProfileErrorType>()
+    private let headerConfigure = PassthroughSubject<ProfileHeader, ProfileErrorType>()
+    private let didTapCell = PassthroughSubject<Int,ProfileErrorType>()
     
     //MARK: - Lifecycle
     init(viewModel: ProfileViewModelType) {

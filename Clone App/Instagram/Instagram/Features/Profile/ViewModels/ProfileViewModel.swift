@@ -54,8 +54,8 @@ extension ProfileViewModel: ProfileViewModelType {
         
 }
 
-//MARK: - ProfileViewModel Get/Set
-extension ProfileViewModel {
+//MARK: - ProfileViewModelComputedProperty
+extension ProfileViewModel: ProfileViewModelComputedProperty {
     
     var getUser: UserInfoModel {
         get {
@@ -67,9 +67,7 @@ extension ProfileViewModel {
     }
 
     var getPostsCount: Int {
-        get {
-            return posts.count
-        }
+        return posts.count
     }
     
     var tabBarController: UITabBarController? {

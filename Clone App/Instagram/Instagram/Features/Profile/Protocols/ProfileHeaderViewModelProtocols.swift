@@ -41,12 +41,10 @@ enum ProfileHeaderState {
          configureUserInfoUI,
          configureProfile,
          configureFollowUI
-         
 }
 
 enum ProfileHeaderErrorType: Error {
     case fail
-
     var errorDescription: String {
         switch self {
         case .fail:
@@ -56,7 +54,7 @@ enum ProfileHeaderErrorType: Error {
 
 }
 
-protocol ProfileHeaderViewModelType: ProfileHeaderViewModelGetSetType, ProfileHeaderViewModelHelperType {
+protocol ProfileHeaderViewModelType: ProfileHeaderViewModelComputedProperty, ProfileHeaderViewModelHelperType {
     
     func transform() -> ProfileHeaderViewModelOutput
     
@@ -74,7 +72,7 @@ protocol ProfileHeaderViewModelHelperType {
     
 }
 
-protocol ProfileHeaderViewModelGetSetType {
+protocol ProfileHeaderViewModelComputedProperty {
     
     var user: UserInfoModel { get set }
     
