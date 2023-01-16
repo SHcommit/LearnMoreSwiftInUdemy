@@ -37,7 +37,7 @@ protocol SetupSubviewsConstraints: UIView {
     
 }
 
-struct ConfigureUI {
+struct UIConfig {
     
     typealias Element = NSLayoutConstraint
     
@@ -46,11 +46,18 @@ struct ConfigureUI {
         apply(view)
     }
     
-    /// Subview's constraints setup.
-    static func setupConstraints<T>(with view: T, apply: (T)->[Element]) where T: UIView {
+    /// Subview's constraints setup where generic type is UIView
+    static func setupConstraints<T>(with view: T, apply: (T)->[Element]) where T: UIView  {
         let constraints = apply(view)
         Element.activate(constraints)
     }
+    
+    /// Subview's constraints setup where generic type is UITextView
+    static func setupConstraints<T>(with view: T, apply: (T)->[Element]) where T: UITextView {
+        let constraints = apply(view)
+        Element.activate(constraints)
+    }
+    
 }
 
 extension UIView {

@@ -14,16 +14,13 @@ class CommentController: UICollectionViewController {
     private let reuseIdentifier = "CommentCellID"
     
     //MARK: - Properties
-    private lazy var commentInputView = initCommentInputView()
-    
+    private var commentInputView: CommentInputAccessoryView!
     private var viewModel: CommentViewModelType
-    
-    let appear = PassthroughSubject<Void,Never>()
-    let reloadData = PassthroughSubject<Void,Never>()
-    let cellForItem = PassthroughSubject<CommentCellInfo,Never>()
-    let didSelect = PassthroughSubject<CommentCellSelectInfo,Never>()
-    
-    var subscriptions = Set<AnyCancellable>()
+    private let appear = PassthroughSubject<Void,Never>()
+    private let reloadData = PassthroughSubject<Void,Never>()
+    private let cellForItem = PassthroughSubject<CommentCellInfo,Never>()
+    private let didSelect = PassthroughSubject<CommentCellSelectInfo,Never>()
+    private var subscriptions = Set<AnyCancellable>()
     
     //MARK: - Lifecycles
     init(viewModel: CommentViewModelType) {
@@ -34,11 +31,11 @@ class CommentController: UICollectionViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+    var count = 0
     override func viewDidLoad() {
         super.viewDidLoad()
         configureCollectionView()
-        configureUI()
+        CreateCommentInputView()
         setupBindings()
     }
     
@@ -51,7 +48,6 @@ class CommentController: UICollectionViewController {
     override func viewWillDisappear(_ aniamted: Bool) {
         super.viewWillDisappear(aniamted)
         self.tabBarController?.tabBar.isHidden = false
-        
     }
     
     override var inputAccessoryView: UIView? {
@@ -75,28 +71,13 @@ extension CommentController {
         collectionView.alwaysBounceVertical = true
         collectionView.keyboardDismissMode = .interactive
     }
-    
-    func configureUI() {
-        
 
-    }
-    
-    func addSubviews() {
-        view.addSubview(commentInputView)
-        
-    }
-    
-    func constraintsSubviews() {
-        
-        
-    }
-    
-    
     func setupBindings() {
-        let input = CommentViewModelInput(appear: appear.eraseToAnyPublisher(),
-                                          reloadData: reloadData.eraseToAnyPublisher(),
-                                          cellForItem: cellForItem.eraseToAnyPublisher(),
-                                          didSelected: didSelect.eraseToAnyPublisher())
+        let input = CommentViewModelInput(
+            appear: appear.eraseToAnyPublisher(),
+            reloadData: reloadData.eraseToAnyPublisher(),
+            cellForItem: cellForItem.eraseToAnyPublisher(),
+            didSelected: didSelect.eraseToAnyPublisher())
         let output = viewModel.transform(input: input)
         output.sink { self.render($0)}.store(in: &subscriptions)
     }
@@ -115,8 +96,7 @@ extension CommentController {
 //MARK: - UICollectionViewDataSource
 extension CommentController {
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return viewModel.comments.count
-        
+        return viewModel.count
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -147,23 +127,11 @@ extension CommentController {
 //MARK: - Initial subViews
 extension CommentController {
     
-    func initCommentInputView() -> CommentInputAccessoryView {
-        let iv = CommentInputAccessoryView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 50))
-        iv.delegate = self
-        return iv
+    func CreateCommentInputView() {
+        commentInputView = CommentInputAccessoryView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 50))
+        commentInputView.delegate = self
     }
     
-}
-
-//MARK: - Constraint subview's auto layout
-extension CommentController {
-    
-    func  commentInputViewConstraints() {
-        NSLayoutConstraint.activate([
-            commentInputView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            commentInputView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            commentInputView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)])
-    }
 }
 
 //MARK: - CommentInputAccessoryViewDelegate

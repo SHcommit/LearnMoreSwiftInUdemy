@@ -117,112 +117,119 @@ extension NotificationCell {
 }
 
 
-//MARK: - Configure subviews
-extension NotificationCell {
+//MARK: - ConfigureSubviewsLayoutCase
+extension NotificationCell: ConfigureSubviewsCase {
     
-    private func configureSubviews() {
+    func configureSubviews() {
         createSubviews()
         addSubviews()
         setupLayouts()
     }
     
-    private func createSubviews() {
+    func createSubviews() {
         profileImageView = UIImageView()
         infoLabel = UILabel()
         postImageView = UIImageView()
         followButton = UIButton()
     }
     
-    private func addSubviews() {
+    func addSubviews() {
         addSubview(profileImageView)
         _=[infoLabel, postImageView, followButton].map{contentView.addSubview($0)}
     }
     
-    private func setupLayouts() {
-        setupProfileImageViewLayout()
-        setupInfoLabelLayout()
-        setupPostImageView()
-        setupFollowButton()
+    func setupLayouts() {
+        setupSubviewsLayouts()
+        setupSubviewsConstratins()
     }
 }
 
 //MARK: - Setup UI layout
-extension NotificationCell {
+extension NotificationCell: SetupSubviewsLayouts {
     
-    private func setupProfileImageViewLayout() {
-        profileImageView.translatesAutoresizingMaskIntoConstraints = false
-        profileImageView.contentMode = .scaleAspectFill
-        profileImageView.clipsToBounds = true
-        profileImageView.backgroundColor = .lightGray
-        profileImageView.image = UIImage()
-        profileImageView.layer.cornerRadius = 48/2
-        setupProfileImageViewConstraints()
-    }
-
-    private func setupInfoLabelLayout() {
-        infoLabel.translatesAutoresizingMaskIntoConstraints = false
-        infoLabel.font = UIFont.boldSystemFont(ofSize: 14)
-        infoLabel.numberOfLines = 0
-        setupInfoLabelConstraints()
-    }
-    
-    private func setupPostImageView(){
-        postImageView.translatesAutoresizingMaskIntoConstraints = false
-        postImageView.contentMode = .scaleAspectFill
-        postImageView.clipsToBounds = true
-        postImageView.backgroundColor = .lightGray
-        let tap = UITapGestureRecognizer(target: self, action: #selector(didTapPostArea))
-        postImageView.isUserInteractionEnabled = true
-        postImageView.addGestureRecognizer(tap)
-        setupPostImageViewConstraints()
-    }
-    
-    private func setupFollowButton() {
-        followButton.translatesAutoresizingMaskIntoConstraints = false
-        followButton.setTitle("Loading", for: .normal)
-        followButton.layer.cornerRadius = 3
-        followButton.layer.borderColor = UIColor.lightGray.cgColor
-        followButton.layer.borderWidth = 0.5
-        followButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
-        followButton.setTitleColor(.black, for: .normal)
-        followButton.addTarget(self, action: #selector(didTapFollowButton), for: .touchUpInside)
-        setupFollowButtonConstraints()
+    func setupSubviewsLayouts() {
+        
+        /// Setup profileImageView layout
+        UIConfig.setupLayout(detail: profileImageView) {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.contentMode = .scaleAspectFill
+            $0.clipsToBounds = true
+            $0.backgroundColor = .lightGray
+            $0.image = UIImage()
+            $0.layer.cornerRadius = 48/2
+        }
+        
+        /// Setup infoLable layout
+        UIConfig.setupLayout(detail: infoLabel) {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.font = UIFont.boldSystemFont(ofSize: 14)
+            $0.numberOfLines = 0
+        }
+        
+        /// Setup postImageView layout
+        UIConfig.setupLayout(detail: postImageView) {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.contentMode = .scaleAspectFill
+            $0.clipsToBounds = true
+            $0.backgroundColor = .lightGray
+            let tap = UITapGestureRecognizer(target: self, action: #selector(self.didTapPostArea))
+            $0.isUserInteractionEnabled = true
+            $0.addGestureRecognizer(tap)
+        }
+        
+        /// Setup followButton layout
+        UIConfig.setupLayout(detail: followButton) {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.setTitle("Loading", for: .normal)
+            $0.layer.cornerRadius = 3
+            $0.layer.borderColor = UIColor.lightGray.cgColor
+            $0.layer.borderWidth = 0.5
+            $0.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
+            $0.setTitleColor(.black, for: .normal)
+            $0.addTarget(self, action: #selector(self.didTapFollowButton), for: .touchUpInside)
+        }
+        
     }
 }
 
 //MARK: - Setup UI constriants
-extension NotificationCell {
+extension NotificationCell: SetupSubviewsConstraints {
     
-    private func setupProfileImageViewConstraints() {
-        NSLayoutConstraint.activate([
-            profileImageView.widthAnchor.constraint(equalToConstant: 48),
-            profileImageView.heightAnchor.constraint(equalToConstant: 48),
-            profileImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            profileImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12)])
-    }
-    
-    private func setupPostImageViewConstraints() {
-        NSLayoutConstraint.activate([
-            postImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            postImageView.trailingAnchor.constraint(equalTo: trailingAnchor,constant: -12),
-            postImageView.widthAnchor.constraint(equalToConstant: 64),
-            postImageView.heightAnchor.constraint(equalToConstant: 64)])
-    }
-    
-    private func setupFollowButtonConstraints() {
-        NSLayoutConstraint.activate([
-            followButton.centerYAnchor.constraint(equalTo: centerYAnchor),
-            followButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12),
-            followButton.widthAnchor.constraint(equalToConstant: 88),
-            followButton.heightAnchor.constraint(equalToConstant: 32)])
-    }
-    
-    private func setupInfoLabelConstraints() {
-        NSLayoutConstraint.activate([
-            infoLabel.centerYAnchor.constraint(equalTo: profileImageView.centerYAnchor),
-            infoLabel.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 8),
-            infoLabel.trailingAnchor.constraint(equalTo: followButton.leadingAnchor, constant: -4)
-            ])
+    func setupSubviewsConstratins() {
+        
+        /// Setup profileImageView constraints
+        UIConfig.setupConstraints(with: profileImageView) {
+            return [$0.width.constraint(equalToConstant: 48),
+                    $0.height.constraint(equalToConstant: 48),
+                    $0.centerY.constraint(equalTo: centerY),
+                    $0.leading.constraint(equalTo: leading, constant: 12)]
+        }
+        
+        /// Setup profileImageView constraints
+        UIConfig.setupConstraints(with: postImageView) {
+            return [$0.centerY.constraint(equalTo: centerY),
+                    $0.trailing.constraint(equalTo: trailing,constant: -12),
+                    $0.width.constraint(equalToConstant: 64),
+                    $0.height.constraint(equalToConstant: 64)]
+        }
+        
+        /// Setup followButton constraints
+        UIConfig.setupConstraints(with: followButton) {
+            return [$0.centerY.constraint(equalTo: centerY),
+                    $0.trailing.constraint(equalTo: trailing, constant: -12),
+                    $0.width.constraint(equalToConstant: 88),
+                    $0.height.constraint(equalToConstant: 32)]
+        }
+        
+        /// Setup infoLabel constraints
+        UIConfig.setupConstraints(with: infoLabel) {
+            return [$0.centerY.constraint(equalTo: profileImageView.centerY),
+                    $0.leading.constraint(equalTo: profileImageView.trailing,
+                                          constant: 8),
+                    $0.trailing.constraint(equalTo: followButton.leading,
+                                           constant: -4)]
+        }
+        
     }
     
 }
