@@ -14,7 +14,7 @@ protocol InputTextCountDelegate {
 class InputTextView: UITextView {
     
     //MARK: - Properties
-    let placeholderLabel: UILabel = initPlaceholderLabel()
+    var placeholderLabel: UILabel!
     var textDelegate: InputTextCountDelegate?
     var placeholderText: String? {
         didSet {
@@ -26,13 +26,15 @@ class InputTextView: UITextView {
     var placeholderShouldCenter = true {
         didSet {
             if placeholderShouldCenter {
-                NSLayoutConstraint.activate([
-                    placeholderLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
-                    placeholderLabel.centerYAnchor.constraint(equalTo: centerYAnchor)])
+                UIConfig.setupConstraints(with: placeholderLabel) {
+                    [$0.leading.constraint(equalTo: leading,constant: 8),
+                     $0.centerY.constraint(equalTo: centerY)]
+                }
             }else {
-                NSLayoutConstraint.activate([
-                    placeholderLabel.topAnchor.constraint(equalTo: topAnchor, constant: 6),
-                    placeholderLabel.leadingAnchor.constraint(equalTo: leadingAnchor,constant: 8)])
+                UIConfig.setupConstraints(with: placeholderLabel) {
+                    [$0.top.constraint(equalTo: top, constant: 6),
+                     $0.leading.constraint(equalTo: leading,constant: 8)]
+                }
             }
         }
     }
@@ -40,7 +42,7 @@ class InputTextView: UITextView {
     //MARK: - Lifecycle
     override init(frame: CGRect, textContainer: NSTextContainer?) {
         super.init(frame: frame, textContainer: textContainer)
-        configureUI()
+        configureSubviews()
     }
     
     required init?(coder: NSCoder) {
@@ -63,43 +65,56 @@ extension InputTextView: UITextViewDelegate {
     
 }
 
-//MARK: - Setup subviews
-extension InputTextView {
-    
-    func configureUI() {
+//MARK: - ConfigureSubviewsCase
+extension InputTextView: ConfigureSubviewsCase {
+    func configureSubviews() {
         delegate = self
+        createSubviews()
         addSubviews()
-        setupSubviewConstraints()
+        setupLayouts()
+    }
+    
+    func createSubviews() {
+        placeholderLabel = UILabel()
     }
     
     func addSubviews() {
         addSubview(placeholderLabel)
     }
     
-    func setupSubviewConstraints() {
-        setupPlaceholderLabelConstraints()
-    }
-}
-
-//MARK: - init properties
-extension InputTextView {
-    
-    static func initPlaceholderLabel() -> UILabel {
-        let lb = UILabel()
-        lb.translatesAutoresizingMaskIntoConstraints = false
-        lb.textColor = .lightGray
-        return lb
+    func setupLayouts() {
+        setupSubviewsLayouts()
+        setupSubviewsConstraints()
     }
     
 }
 
-//MARK: - AutoLaoout Constraints
-extension InputTextView {
+//MARK: - SetupSubviewsLayouts
+extension InputTextView: SetupSubviewsLayouts {
     
-    func setupPlaceholderLabelConstraints() {
-        NSLayoutConstraint.activate([
-            placeholderLabel.topAnchor.constraint(equalTo: topAnchor, constant: INPUT_TEXT_VIEW_DEFAULT_MARGIN*2),
-            placeholderLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: INPUT_TEXT_VIEW_DEFAULT_MARGIN*2)])
+    func setupSubviewsLayouts() {
+        
+        ///Setup placeholderLabel layout
+        UIConfig.setupLayout(detail: placeholderLabel) {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.textColor = .lightGray
+        }
+    }
+    
+}
+
+//MARK: - SetupSubviewsConstraints
+extension InputTextView: SetupSubviewsConstraints {
+    
+    func setupSubviewsConstraints() {
+    
+        ///Setup placeholderLabel constraints
+        UIConfig.setupConstraints(with: placeholderLabel) {
+            [$0.top.constraint(equalTo: top,
+                               constant: INPUT_TEXT_VIEW_DEFAULT_MARGIN*2),
+             $0.leading.constraint(equalTo: leading,
+                                   constant: INPUT_TEXT_VIEW_DEFAULT_MARGIN*2)]
+        }
     }
     
 }

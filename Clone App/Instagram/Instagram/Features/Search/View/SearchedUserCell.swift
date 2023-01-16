@@ -78,7 +78,7 @@ extension SearchedUserCell: ConfigureSubviewsCase {
     
     func setupLayouts() {
         setupSubviewsLayouts()
-        setupSubviewsConstratins()
+        setupSubviewsConstraints()
     }
 
 }
@@ -130,7 +130,7 @@ extension SearchedUserCell: SetupSubviewsLayouts{
 //MARK: - SetupSubviewsConstraints
 extension SearchedUserCell: SetupSubviewsConstraints {
     
-    func setupSubviewsConstratins() {
+    func setupSubviewsConstraints() {
         setupProfileImageViewConstriants()
         setupNameStackViewConstraints()
     }

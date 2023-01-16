@@ -140,7 +140,7 @@ extension NotificationCell: ConfigureSubviewsCase {
     
     func setupLayouts() {
         setupSubviewsLayouts()
-        setupSubviewsConstratins()
+        setupSubviewsConstraints()
     }
 }
 
@@ -195,7 +195,7 @@ extension NotificationCell: SetupSubviewsLayouts {
 //MARK: - Setup UI constriants
 extension NotificationCell: SetupSubviewsConstraints {
     
-    func setupSubviewsConstratins() {
+    func setupSubviewsConstraints() {
         
         /// Setup profileImageView constraints
         UIConfig.setupConstraints(with: profileImageView) {

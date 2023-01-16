@@ -8,7 +8,7 @@
 import UIKit
 
 ///UIView type's default configure
-protocol ConfigureSubviewsCase: UIView {
+protocol ConfigureSubviewsCase {
     
     /// Combine setupview's all configuration
     func configureSubviews()
@@ -23,17 +23,17 @@ protocol ConfigureSubviewsCase: UIView {
     func setupLayouts()
 }
 
-protocol SetupSubviewsLayouts: UIView {
+protocol SetupSubviewsLayouts {
     
     ///Use ConfigureUI.setupLayout(detail:apply:)
     func setupSubviewsLayouts()
     
 }
 
-protocol SetupSubviewsConstraints: UIView {
+protocol SetupSubviewsConstraints {
     
     ///Use ConfigureUI.setupConstraints(detail:apply:)
-    func setupSubviewsConstratins()
+    func setupSubviewsConstraints()
     
 }
 
@@ -54,6 +54,11 @@ struct UIConfig {
     
     /// Subview's constraints setup where generic type is UITextView
     static func setupConstraints<T>(with view: T, apply: (T)->[Element]) where T: UITextView {
+        let constraints = apply(view)
+        Element.activate(constraints)
+    }
+    
+    static func setupConstraints<T>(with view: T, apply: (T)->[Element]) where T: UIImageView {
         let constraints = apply(view)
         Element.activate(constraints)
     }

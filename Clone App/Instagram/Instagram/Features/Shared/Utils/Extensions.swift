@@ -49,11 +49,13 @@ extension UIViewController {
     }
     
     fileprivate func setupIndicatorConstraints() {
-        NSLayoutConstraint.activate([
-            indicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            indicator.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -40),
-            indicator.widthAnchor.constraint(equalToConstant: 88),
-            indicator.heightAnchor.constraint(equalToConstant: 88)])
+        UIConfig.setupConstraints(with: indicator) {
+            [$0.centerX.constraint(equalTo: view.centerX),
+             $0.centerY.constraint(equalTo: view.centerY, constant: -40),
+             $0.width.constraint(equalToConstant: 88),
+             $0.height.constraint(equalToConstant: 88)]
+        }
+        
     }
     
 }

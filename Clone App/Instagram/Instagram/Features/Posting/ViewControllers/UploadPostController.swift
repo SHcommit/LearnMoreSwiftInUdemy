@@ -14,18 +14,20 @@ protocol UploadPostControllerDelegate: AnyObject {
 class UploadPostController: UIViewController {
     
     //MARK: - Properties
-    private let photoImageView: UIImageView = initPhotoImageView()
-    private lazy var contentsTextView: InputTextView = initContentsTextView()
-    private var charCountLabel:  UILabel = initCharCountLabel()
+    fileprivate var photoImageView: UIImageView! = UIImageView()
+    fileprivate var contentsTextView: InputTextView!
+    fileprivate var charCountLabel: UILabel!
     var selectedImage: UIImage? {
         didSet { photoImageView.image = selectedImage }
     }
     weak var didFinishDelegate: UploadPostControllerDelegate?
-    private var indicator: UIActivityIndicatorView = UIActivityIndicatorView(style: .medium)
     var currentUserInfo: UserInfoModel?
+    
     //MARK: - Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        configureSubviews()
         configureUI()
     }
     
@@ -41,9 +43,6 @@ extension UploadPostController {
                                                            target: self, action: #selector(didTapCancel))
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Share",
                                                             style: .done, target: self, action: #selector(didTapShare))
-        setupSubviews()
-        setupSubviewsConstraints()
-
     }
     
     func checkMaxLine(_ textView: UITextView, maxLength: Int) {
@@ -106,53 +105,95 @@ extension UploadPostController {
     }
 }
 
-//MARK: - Setup subviews
-extension UploadPostController {
+extension UploadPostController: ConfigureSubviewsCase {
     
-    func setupSubviews() {
+    func configureSubviews() {
+        createSubviews()
+        addSubviews()
+        setupLayouts()
+    }
+    
+    func createSubviews() {
+        contentsTextView = InputTextView()
+        charCountLabel = UILabel()
+    }
+    
+    func addSubviews() {
         view.addSubview(photoImageView)
         view.addSubview(contentsTextView)
         view.addSubview(charCountLabel)
     }
     
-    func setupSubviewsConstraints() {
-        setupPhotoImageViewConstraints()
-        setupContentsTextViewConstraints()
-        setupCharCountLabelConstraints()
+    func setupLayouts() {
+        setupSubviewsLayouts()
+        setupSubviewsConstraints()
     }
+    
+    
 }
 
-//MARK: - Init properties
-extension UploadPostController {
-    
-    static func initPhotoImageView() -> UIImageView {
-        let iv = UIImageView()
-        iv.translatesAutoresizingMaskIntoConstraints = false
-        iv.contentMode = .scaleAspectFill
-        iv.layer.cornerRadius = 10
-        iv.clipsToBounds = true
-        return iv
-    }
-    
-    func initContentsTextView() -> InputTextView {
-        let tv = InputTextView()
-        tv.translatesAutoresizingMaskIntoConstraints = false
-        tv.placeholderText = "Enter caption.."
-        tv.font = UIFont.systemFont(ofSize: 16)
-        tv.textDelegate = self
-        tv.placeholderShouldCenter = false
-        return tv
-    }
-    
-    static func initCharCountLabel() -> UILabel {
-        let lb = UILabel()
+extension UploadPostController: SetupSubviewsLayouts {
+    func setupSubviewsLayouts() {
         
-        lb.translatesAutoresizingMaskIntoConstraints = false
-        lb.textColor = .lightGray
-        lb.font = UIFont.systemFont(ofSize: 14)
-        lb.text = "0/100"
-        return lb
+        ///Setup photoImageView layout
+        UIConfig.setupLayout(detail: photoImageView) {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.contentMode = .scaleAspectFill
+            $0.layer.cornerRadius = 10
+            $0.clipsToBounds = true
+        }
+        
+        ///Setup contentsTextView layout
+        UIConfig.setupLayout(detail: contentsTextView) {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.placeholderText = "Enter caption.."
+            $0.font = UIFont.systemFont(ofSize: 16)
+            $0.textDelegate = self
+            $0.placeholderShouldCenter = false
+        }
+        
+        ///Setup charCount layout
+        UIConfig.setupLayout(detail: charCountLabel) {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.textColor = .lightGray
+            $0.font = UIFont.systemFont(ofSize: 14)
+            $0.text = "0/100"
+        }
     }
+    
+}
+
+extension UploadPostController: SetupSubviewsConstraints {
+    func setupSubviewsConstraints() {
+        
+        ///Setup photoImageView constraints
+        UIConfig.setupConstraints(with: photoImageView) {
+            return [$0.height.constraint(equalToConstant: UPLOAD_POST_PHOTO_IMAGE_VIEW_SIZE),
+                    $0.width.constraint(equalToConstant: UPLOAD_POST_PHOTO_IMAGE_VIEW_SIZE),
+                    $0.top.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+                    $0.centerX.constraint(equalTo: view.centerX)]
+        }
+        
+        ///Setup contentsTextView constraints
+        UIConfig.setupConstraints(with: contentsTextView) {
+            return [$0.top.constraint(equalTo: photoImageView.bottom,
+                                      constant: UPLOAD_POST_CONTENT_TOP_MARGIN),
+                    $0.leading.constraint(equalTo: view.leading,
+                                          constant: UPLOAD_POST_CONTENT_SIDE_MARGIN),
+                    $0.trailing.constraint(equalTo: view.trailing,
+                                           constant: -UPLOAD_POST_CONTENT_SIDE_MARGIN),
+                    $0.height.constraint(equalToConstant: UPLOAD_POST_CONTENT_VIEW_SIZE)]
+        }
+        
+        ///Setup charCountLabel constraints
+        UIConfig.setupConstraints(with: charCountLabel) {
+            return [$0.top.constraint(equalTo: contentsTextView.bottom,
+                                      constant: UPLOAD_POST_CONTENT_SIDE_MARGIN),
+                    $0.trailing.constraint(equalTo: view.trailing,
+                                           constant: -UPLOAD_POST_CONTENT_SIDE_MARGIN)]
+        }
+    }
+    
 }
 
 extension UploadPostController: InputTextCountDelegate {
@@ -162,31 +203,4 @@ extension UploadPostController: InputTextCountDelegate {
             self.charCountLabel.text = "\(cnt)/100"
         }
     }
-}
-
-//MARK: - AutoLayout subview's constraint
-extension UploadPostController {
-    
-    func setupPhotoImageViewConstraints() {
-        NSLayoutConstraint.activate([
-            photoImageView.heightAnchor.constraint(equalToConstant: UPLOAD_POST_PHOTO_IMAGE_VIEW_SIZE),
-            photoImageView.widthAnchor.constraint(equalToConstant: UPLOAD_POST_PHOTO_IMAGE_VIEW_SIZE),
-            photoImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            photoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor)])
-    }
-    
-    func setupContentsTextViewConstraints() {
-        NSLayoutConstraint.activate([
-            contentsTextView.topAnchor.constraint(equalTo: photoImageView.bottomAnchor, constant: UPLOAD_POST_CONTENT_TOP_MARGIN),
-            contentsTextView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: UPLOAD_POST_CONTENT_SIDE_MARGIN),
-            contentsTextView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -UPLOAD_POST_CONTENT_SIDE_MARGIN),
-            contentsTextView.heightAnchor.constraint(equalToConstant: UPLOAD_POST_CONTENT_VIEW_SIZE)])
-    }
-    
-    func setupCharCountLabelConstraints() {
-        NSLayoutConstraint.activate([
-            charCountLabel.topAnchor.constraint(equalTo: contentsTextView.bottomAnchor, constant: UPLOAD_POST_CONTENT_SIDE_MARGIN),
-            charCountLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -UPLOAD_POST_CONTENT_SIDE_MARGIN)])
-    }
-    
 }

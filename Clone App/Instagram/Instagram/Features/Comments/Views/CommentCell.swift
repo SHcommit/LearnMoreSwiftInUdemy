@@ -45,7 +45,7 @@ extension CommentCell: ConfigureSubviewsCase {
     
     func setupLayouts() {
         setupSubviewsLayouts()
-        setupSubviewsConstratins()
+        setupSubviewsConstraints()
     }
     
     
@@ -84,7 +84,7 @@ extension CommentCell: SetupSubviewsLayouts {
 //MARK: - SetupSubviewsComstraints
 extension CommentCell: SetupSubviewsConstraints {
     
-    func setupSubviewsConstratins() {
+    func setupSubviewsConstraints() {
         
         /// Setup profileImageView constraints
         UIConfig.setupConstraints(with: profileImageView) {

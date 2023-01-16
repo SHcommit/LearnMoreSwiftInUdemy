@@ -9,11 +9,11 @@ import UIKit
 
 protocol BindingTextField where Self: UITextField{
 
-//MARK: - Helpers
-
+    //MARK: - Helpers
     func bind(callback: @escaping (String)->Void)
     func addTargetTextField(textFieldDidChanged: Selector)
 
-//MARK: - Setup event handler
+    //MARK: - Setup event handler
     func textFieldDidChanged(_ textField: UITextField)
+    
 }

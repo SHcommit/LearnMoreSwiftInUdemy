@@ -92,7 +92,7 @@ extension CommentInputAccessoryView: ConfigureSubviewsCase{
     
     func setupLayouts() {
         setupSubviewsLayouts()
-        setupSubviewsConstratins()
+        setupSubviewsConstraints()
     }
     
     
@@ -128,7 +128,7 @@ extension CommentInputAccessoryView: SetupSubviewsLayouts {
 //MARK: - SetupSubviewsConstraints
 extension CommentInputAccessoryView: SetupSubviewsConstraints {
    
-    func setupSubviewsConstratins() {
+    func setupSubviewsConstraints() {
         
         ///Setup textView constraints
         UIConfig.setupConstraints(with: commentTextView) {
