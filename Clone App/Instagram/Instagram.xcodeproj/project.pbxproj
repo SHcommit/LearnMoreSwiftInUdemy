@@ -56,6 +56,7 @@
 		15ACA739290D7EDF0011E665 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 15ACA738290D7EDF0011E665 /* GoogleService-Info.plist */; };
 		15ACA73E290D80040011E665 /* UserInfoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15ACA73C290D80040011E665 /* UserInfoModel.swift */; };
 		15AD6424296DA6440008231B /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15AD6423296DA6440008231B /* NotificationService.swift */; };
+		15AE41C62974995E006E23BC /* UIView+ViewLayoutProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15AE41C52974995E006E23BC /* UIView+ViewLayoutProtocols.swift */; };
 		15B5F8C329558CDA00D95A46 /* CommentController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15B5F8C229558CDA00D95A46 /* CommentController.swift */; };
 		15B5F8C529558E0200D95A46 /* CommentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15B5F8C429558E0200D95A46 /* CommentViewModel.swift */; };
 		15B5F8C729558E2B00D95A46 /* CommentViewModelProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15B5F8C629558E2B00D95A46 /* CommentViewModelProtocols.swift */; };
@@ -129,6 +130,7 @@
 		15ACA738290D7EDF0011E665 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		15ACA73C290D80040011E665 /* UserInfoModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserInfoModel.swift; sourceTree = "<group>"; };
 		15AD6423296DA6440008231B /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		15AE41C52974995E006E23BC /* UIView+ViewLayoutProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+ViewLayoutProtocols.swift"; sourceTree = "<group>"; };
 		15B5F8C229558CDA00D95A46 /* CommentController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentController.swift; sourceTree = "<group>"; };
 		15B5F8C429558E0200D95A46 /* CommentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentViewModel.swift; sourceTree = "<group>"; };
 		15B5F8C629558E2B00D95A46 /* CommentViewModelProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentViewModelProtocols.swift; sourceTree = "<group>"; };
@@ -262,6 +264,7 @@
 		1552C58E296D94E4001D8E48 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				15AE41C42974992D006E23BC /* Protocols */,
 				1552C596296D966D001D8E48 /* Views+ */,
 				1552C594296D9629001D8E48 /* Models */,
 				1552C593296D961F001D8E48 /* ViewModels */,
@@ -633,6 +636,14 @@
 			path = ViewModels;
 			sourceTree = "<group>";
 		};
+		15AE41C42974992D006E23BC /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				15AE41C52974995E006E23BC /* UIView+ViewLayoutProtocols.swift */,
+			);
+			path = Protocols;
+			sourceTree = "<group>";
+		};
 		15C6F34D293F8E95006A3587 /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
@@ -792,6 +803,7 @@
 				15B5F8C529558E0200D95A46 /* CommentViewModel.swift in Sources */,
 				15ACA729290D795C0011E665 /* CustomTextField.swift in Sources */,
 				156B304D2941F1BE003BC4EE /* CombineUtils.swift in Sources */,
+				15AE41C62974995E006E23BC /* UIView+ViewLayoutProtocols.swift in Sources */,
 				15ACA72A290D795C0011E665 /* BindingTextField.swift in Sources */,
 				156E22EB290D6EBD0026B0C3 /* SceneDelegate.swift in Sources */,
 				15ACA71F290D793D0011E665 /* ImageService.swift in Sources */,
