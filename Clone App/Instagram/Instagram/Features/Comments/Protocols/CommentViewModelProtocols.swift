@@ -17,19 +17,23 @@ struct CommentViewModelInput {
     let reloadData: AnyPublisher<Void,Never>
     let cellForItem: AnyPublisher<CommentCellInfo,Never>
     let didSelected: AnyPublisher<CommentCellSelectInfo,Never>
+    
 }
 
 typealias CommentViewModelOutput = AnyPublisher<CommentControllerState,Never>
 
 enum CommentControllerState {
+    
     case none
     case updateUI
+    
 }
 
 protocol CommentViewModelComputedPropery {
     
     var post: PostModel { get set }
     var comments: [CommentModel] { get set }
+    var count: Int { get }
     
 }
 

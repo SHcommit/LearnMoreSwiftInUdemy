@@ -8,7 +8,7 @@
 import UIKit
 import Combine
 
-protocol SearchViewModelGetSetType {
+protocol SearchViewModelComputedPropertyCase {
     
     /// Is searchController activated?
     func isSearchMode(withSearch viewController: UISearchController) -> Bool
@@ -26,7 +26,7 @@ protocol SearchViewModelGetSetType {
     
 }
 
-protocol SearchViewModelType: SearchViewModelGetSetType {
+protocol SearchViewModelType: SearchViewModelComputedPropertyCase {
     //MARK: - Input/Output
     /// SearchController's input -> viewModel's output
     func transform(input: SearchViewModelInput) -> SearchViewModelOutput

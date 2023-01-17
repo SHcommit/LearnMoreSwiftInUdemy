@@ -8,14 +8,17 @@
 import UIKit
 import Combine
 
-protocol ProfileViewModelGetSetType {
+protocol ProfileViewModelComputedProperty {
     
     var getUser: UserInfoModel { get set }
     
     var getPostsCount: Int { get }
+    
+    var tabBarController: UITabBarController? { get set }
+    
 }
 
-protocol ProfileViewModelType: ProfileViewModelGetSetType {
+protocol ProfileViewModelType: ProfileViewModelComputedProperty {
     
     /**
      Summary : ProfileViewController, view의 이벤트 Input에 대한 로직 처리후 output로 반환
@@ -80,6 +83,8 @@ enum ProfileControllerState {
     
     case reloadData,
          showSpecificUser(feed: FeedController),
+         startIndicator,
+         endIndicator,
          none
 }
 

@@ -11,14 +11,14 @@ import Combine
 class ProfileController: UICollectionViewController {
     
     //MARK: - properties
-    let viewModel: ProfileViewModelType
+    var viewModel: ProfileViewModelType
     var subscriptions = Set<AnyCancellable>()
     
     //MARK: - ProfileViewModel input properties
-    let appear = PassthroughSubject<Void,ProfileErrorType>()
-    let cellConfigure = PassthroughSubject<(ProfileCell,index: Int), ProfileErrorType>()
-    let headerConfigure = PassthroughSubject<ProfileHeader, ProfileErrorType>()
-    let didTapCell = PassthroughSubject<Int,ProfileErrorType>()
+    private let appear = PassthroughSubject<Void,ProfileErrorType>()
+    private let cellConfigure = PassthroughSubject<(ProfileCell,index: Int), ProfileErrorType>()
+    private let headerConfigure = PassthroughSubject<ProfileHeader, ProfileErrorType>()
+    private let didTapCell = PassthroughSubject<Int,ProfileErrorType>()
     
     //MARK: - Lifecycle
     init(viewModel: ProfileViewModelType) {
@@ -33,6 +33,7 @@ class ProfileController: UICollectionViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.viewModel.tabBarController = self.tabBarController
         setupCollectionView()
         setupBindings()
     }
@@ -41,61 +42,6 @@ class ProfileController: UICollectionViewController {
         appear.send()
     }
 
-}
-
-//MARK: - Helpers
-extension ProfileController {
-    
-    func setupCollectionView() {
-        collectionView.backgroundColor = .white
-        collectionView.register(ProfileCell.self, forCellWithReuseIdentifier: CELLREUSEABLEID)
-        collectionView.register(ProfileHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: COLLECTIONHEADERREUSEABLEID)
-    }
-    
-    func setupBindings() {
-        let input = ProfileViewModelInput(appear: appear.eraseToAnyPublisher(),
-                                          cellConfigure: cellConfigure.eraseToAnyPublisher(),
-                                          headerConfigure: headerConfigure.eraseToAnyPublisher(),
-                                          didTapCell: didTapCell.eraseToAnyPublisher())
-        let output = viewModel.transform(input: input)
-        output
-            .receive(on: RunLoop.main)
-            .sink { result in
-                switch result {
-                case .finished:
-                    break
-                case .failure(let error):
-                    self.outputErrorHandling(with: error)
-                    break
-                }
-            } receiveValue: { state in
-                self.render(state)
-            }.store(in: &subscriptions)
-    }
-    
-    func render(_ state: ProfileControllerState) {
-        switch state {
-        case .none:
-            break
-        case .reloadData:
-            collectionView.reloadData()
-            break
-        case .showSpecificUser(feed: let feed):
-            feed.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: feed, action: #selector(feed.cancel))
-            navigationController?.pushViewController(feed, animated: true)
-        }
-    }
-    
-    func outputErrorHandling(with error: ProfileErrorType) {
-        switch error {
-        case .failed:
-            print(ProfileErrorType.failed.errorDiscription + " : \(error.localizedDescription)")
-        case .invalidUserProperties:
-            print(ProfileErrorType.invalidUserProperties.errorDiscription + " : \(error.localizedDescription)")
-        case .invalidInstance:
-            print(ProfileErrorType.invalidInstance.errorDiscription + " : \(error.localizedDescription)")
-        }
-    }
 }
 
 //MARK: - UICollectionViewDataSource
@@ -113,7 +59,6 @@ extension ProfileController {
 
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         guard let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: COLLECTIONHEADERREUSEABLEID, for: indexPath) as? ProfileHeader else { fatalError() }
-        
         headerConfigure.send(headerView)
         return headerView
     }
@@ -143,11 +88,71 @@ extension ProfileController: UICollectionViewDelegateFlowLayout{
     
 }
 
-
-
 //MARK: - UICollectionViewDelegate
 extension ProfileController {
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         didTapCell.send(indexPath.row)
+    }
+}
+
+//MARK: - Helpers
+extension ProfileController {
+    
+    func setupCollectionView() {
+        collectionView.backgroundColor = .white
+        collectionView.register(ProfileCell.self, forCellWithReuseIdentifier: CELLREUSEABLEID)
+        collectionView.register(ProfileHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: COLLECTIONHEADERREUSEABLEID)
+    }
+    
+    func setupBindings() {
+        let input = ProfileViewModelInput(appear: appear.eraseToAnyPublisher(),
+                                          cellConfigure: cellConfigure.eraseToAnyPublisher(),
+                                          headerConfigure: headerConfigure.eraseToAnyPublisher(),
+                                          didTapCell: didTapCell.eraseToAnyPublisher())
+        let output = viewModel.transform(input: input)
+        output
+            .receive(on: DispatchQueue.main)
+            .sink { result in
+                switch result {
+                case .finished:
+                    break
+                case .failure(let error):
+                    self.outputErrorHandling(with: error)
+                    break
+                }
+            } receiveValue: { state in
+                self.render(state)
+            }.store(in: &subscriptions)
+    }
+    
+    func render(_ state: ProfileControllerState) {
+        switch state {
+        case .none:
+            break
+        case .reloadData:
+            collectionView.reloadData()
+            break
+        case .showSpecificUser(feed: let feed):
+            feed.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: feed, action: #selector(feed.cancel))
+            navigationController?.pushViewController(feed, animated: true)
+            break
+        case .startIndicator:
+            startIndicator()
+            break
+        case .endIndicator:
+            endIndicator()
+            break
+        }
+    }
+    
+    func outputErrorHandling(with error: ProfileErrorType) {
+        switch error {
+        case .failed:
+            print(ProfileErrorType.failed.errorDiscription + " : \(error.localizedDescription)")
+        case .invalidUserProperties:
+            print(ProfileErrorType.invalidUserProperties.errorDiscription + " : \(error.localizedDescription)")
+        case .invalidInstance:
+            print(ProfileErrorType.invalidInstance.errorDiscription + " : \(error.localizedDescription)")
+        }
     }
 }

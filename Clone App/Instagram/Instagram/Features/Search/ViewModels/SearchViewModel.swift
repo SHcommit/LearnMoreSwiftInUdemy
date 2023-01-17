@@ -13,34 +13,17 @@ class SearchViewModel {
     //MARK: - Properties
     @Published var users: [UserInfoModel] = [UserInfoModel]()
     @Published var filteredUsers: [UserInfoModel] = [UserInfoModel]()
-    var subscriptions: Set<AnyCancellable> = Set<AnyCancellable>()
+    internal var subscriptions: Set<AnyCancellable> = Set<AnyCancellable>()
 
     init() {
         Task() { await fetchAllUser() }
     }
 }
 
-//MARK: - SearchViewModelType
-extension SearchViewModel: SearchViewModelType {
+
+//MARK: - SearchViewModelComputedPropertyCase
+extension SearchViewModel: SearchViewModelComputedPropertyCase {
     
-    //MARK: - Input/Output
-    func transform(input: SearchViewModelInput) -> SearchViewModelOutput {
-        
-        subscriptions.forEach { $0.cancel() }
-        subscriptions.removeAll()
-        
-        let cellForRowAt = setupCellForRowAtInputBind(with: input)
-        let didSelectRowAt = setupDidSelectRowAtInputBind(with: input)
-        let appear = setupAppearInputBind(with: input)
-        let searched = setupSearchResultInputBind(with: input)
-        
-        let success: SearchViewModelOutput = Publishers.Merge(searched, didSelectRowAt).eraseToAnyPublisher()
-        let tableViewReload: SearchViewModelOutput = Publishers.Merge(success, appear).eraseToAnyPublisher()
-        
-        return Publishers.Merge(cellForRowAt, tableViewReload).eraseToAnyPublisher()
-    }
-    
-    //MARK: - Get/Set
     func isSearchMode(withSearch viewController: UISearchController) -> Bool {
         guard let searchedText = viewController.searchBar.text else { return false }
         return viewController.isActive && !searchedText.isEmpty
@@ -61,6 +44,27 @@ extension SearchViewModel: SearchViewModelType {
     
     func getUsers() -> [UserInfoModel] {
         users
+    }
+    
+}
+
+//MARK: - SearchViewModelType
+extension SearchViewModel: SearchViewModelType {
+    
+    //MARK: - Input/Output
+    func transform(input: SearchViewModelInput) -> SearchViewModelOutput {
+        
+        subscriptions.forEach { $0.cancel() }
+        subscriptions.removeAll()
+        
+        let cellForRowAt = setupCellForRowAtInputBind(with: input)
+        let didSelectRowAt = setupDidSelectRowAtInputBind(with: input)
+        let appear = setupAppearInputBind(with: input)
+        let searched = setupSearchResultInputBind(with: input)
+        let success: SearchViewModelOutput = Publishers.Merge(searched, didSelectRowAt).eraseToAnyPublisher()
+        let tableViewReload: SearchViewModelOutput = Publishers.Merge(success, appear).eraseToAnyPublisher()
+        
+        return Publishers.Merge(cellForRowAt, tableViewReload).eraseToAnyPublisher()
     }
     
 }

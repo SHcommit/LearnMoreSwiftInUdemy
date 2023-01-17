@@ -14,9 +14,10 @@ protocol CommentInputAccessoryViewDelegate: AnyObject {
 class CommentInputAccessoryView: UIView {
     
     //MARK: - Properties
-    private lazy var commentTextView: InputTextView = initCommentTextView()
-    private lazy var postButton: UIButton = initPostButton()
+    private var commentTextView: InputTextView!
+    private var postButton: UIButton!
     weak var delegate: CommentInputAccessoryViewDelegate?
+    
     //MARK: - Lifecycles
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -30,6 +31,7 @@ class CommentInputAccessoryView: UIView {
     override var intrinsicContentSize: CGSize {
         return .zero
     }
+    
 }
 
 //MARK: - Helpers
@@ -38,25 +40,26 @@ extension CommentInputAccessoryView {
     func configureUI() {
         autoresizingMask = .flexibleHeight
         backgroundColor = .white
-        addSubviews()
-        constraintsSubviews()
-        
+        configureSubviews()
         setupDivider()
-    }
-    
-    func addSubviews() {
-        addSubview(commentTextView)
-        addSubview(postButton)
-    }
-    
-    func constraintsSubviews() {
-        commentTextViewConstraints()
-        postButtonConstraints()
     }
     
     func clearCommentTextView() {
         commentTextView.text = nil
         commentTextView.placeholderLabel.isHidden = false
+    }
+    
+    private func setupDivider() {
+        let divider = UIView()
+        divider.translatesAutoresizingMaskIntoConstraints = false
+        divider.backgroundColor = .lightGray
+        addSubview(divider)
+        UIConfig.setupConstraints(with: divider) {
+            [$0.top.constraint(equalTo: top),
+             $0.leading.constraint(equalTo: leading),
+             $0.trailing.constraint(equalTo: trailing),
+             $0.height.constraint(equalToConstant: 0.5)]
+        }
     }
     
 }
@@ -68,62 +71,81 @@ extension CommentInputAccessoryView {
     }
 }
 
-//MARK: - Init subViews
-extension CommentInputAccessoryView {
-    
-    func initCommentTextView() -> InputTextView {
-        let tv = InputTextView()
-        tv.placeholderText = "Enter comment.."
-        tv.translatesAutoresizingMaskIntoConstraints = false
-        tv.font = UIFont.systemFont(ofSize: 15)
-        tv.isScrollEnabled = false
-        tv.placeholderShouldCenter = true
-        //tv.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        return tv
+//MARK: - ConfigureSubviewsCase
+extension CommentInputAccessoryView: ConfigureSubviewsCase{
+   
+    func configureSubviews() {
+        createSubviews()
+        addSubviews()
+        setupLayouts()
     }
     
-    func initPostButton() -> UIButton {
-        let pb = UIButton()
-        pb.translatesAutoresizingMaskIntoConstraints = false
-        pb.setTitle("Post", for: .normal)
-        pb.setTitleColor(.black, for: .normal)
-        pb.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
-        pb.addTarget(self, action: #selector(didTapPost), for: .touchUpInside)
-        pb.setTitleColor(.lightText, for: .highlighted)
-        //pb.setContentHuggingPriority(.defaultHigh, for: .horizontal)
-        return pb
+    func createSubviews() {
+        commentTextView = InputTextView()
+        postButton = UIButton()
     }
     
-    func setupDivider() {
-        let divider = UIView()
-        divider.translatesAutoresizingMaskIntoConstraints = false
-        divider.backgroundColor = .lightGray
-        addSubview(divider)
-        NSLayoutConstraint.activate([
-            divider.topAnchor.constraint(equalTo: topAnchor),
-            divider.leadingAnchor.constraint(equalTo: leadingAnchor),
-            divider.trailingAnchor.constraint(equalTo: trailingAnchor),
-            divider.heightAnchor.constraint(equalToConstant: 0.5)])
+    func addSubviews() {
+        addSubview(commentTextView)
+        addSubview(postButton)
+    }
+    
+    func setupLayouts() {
+        setupSubviewsLayouts()
+        setupSubviewsConstraints()
+    }
+    
+    
+}
+
+//MARK: - SetupSubviewsLayouts
+extension CommentInputAccessoryView: SetupSubviewsLayouts {
+   
+    func setupSubviewsLayouts() {
+        
+        /// Setup commentTextView layout
+        UIConfig.setupLayout(detail: commentTextView) {
+            $0.placeholderText = "Enter comment.."
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.font = UIFont.systemFont(ofSize: 15)
+            $0.isScrollEnabled = false
+            $0.placeholderShouldCenter = true
+        }
+        
+        /// Setup postButton layout
+        UIConfig.setupLayout(detail: postButton) {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.setTitle("Post", for: .normal)
+            $0.setTitleColor(.black, for: .normal)
+            $0.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
+            $0.addTarget(self, action: #selector(self.didTapPost), for: .touchUpInside)
+            $0.setTitleColor(.lightText, for: .highlighted)
+        }
     }
     
 }
 
-//MARK: - Constraint subview's auto layout
-extension CommentInputAccessoryView {
+//MARK: - SetupSubviewsConstraints
+extension CommentInputAccessoryView: SetupSubviewsConstraints {
+   
+    func setupSubviewsConstraints() {
+        
+        ///Setup textView constraints
+        UIConfig.setupConstraints(with: commentTextView) {
+            [$0.leading.constraint(equalTo: leading, constant: 8),
+             $0.top.constraint(equalTo: top, constant: 8),
+             $0.trailing.constraint(equalTo: postButton.leading, constant: -8),
+             $0.bottom.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -8)]
+        }
     
-    func commentTextViewConstraints() {
-        NSLayoutConstraint.activate([
-            commentTextView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
-            commentTextView.topAnchor.constraint(equalTo: topAnchor, constant: 8),
-            commentTextView.rightAnchor.constraint(equalTo: postButton.leftAnchor, constant: -8),
-            commentTextView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -8)])
+        ///Setup postButton constraints
+        UIConfig.setupConstraints(with: postButton) {
+            [$0.trailing.constraint(equalTo: trailing, constant: -8),
+             $0.top.constraint(equalTo: top),
+             $0.width.constraint(equalToConstant: 50),
+             $0.height.constraint(equalToConstant: 50)]
+        }
     }
     
-    func postButtonConstraints() {
-        NSLayoutConstraint.activate([
-            postButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8),
-            postButton.topAnchor.constraint(equalTo: topAnchor),
-            postButton.widthAnchor.constraint(equalToConstant: 50),
-            postButton.heightAnchor.constraint(equalToConstant: 50)])
-    }
 }
+

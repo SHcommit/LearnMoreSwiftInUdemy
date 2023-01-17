@@ -10,13 +10,13 @@ import UIKit
 class CommentCell: UICollectionViewCell {
     
     //MARK: - Properties
-    let profileImageView = initialProfileImageView()
-    let commentLabel = initialCommentLabel()
+    var profileImageView: UIImageView!
+    var commentLabel: UILabel!
     
     //MARK: - Lifecycles
     override init(frame: CGRect) {
         super.init(frame: frame)
-        configureUI()
+        configureSubviews()
     }
     
     required init?(coder: NSCoder) {
@@ -24,14 +24,18 @@ class CommentCell: UICollectionViewCell {
     }
 }
 
-//MARK: - Helpers
-extension CommentCell {
+//MARK: - ConfigureSubviewsCase
+extension CommentCell: ConfigureSubviewsCase {
     
-    func configureUI() {
-        
+    func configureSubviews() {
+        createSubviews()
         addSubviews()
-        constraintsSubviews()
-        commentLabel.numberOfLines = 0
+        setupLayouts()
+    }
+    
+    func createSubviews() {
+        profileImageView = UIImageView()
+        commentLabel = UILabel()
     }
     
     func addSubviews() {
@@ -39,51 +43,66 @@ extension CommentCell {
         addSubview(commentLabel)
     }
     
-    func constraintsSubviews() {
-        profileImageViewConstraints()
-        commentLabelConstraints()
+    func setupLayouts() {
+        setupSubviewsLayouts()
+        setupSubviewsConstraints()
     }
+    
+    
 }
 
-//MARK: - Initial subViews
-extension CommentCell {
+//MARK: - SetupSubviewsLayouts
+extension CommentCell: SetupSubviewsLayouts {
     
-    static func initialProfileImageView() -> UIImageView {
-        let iv = UIImageView()
-        iv.translatesAutoresizingMaskIntoConstraints = false
-        iv.contentMode = .scaleAspectFill
-        iv.clipsToBounds = true
-        iv.backgroundColor = .systemPink
-        iv.layer.cornerRadius = 40/2
-        return iv
-    }
-    
-    static func initialCommentLabel() -> UILabel {
-        let lb = UILabel()
-        lb.translatesAutoresizingMaskIntoConstraints = false
-        let attrStr = NSMutableAttributedString(string: "username ", attributes: [.font: UIFont.boldSystemFont(ofSize: 14)])
-        attrStr.append(NSAttributedString(string: "Some test comment need...", attributes: [.font: UIFont.systemFont(ofSize: 14)]))
-        lb.attributedText = attrStr
+    func setupSubviewsLayouts() {
         
-        return lb
+        /// Setup profileImageView layout
+        UIConfig.setupLayout(detail: profileImageView) {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.contentMode = .scaleAspectFill
+            $0.clipsToBounds = true
+            $0.backgroundColor = .systemPink
+            $0.layer.cornerRadius = 40/2
+        }
+        
+        /// Setup commentLabel layout
+        UIConfig.setupLayout(detail: commentLabel) {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            let attrStr = NSMutableAttributedString(
+                string: "username ",
+                attributes:
+                    [.font: UIFont.boldSystemFont(ofSize: 14)])
+            attrStr.append(NSAttributedString(string: "Some test comment need...", attributes: [.font: UIFont.systemFont(ofSize: 14)]))
+            $0.attributedText = attrStr
+            $0.numberOfLines = 0
+        }
     }
+    
+    
 }
 
-//MARK: - Constraint subview's auto layout
-extension CommentCell {
+//MARK: - SetupSubviewsComstraints
+extension CommentCell: SetupSubviewsConstraints {
     
-    func profileImageViewConstraints() {
-        NSLayoutConstraint.activate([
-            profileImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
-            profileImageView.topAnchor.constraint(equalTo: topAnchor, constant: 8),
-            profileImageView.widthAnchor.constraint(equalToConstant: 40),
-            profileImageView.heightAnchor.constraint(equalToConstant: 40)])
+    func setupSubviewsConstraints() {
+        
+        /// Setup profileImageView constraints
+        UIConfig.setupConstraints(with: profileImageView) {
+            [$0.leading.constraint(equalTo: leading, constant: 8),
+             $0.top.constraint(equalTo: top, constant: 8),
+             $0.width.constraint(equalToConstant: 40),
+             $0.height.constraint(equalToConstant: 40)]
+        }
+        
+        /// Setup commentLabel constraints
+        UIConfig.setupConstraints(with: commentLabel) {
+            [$0.leading.constraint(equalTo: profileImageView.trailing,
+                                   constant: 8),
+             $0.trailing.constraint(equalTo: trailing, constant:  -8),
+             $0.top.constraint(equalTo: profileImageView.centerY,
+                               constant: -8)]
+        }
     }
-    
-    func commentLabelConstraints() {
-        NSLayoutConstraint.activate([
-            commentLabel.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 8),
-            commentLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant:  -8),
-            commentLabel.topAnchor.constraint(equalTo: profileImageView.centerYAnchor, constant: -8)])
-    }
+
 }
+
