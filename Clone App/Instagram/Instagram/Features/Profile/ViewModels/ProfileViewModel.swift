@@ -15,7 +15,9 @@ class ProfileViewModel {
     @Published var profileImage: UIImage?
     @Published var postsInfo = [PostModel]()
     @Published var posts = [UIImage]()
+    private var indicatorSubject = PassthroughSubject<IndicatorState,Never>()
     var subscriptions = Set<AnyCancellable>()
+    private var tab: UITabBarController?
     
     //MARK: - Lifecycles
     init(user: UserInfoModel) {
@@ -28,6 +30,8 @@ class ProfileViewModel {
 extension ProfileViewModel: ProfileViewModelType {
             
     func transform(input: ProfileViewModelInput) -> ProfileViewModelOutput {
+        
+        let indicatorSubscription = indicatorSubjectChains()
         
         let appear = appearChains(with: input)
         
@@ -43,14 +47,15 @@ extension ProfileViewModel: ProfileViewModelType {
         
         let input = Publishers.Merge4(appears, headerConfigure, cellConfigure, didTapCell).eraseToAnyPublisher()
         
-        return Publishers.Merge(input,
-                                viewModelPropertiesPublisherValueChanged()).eraseToAnyPublisher()
+        return Publishers.Merge3(input,
+                                 viewModelPropertiesPublisherValueChanged(),
+                                 indicatorSubscription).eraseToAnyPublisher()
     }
         
 }
 
-//MARK: - ProfileViewModel Get/Set
-extension ProfileViewModel {
+//MARK: - ProfileViewModelComputedProperty
+extension ProfileViewModel: ProfileViewModelComputedProperty {
     
     var getUser: UserInfoModel {
         get {
@@ -62,8 +67,15 @@ extension ProfileViewModel {
     }
 
     var getPostsCount: Int {
+        return posts.count
+    }
+    
+    var tabBarController: UITabBarController? {
         get {
-            return posts.count
+            return tab
+        }
+        set {
+            tab = newValue
         }
     }
     
@@ -118,6 +130,19 @@ extension ProfileViewModel: ProfileViewModelInputChainCase {
             }.eraseToAnyPublisher()
     }
     
+    func indicatorSubjectChains() -> ProfileViewModelOutput {
+        indicatorSubject
+            .subscribe(on: DispatchQueue.main)
+            .setFailureType(to: ProfileErrorType.self)
+            .map { indicatorState -> ProfileControllerState in
+                switch indicatorState {
+                case .start:
+                    return .startIndicator
+                case .end:
+                    return .endIndicator
+                }
+            }.eraseToAnyPublisher()
+    }
 }
     
 //MARK: - ProfileVMInnerPropertiesPublisherChainType
@@ -180,10 +205,14 @@ extension ProfileViewModel: ProfileVMInnerPropertiesPublisherChainType {
 extension ProfileViewModel: ProfileHeaderDelegate {
     
     func header(_ profileHeader: ProfileHeader) {
+        indicatorSubject.send(.start)
         if user.isCurrentUser {
             print("DEBUG: Show edit profile here..")
+            indicatorSubject.send(.end)
             return
         }
+        guard let tab = tabBarController as? MainHomeTabController else { indicatorSubject.send(.end); return }
+        guard let currentUser = tab.getUserVM?.getUser else { indicatorSubject.send(.end); return }
         switch user.isFollowed {
         case true:
             Task() {
@@ -192,6 +221,7 @@ extension ProfileViewModel: ProfileHeaderDelegate {
                 DispatchQueue.main.async {
                     self.user.isFollowed = false
                     self.userStats = userStats
+                    self.indicatorSubject.send(.end)
                 }
             }
             break
@@ -202,7 +232,17 @@ extension ProfileViewModel: ProfileHeaderDelegate {
                 DispatchQueue.main.async {
                     self.user.isFollowed = true
                     self.userStats = userStats
+                    self.indicatorSubject.send(.end)
                 }
+                let uploadNoti = UploadNotificationModel(
+                    uid: currentUser.uid,
+                    profileImageUrl: currentUser.profileURL,
+                    username: currentUser.username,
+                    userIsFollowed: currentUser.isFollowed)
+                NotificationService.uploadNotification(
+                    toUid: user.uid,
+                    to: uploadNoti,
+                    type: .follow)
             }
             break
         }

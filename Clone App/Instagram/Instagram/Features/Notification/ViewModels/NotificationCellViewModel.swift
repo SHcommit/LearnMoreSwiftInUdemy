@@ -11,11 +11,13 @@ import Combine
 class NotificationCellViewModel {
     
     //MARK: - Properties
-    private let notification: NotificationModel
+    private var _notification: NotificationModel
     var subscriptions = Set<AnyCancellable>()
+    private var isUpdatedFollow = PassthroughSubject<Void,Never>()
+    
     //MARK: - Lifecycles
     init(notification: NotificationModel) {
-        self.notification = notification
+        self._notification = notification
     }
     
 }
@@ -23,62 +25,103 @@ class NotificationCellViewModel {
 //MARK: - NotificationCellVMComputedProperties
 extension NotificationCellViewModel: NotificationCellVMComputedProperties {
     
-    var postImageUrl: URL? {
+    var userIsFollowed: Bool {
         get {
-            return URL(string: notification.postImageUrl ?? "")
+            _notification.specificUserInfo.userIsFollowed
         }
+        set {
+            _notification.specificUserInfo.userIsFollowed = newValue
+        }
+    }
+    
+    var postImageUrl: URL? {
+        return URL(string: _notification.postImageUrl ?? "")
     }
     
     var profileImageUrl: URL? {
-        get {
-            URL(string: notification.specificUserInfo.profileImageUrl)
-        }
+        return URL(string: _notification.specificUserInfo.profileImageUrl)
     }
     
     var specificUsernameToNotify: String {
-        get {
-            notification.specificUserInfo.username
-        }
+        return _notification.specificUserInfo.username
     }
     
     var notificationMessage: NSAttributedString {
+        let username = specificUsernameToNotify
+        let message = _notification.type.description
+        let attrText = NSMutableAttributedString(string: username, attributes: [.font: UIFont.boldSystemFont(ofSize: 14)])
+        attrText.append(NSAttributedString(string: message, attributes: [.font: UIFont.systemFont(ofSize: 14)]))
+        attrText.append(NSAttributedString(string: " 1min",
+                                           attributes: [.font:UIFont.boldSystemFont(ofSize: 12),
+                                                        .foregroundColor: UIColor.lightGray]))
+        return attrText
+    }
+    
+    var shouldHidePostImage: Bool {
+        return self._notification.type == .follow
+    }
+    
+    var notification: NotificationModel {
         get {
-            let username = specificUsernameToNotify
-            let message = notification.type.description
-            let attrText = NSMutableAttributedString(string: username, attributes: [.font: UIFont.boldSystemFont(ofSize: 14)])
-            attrText.append(NSAttributedString(string: message, attributes: [.font: UIFont.systemFont(ofSize: 14)]))
-            attrText.append(NSAttributedString(string: " 1min",
-                                               attributes: [.font:UIFont.boldSystemFont(ofSize: 12),
-                                                            .foregroundColor: UIColor.lightGray]))
-            return attrText
+            return _notification
         }
+        set {
+            _notification = newValue
+        }
+    }
+    
+    var followButtonText: String {
+        notification.specificUserInfo.userIsFollowed ? "Following" : "Follow"
+    }
+    
+    var followButtonBackgroundColor: UIColor {
+        return notification.specificUserInfo.userIsFollowed ? .white : .systemBlue
+    }
+    
+    var followButtonTextColor: UIColor {
+        return notification.specificUserInfo.userIsFollowed ? .black : .white
     }
        
 }
 
 //MARK: - NotificationCellViewModelType
 extension NotificationCellViewModel: NotificationCellViewModelType {
+    
     func transform(with input: NotificationCellViewModelInput) -> NotificationCellViewModelOutput {
         let initializaiton = initializationChains(with: input)
+        
+        let updatedFollow = isUpdatedFollowChains()
+        
         return initializaiton
+            .merge(with: updatedFollow)
+            .eraseToAnyPublisher()
     }
+    
 }
 
 //MARK: NotificationCellViewModelType subscription chains
 extension NotificationCellViewModel {
     
-    func initializationChains(with input: NotificationCellViewModelInput) -> NotificationCellViewModelOutput {
+    fileprivate func initializationChains(with input: NotificationCellViewModelInput) -> NotificationCellViewModelOutput {
         return input.initialization
             .first()
             .map {[unowned self] ivs -> NotificationCellState in
                 _=[(ivs.profile, profileImageUrl!),
-                   (ivs.post, postImageUrl!)]
+                   (ivs.post, postImageUrl)]
                     .map{ updateImageView($0.0, withUrl: $0.1)}
-                
+                ///Notification내부에서 팔로우하거나 끊기는 가능한데 유저 노티피 탭 한 이후 서치에서 특정 상대 검색후 팔로우하고 다시 노티피케이션으로 오면 prepare만 동작한다. 이땐 서버에서 내가 사용자 팔로우했는지 갱신 여부 안받아오기 때문에 아래 함수로 받아오게 했다.
+                checkIfUserIsFollowed()
                 return .configure(self.notificationMessage)
             }
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
+    }
+    
+    fileprivate func isUpdatedFollowChains() -> NotificationCellViewModelOutput {
+        return isUpdatedFollow
+            .map{ _ -> NotificationCellState in
+                return .updatedFollow
+            }.eraseToAnyPublisher()
     }
     
 }
@@ -121,11 +164,30 @@ extension NotificationCellViewModel {
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
+    
+    private func checkIfUserIsFollowed() {
+        Task(priority: .high) {
+            do {
+                let isFollowed = try await UserService.checkIfUserIsFollowd(uid: _notification.specificUserInfo.uid)
+                DispatchQueue.main.async {
+                    self._notification
+                        .specificUserInfo
+                        .userIsFollowed = isFollowed
+                    self.isUpdatedFollow.send()
+                }
+            } catch {
+                print("DEBUG: \(error)")
+            }
+        }
+    }
+    
 }
 
 //MARK: - Helpers
 extension NotificationCellViewModel {
-    private func updateImageView(_ imageView: UIImageView, withUrl url: URL) {
+    
+    private func updateImageView(_ imageView: UIImageView, withUrl url: URL?) {
+        guard let url = url else { return }
         self.fetchImage(with: url)
             .sink {
                 switch $0 {
@@ -135,6 +197,6 @@ extension NotificationCellViewModel {
             } receiveValue: { image in
                 imageView.image = image
             }.store(in: &self.subscriptions)
-
     }
+    
 }

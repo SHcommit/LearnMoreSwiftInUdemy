@@ -81,8 +81,8 @@ extension ProfileHeaderViewModel: ProfileHeaderVMInnerPublisherChainType {
     
 }
 
-//MARK: - ProfileHeaderViweModel Get Set
-extension ProfileHeaderViewModel {
+//MARK: - ProfileHeaderViweModelComputedProperty
+extension ProfileHeaderViewModel: ProfileHeaderViewModelComputedProperty {
     
     var user: UserInfoModel {
         get {
@@ -130,19 +130,15 @@ extension ProfileHeaderViewModel {
     }
     
     var numberOfFollowers: NSAttributedString {
-        get {
-            return attributedStatText(value: userStats?.followers ?? 0, label: "followers")
-        }
+        return attributedStatText(value: userStats?.followers ?? 0, label: "followers")
     }
     
     var numberOfFollowing: NSAttributedString {
-        get {
-            return attributedStatText(value: userStats?.following ?? 0, label: "following")
-        }
+        return attributedStatText(value: userStats?.following ?? 0, label: "following")
     }
     
     var numberOfPosts: NSAttributedString {
-        attributedStatText(value: 5, label: "posts")
+        return attributedStatText(value: 5, label: "posts")
     }
 
 }

@@ -242,7 +242,7 @@ extension MainHomeTabController: AuthentificationDelegate {
         ud.set(uid, forKey: CURRENT_USER_UID)
         do{
             try await fetchCurrentUserInfo(withUID: uid)
-            endIndicator(indicator: indicator)
+            endIndicator()
         }catch {
             authenticationCompletionErrorHandling(error: error)
         }

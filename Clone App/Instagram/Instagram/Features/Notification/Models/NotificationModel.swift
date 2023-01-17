@@ -18,11 +18,10 @@ extension NotificationType: CustomStringConvertible {
     var description: String {
         switch self {
         case .like: return " liked your post."
-        case .follow: return "started following you"
-        case .comment: return "commented on your post"
+        case .follow: return " started following you"
+        case .comment: return " commented on your post"
         }
     }
-    
     
 }
 
@@ -32,5 +31,5 @@ struct NotificationModel: Codable {
     let timestamp: Timestamp
     let type: NotificationType
     let id: String
-    let specificUserInfo: UploadNotificationModel
+    var specificUserInfo: UploadNotificationModel
 }

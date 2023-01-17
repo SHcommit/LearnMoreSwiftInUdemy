@@ -11,15 +11,14 @@ import Combine
 class SearchController: UITableViewController {
     
     //MARK: - Properties
-    var viewModel: SearchViewModelType
+    internal var viewModel: SearchViewModelType!
     //MARK: - SearchViewModelInput
-    private let cellForRowAt = PassthroughSubject<(SearchViewModelInputTableInfo,UISearchController),Never>()
-    private let didSelectRowAt = PassthroughSubject<SearchViewModelInputTableInfo,Never>()
-    private let searchResult = PassthroughSubject<String,Never>()
-    private let appear = PassthroughSubject<Void,Never>()
-    
-    private var subscriptions = Set<AnyCancellable>()
-    private let searchController = UISearchController(searchResultsController: nil)
+    fileprivate let cellForRowAt = PassthroughSubject<(SearchViewModelInputTableInfo,UISearchController),Never>()
+    fileprivate let didSelectRowAt = PassthroughSubject<SearchViewModelInputTableInfo,Never>()
+    fileprivate let searchResult = PassthroughSubject<String,Never>()
+    fileprivate let appear = PassthroughSubject<Void,Never>()
+    fileprivate var subscriptions = Set<AnyCancellable>()
+    fileprivate let searchController = UISearchController(searchResultsController: nil)
     
     //MARK: - LifeCycle
     override func viewDidLoad() {
@@ -44,7 +43,7 @@ class SearchController: UITableViewController {
 }
 
 
-//MARK: - Bindings
+//MARK: - Bind
 extension SearchController {
     
     func setupBindings() {
@@ -56,12 +55,6 @@ extension SearchController {
         output.sink { self.render($0) }.store(in: &subscriptions)
     }
     
-}
-
-
-//MARK: - Helpers
-extension SearchController {
-
     private func render(_ state: SearchControllerState) {
         switch state {
         case .none:
@@ -76,6 +69,12 @@ extension SearchController {
             break
         }
     }
+    
+}
+
+
+//MARK: - Helpers
+extension SearchController {
     
     func configure() {
         configureSearchController()

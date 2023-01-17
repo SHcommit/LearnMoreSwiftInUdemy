@@ -26,6 +26,11 @@ class CommentViewModel {
 
 //MARK: - CommentViewModelComputedPropery
 extension CommentViewModel: CommentViewModelComputedPropery {
+   
+    var count: Int {
+        return _comments.count
+    }
+    
     
     var post: PostModel {
         get {

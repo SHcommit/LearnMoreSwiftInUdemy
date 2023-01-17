@@ -7,10 +7,6 @@
 
 import Firebase
 
-// Constant properties
-
-var indicator: UIActivityIndicatorView = UIActivityIndicatorView(style: .medium)
-
 //MARK: - profile subview's ID
 let COLLECTIONHEADERREUSEABLEID = "UserProfileCollectionHeaderView"
 let CELLREUSEABLEID = "CollectionViewCell"

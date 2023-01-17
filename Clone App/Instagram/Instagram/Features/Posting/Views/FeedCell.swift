@@ -12,20 +12,19 @@ import Combine
 class FeedCell: UICollectionViewCell {
     
     //MARK: - Properties
-    private lazy var profileImageView: UIImageView = initialProfileImageVIew()
-    private let postImageView: UIImageView = initialPostImageView()
-    private let likeLabel: UILabel = initialLikeLabel()
-    private let captionLabel: UILabel = initialCaptionLabel()
-    private let postTimeLabel: UILabel = initialPostTimeLabel()
-    private lazy var usernameButton: UIButton = initialUsernameButton()
-    private lazy var likeButton: UIButton = initialLikeButton()
-    private lazy var commentButton: UIButton = initialCommentButton()
-    private lazy var shareButton: UIButton = initialShareButton()
-
-    var didTapUserProfile = PassthroughSubject<String,Never>()
-    var didTapCommentPublisher = PassthroughSubject<UINavigationController?,Never>()
-    var didTapLikePublisher = PassthroughSubject<UIButton,Never>()
-    private var subscriptions = Set<AnyCancellable>()
+    fileprivate var profileImageView: UIImageView!
+    fileprivate var postImageView: UIImageView!
+    fileprivate var likeLabel: UILabel!
+    fileprivate var captionLabel: UILabel!
+    fileprivate var postTimeLabel: UILabel!
+    fileprivate var usernameButton: UIButton!
+    fileprivate var likeButton: UIButton!
+    fileprivate var commentButton: UIButton!
+    fileprivate var shareButton: UIButton!
+    fileprivate var didTapUserProfile = PassthroughSubject<String,Never>()
+    fileprivate var didTapCommentPublisher = PassthroughSubject<UINavigationController?,Never>()
+    fileprivate var didTapLikePublisher = PassthroughSubject<UIButton,Never>()
+    fileprivate var subscriptions = Set<AnyCancellable>()
     var feedControllerNavigationController: UINavigationController?
     
     var viewModel: FeedCellViewModelType?
@@ -57,20 +56,7 @@ extension FeedCell {
     
     func setupUI() {
         backgroundColor = .white
-        addSubviews()
-        setupSubViewsConstraints()
-    }
-    
-    func addSubviews() {
-        addSubview(profileImageView)
-        addSubview(usernameButton)
-        addSubview(postImageView)
-        addSubview(likeButton)
-        addSubview(commentButton)
-        addSubview(shareButton)
-        addSubview(likeLabel)
-        addSubview(captionLabel)
-        addSubview(postTimeLabel)
+        configureSubviews()
     }
     
     func setupBinding(with navigationController: UINavigationController?) {
@@ -178,172 +164,206 @@ extension FeedCell {
     }
 }
 
-//MARK: - Init properites
-extension FeedCell {
-    
-    //MARK: - Initial properties
-    func initialProfileImageVIew() -> UIImageView {
-        let iv = UIImageView()
-        iv.translatesAutoresizingMaskIntoConstraints = false
-        iv.contentMode = .scaleAspectFill
-        iv.clipsToBounds = true
-        iv.isUserInteractionEnabled = true
-        iv.backgroundColor = .lightGray
-        iv.layer.cornerRadius = 40/2
-        iv.setContentCompressionResistancePriority(UILayoutPriority(999), for: .vertical)
-        let tap = UITapGestureRecognizer(target: self, action: #selector(didTapUsername))
-        iv.isUserInteractionEnabled = true
-        iv.addGestureRecognizer(tap)
-        return iv
+//MARK: - ConfigureSubviewsCase
+extension FeedCell: ConfigureSubviewsCase {
+    func configureSubviews() {
+        createSubviews()
+        addSubviews()
+        setupLayouts()
     }
     
-    func initialUsernameButton() -> UIButton {
-        let btn = UIButton(type: .system)
-        btn.translatesAutoresizingMaskIntoConstraints = false
-        btn.setTitleColor(.black, for: .normal)
-        btn.titleLabel?.font = UIFont.boldSystemFont(ofSize: 13)
-        btn.addTarget(self, action: #selector(didTapUsername), for: .touchUpInside)
-        btn.setContentCompressionResistancePriority(UILayoutPriority(999), for: .vertical)
-        return btn
+    func createSubviews() {
+        profileImageView = UIImageView()
+        usernameButton = UIButton(type: .system)
+        postImageView = UIImageView()
+        likeLabel = UILabel()
+        commentButton = UIButton()
+        shareButton = UIButton(type: .system)
+        likeButton = UIButton(type: .system)
+        captionLabel = UILabel()
+        postTimeLabel = UILabel()
     }
     
-    static func initialPostImageView() -> UIImageView {
-        let iv = UIImageView()
-        iv.translatesAutoresizingMaskIntoConstraints = false
-        iv.contentMode = .scaleAspectFill
-        iv.clipsToBounds = true
-        iv.isUserInteractionEnabled = true
-        iv.setContentCompressionResistancePriority(UILayoutPriority(998), for: .vertical)
-        return iv
+    func addSubviews() {
+        _=[profileImageView, usernameButton, postImageView,
+           likeLabel, commentButton, shareButton, likeButton,
+           captionLabel, postTimeLabel].map{addSubview($0)}
+    }
+
+    func setupLayouts() {
+        setupSubviewsLayouts()
+        setupSubviewsConstraints()
     }
     
-    func initialLikeButton() -> UIButton {
-        let btn = UIButton(type: .system)
-        btn.translatesAutoresizingMaskIntoConstraints = false
-        btn.setImage(.imageLiteral(name: "like_unselected"), for: .normal)
-        btn.addTarget(self, action: #selector(didTapLikeButton(_:)), for: .touchUpInside)
-        btn.setContentCompressionResistancePriority(UILayoutPriority(999), for: .vertical)
-        btn.tintColor = .black
-        return btn
-    }
     
-    func initialCommentButton() -> UIButton {
-        let btn = UIButton(type: .system)
-        btn.translatesAutoresizingMaskIntoConstraints = false
-        btn.setImage(.imageLiteral(name: "comment"), for: .normal)
-        btn.addTarget(self, action: #selector(didTapComment(_:)), for: .touchUpInside)
-        btn.setContentCompressionResistancePriority(UILayoutPriority(999), for: .vertical)
-        btn.tintColor = .black
-        return btn
-    }
-    
-    func initialShareButton() -> UIButton {
-        let btn = UIButton(type: .system)
-        btn.translatesAutoresizingMaskIntoConstraints = false
-        btn.setImage(.imageLiteral(name: "send2"), for: .normal)
-        btn.addTarget(self, action: #selector(didTapLikeButton(_:)), for: .touchUpInside)
-        btn.setContentCompressionResistancePriority(UILayoutPriority(999), for: .vertical)
-        btn.tintColor = .black
-        return btn
-    }
-    
-    static func initialLikeLabel() -> UILabel {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.boldSystemFont(ofSize: 12)
-        label.setContentCompressionResistancePriority(UILayoutPriority(999), for: .vertical)
-        return label
-    }
-    
-    static func initialCaptionLabel() -> UILabel {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.boldSystemFont(ofSize: 12)
-        label.setContentCompressionResistancePriority(UILayoutPriority(999), for: .vertical)
-        return label
-    }
-    
-    static func initialPostTimeLabel() -> UILabel {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.boldSystemFont(ofSize: 12)
-        label.textColor = .lightGray
-        label.setContentCompressionResistancePriority(UILayoutPriority(999), for: .vertical)
-        return label
-    }
 }
 
+//MARK: - SetupSubviewsLayouts
+extension FeedCell: SetupSubviewsLayouts {
+   
+    func setupSubviewsLayouts() {
+        
+        ///Setup profileImageView layout
+        UIConfig.setupLayout(detail: profileImageView) {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.contentMode = .scaleAspectFill
+            $0.clipsToBounds = true
+            $0.isUserInteractionEnabled = true
+            $0.backgroundColor = .lightGray
+            $0.layer.cornerRadius = 40/2
+            $0.setContentCompressionResistancePriority(
+                UILayoutPriority(999), for: .vertical)
+            let tap = UITapGestureRecognizer(target: self, action: #selector(self.didTapUsername))
+            $0.isUserInteractionEnabled = true
+            $0.addGestureRecognizer(tap)
+        }
+        
+        /// Setup usernameButton layout
+        UIConfig.setupLayout(detail: usernameButton) {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.setTitleColor(.black, for: .normal)
+            $0.titleLabel?.font = UIFont.boldSystemFont(ofSize: 13)
+            $0.addTarget(self, action: #selector(self.didTapUsername), for: .touchUpInside)
+            $0.setContentCompressionResistancePriority(
+                UILayoutPriority(999), for: .vertical)
+        }
 
-//MARK: - Setup subview's constraints
-extension FeedCell {
-    
-    func setupSubViewsConstraints() {
-        setupProfileImageViewConstraints()
-        setupUsernameButtonConstraints()
-        setupPostImageViewConstarints()
-        setupLikeButtonConstraints()
-        setupCommentButtonConstraints()
-        setupShareButtonConstraints()
-        setupLikeLabelConstraints()
-        setupCaptionLabelConstraints()
-        setupPostTimeLabelConstraints()
+        /// Setup postImageView layout
+        UIConfig.setupLayout(detail: postImageView) {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.contentMode = .scaleAspectFill
+            $0.clipsToBounds = true
+            $0.isUserInteractionEnabled = true
+            $0.setContentCompressionResistancePriority(
+                UILayoutPriority(998), for: .vertical)
+        }
+
+        /// Setup likeButton layout
+        UIConfig.setupLayout(detail: likeButton) {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.setImage(.imageLiteral(name: "like_unselected"), for: .normal)
+            $0.addTarget(self, action: #selector(self.didTapLikeButton(_:)), for: .touchUpInside)
+            $0.setContentCompressionResistancePriority(
+                UILayoutPriority(999), for: .vertical)
+            $0.tintColor = .black
+        }
+
+        /// Setup commentButton layout
+        UIConfig.setupLayout(detail: commentButton) {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.setImage(.imageLiteral(name: "comment"), for: .normal)
+            $0.addTarget(self, action: #selector(self.didTapComment(_:)), for: .touchUpInside)
+            $0.setContentCompressionResistancePriority(
+                UILayoutPriority(999), for: .vertical)
+            $0.tintColor = .black
+        }
+        
+        /// Setup commentButton layout
+        UIConfig.setupLayout(detail: shareButton) {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.setImage(.imageLiteral(name: "send2"), for: .normal)
+            $0.addTarget(self, action: #selector(self.didTapLikeButton(_:)), for: .touchUpInside)
+            $0.setContentCompressionResistancePriority(UILayoutPriority(999), for: .vertical)
+            $0.tintColor = .black
+            
+        }
+        
+        /// Setup likeLabel layout
+        UIConfig.setupLayout(detail: likeLabel) {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.font = UIFont.boldSystemFont(ofSize: 12)
+            $0.setContentCompressionResistancePriority(UILayoutPriority(999), for: .vertical)
+
+        }
+        
+        /// Setup captionLabel layout
+        UIConfig.setupLayout(detail: captionLabel) {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.font = UIFont.boldSystemFont(ofSize: 12)
+            $0.setContentCompressionResistancePriority(UILayoutPriority(999), for: .vertical)
+        }
+        
+        /// Setup postTimeLabel layout
+        UIConfig.setupLayout(detail: postTimeLabel) {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.font = UIFont.boldSystemFont(ofSize: 12)
+            $0.textColor = .lightGray
+            $0.setContentCompressionResistancePriority(UILayoutPriority(999), for: .vertical)
+        }
     }
     
-    func setupProfileImageViewConstraints() {
-        NSLayoutConstraint.activate([
-            profileImageView.topAnchor.constraint(equalTo: topAnchor, constant: 12),
-            profileImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
-            profileImageView.widthAnchor.constraint(equalToConstant: 40),
-            profileImageView.heightAnchor.constraint(equalToConstant: 40)])
+    
+}
+
+//MARK: - SetupSubviewsConstraints
+extension FeedCell: SetupSubviewsConstraints {
+    
+    func setupSubviewsConstraints() {
+        
+        ///Setup profileImageView constraints
+        UIConfig.setupConstraints(with: profileImageView) {
+            return [$0.top.constraint(equalTo: top, constant: 12),
+                    $0.leading.constraint(equalTo: leading, constant: 12),
+                    $0.width.constraint(equalToConstant: 40),
+                    $0.height.constraint(equalToConstant: 40)]
+        }
+        
+        ///Setup usernameButton constraints
+        UIConfig.setupConstraints(with: usernameButton) {
+            return [$0.centerY.constraint(equalTo: profileImageView.centerY),
+                    $0.leading.constraint(equalTo: profileImageView.trailing, constant: 8)]
+        }
+        
+        ///Setup postImageView constraints
+        UIConfig.setupConstraints(with: postImageView) {
+            return [$0.leading.constraint(equalTo: leading),
+                    $0.top.constraint(equalTo: profileImageView.bottom, constant: 12),
+                    $0.trailing.constraint(equalTo: trailing)]
+        }
+        
+        ///Setup likeButton constraints
+        UIConfig.setupConstraints(with: likeButton) {
+            return [$0.top.constraint(equalTo: postImageView.bottom,
+                                      constant: 12),
+                $0.leading.constraint(equalTo: leading, constant: 12)]
+        }
+        
+        ///Setup commentButton constraints
+        UIConfig.setupConstraints(with: commentButton) {
+            return [$0.centerY.constraint(equalTo: likeButton.centerY),
+                    $0.leading.constraint(equalTo: likeButton.trailing,
+                                          constant: 12)]
+        }
+        
+        ///Setup shareButton constraints
+        UIConfig.setupConstraints(with: shareButton) {
+            return [$0.centerY.constraint(equalTo: commentButton.centerY),
+                    $0.leading.constraint(equalTo: commentButton.trailing,
+                                          constant: 12)]
+        }
+        
+        ///Setup likeLabel constraints
+        UIConfig.setupConstraints(with: likeLabel) {
+            return [$0.top.constraint(equalTo: likeButton.bottom,
+                                      constant: 12),
+                    $0.leading.constraint(equalTo: leading, constant: 12)]
+        }
+        
+        ///Setup captionLabel constraints
+        UIConfig.setupConstraints(with: captionLabel) {
+            return [$0.top.constraint(equalTo: likeLabel.bottom,
+                                      constant: 12),
+                    $0.leading.constraint(equalTo: leading, constant: 12)]
+        }
+        
+        ///Setup postTimeLabel constraints
+        UIConfig.setupConstraints(with: postTimeLabel) {
+            return [$0.top.constraint(equalTo: captionLabel.bottom,
+                                      constant: 12),
+                    $0.leading.constraint(equalTo: leading, constant: 12),
+                    $0.bottom.constraint(equalTo: bottom)]
+        }
     }
     
-    func setupUsernameButtonConstraints() {
-        NSLayoutConstraint.activate([
-            usernameButton.centerYAnchor.constraint(equalTo: profileImageView.centerYAnchor),
-            usernameButton.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 8)])
-    }
     
-    func setupPostImageViewConstarints() {
-        NSLayoutConstraint.activate([
-            postImageView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            postImageView.topAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: 12),
-            postImageView.trailingAnchor.constraint(equalTo: trailingAnchor)])
-    }
-    
-    func setupLikeButtonConstraints() {
-        NSLayoutConstraint.activate([
-            likeButton.topAnchor.constraint(equalTo: postImageView.bottomAnchor, constant: 12),
-            likeButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12)])
-    }
-    
-    func setupCommentButtonConstraints() {
-        NSLayoutConstraint.activate([
-            commentButton.centerYAnchor.constraint(equalTo: likeButton.centerYAnchor),
-            commentButton.leadingAnchor.constraint(equalTo: likeButton.trailingAnchor, constant: 12)])
-    }
-    
-    func setupShareButtonConstraints() {
-        NSLayoutConstraint.activate([
-            shareButton.centerYAnchor.constraint(equalTo: commentButton.centerYAnchor),
-            shareButton.leadingAnchor.constraint(equalTo: commentButton.trailingAnchor, constant: 12)])
-    }
-    
-    func setupLikeLabelConstraints() {
-        NSLayoutConstraint.activate([
-            likeLabel.topAnchor.constraint(equalTo: likeButton.bottomAnchor, constant: 12),
-            likeLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12)])
-    }
-    
-    func setupCaptionLabelConstraints() {
-        NSLayoutConstraint.activate([
-            captionLabel.topAnchor.constraint(equalTo: likeLabel.bottomAnchor, constant: 12),
-            captionLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12)])
-    }
-    
-    func setupPostTimeLabelConstraints() {
-        NSLayoutConstraint.activate([
-            postTimeLabel.topAnchor.constraint(equalTo: captionLabel.bottomAnchor, constant: 12),
-            postTimeLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
-            postTimeLabel.bottomAnchor.constraint(equalTo: bottomAnchor)])
-    }
 }

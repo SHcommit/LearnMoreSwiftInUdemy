@@ -28,9 +28,7 @@ class FeedViewModel {
 extension FeedViewModel: FeedCellViewModelComputedProperty {
     
     var userUID: String {
-        get {
-            return postModel.ownerUid
-        }
+        return postModel.ownerUid
     }
      
     var post: PostModel {
@@ -43,58 +41,42 @@ extension FeedViewModel: FeedCellViewModelComputedProperty {
     }
     
     var image: UIImage? {
-        get {
-            guard let postImage = postImage else {
-                return nil
-            }
-            return postImage
+        guard let postImage = postImage else {
+            return nil
         }
+        return postImage
     }
     
     var postedUserProfile: UIImage? {
-        get {
-            guard let profile = userProfile else {
-                print("DEBUG: postVM's userProfile can't bind.")
-                return nil
-            }
-            return profile
+        guard let profile = userProfile else {
+            print("DEBUG: postVM's userProfile can't bind.")
+            return nil
         }
+        return profile
     }
     
     var caption: String {
-        get {
-            return post.caption
-        }
+        return post.caption
     }
     
     var username: String {
-        get {
-            return post.ownerUsername
-        }
+        return post.ownerUsername
     }
     
     var postTime: Timestamp {
-        get {
-            return post.timestamp
-        }
+        return post.timestamp
     }
     
     var ownerImageUrl: String {
-        get {
-            return post.ownerImageUrl
-        }
+        return post.ownerImageUrl
     }
     
     var likes: Int {
-        get {
-            return post.likes
-        }
+        return post.likes
     }
     
     var postLikes: String {
-        get {
-            return likes < 2 ? "\(likes) like" : "\(likes) likes"
-        }
+        return likes < 2 ? "\(likes) like" : "\(likes) likes"
     }
     
     var didLike: Bool {
@@ -190,7 +172,8 @@ extension FeedViewModel: FeedCellViewModelSubscriptionChains {
                         let uploadModel = UploadNotificationModel(
                             uid: user.uid,
                             profileImageUrl: user.profileURL,
-                            username: user.username)
+                            username: user.username,
+                            userIsFollowed: user.isFollowed)
                         await PostService.likePost(post: post)
                         NotificationService.uploadNotification(toUid: post.ownerUid, to: uploadModel,
                                                                type: .like,
