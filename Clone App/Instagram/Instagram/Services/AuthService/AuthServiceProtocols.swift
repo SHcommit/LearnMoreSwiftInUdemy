@@ -24,7 +24,7 @@ enum AuthError: Error {
     }
 }
 
-protocol AuthType: ServiceExtensionType {
+protocol AuthServiceType: ServiceExtensionType {
     
     static func handleIsLoginAccount(email: String, pw: String) async throws -> AuthDataResult?
     

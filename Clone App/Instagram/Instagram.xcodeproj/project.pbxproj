@@ -14,7 +14,7 @@
 		151FA67D2954563600D45825 /* AuthServiceProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 151FA67C2954563600D45825 /* AuthServiceProtocols.swift */; };
 		151FA67F295457FE00D45825 /* UserServiceProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 151FA67E295457FE00D45825 /* UserServiceProtocols.swift */; };
 		152BD5642954A21C000AA1B2 /* ImageServiceProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 152BD5632954A21C000AA1B2 /* ImageServiceProtocols.swift */; };
-		152BD5662954A668000AA1B2 /* PostServiceProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 152BD5652954A668000AA1B2 /* PostServiceProtocols.swift */; };
+		152BD5662954A668000AA1B2 /* PostServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 152BD5652954A668000AA1B2 /* PostServiceType.swift */; };
 		153171FE29632DDB005390B0 /* FeedCellViewModelProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 153171FD29632DDB005390B0 /* FeedCellViewModelProtocols.swift */; };
 		15486DC4291D1745008B98E6 /* UploadPostController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15486DC3291D1745008B98E6 /* UploadPostController.swift */; };
 		15486DC6291D1B74008B98E6 /* InputTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15486DC5291D1B74008B98E6 /* InputTextView.swift */; };
@@ -35,6 +35,9 @@
 		156E22F0290D6EBD0026B0C3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 156E22EE290D6EBD0026B0C3 /* Main.storyboard */; };
 		156E22F2290D6EBE0026B0C3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 156E22F1290D6EBE0026B0C3 /* Assets.xcassets */; };
 		156E22F5290D6EBE0026B0C3 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 156E22F3290D6EBE0026B0C3 /* LaunchScreen.storyboard */; };
+		159B9EB729786FDC00546002 /* FirestoreConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159B9EB629786FDC00546002 /* FirestoreConstants.swift */; };
+		159B9EBF29787A0900546002 /* NotificationServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159B9EBE29787A0900546002 /* NotificationServiceType.swift */; };
+		159B9EC129787B2F00546002 /* CommentServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159B9EC029787B2F00546002 /* CommentServiceType.swift */; };
 		15ACA70C290D77780011E665 /* MainHomeTabController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15ACA70B290D77780011E665 /* MainHomeTabController.swift */; };
 		15ACA711290D77960011E665 /* ProfileController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15ACA70D290D77950011E665 /* ProfileController.swift */; };
 		15ACA712290D77960011E665 /* ImageSelectorController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15ACA70E290D77950011E665 /* ImageSelectorController.swift */; };
@@ -73,6 +76,7 @@
 		15E4E90E2940F2C30080A4FF /* LoginViewModelProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E4E90D2940F2C30080A4FF /* LoginViewModelProtocols.swift */; };
 		15E4E912294181360080A4FF /* ProfileViewModelProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E4E911294181360080A4FF /* ProfileViewModelProtocols.swift */; };
 		15E5A736294250A300183B71 /* SearchViewModelProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E5A735294250A300183B71 /* SearchViewModelProtocols.swift */; };
+		15E8A77F29787E510025A740 /* ServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E8A77E29787E510025A740 /* ServiceProvider.swift */; };
 		15E8DB872917B370000EF639 /* UserStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E8DB862917B370000EF639 /* UserStats.swift */; };
 		15FDED99291FA8CE00DDAF2E /* FeedViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15FDED98291FA8CE00DDAF2E /* FeedViewModel.swift */; };
 		81BBDDEDACB63985F43988AC /* Pods_Instagram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B288DF44C633C67CA7F5E28 /* Pods_Instagram.framework */; };
@@ -86,7 +90,7 @@
 		151FA67C2954563600D45825 /* AuthServiceProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthServiceProtocols.swift; sourceTree = "<group>"; };
 		151FA67E295457FE00D45825 /* UserServiceProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserServiceProtocols.swift; sourceTree = "<group>"; };
 		152BD5632954A21C000AA1B2 /* ImageServiceProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageServiceProtocols.swift; sourceTree = "<group>"; };
-		152BD5652954A668000AA1B2 /* PostServiceProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostServiceProtocols.swift; sourceTree = "<group>"; };
+		152BD5652954A668000AA1B2 /* PostServiceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostServiceType.swift; sourceTree = "<group>"; };
 		153171FD29632DDB005390B0 /* FeedCellViewModelProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedCellViewModelProtocols.swift; sourceTree = "<group>"; };
 		15486DC3291D1745008B98E6 /* UploadPostController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadPostController.swift; sourceTree = "<group>"; };
 		15486DC5291D1B74008B98E6 /* InputTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputTextView.swift; sourceTree = "<group>"; };
@@ -109,6 +113,9 @@
 		156E22F1290D6EBE0026B0C3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		156E22F4290D6EBE0026B0C3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		156E22F6290D6EBE0026B0C3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		159B9EB629786FDC00546002 /* FirestoreConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreConstants.swift; sourceTree = "<group>"; };
+		159B9EBE29787A0900546002 /* NotificationServiceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationServiceType.swift; sourceTree = "<group>"; };
+		159B9EC029787B2F00546002 /* CommentServiceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentServiceType.swift; sourceTree = "<group>"; };
 		15ACA70B290D77780011E665 /* MainHomeTabController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainHomeTabController.swift; sourceTree = "<group>"; };
 		15ACA70D290D77950011E665 /* ProfileController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileController.swift; sourceTree = "<group>"; };
 		15ACA70E290D77950011E665 /* ImageSelectorController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageSelectorController.swift; sourceTree = "<group>"; };
@@ -147,6 +154,7 @@
 		15E4E90D2940F2C30080A4FF /* LoginViewModelProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModelProtocols.swift; sourceTree = "<group>"; };
 		15E4E911294181360080A4FF /* ProfileViewModelProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModelProtocols.swift; sourceTree = "<group>"; };
 		15E5A735294250A300183B71 /* SearchViewModelProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModelProtocols.swift; sourceTree = "<group>"; };
+		15E8A77E29787E510025A740 /* ServiceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceProvider.swift; sourceTree = "<group>"; };
 		15E8DB862917B370000EF639 /* UserStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStats.swift; sourceTree = "<group>"; };
 		15FDED98291FA8CE00DDAF2E /* FeedViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedViewModel.swift; sourceTree = "<group>"; };
 		5B288DF44C633C67CA7F5E28 /* Pods_Instagram.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Instagram.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -166,25 +174,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		151FA67B295455C100D45825 /* Protocols */ = {
-			isa = PBXGroup;
-			children = (
-				151FA67C2954563600D45825 /* AuthServiceProtocols.swift */,
-				151FA67E295457FE00D45825 /* UserServiceProtocols.swift */,
-				152BD5632954A21C000AA1B2 /* ImageServiceProtocols.swift */,
-				152BD5652954A668000AA1B2 /* PostServiceProtocols.swift */,
-			);
-			path = Protocols;
-			sourceTree = "<group>";
-		};
 		1552C586296D8FAC001D8E48 /* Features */ = {
 			isa = PBXGroup;
 			children = (
+				1552C58E296D94E4001D8E48 /* Shared */,
 				1552C5A6296D9936001D8E48 /* Notification */,
 				1552C5A4296D9900001D8E48 /* Search */,
 				1552C59A296D97AA001D8E48 /* Comments */,
 				1552C599296D9782001D8E48 /* Profile */,
-				1552C58E296D94E4001D8E48 /* Shared */,
 				1552C58C296D9395001D8E48 /* Posting */,
 				1552C587296D92E7001D8E48 /* Authentication */,
 			);
@@ -535,7 +532,7 @@
 		156E22E7290D6EBD0026B0C3 /* Instagram */ = {
 			isa = PBXGroup;
 			children = (
-				15ACA71C290D79310011E665 /* API */,
+				15ACA71C290D79310011E665 /* Services */,
 				1552C586296D8FAC001D8E48 /* Features */,
 				159043D1293F81C6001D8762 /* LifeCycles */,
 				156E22EE290D6EBD0026B0C3 /* Main.storyboard */,
@@ -572,6 +569,60 @@
 			path = LifeCycles;
 			sourceTree = "<group>";
 		};
+		159B9EB8297876A300546002 /* CommentService */ = {
+			isa = PBXGroup;
+			children = (
+				1564FA9C2956A55500B17E5F /* CommentService.swift */,
+				159B9EC029787B2F00546002 /* CommentServiceType.swift */,
+			);
+			path = CommentService;
+			sourceTree = "<group>";
+		};
+		159B9EB9297876C500546002 /* NotificationService */ = {
+			isa = PBXGroup;
+			children = (
+				15AD6423296DA6440008231B /* NotificationService.swift */,
+				159B9EBE29787A0900546002 /* NotificationServiceType.swift */,
+			);
+			path = NotificationService;
+			sourceTree = "<group>";
+		};
+		159B9EBA297876DB00546002 /* PostService */ = {
+			isa = PBXGroup;
+			children = (
+				152BD5652954A668000AA1B2 /* PostServiceType.swift */,
+				15D0DCB2291F4C9700ACF1ED /* PostService.swift */,
+			);
+			path = PostService;
+			sourceTree = "<group>";
+		};
+		159B9EBB297876E300546002 /* ImageService */ = {
+			isa = PBXGroup;
+			children = (
+				152BD5632954A21C000AA1B2 /* ImageServiceProtocols.swift */,
+				15ACA71D290D793D0011E665 /* ImageService.swift */,
+			);
+			path = ImageService;
+			sourceTree = "<group>";
+		};
+		159B9EBC2978771900546002 /* AuthService */ = {
+			isa = PBXGroup;
+			children = (
+				151FA67C2954563600D45825 /* AuthServiceProtocols.swift */,
+				15ACA71E290D793D0011E665 /* AuthService.swift */,
+			);
+			path = AuthService;
+			sourceTree = "<group>";
+		};
+		159B9EBD2978772C00546002 /* UserService */ = {
+			isa = PBXGroup;
+			children = (
+				15C18489290FF465004EF35F /* UserService.swift */,
+				151FA67E295457FE00D45825 /* UserServiceProtocols.swift */,
+			);
+			path = UserService;
+			sourceTree = "<group>";
+		};
 		15ACA70A290D77600011E665 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -580,18 +631,19 @@
 			path = Controllers;
 			sourceTree = "<group>";
 		};
-		15ACA71C290D79310011E665 /* API */ = {
+		15ACA71C290D79310011E665 /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				151FA67B295455C100D45825 /* Protocols */,
-				15ACA71D290D793D0011E665 /* ImageService.swift */,
-				15ACA71E290D793D0011E665 /* AuthService.swift */,
-				15C18489290FF465004EF35F /* UserService.swift */,
-				15D0DCB2291F4C9700ACF1ED /* PostService.swift */,
-				1564FA9C2956A55500B17E5F /* CommentService.swift */,
-				15AD6423296DA6440008231B /* NotificationService.swift */,
+				15E8A77E29787E510025A740 /* ServiceProvider.swift */,
+				159B9EB629786FDC00546002 /* FirestoreConstants.swift */,
+				159B9EBD2978772C00546002 /* UserService */,
+				159B9EBC2978771900546002 /* AuthService */,
+				159B9EBB297876E300546002 /* ImageService */,
+				159B9EBA297876DB00546002 /* PostService */,
+				159B9EB9297876C500546002 /* NotificationService */,
+				159B9EB8297876A300546002 /* CommentService */,
 			);
-			path = API;
+			path = Services;
 			sourceTree = "<group>";
 		};
 		15ACA721290D79480011E665 /* Models */ = {
@@ -789,6 +841,7 @@
 				152BD5642954A21C000AA1B2 /* ImageServiceProtocols.swift in Sources */,
 				151FA67F295457FE00D45825 /* UserServiceProtocols.swift in Sources */,
 				15ACA71B290D79250011E665 /* LoginController.swift in Sources */,
+				159B9EBF29787A0900546002 /* NotificationServiceType.swift in Sources */,
 				15ACA711290D77960011E665 /* ProfileController.swift in Sources */,
 				15C6F354293F9064006A3587 /* RegistrationViewModel.swift in Sources */,
 				1518D258291624E0003A2A48 /* ProfileHeaderViewModel.swift in Sources */,
@@ -799,6 +852,7 @@
 				15E8DB872917B370000EF639 /* UserStats.swift in Sources */,
 				153171FE29632DDB005390B0 /* FeedCellViewModelProtocols.swift in Sources */,
 				15C6F35B293F9A14006A3587 /* LoginViewModel.swift in Sources */,
+				159B9EC129787B2F00546002 /* CommentServiceType.swift in Sources */,
 				15B5F8C729558E2B00D95A46 /* CommentViewModelProtocols.swift in Sources */,
 				15B5F8C529558E0200D95A46 /* CommentViewModel.swift in Sources */,
 				15ACA729290D795C0011E665 /* CustomTextField.swift in Sources */,
@@ -812,9 +866,10 @@
 				15FDED99291FA8CE00DDAF2E /* FeedViewModel.swift in Sources */,
 				15E4E90E2940F2C30080A4FF /* LoginViewModelProtocols.swift in Sources */,
 				15ACA713290D77960011E665 /* NotificationController.swift in Sources */,
+				159B9EB729786FDC00546002 /* FirestoreConstants.swift in Sources */,
 				15D0DCB3291F4C9700ACF1ED /* PostService.swift in Sources */,
 				155E1D77296DD5DB0036653F /* NotificationViewModelProtocols.swift in Sources */,
-				152BD5662954A668000AA1B2 /* PostServiceProtocols.swift in Sources */,
+				152BD5662954A668000AA1B2 /* PostServiceType.swift in Sources */,
 				15B5F8C9295590EB00D95A46 /* CommentCell.swift in Sources */,
 				15C2C4692942006D00052CDF /* RegistrationViewModelInput.swift in Sources */,
 				15ACA712290D77960011E665 /* ImageSelectorController.swift in Sources */,
@@ -826,6 +881,7 @@
 				155E1D71296DA87F0036653F /* NotificationModel.swift in Sources */,
 				15E5A736294250A300183B71 /* SearchViewModelProtocols.swift in Sources */,
 				15D0DCB5291F523600ACF1ED /* PostModel.swift in Sources */,
+				15E8A77F29787E510025A740 /* ServiceProvider.swift in Sources */,
 				15ACA737290D79FA0011E665 /* FeedCell.swift in Sources */,
 				15ACA728290D795C0011E665 /* UserHelpLabelAndButton.swift in Sources */,
 				15C1848F2910D10F004EF35F /* UserInfoViewModel.swift in Sources */,

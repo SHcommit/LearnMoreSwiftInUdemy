@@ -83,6 +83,9 @@ enum FetchUserStatsError: Error {
     }
 }
 
+protocol UserServiceType: UserServiceDefaultType, UserServiceAboutSearchType, UserServiceAboutProfileType { }
+
+
 protocol UserServiceDefaultType {
     
     static func updateCurrentUserInfo(CodableType info: UserInfoModel) async throws

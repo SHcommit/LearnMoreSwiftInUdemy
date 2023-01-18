@@ -10,7 +10,7 @@
 import Firebase
 import FirebaseFirestore
 
-struct AuthService: ServiceExtensionType, AuthType {
+struct AuthService: ServiceExtensionType, AuthServiceType {
     
     static func handleIsLoginAccount(email: String, pw: String) async throws -> AuthDataResult? {
         return try await AUTH.signIn(withEmail: email, password: pw)
@@ -23,7 +23,7 @@ struct AuthService: ServiceExtensionType, AuthType {
         let userUID = result.user.uid
         let user = info.getUserInfoModel(uid: userUID, url: imageUrl)
         let encodedUserModel = encodeToNSDictionary(info: user)
-        guard let _ = try? await COLLECTION_USERS.document(userUID).setData(encodedUserModel) else { throw AuthError.invalidSetUserDataOnFireStore}
+        guard let _ = try? await FSConstants.ref(.users).document(userUID).setData(encodedUserModel) else { throw AuthError.invalidSetUserDataOnFireStore}
     }
     
 }
