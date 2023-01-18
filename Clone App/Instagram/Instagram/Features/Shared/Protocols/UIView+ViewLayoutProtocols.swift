@@ -7,6 +7,7 @@
 
 import UIKit
 
+
 ///UIView type's default configure
 protocol ConfigureSubviewsCase {
     
