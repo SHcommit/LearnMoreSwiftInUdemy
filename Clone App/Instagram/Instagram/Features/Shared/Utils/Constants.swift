@@ -25,11 +25,7 @@ let SEARCHED_USER_CELL_STACKVIEW_SPACING: CGFloat = 4
 
 //MARK: - UserService
 typealias FiresotreCompletion = (Error?) -> Void
-let FIRESTORE_USERS = "users"
-let COLLECTION_USERS = Firestore.firestore().collection(FIRESTORE_USERS)
-let COLLECTION_FOLLOWERS = Firestore.firestore().collection("followers")
-let COLLECTION_FOLLOWING = Firestore.firestore().collection("following")
-let FIRESTORE_DB = Firestore.firestore()
+
 let STORAGE = Storage.storage()
 let AUTH = Auth.auth()
 let USERPROFILEIMAGEMEGABYTE = Int64(1*1024*1024)
@@ -50,9 +46,3 @@ let UPLOAD_POST_CONTENT_VIEW_SIZE: CGFloat = 64
 //MARK: - InputTextView
 let INPUT_TEXT_VIEW_DEFAULT_MARGIN: CGFloat = 4
 
-
-//MARK: - PostService
-let COLLECTION_POSTS = Firestore.firestore().collection("posts")
-
-//MARK: - Notification
-let COLLECTION_NOTIFICATION = Firestore.firestore().collection("notifications")

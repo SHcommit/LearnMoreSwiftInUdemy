@@ -9,16 +9,18 @@ import Firebase
 import FirebaseFirestore
 
 //MARK: - Firestore user default info
-struct UserService: ServiceExtensionType, UserServiceDefaultType {
+struct UserService: ServiceExtensionType, UserServiceType {
     
     static func updateCurrentUserInfo(CodableType info: UserInfoModel) async throws {
         let encodedUserModel = encodeToNSDictionary(info: info)
-        let userDocument = COLLECTION_USERS.document(info.uid)
+        let userDocument = FSConstants.ref(.users).document(info.uid)
         try await userDocument.updateData(encodedUserModel)
     }
     
     static func fetchUserInfo<T: Codable>(type: T.Type, withUid uid: String) async throws -> T? {
-        guard let result = try? await COLLECTION_USERS.document(uid).getDocument() else {
+        guard let result = try? await FSConstants.ref(.users)
+            .document(uid)
+            .getDocument() else {
             throw FetchUserError.invalidGetDocumentUserUID
         }
         if !result.exists { throw FetchUserError.invalidGetDocumentUserUID }
@@ -43,7 +45,7 @@ struct UserService: ServiceExtensionType, UserServiceDefaultType {
 extension UserService: UserServiceAboutSearchType {
     
     static func fetchUserList<T: Codable>(type: T.Type) async throws -> [T]? {
-        let docuemts = try await COLLECTION_USERS.getDocuments().documents
+        let docuemts = try await FSConstants.ref(.users).getDocuments().documents
         return try docuemts.map{
             try $0.data(as: type.self)
         }
@@ -58,12 +60,12 @@ extension UserService: UserServiceAboutProfileType {
         guard let currentUid = Utils.pList.string(forKey: CURRENT_USER_UID) else { throw FollowServiceError.invalidCurrentUserUIDInUserDefaultsStandard }
         return await withThrowingTaskGroup(of: Void.self) { group in
             group.addTask {
-                guard let _ = try? await COLLECTION_FOLLOWING.document(currentUid).collection("user-following")
+                guard let _ = try? await FSConstants.ref(.following).document(currentUid).collection("user-following")
                     .document(uid).setData([:]) else { throw FollowServiceError.failedFollowingToSetData }
             }
-            
             group.addTask {
-                guard let _ = try? await COLLECTION_FOLLOWERS.document(uid).collection("user-followers")
+                guard let _ = try? await FSConstants.ref(.followers)
+                    .document(uid).collection("user-followers")
                     .document(currentUid).setData([:]) else {
                     throw FollowServiceError.failedFollowerToSetData }
             }
@@ -75,14 +77,14 @@ extension UserService: UserServiceAboutProfileType {
             UnFollowServiceError.invalidCurrentUserUIDInUserDefaultsStandard }
         return await withThrowingTaskGroup(of: Void.self) { group in
             group.addTask {
-                guard let _ = try? await COLLECTION_FOLLOWING
+                guard let _ = try? await FSConstants.ref(.following)
                     .document(currentUid).collection("user-following")
                     .document(uid).delete() else {
                     throw UnFollowServiceError.failedUnFollowSpecificUserFromLoginUser
                 }
             }
             group.addTask {
-                guard let _ = try? await COLLECTION_FOLLOWERS
+                guard let _ = try? await FSConstants.ref(.followers)
                     .document(uid).collection("user-followers")
                     .document(currentUid).delete() else {
                     throw UnFollowServiceError.failedUnFollowLoginUserFromSpecificUser
@@ -95,7 +97,7 @@ extension UserService: UserServiceAboutProfileType {
         
         guard let currentUid = Utils.pList.string(forKey: CURRENT_USER_UID) else {
             throw CheckUserFollowedError.invalidCurrentUserUIDInUserDefaultsStandard }
-        guard let docSanps = try? await COLLECTION_FOLLOWING
+        guard let docSanps = try? await FSConstants.ref(.following)
             .document(currentUid).collection("user-following")
             .document(uid).getDocument() else {
             throw CheckUserFollowedError.invalidSpecificUserInfo }
@@ -104,12 +106,12 @@ extension UserService: UserServiceAboutProfileType {
     
     static func fetchUserStats(uid: String) async throws -> Userstats {
     
-        guard let followerQuery = try? await COLLECTION_FOLLOWERS
+        guard let followerQuery = try? await FSConstants.ref(.followers)
             .document(uid).collection("user-followers")
             .getDocuments() else {
             throw FetchUserStatsError.invalidSpecificUserFollowersDocument
         }
-        guard let followingQuery = try? await COLLECTION_FOLLOWING
+        guard let followingQuery = try? await FSConstants.ref(.following)
             .document(uid).collection("user-following")
             .getDocuments() else {
             throw FetchUserStatsError.invalidSpecificUSerFollowingDocuemnt
