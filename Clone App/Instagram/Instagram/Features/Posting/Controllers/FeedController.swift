@@ -63,7 +63,6 @@ extension FeedController {
     
     func presentLoginScene() {
         let controller = LoginController(viewModel: LoginViewModel())
-        controller.authDelegate = tabBarController as? MainHomeTabController
         let nav = UINavigationController(rootViewController: controller)
         nav.modalPresentationStyle = .fullScreen
         self.present(nav,animated: false, completion: nil)
@@ -144,7 +143,7 @@ extension FeedController {
             fatalError()
         }
         guard let tab = tabBarController as? MainHomeTabController else { fatalError() }
-        guard let user = tab.getUserVM?.getUser else { fatalError() }
+        let user = tab.vm.user
         if let post = post {
             cell.viewModel = FeedViewModel(post: post, user: user)
         }else {

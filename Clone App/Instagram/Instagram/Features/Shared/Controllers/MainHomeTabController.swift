@@ -29,6 +29,7 @@ class MainHomeTabController: UITabBarController {
     //MARK: - Lifecycle
     init(vm: MainHomeTabViewModelType) {
         self.vm = vm
+        super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {
