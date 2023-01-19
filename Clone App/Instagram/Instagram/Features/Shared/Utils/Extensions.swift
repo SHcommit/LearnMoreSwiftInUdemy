@@ -118,13 +118,13 @@ class Dynamic<T> {
 //MARK: - Network service extension
 protocol ServiceExtensionType {
     
-    static func encodeToNSDictionary(info: Codable) -> [String:Any]
+    func encodeToNSDictionary(info: Codable) -> [String:Any]
     
 }
 
 extension ServiceExtensionType {
     
-    static func encodeToNSDictionary(info: Codable) -> [String : Any] {
+    func encodeToNSDictionary(info: Codable) -> [String : Any] {
         guard let dataDictionary = info.encodeToDictionary else { fatalError() }
         return dataDictionary
     }
@@ -133,6 +133,7 @@ extension ServiceExtensionType {
 
 //MARK: - Utils
 struct Utils {
+    
     static var pList: UserDefaults {
         get {
             let pList = UserDefaults.standard
@@ -140,6 +141,7 @@ struct Utils {
             return pList
         }
     }
+
 }
 
 
