@@ -26,8 +26,8 @@ enum AuthError: Error {
 
 protocol AuthServiceType: ServiceExtensionType {
     
-    static func handleIsLoginAccount(email: String, pw: String) async throws -> AuthDataResult?
+    func handleIsLoginAccount(email: String, pw: String) async throws -> AuthDataResult?
     
-    static func registerUser(with info: RegistrationViewModel) async throws
+    func registerUser(with info: RegistrationViewModel) async throws
     
 }

@@ -22,15 +22,15 @@ enum CommentServiceError: Error {
 
 protocol CommentServiceType {
     
-    static func uploadComment(inputModel info: UploadCommentInputModel) throws
+    func uploadComment(inputModel info: UploadCommentInputModel) throws
     
-    static func fetchComment(postID: String, completion: @escaping([CommentModel])->Void)
+    func fetchComment(postID: String, completion: @escaping([CommentModel])->Void)
     
 }
 
 extension CommentService {
     
-    static func createCommentModel(withUploadCommentInput info: UploadCommentInputModel) -> CommentModel {
+    func createCommentModel(withUploadCommentInput info: UploadCommentInputModel) -> CommentModel {
         let comment = deleteLineBreaksInComment(with: info.comment)
         return CommentModel(uid: info.user.uid,
                             comment: comment,
@@ -39,7 +39,7 @@ extension CommentService {
                             profileImageUrl: info.user.profileURL)
     }
     
-    static func deleteLineBreaksInComment(with comment: String) -> String {
+    func deleteLineBreaksInComment(with comment: String) -> String {
         return comment.replacingOccurrences(of: "\n\n*", with: "\n", options: .regularExpression)
     }
 }

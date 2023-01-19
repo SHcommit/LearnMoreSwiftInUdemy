@@ -32,25 +32,25 @@ enum FetchPostError: Error {
 
 protocol PostServiceType {
     
-    static func fetchPosts() async throws -> [PostModel]
+    func fetchPosts() async throws -> [PostModel]
     
-    static func fetchPost(withPostId id: String) async throws -> PostModel
+    func fetchPost(withPostId id: String) async throws -> PostModel
     
-    static func fetchSpecificUserPostsInfo(forUser uid: String) async throws -> [PostModel]
+    func fetchSpecificUserPostsInfo(forUser uid: String) async throws -> [PostModel]
     
-    static func uploadPost(caption: String, image: UIImage, ownerProfileUrl ownerUrl: String, ownerUsername ownerName: String) async throws
+    func uploadPost(caption: String, image: UIImage, ownerProfileUrl ownerUrl: String, ownerUsername ownerName: String) async throws
     
     
-    static func uploadImage(with image: UIImage) async throws -> String
+    func uploadImage(with image: UIImage) async throws -> String
     
-    static func likePost(post: PostModel) async
+    func likePost(post: PostModel) async
     
-    static func unlikePost(post: PostModel) async
+    func unlikePost(post: PostModel) async
     
-    static func checkIfUserLikedPost(post: PostModel) async -> Bool
+    func checkIfUserLikedPost(post: PostModel) async -> Bool
     
 }
 
 protocol ProstServiceErrorType {
-    static func uploadImageErrorHandling(with error: ImageServiceError)
+    func uploadImageErrorHandling(with error: ImageServiceError)
 }

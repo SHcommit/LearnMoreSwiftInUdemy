@@ -23,7 +23,18 @@ class UploadPostController: UIViewController {
     weak var didFinishDelegate: UploadPostControllerDelegate?
     var currentUserInfo: UserInfoModel?
     
+    //MARK: - Usecase
+    fileprivate let apiClient: ServiceProviderType
+    
     //MARK: - Lifecycle
+    init(apiClient: ServiceProviderType) {
+        self.apiClient = apiClient
+        super.init()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -79,7 +90,7 @@ extension UploadPostController {
             let caption = contentsTextView.text else { throw FetchPostError.invalidUserPostData }
         guard let userInfo = currentUserInfo else { throw FetchUserError.invalidUserInfo }
         
-        try await PostService.uploadPost(caption: caption, image: image, ownerProfileUrl: userInfo.profileURL, ownerUsername: userInfo.username)
+        try await apiClient.postCase.uploadPost(caption: caption, image: image, ownerProfileUrl: userInfo.profileURL, ownerUsername: userInfo.username)
     }
     
     func uploadPostCompletionHandler() {

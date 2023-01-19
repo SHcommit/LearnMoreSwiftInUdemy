@@ -13,8 +13,12 @@ class NotificationsViewModel {
     //MARK: - Properties
     fileprivate var _notifications = CurrentValueSubject<[NotificationModel],Never>([NotificationModel]())
     
+    //MARK: - Usecase
+    fileprivate let apiClient: ServiceProviderType
+    
     //MARK: - Lifecycels
-    init() {
+    init(apiClient: ServiceProviderType) {
+        self.apiClient = apiClient
         configure()
     }
     
@@ -30,7 +34,7 @@ extension  NotificationsViewModel {
 }
 
 //MARK: - NotificationViewModelType
-extension NotificationsViewModel: NotificationsViewModelType {
+extension NotificationsViewModel: NotificationViewModelType {
     
     func transform(with input: NotificationViewModelInput) -> NotificationViewModelOutput {
         let appear = appearChains(with: input)
@@ -46,7 +50,7 @@ extension NotificationsViewModel: NotificationsViewModelType {
 }
 
 //MARK: - NotificationsVMComputedProperties
-extension NotificationsViewModel: NotificationsVMComputedProperties {
+extension NotificationsViewModel: NotificationVMComputedProperties {
     
     var count: Int {
         _notifications.value.count
@@ -88,7 +92,7 @@ extension NotificationsViewModel {
             .specificCellInit
             .subscribe(on: DispatchQueue.main)
             .map { [unowned self] (cell, index) -> NotificationControllerState in
-                cell.vm = NotificationCellViewModel(notification: _notifications.value[index])
+                cell.vm = NotificationCellViewModel(notification: _notifications.value[index], apiClient: apiClient)
                 cell.setupBindings()
                 cell.didTapFollowButton()
                 return .none
@@ -113,7 +117,7 @@ extension NotificationsViewModel {
     private func fetchNotifications() {
         Task(priority: .high) {
             do {
-                let list = try await NotificationService.fetchNotifications()
+                let list = try await apiClient.notificationCase.fetchNotifications()
                 self._notifications.value = list
                 try self.checkIfUserIsFollowed()
             } catch {
@@ -133,7 +137,7 @@ extension NotificationsViewModel {
         _notifications.value.forEach{ notification in
             Task(priority: .high) {
                 guard notification.type == .follow else { return }
-                let isFollowed = try await UserService.checkIfUserIsFollowd(uid: notification.specificUserInfo.uid)
+                let isFollowed = try await apiClient.userCase.checkIfUserIsFollowd(uid: notification.specificUserInfo.uid)
                 guard let idx = _notifications.value.firstIndex(where: {$0.id == notification.id}) else {
                     return
                 }

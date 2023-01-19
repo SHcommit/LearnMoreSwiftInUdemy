@@ -8,7 +8,7 @@
 import UIKit
 
 class ImageSelectorController: UIViewController {
-    
+    weak var coordinator: ImageSelectorFlowCoordinator?
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white

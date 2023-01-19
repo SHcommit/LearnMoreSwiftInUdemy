@@ -18,7 +18,7 @@ class FeedController: UICollectionViewController {
         }
     }
     var subscriptions = Set<AnyCancellable>()
-    
+    weak var coordinator: FeedFlowCoordinator?
     // specific user's specific CollectionViewcell post info
     var post: PostModel? {
         didSet {
@@ -62,8 +62,7 @@ extension FeedController {
     }
     
     func presentLoginScene() {
-        let controller = LoginController(viewModel: LoginViewModel())
-        controller.authDelegate = tabBarController as? MainHomeTabController
+        let controller = LoginController(viewModel: LoginViewModel(apiClient: ServiceProvider.defaultProvider()))
         let nav = UINavigationController(rootViewController: controller)
         nav.modalPresentationStyle = .fullScreen
         self.present(nav,animated: false, completion: nil)
@@ -71,7 +70,7 @@ extension FeedController {
     func checkIfUserLikePosts() {
         self.posts.forEach { post in
             Task() {
-                let didLike = await PostService.checkIfUserLikedPost(post: post)
+                let didLike = await ServiceProvider.defaultProvider().postCase.checkIfUserLikedPost(post: post)
                 if let index = self.posts.firstIndex(where: {$0.postId == post.postId}) {
                     self.posts[index].didLike = didLike
                 }
@@ -87,7 +86,7 @@ extension FeedController {
         guard post == nil else { return }
         Task() {
             do {
-                var posts = try await PostService.fetchPosts()
+                var posts = try await ServiceProvider.defaultProvider().postCase.fetchPosts()
                 posts.sort() {
                     $0.timestamp.seconds > $1.timestamp.seconds
                 }
@@ -144,11 +143,12 @@ extension FeedController {
             fatalError()
         }
         guard let tab = tabBarController as? MainHomeTabController else { fatalError() }
-        guard let user = tab.getUserVM?.getUser else { fatalError() }
+        let user = tab.vm.user
+        let apiClient = ServiceProvider.defaultProvider()
         if let post = post {
-            cell.viewModel = FeedViewModel(post: post, user: user)
+            cell.viewModel = FeedViewModel(post: post, user: user, apiClient: apiClient)
         }else {
-            cell.viewModel = FeedViewModel(post: posts[indexPath.row], user: user)
+            cell.viewModel = FeedViewModel(post: posts[indexPath.row], user: user, apiClient: apiClient)
         }
         cell.configure()
         cell.setupBinding(with: navigationController)

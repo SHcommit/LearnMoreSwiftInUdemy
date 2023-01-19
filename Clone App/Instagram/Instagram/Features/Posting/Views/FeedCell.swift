@@ -102,7 +102,7 @@ extension FeedCell {
             break
         case .present(let navigationController):
             guard let post = self.viewModel?.post else { return }
-            let controller = CommentController(viewModel: CommentViewModel(post: post))
+            let controller = CommentController(viewModel: CommentViewModel(post: post, apiClient: ServiceProvider.defaultProvider()), apiClient: ServiceProvider.defaultProvider())
             navigationController?.pushViewController(controller, animated: true)
             break
         case .updateLikeLabel:
@@ -110,10 +110,10 @@ extension FeedCell {
             break
         case .fetchUserInfo(let uid):
             Task() {
-                let userInfo = try await UserService.fetchUserInfo(type: UserInfoModel.self, withUid: uid)
+                let userInfo = try await ServiceProvider.defaultProvider().userCase.fetchUserInfo(type: UserInfoModel.self, withUid: uid)
                 guard let userInfo = userInfo else { return }
                 DispatchQueue.main.async {
-                    let controller = ProfileController(viewModel: ProfileViewModel(user: userInfo))
+                    let controller = ProfileController(viewModel: ProfileViewModel(user: userInfo, apiClient: ServiceProvider.defaultProvider()))
                     self.feedControllerNavigationController?.pushViewController(controller, animated: true)
                 }
             }
@@ -131,7 +131,7 @@ extension FeedCell {
         viewModel.didLike = false
         
         Task(priority: .high) {
-            let didLike = await PostService.checkIfUserLikedPost(post: viewModel.post)
+            let didLike = await ServiceProvider.defaultProvider().postCase.checkIfUserLikedPost(post: viewModel.post)
             viewModel.didLike = didLike
             DispatchQueue.main.async {
                 if didLike {

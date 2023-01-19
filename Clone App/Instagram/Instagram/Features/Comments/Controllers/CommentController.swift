@@ -12,10 +12,11 @@ class CommentController: UICollectionViewController {
     
     //MARK: - Constants
     private let reuseIdentifier = "CommentCellID"
-    
     //MARK: - Properties
     private var commentInputView: CommentInputAccessoryView!
     private var viewModel: CommentViewModelType
+    private let apiClient: ServiceProviderType
+    
     private let appear = PassthroughSubject<Void,Never>()
     private let reloadData = PassthroughSubject<Void,Never>()
     private let cellForItem = PassthroughSubject<CommentCellInfo,Never>()
@@ -23,8 +24,9 @@ class CommentController: UICollectionViewController {
     private var subscriptions = Set<AnyCancellable>()
     
     //MARK: - Lifecycles
-    init(viewModel: CommentViewModelType) {
+    init(viewModel: CommentViewModelType, apiClient: ServiceProviderType) {
         self.viewModel = viewModel
+        self.apiClient = apiClient
         super.init(collectionViewLayout: UICollectionViewFlowLayout())
     }
     
@@ -144,16 +146,14 @@ extension CommentController: CommentInputAccessoryViewDelegate {
         guard let vc = tabBarController as? MainHomeTabController else {
             return
         }
-        guard let user = vc.getUserVM?.userInfoModel() else {
-            return
-        }
+        let user = vc.vm.user
         guard let postId = viewModel.post.postId else { return }
         let input = UploadCommentInputModel(comment: comment,
                                             postID: postId,
                                             user: user)
         (viewModel as? CommentViewModelNetworkServiceType)?.uploadComment(withInputModel: input)
         let uploadModel = UploadNotificationModel(uid: user.uid, profileImageUrl: user.profileURL, username: user.username, userIsFollowed: user.isFollowed)
-        NotificationService.uploadNotification(toUid: viewModel.post.ownerUid, to: uploadModel, type: .comment,post: viewModel.post)
+        apiClient.notificationCase.uploadNotification(toUid: viewModel.post.ownerUid, to: uploadModel, type: .comment,post: viewModel.post)
         inputView.clearCommentTextView()
     }
 }

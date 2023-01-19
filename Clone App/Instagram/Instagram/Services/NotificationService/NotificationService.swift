@@ -11,7 +11,7 @@ import Combine
 
 struct NotificationService: NotificationServiceType {
     
-    static func uploadNotification(toUid uid: String, to uploadUserInfo: UploadNotificationModel, type: NotificationType, post: PostModel? = nil) {
+    func uploadNotification(toUid uid: String, to uploadUserInfo: UploadNotificationModel, type: NotificationType, post: PostModel? = nil) {
         guard let currentUid = Utils.pList.string(forKey: CURRENT_USER_UID) else { return }
         guard uid != currentUid else { return }
         let doc = FSConstants.ref(.notifications).document(uid)
@@ -35,7 +35,7 @@ struct NotificationService: NotificationServiceType {
         
     }
     
-    static func fetchNotifications() async throws -> [NotificationModel] {
+    func fetchNotifications() async throws -> [NotificationModel] {
         guard let currentUid = Utils.pList.string(forKey: CURRENT_USER_UID) else { throw NotificationServiceError.invalidCurrentUser }
         guard let snapShot = try? await FSConstants.ref(.notifications)
             .document(currentUid)

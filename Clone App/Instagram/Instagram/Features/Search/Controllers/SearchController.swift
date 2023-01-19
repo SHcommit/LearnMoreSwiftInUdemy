@@ -19,7 +19,7 @@ class SearchController: UITableViewController {
     fileprivate let appear = PassthroughSubject<Void,Never>()
     fileprivate var subscriptions = Set<AnyCancellable>()
     fileprivate let searchController = UISearchController(searchResultsController: nil)
-    
+    weak var coordinator: SearchFlowCoordinator?
     //MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()

@@ -23,13 +23,13 @@ enum NotificationControllerState {
     case refresh
 }
 
-protocol NotificationsVMComputedProperties {
+protocol NotificationVMComputedProperties {
     var count: Int { get }
     
     var notifications: [NotificationModel] { get set }
 }
 
-protocol NotificationsViewModelType: NotificationsVMComputedProperties {
+protocol NotificationViewModelType: NotificationVMComputedProperties {
     func transform(with input: NotificationViewModelInput) -> NotificationViewModelOutput
 }
 

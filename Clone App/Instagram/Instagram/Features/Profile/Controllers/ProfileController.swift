@@ -13,6 +13,7 @@ class ProfileController: UICollectionViewController {
     //MARK: - properties
     var viewModel: ProfileViewModelType
     var subscriptions = Set<AnyCancellable>()
+    weak var coordinator: ProfileFlowCoordinator?
     
     //MARK: - ProfileViewModel input properties
     private let appear = PassthroughSubject<Void,ProfileErrorType>()
