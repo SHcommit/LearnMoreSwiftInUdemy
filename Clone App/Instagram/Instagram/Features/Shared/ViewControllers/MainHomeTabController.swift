@@ -6,39 +6,38 @@
 //
 
 import UIKit
+import Combine
 import Firebase
 import YPImagePicker
 
 class MainHomeTabController: UITabBarController {
     
     //MARK: - Properties
-    private var userVM: UserInfoViewModel? {
-        didSet {
-            configureViewControllers()
-        }
-    }
+    var vm: MainHomeTabViewModelType
+    var appear = PassthroughSubject<Void,Never>()
+    var subscriptions = Set<AnyCancellable>()
     
-    var getUserVM: UserInfoViewModel? {
-        get {
-            return self.userVM
-        }
-        set (newUser) {
-            self.userVM = newUser
-        }
-    }
-    
-    private var isLogin: Bool? {
-        didSet {
-            Task() {
-                await isLoginConfigure()
-            }
-        }
-    }
+//    private var isLogin: Bool? {
+//        didSet {
+//            Task() {
+//                await isLoginConfigure()
+//            }
+//        }
+//    }
     
     
     //MARK: - Lifecycle
+    init(vm: MainHomeTabViewModelType) {
+        self.vm = vm
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupBindings()
         view.backgroundColor = .white
     }
     
@@ -48,33 +47,60 @@ class MainHomeTabController: UITabBarController {
         
     }
     
-} 
+}
+
+//MARK: - Bind
+extension MainHomeTabController {
+    
+    fileprivate func setupBindings() {
+        _=subscriptions.map{$0.cancel()}
+        subscriptions.removeAll()
+        
+        let input = MainHomeTabViewModelInput(appear: appear.eraseToAnyPublisher())
+        let output = vm.transform(with: input)
+        output.sink { _ in
+            print("DEBUG: MainHomeTabController's transform complete.")
+        } receiveValue: {
+            self.render($0)
+        }.store(in: &subscriptions)
+    }
+    
+    fileprivate func render(_ state: MainHomeTabControllerState) {
+        switch state {
+        case .none:
+            break
+        case .fetchUserInfoIsCompleted:
+            configureViewControllers()
+            break
+        }
+    }
+}
 
 //MARK: - Helpers
 extension MainHomeTabController {
     
     func configure() {
         customTabBarUI()
-        isLogin = isUserLogined()
+        //isLogin = isUserLogined()
         delegate = self
     }
     
-    func isLoginConfigure() async {
-        guard let isLogin = isLogin else { return }
-        if !isLogin {
-            DispatchQueue.main.async {
-                self.presentLoginScene()
-            }
-        }else {
-            guard let _ = userVM else {
-                await fetchCurrentUserInfo()
-                return
-            }
-        }
-    }
+    // 유저 로그인 기능은 메인 코디네이터에서 담당할거
+//    func isLoginConfigure() async {
+//        guard let isLogin = isLogin else { return }
+//        if !isLogin {
+//            DispatchQueue.main.async {
+//                self.presentLoginScene()
+//            }
+//        }else {
+//            guard let _ = userVM else {
+//                await fetchCurrentUserInfo()
+//                return
+//            }
+//        }
+//    }
     
     func configureViewControllers() {
-        guard let userVM = userVM else { return }
         
         let layout = UICollectionViewFlowLayout()
         
@@ -85,35 +111,13 @@ extension MainHomeTabController {
         let imageSelector = templateNavigationController(unselectedImage: .imageLiteral(name: "plus_unselected"), selectedImage: .imageLiteral(name: "plus_unselected"), rootVC: ImageSelectorController())
         let notifications = templateNavigationController(unselectedImage: .imageLiteral(name: "like_unselected"), selectedImage: .imageLiteral(name: "like_selected"), rootVC: NotificationController())
         
-        let profileVC = ProfileController(viewModel: ProfileViewModel(user: userVM.userInfoModel()))
+        let profileVC = ProfileController(viewModel: ProfileViewModel(user: vm.user))
         
         let profile = templateNavigationController(unselectedImage: .imageLiteral(name: "profile_unselected"), selectedImage: .imageLiteral(name: "profile_selected"), rootVC: profileVC)
         
         viewControllers = [feed,search,imageSelector,notifications,profile]
     }
     
-    
-}
-
-//MARK: - Setup NavigationController Helpers
-extension MainHomeTabController {
-    
-    func templateNavigationController(unselectedImage: UIImage, selectedImage: UIImage, rootVC: UIViewController) -> UINavigationController {
-        let nav = UINavigationController(rootViewController: rootVC)
-        nav.tabBarItem.image = unselectedImage
-        nav.tabBarItem.selectedImage = selectedImage
-        nav.navigationBar.tintColor = .black
-        setupNavigationAppearance(nav: nav)
-        return nav
-    }
-    
-    func setupNavigationAppearance(nav: UINavigationController) {
-        let appearance = UINavigationBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = .white
-        nav.navigationBar.standardAppearance = appearance
-        nav.navigationBar.scrollEdgeAppearance = appearance
-    }
     
 }
 
@@ -127,7 +131,7 @@ extension MainHomeTabController {
                 let vc = UploadPostController()
                 vc.selectedImage = selectedImage
                 vc.didFinishDelegate = self
-                vc.currentUserInfo = self.userVM?.userInfoModel()
+                vc.currentUserInfo = self.vm.user
                 let nav = UINavigationController(rootViewController: vc)
                 nav.modalPresentationStyle = .fullScreen
                 self.present(nav, animated: false)
@@ -161,71 +165,17 @@ extension MainHomeTabController {
 //MARK: - API.
 extension MainHomeTabController {
     
-    func fetchUserInfo(withUID uid: String) async {
-        do{
-            try await fetchUserInfoFromUserService(withUID: uid)
-        }catch {
-            fetchUserInfoErrorHandling(withError: error)
-        }
-    }
-    func fetchUserInfoErrorHandling(withError error: Error) {
-        switch error {
-        case FetchUserError.invalidUserInfo:
-            print("DEBUG: Fail to bind userInfo instance.")
-        case FetchUserError.invalidGetDocumentUserUID:
-            print("DEBUG: Fail to get user document with UID.")
-        default:
-            print("DEBUG: An error occured: \(error.localizedDescription)")
-        }
-
-    }
-    
-    func fetchCurrentUserInfo() async {
-        do {
-            try await fetchUserInfoFromUserService()
-        } catch {
-            fetchCurrentUserInfoErrorHandling(withError: error)
-        }
-    }
-    func fetchUserInfoFromUserService(withUID uid: String? = nil) async throws {
-        guard let uid = uid else {
-            guard let userInfo = try await UserService.fetchCurrentUserInfo(type: UserInfoModel.self) else { throw FetchUserError.invalidUserInfo }
-            DispatchQueue.main.async {
-                self.userVM = UserInfoViewModel(user: userInfo)
-            }
-            return
-        }
-        guard let userInfo = try await UserService.fetchUserInfo(type: UserInfoModel.self, withUid: uid) else { throw FetchUserError.invalidUserInfo }
-        self.userVM = UserInfoViewModel(user: userInfo, profileImage: nil)
-    }
-    func fetchCurrentUserInfoErrorHandling(withError error: Error) {
-        guard let error = error as? FetchUserError else { return }
-        switch error {
-        case .invalidGetDocumentUserUID:
-            print("DEBUG: Invalid get docuemnt specific user's uid")
-            break
-        case .invalidUserInfo:
-            print("DEBUG: Invalid user's instance")
-            break
-        default :
-            print("DEBUG: Unexpected error occured")
-            break
-        }
-    }
-    
-    
     //MARK: - API. check user's membership
-    func isUserLogined() -> Bool {
-        let currentUserUid = Utils.pList.string(forKey: CURRENT_USER_UID)
-        if Auth.auth().currentUser == nil || currentUserUid == nil{
-            return false
-        }
-        return true
-    }
+//    func isUserLogined() -> Bool {
+//        let currentUserUid = Utils.pList.string(forKey: CURRENT_USER_UID)
+//        if Auth.auth().currentUser == nil || currentUserUid == nil{
+//            return false
+//        }
+//        return true
+//    }
     
     func presentLoginScene() {
         let controller = LoginController(viewModel: LoginViewModel())
-        controller.authDelegate = self
         let nav = UINavigationController(rootViewController: controller)
         nav.modalPresentationStyle = .fullScreen
         self.present(nav,animated: false, completion: nil)
@@ -234,41 +184,43 @@ extension MainHomeTabController {
 }
 
 //MARK: - Implement AuthentificationDelegate
-extension MainHomeTabController: AuthentificationDelegate {
+//extension MainHomeTabController {
     
-    func authenticationCompletion(uid: String) async {
-        let ud = UserDefaults.standard
-        ud.synchronize()
-        ud.set(uid, forKey: CURRENT_USER_UID)
-        do{
-            try await fetchCurrentUserInfo(withUID: uid)
-            endIndicator()
-        }catch {
-            authenticationCompletionErrorHandling(error: error)
-        }
-        self.dismiss(animated: false)
-    }
-    
-    func fetchCurrentUserInfo(withUID id: String) async throws {
-        let userInfo = try await UserService.fetchUserInfo(type: UserInfoModel.self, withUid: id)
-        guard let userInfo = userInfo else { throw FetchUserError.invalidUserInfo }
-        self.userVM = UserInfoViewModel(user: userInfo, profileImage: nil)
-    }
-    
-    func authenticationCompletionErrorHandling(error: Error) {
-        switch error {
-        case FetchUserError.invalidGetDocumentUserUID:
-            print("DEBUG: Fail to get user document with UID 이경우 로그인됬는데 uid를 찾을 수 없음 -> 파이어베이스 사용자 UID 잘못 등록됨.")
-            DispatchQueue.main.async {
-                self.presentLoginScene()
-            }
-        case FetchUserError.invalidUserInfo:
-            print("DEBUG: Fail to bind userInfo")
-        default:
-            print("DEBUG: Unexpected error occured: \(error.localizedDescription)")
-        }
-    }
-}
+//    /// 엥 여기서 영구저장소를 업데이트한다고?!
+//    func authenticationCompletion(uid: String) async {
+//        let ud = UserDefaults.standard
+//        ud.synchronize()
+//        ud.set(uid, forKey: CURRENT_USER_UID)
+//        do{
+//            try await fetchCurrentUserInfo(withUID: uid)
+//            endIndicator()
+//        }catch {
+//            authenticationCompletionErrorHandling(error: error)
+//        }
+//        self.dismiss(animated: false)
+//    }
+//    ///얘는 uid있을 때 근데 이거도 로그인 버튼누르고 로그인 성공시에 영구저장소에 저장하면 매개변수 없앨 수 있어.
+//    /// 근데 fetchCurrentUserInfo에서 어차피 영구저장소에서 가져와서 이거 없애도 될듯
+//    func fetchCurrentUserInfo(withUID id: String) async throws {
+//        let userInfo = try await UserService.fetchUserInfo(type: UserInfoModel.self, withUid: id)
+//        guard let userInfo = userInfo else { throw FetchUserError.invalidUserInfo }
+//        self.userVM = UserInfoViewModel(user: userInfo, profileImage: nil)
+//    }
+//
+//    func authenticationCompletionErrorHandling(error: Error) {
+//        switch error {
+//        case FetchUserError.invalidGetDocumentUserUID:
+//            print("DEBUG: Fail to get user document with UID 이경우 로그인됬는데 uid를 찾을 수 없음 -> 파이어베이스 사용자 UID 잘못 등록됨.")
+//            DispatchQueue.main.async {
+//                self.presentLoginScene()
+//            }
+//        case FetchUserError.invalidUserInfo:
+//            print("DEBUG: Fail to bind userInfo")
+//        default:
+//            print("DEBUG: Unexpected error occured: \(error.localizedDescription)")
+//        }
+//    }
+//}
 
 //MAKR: -  UITabBarControllerDelegate
 extension MainHomeTabController: UITabBarControllerDelegate {

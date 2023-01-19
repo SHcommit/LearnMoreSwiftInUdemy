@@ -12,7 +12,7 @@ import Combine
 class LoginController: UIViewController {
     
     //MARK: - Properties
-    weak var authDelegate: AuthentificationDelegate?
+    //weak var authDelegate: AuthentificationDelegate?
     private let instagramIcon: UIImageView = initialInstagramIcon()
     private lazy var emailTextField: UITextField = initialEmailTextField()
     private lazy var passwdTextField: UITextField = initialPasswdTextField()
@@ -129,6 +129,10 @@ extension LoginController {
             endIndicator()
             loginButtonSwitchHandler(with: isValid)
             break
+        case .loginSuccess:
+            endIndicator()
+            startIndicator()
+            self.dismiss(animated: true)
         }
     }
     

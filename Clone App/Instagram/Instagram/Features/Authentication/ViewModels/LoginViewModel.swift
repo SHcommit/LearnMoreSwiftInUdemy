@@ -54,8 +54,8 @@ extension LoginViewModel: LoginViewModelInputCase {
                     throw LoginViewModelErrorType.loginPublishedOutputStreamNil
                 }
                 presentingVC.view.isHidden = false
-                loginInputAccount(currentVC: currentVC)
-                return .endIndicator
+                loginInputAccount()
+                return .loginSuccess
             }.mapError{ error -> LoginViewModelErrorType in
                 return error as? LoginViewModelErrorType ?? .failed
             }.eraseToAnyPublisher()
@@ -124,11 +124,15 @@ extension LoginViewModel: LoginViewModelInputCase {
 //MARK: - LoginViewModelAPIType
 extension LoginViewModel: LoginViewModelNetworkServiceType {
     
-    func loginInputAccount(currentVC: LoginController) {
+    func loginInputAccount() {
         Task() {
             do {
                 guard let authDataResult = try await AuthService.handleIsLoginAccount(email: email, pw: passwd) else { throw FetchUserError.invalidUserInfo }
-                await currentVC.authDelegate?.authenticationCompletion(uid: authDataResult.user.uid)
+                DispatchQueue.main.async {
+                    let ud = UserDefaults.standard
+                    ud.synchronize()
+                    ud.set(authDataResult.user.uid, forKey: CURRENT_USER_UID)
+                }
             }catch FetchUserError.invalidUserInfo {
                 print("DEBUG: Fail to bind userInfo")
             }catch {
