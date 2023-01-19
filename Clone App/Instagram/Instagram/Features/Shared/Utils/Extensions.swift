@@ -141,3 +141,26 @@ struct Utils {
         }
     }
 }
+
+
+//MARK: - RootNavigationController+
+extension MainHomeTabController {
+    
+    func templateNavigationController(unselectedImage: UIImage, selectedImage: UIImage, rootVC: UIViewController) -> UINavigationController {
+        let nav = UINavigationController(rootViewController: rootVC)
+        nav.tabBarItem.image = unselectedImage
+        nav.tabBarItem.selectedImage = selectedImage
+        nav.navigationBar.tintColor = .black
+        setupNavigationAppearance(nav: nav)
+        return nav
+    }
+    
+    func setupNavigationAppearance(nav: UINavigationController) {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .white
+        nav.navigationBar.standardAppearance = appearance
+        nav.navigationBar.scrollEdgeAppearance = appearance
+    }
+    
+}
