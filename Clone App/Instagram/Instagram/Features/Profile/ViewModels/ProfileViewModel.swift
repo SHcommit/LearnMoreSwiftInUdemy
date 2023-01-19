@@ -10,7 +10,7 @@ import Combine
 
 class ProfileViewModel {
     //MARK: - Properties
-    @Published var user = UserInfoModel(email: "", fullname: "", profileURL: "", uid: "", username: "")
+    @Published var user: UserInfoModel
     @Published var userStats: Userstats?
     @Published var profileImage: UIImage?
     @Published var postsInfo = [PostModel]()
@@ -212,7 +212,7 @@ extension ProfileViewModel: ProfileHeaderDelegate {
             return
         }
         guard let tab = tabBarController as? MainHomeTabController else { indicatorSubject.send(.end); return }
-        guard let currentUser = tab.getUserVM?.getUser else { indicatorSubject.send(.end); return }
+        let currentUser = tab.vm.user
         switch user.isFollowed {
         case true:
             Task() {
