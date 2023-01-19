@@ -11,15 +11,19 @@ import Combine
 class CommentViewModel {
     
     //MARK: - Properties
-    private var _post: PostModel
-    private var _comments = [CommentModel]()
+    fileprivate var _post: PostModel
+    fileprivate var _comments = [CommentModel]()
     
     //MARK: - CombineProperties
     let newComment = PassthroughSubject<Void,Never>()
     
+    //MARK: - Service
+    fileprivate let apiClient: ServiceProviderType
+    
     //MARK: - Lifecycles
-    init(post: PostModel) {
+    init(post: PostModel, apiClient: ServiceProviderType) {
         _post = post
+        self.apiClient = apiClient
         fetchComments()
     }
 }
@@ -140,9 +144,9 @@ extension CommentViewModel: CommentViewModelInputCase {
                 
                 Task(priority: .high) {
                     do {
-                        guard let user = try await UserService.fetchUserInfo(type: UserInfoModel.self, withUid: uid) else { return }
+                        guard let user = try await apiClient.userCase.fetchUserInfo(type: UserInfoModel.self, withUid: uid) else { return }
                         DispatchQueue.main.async {
-                            cellInfo.nav?.pushViewController(ProfileController(viewModel: ProfileViewModel(user: user)), animated: true)
+                            cellInfo.nav?.pushViewController(ProfileController(viewModel: ProfileViewModel(user: user, apiClient: apiClient)), animated: true)
                         }
                     } catch {}
                 }
@@ -158,7 +162,7 @@ extension CommentViewModel: CommentViewModelNetworkServiceType {
     
     func uploadComment(withInputModel input: UploadCommentInputModel) {
         do {
-            try CommentService.uploadComment(inputModel: input)
+            try apiClient.commentCase.uploadComment(inputModel: input)
         }catch {
             guard let error = error as? CommentServiceError else { return }
             switch error {
@@ -172,7 +176,7 @@ extension CommentViewModel: CommentViewModelNetworkServiceType {
     
     func fetchComments() {
         guard let postId = post.postId else { return }
-        CommentService.fetchComment(postID: postId) { comments in
+        apiClient.commentCase.fetchComment(postID: postId) { comments in
             self.comments = comments
             self.newComment.send()
         }
@@ -190,9 +194,9 @@ extension CommentViewModel: CommentViewModelNetworkServiceType {
             }
         }
     }
-    
+
     func fetchProfileFromImageService(index: Int) async throws -> UIImage {
-        return try await UserProfileImageService.fetchUserProfile(userProfile: _comments[index].profileImageUrl)
+        return try await apiClient.imageCase.fetchUserProfile(userProfile: _comments[index].profileImageUrl)
     }
     
     func fetchImageErrorHandling(error: Error) {

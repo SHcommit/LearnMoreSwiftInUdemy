@@ -25,8 +25,8 @@ enum ImageServiceError: Error {
 
 protocol UserProfileImageServiceType {
     //MARK: - Firebase storage upload image
-    static func uploadImage(image: UIImage) async throws -> String
+    func uploadImage(image: UIImage) async throws -> String
     //MARK: - Firebase storage download image
-    static func fetchUserProfile(userProfile url: String) async throws -> UIImage
+    func fetchUserProfile(userProfile url: String) async throws -> UIImage
     
 }

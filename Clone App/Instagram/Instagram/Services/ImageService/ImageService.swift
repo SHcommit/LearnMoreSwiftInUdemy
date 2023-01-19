@@ -9,7 +9,7 @@ import FirebaseStorage
 
 struct UserProfileImageService: UserProfileImageServiceType {
     
-    static func uploadImage(image: UIImage) async throws -> String {
+    func uploadImage(image: UIImage) async throws -> String {
         guard let imageData = image.jpegData(compressionQuality: 0.75) else { throw ImageServiceError.invalidUserProfileImage }
         let filename = NSUUID().uuidString
         let ref = Storage.storage().reference(withPath: " /profile_images/\(filename)")
@@ -17,7 +17,7 @@ struct UserProfileImageService: UserProfileImageServiceType {
         return (try await ref.downloadURL()).absoluteString
     }
     
-    static func fetchUserProfile(userProfile url: String) async throws -> UIImage {
+    func fetchUserProfile(userProfile url: String) async throws -> UIImage {
         guard let data = try? await STORAGE.reference(forURL: url).data(maxSize: USERPROFILEIMAGEMEGABYTE) else {
             throw ImageServiceError.failedFetchUserProfileImage}
         guard let image = UIImage(data: data) else {

@@ -14,8 +14,12 @@ class SearchViewModel {
     @Published var users: [UserInfoModel] = [UserInfoModel]()
     @Published var filteredUsers: [UserInfoModel] = [UserInfoModel]()
     internal var subscriptions: Set<AnyCancellable> = Set<AnyCancellable>()
-
-    init() {
+    
+    //MARK: - Usecase
+    fileprivate let apiClient: ServiceProviderType
+    
+    init(apiClient: ServiceProviderType) {
+        self.apiClient = apiClient
         Task() { await fetchAllUser() }
     }
 }
@@ -109,7 +113,7 @@ extension SearchViewModel: SearchViewModelInputCase {
             .receive(on: RunLoop.main)
             .map { tableInfo -> SearchControllerState in
                 guard let  user = tableInfo.cell.userVM else { return .failure }
-                let vc = ProfileController(viewModel: ProfileViewModel(user: user.userInfoModel()))
+                let vc = ProfileController(viewModel: ProfileViewModel(user: user.userInfoModel(), apiClient: self.apiClient))
                 //let vc = ProfileController(user: user.userInfoModel())
                 return .success(vc)
             }.eraseToAnyPublisher()
@@ -164,7 +168,7 @@ extension SearchViewModel: SearchViewModelNetworkServiceType {
     }
     
     func fetchAllUserDefaultInfo() async throws {
-        guard let users = try await UserService.fetchUserList(type: UserInfoModel.self) else { throw FetchUserError.invalidUsers }
+        guard let users = try await apiClient.userCase.fetchUserList(type: UserInfoModel.self) else { throw FetchUserError.invalidUsers }
         DispatchQueue.main.async {
             self.users = users
         }

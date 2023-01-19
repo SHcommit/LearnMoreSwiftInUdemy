@@ -11,13 +11,13 @@ import FirebaseFirestore
 //MARK: - Firestore user default info
 struct UserService: ServiceExtensionType, UserServiceType {
     
-    static func updateCurrentUserInfo(CodableType info: UserInfoModel) async throws {
+    func updateCurrentUserInfo(CodableType info: UserInfoModel) async throws {
         let encodedUserModel = encodeToNSDictionary(info: info)
         let userDocument = FSConstants.ref(.users).document(info.uid)
         try await userDocument.updateData(encodedUserModel)
     }
     
-    static func fetchUserInfo<T: Codable>(type: T.Type, withUid uid: String) async throws -> T? {
+    func fetchUserInfo<T: Codable>(type: T.Type, withUid uid: String) async throws -> T? {
         guard let result = try? await FSConstants.ref(.users)
             .document(uid)
             .getDocument() else {
@@ -27,12 +27,12 @@ struct UserService: ServiceExtensionType, UserServiceType {
         return try result.data(as: type.self)
     }
     
-    static func fetchCurrentUserInfo<T: Codable>(type: T.Type) async throws -> T? {
+    func fetchCurrentUserInfo<T: Codable>(type: T.Type) async throws -> T? {
         let currentUserUID = try currentUserLogindUID()
         return try await fetchUserInfo(type: type.self, withUid: currentUserUID)
     }
     
-    static func currentUserLogindUID() throws -> String {
+    func currentUserLogindUID() throws -> String {
         let ud = UserDefaults.standard
         ud.synchronize()
         guard let userUID = ud.string(forKey: CURRENT_USER_UID) else { throw FetchUserError.invalidCurrentUserUIDInUserDefaultsStandard }
@@ -44,7 +44,7 @@ struct UserService: ServiceExtensionType, UserServiceType {
 //MARK: - SearchController API
 extension UserService: UserServiceAboutSearchType {
     
-    static func fetchUserList<T: Codable>(type: T.Type) async throws -> [T]? {
+    func fetchUserList<T: Codable>(type: T.Type) async throws -> [T]? {
         let docuemts = try await FSConstants.ref(.users).getDocuments().documents
         return try docuemts.map{
             try $0.data(as: type.self)
@@ -56,7 +56,7 @@ extension UserService: UserServiceAboutSearchType {
 //MARK: - ProfileController API.
 extension UserService: UserServiceAboutProfileType {
     
-    static func follow(someone uid: String) async throws {
+    func follow(someone uid: String) async throws {
         guard let currentUid = Utils.pList.string(forKey: CURRENT_USER_UID) else { throw FollowServiceError.invalidCurrentUserUIDInUserDefaultsStandard }
         return await withThrowingTaskGroup(of: Void.self) { group in
             group.addTask {
@@ -72,7 +72,7 @@ extension UserService: UserServiceAboutProfileType {
         }
     }
     
-    static func unfollow(someone uid: String) async throws {
+    func unfollow(someone uid: String) async throws {
         guard let currentUid = Utils.pList.string(forKey: CURRENT_USER_UID) else { throw
             UnFollowServiceError.invalidCurrentUserUIDInUserDefaultsStandard }
         return await withThrowingTaskGroup(of: Void.self) { group in
@@ -93,7 +93,7 @@ extension UserService: UserServiceAboutProfileType {
         }
     }
     
-    static func checkIfUserIsFollowd(uid: String) async throws -> Bool {
+    func checkIfUserIsFollowd(uid: String) async throws -> Bool {
         
         guard let currentUid = Utils.pList.string(forKey: CURRENT_USER_UID) else {
             throw CheckUserFollowedError.invalidCurrentUserUIDInUserDefaultsStandard }
@@ -104,7 +104,7 @@ extension UserService: UserServiceAboutProfileType {
         return docSanps.exists
     }
     
-    static func fetchUserStats(uid: String) async throws -> Userstats {
+    func fetchUserStats(uid: String) async throws -> Userstats {
     
         guard let followerQuery = try? await FSConstants.ref(.followers)
             .document(uid).collection("user-followers")

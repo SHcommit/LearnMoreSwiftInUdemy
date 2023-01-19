@@ -10,7 +10,7 @@ import Firebase
 
 struct PostService: PostServiceType {
     
-    static func fetchPosts() async throws -> [PostModel]{
+    func fetchPosts() async throws -> [PostModel]{
         guard let documents = try? await FSConstants.ref(.posts).getDocuments().documents else { throw FetchPostError.invalidPostsGetDocuments }
         var posts: [PostModel] = try documents.map {
             var post = try $0.data(as: PostModel.self)
@@ -23,7 +23,7 @@ struct PostService: PostServiceType {
         return posts
     }
     
-    static func fetchPost(withPostId id: String) async throws -> PostModel {
+    func fetchPost(withPostId id: String) async throws -> PostModel {
         guard let snapshot = try? await FSConstants.ref(.posts).document(id).getDocument() else {
             throw FetchPostError.failToRequestPostData
         }
@@ -33,7 +33,7 @@ struct PostService: PostServiceType {
         return post
     }
     
-    static func fetchSpecificUserPostsInfo(forUser uid: String) async throws -> [PostModel] {
+    func fetchSpecificUserPostsInfo(forUser uid: String) async throws -> [PostModel] {
         let querySnapshot = try await FSConstants.ref(.posts)
             .whereField("ownerUid", isEqualTo: uid)
             .getDocuments()
@@ -48,21 +48,21 @@ struct PostService: PostServiceType {
     }
     
     
-    static func uploadPost(caption: String, image: UIImage, ownerProfileUrl ownerUrl: String, ownerUsername ownerName: String) async throws {
+    func uploadPost(caption: String, image: UIImage, ownerProfileUrl ownerUrl: String, ownerUsername ownerName: String) async throws {
         let ud = UserDefaults.standard
         ud.synchronize()
         guard let userUID = ud.string(forKey: CURRENT_USER_UID) else { throw FetchUserError.invalidGetDocumentUserUID }
         let url = try await uploadImage(with: image)
         let post = PostModel(caption: caption, timestamp: Timestamp(date: Date()), likes: 0, imageUrl: url, ownerUid: userUID, ownerImageUrl: ownerUrl, ownerUsername: ownerName)
-        let encodedPost = UserService.encodeToNSDictionary(info: post)
+        let encodedPost = UserService().encodeToNSDictionary(info: post)
         guard let _ = try? await FSConstants.ref(.posts).addDocument(data: encodedPost) else { throw FetchPostError.failToRequestPostData}
         
     }
     
     
-    static func uploadImage(with image: UIImage) async throws -> String {
+    func uploadImage(with image: UIImage) async throws -> String {
         do {
-            let url = try await UserProfileImageService.uploadImage(image: image)
+            let url = try await UserProfileImageService().uploadImage(image: image)
             return url
         }catch {
             uploadImageErrorHandling(with: error as! ImageServiceError)
@@ -71,7 +71,7 @@ struct PostService: PostServiceType {
     }
     
     
-    static func likePost(post: PostModel) async {
+    func likePost(post: PostModel) async {
         guard let currentUid = Utils.pList.string(forKey: CURRENT_USER_UID),
               let postId = post.postId else { return }
         
@@ -93,7 +93,7 @@ struct PostService: PostServiceType {
         
     }
     
-    static func unlikePost(post: PostModel) async {
+    func unlikePost(post: PostModel) async {
         guard let currentUid = Utils.pList.string(forKey: CURRENT_USER_UID),
               let postId = post.postId else { return }
         
@@ -104,7 +104,7 @@ struct PostService: PostServiceType {
         } catch { print("DEBUG: \(error.localizedDescription)")}
     }
     
-    static func checkIfUserLikedPost(post: PostModel) async -> Bool {
+    func checkIfUserLikedPost(post: PostModel) async -> Bool {
         guard let currentUid = Utils.pList.string(forKey: CURRENT_USER_UID),
               let postId = post.postId else { fatalError() }
         do {
@@ -120,7 +120,7 @@ struct PostService: PostServiceType {
 
 extension PostService: ProstServiceErrorType {
     
-    static func uploadImageErrorHandling(with error: ImageServiceError){
+    func uploadImageErrorHandling(with error: ImageServiceError){
         switch error {
         case .invalidUserProfileImage:
             print("DEBUG: \(ImageServiceError.invalidUserProfileImage) : \(error.localizedDescription)")

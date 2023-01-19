@@ -19,9 +19,13 @@ class ProfileViewModel {
     var subscriptions = Set<AnyCancellable>()
     private var tab: UITabBarController?
     
+    //MARK: - Usecase
+    fileprivate let apiClient: ServiceProviderType
+    
     //MARK: - Lifecycles
-    init(user: UserInfoModel) {
+    init(user: UserInfoModel, apiClient: ServiceProviderType) {
         self.user = user
+        self.apiClient = apiClient
     }
     
 }
@@ -30,7 +34,6 @@ class ProfileViewModel {
 extension ProfileViewModel: ProfileViewModelType {
             
     func transform(input: ProfileViewModelInput) -> ProfileViewModelOutput {
-        
         let indicatorSubscription = indicatorSubjectChains()
         
         let appear = appearChains(with: input)
@@ -239,10 +242,10 @@ extension ProfileViewModel: ProfileHeaderDelegate {
                     profileImageUrl: currentUser.profileURL,
                     username: currentUser.username,
                     userIsFollowed: currentUser.isFollowed)
-                NotificationService.uploadNotification(
+                apiClient.notificationCase.uploadNotification(
                     toUid: user.uid,
                     to: uploadNoti,
-                    type: .follow)
+                    type: .follow,post: nil)
             }
             break
         }
@@ -250,7 +253,7 @@ extension ProfileViewModel: ProfileHeaderDelegate {
     
     func fetchUserStats(uid: String) async -> Userstats {
         do {
-            return try await UserService.fetchUserStats(uid: uid)
+            return try await apiClient.userCase.fetchUserStats(uid: uid)
         }catch {
             fetchUserStatsErrorHandling(with: error as! FetchUserStatsError)
             return Userstats(followers: 0, following: 0)
@@ -259,7 +262,7 @@ extension ProfileViewModel: ProfileHeaderDelegate {
     
     func follow(someone uid: String) async {
         do {
-            try await UserService.follow(someone: uid)
+            try await apiClient.userCase.follow(someone: uid)
         }catch {
            followErrorHandling(with: error)
         }
@@ -268,7 +271,7 @@ extension ProfileViewModel: ProfileHeaderDelegate {
     
     func unFollow(someone uid: String) async {
         do {
-            try await UserService.unfollow(someone: self.getUser.uid)
+            try await apiClient.userCase.unfollow(someone: self.getUser.uid)
         }catch {
             unFollowErrorHandling(error: error)
         }
@@ -317,7 +320,7 @@ extension ProfileViewModel: ProfileViewModelAPIType {
     
     func fetchToCheckIfUserIsFollowed() async -> Bool {
         do{
-            return try await UserService.checkIfUserIsFollowd(uid: user.uid)
+            return try await apiClient.userCase.checkIfUserIsFollowd(uid: user.uid)
         }catch {
             fetchToCheckIfUserIsFollowedErrorHandling(with: error as! CheckUserFollowedError)
             return false
@@ -326,7 +329,7 @@ extension ProfileViewModel: ProfileViewModelAPIType {
     
     func fetchUserStats() async -> Userstats {
         do {
-            return try await UserService.fetchUserStats(uid: user.uid)
+            return try await apiClient.userCase.fetchUserStats(uid: user.uid)
             
         }catch {
             fetchUserStatsErrorHandling(with: error as! FetchUserStatsError)
@@ -334,10 +337,10 @@ extension ProfileViewModel: ProfileViewModelAPIType {
         }
         
     }
-    
+
     func fetchImage(profileUrl url: String) async -> UIImage {
         do {
-            return try await UserProfileImageService.fetchUserProfile(userProfile: url)
+            return try await apiClient.imageCase.fetchUserProfile(userProfile: url)
         } catch {
             fetchImageErrorHandling(withError: error)
             return UIImage()
@@ -346,7 +349,7 @@ extension ProfileViewModel: ProfileViewModelAPIType {
     
     func fetchSpecificUserPostsInfo() async -> [PostModel] {
         do {
-            return try await PostService.fetchSpecificUserPostsInfo(forUser: user.uid)
+            return try await apiClient.postCase.fetchSpecificUserPostsInfo(forUser: user.uid)
         } catch let error {
             guard let error = error as? FetchPostError else { return [PostModel]() }
             fetchPostsErrorHandling(with: error)
@@ -356,7 +359,7 @@ extension ProfileViewModel: ProfileViewModelAPIType {
     
     func fetchSpecificPost(with url: String) async -> UIImage {
         do {
-            return try await UserProfileImageService.fetchUserProfile(userProfile: url)
+            return try await apiClient.imageCase.fetchUserProfile(userProfile: url)
         }catch {
             print("DEBUG: 각각의 상황에 대한 오류 처리 해야 함 :\(error.localizedDescription)")
             return UIImage()

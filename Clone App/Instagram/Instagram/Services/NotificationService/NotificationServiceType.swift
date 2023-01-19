@@ -24,8 +24,8 @@ extension NotificationServiceError: CustomStringConvertible {
 
 protocol NotificationServiceType {
     
-    static func uploadNotification(toUid uid: String,to uploadUserInfo: UploadNotificationModel, type: NotificationType, post: PostModel?)
+    func uploadNotification(toUid uid: String,to uploadUserInfo: UploadNotificationModel, type: NotificationType, post: PostModel?)
     
-    static func fetchNotifications() async throws -> [NotificationModel]
+    func fetchNotifications() async throws -> [NotificationModel]
     
 }

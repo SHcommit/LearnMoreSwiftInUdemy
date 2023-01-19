@@ -15,6 +15,12 @@ final class LoginViewModel {
     @Published var passwd: String = ""
     var subscriptions: Set<AnyCancellable> = Set<AnyCancellable>()
     
+    private let apiClient: ServiceProviderType
+    
+    //MARK: - Lifecycles
+    init(apiClient: ServiceProviderType) {
+        self.apiClient: apiClient
+    }
 }
 
 //MARK: - LoginViewModelType
@@ -48,8 +54,8 @@ extension LoginViewModel: LoginViewModelInputCase {
             .receive(on: RunLoop.main)
             .tryMap { [unowned self] viewType -> LoginControllerState in
                 guard
-                    let presentingVC = viewType.presentingVC as? MainHomeTabController,
-                    let currentVC = viewType.currentVC as? LoginController
+                    let presentingVC = viewType.presentingVC as? MainHomeTabController
+                    //let currentVC = viewType.currentVC as? LoginController
                 else {
                     throw LoginViewModelErrorType.loginPublishedOutputStreamNil
                 }
@@ -127,7 +133,7 @@ extension LoginViewModel: LoginViewModelNetworkServiceType {
     func loginInputAccount() {
         Task() {
             do {
-                guard let authDataResult = try await AuthService.handleIsLoginAccount(email: email, pw: passwd) else { throw FetchUserError.invalidUserInfo }
+                guard let authDataResult = try await apiClient.authCase.handleIsLoginAccount(email: email, pw: passwd) else { throw FetchUserError.invalidUserInfo }
                 DispatchQueue.main.async {
                     let ud = UserDefaults.standard
                     ud.synchronize()

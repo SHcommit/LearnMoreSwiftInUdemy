@@ -10,17 +10,23 @@ import Firebase
 import Combine
 
 class FeedViewModel {
+    
     //MARK: - Properties
-    private var postModel: PostModel
-    private var postImage: UIImage?
-    private var userProfile: UIImage?
+    fileprivate var postModel: PostModel
+    fileprivate var postImage: UIImage?
+    fileprivate var userProfile: UIImage?
     var likeChanged = PassthroughSubject<Void,Never>()
-    private var user: UserInfoModel
+    fileprivate var user: UserInfoModel
+    
+    //MARK: - Usecase
+    fileprivate let apiClient: ServiceProviderType
     
     //MARK: - LifeCycles
-    init(post: PostModel, user: UserInfoModel) {
+    init(post: PostModel, user: UserInfoModel, apiClient: ServiceProviderType) {
         self.postModel = post
         self.user = user
+        
+        self.apiClient = apiClient
     }
 }
 
@@ -107,7 +113,7 @@ extension FeedViewModel: FeedCellViewModelAPIs {
     
     func fetchPostImage() async {
         do {
-            let image = try await UserProfileImageService.fetchUserProfile(userProfile: post.imageUrl)
+            let image = try await apiClient.imageCase.fetchUserProfile(userProfile: post.imageUrl)
             DispatchQueue.main.async {
                 self.postImage = image
             }
@@ -118,7 +124,7 @@ extension FeedViewModel: FeedCellViewModelAPIs {
     
     func fetchUserProfile() async {
         do {
-            guard let image = try? await UserProfileImageService.fetchUserProfile(userProfile: post.ownerImageUrl) else { throw FetchUserError.invalidUserProfileImage }
+            guard let image = try? await apiClient.imageCase.fetchUserProfile(userProfile: post.ownerImageUrl) else { throw FetchUserError.invalidUserProfileImage }
             DispatchQueue.main.async {
                 self.userProfile = image
             }
@@ -174,12 +180,12 @@ extension FeedViewModel: FeedCellViewModelSubscriptionChains {
                             profileImageUrl: user.profileURL,
                             username: user.username,
                             userIsFollowed: user.isFollowed)
-                        await PostService.likePost(post: post)
-                        NotificationService.uploadNotification(toUid: post.ownerUid, to: uploadModel,
+                        await apiClient.postCase.likePost(post: post)
+                        apiClient.notificationCase.uploadNotification(toUid: post.ownerUid, to: uploadModel,
                                                                type: .like,
                                                                post: post)
                     }else {
-                        await PostService.unlikePost(post: post)
+                        await apiClient.postCase.unlikePost(post: post)
                     }
                     DispatchQueue.main.async { [self] in
                         setupLike(button: likeButton)

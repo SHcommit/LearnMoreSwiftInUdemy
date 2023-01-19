@@ -7,8 +7,17 @@
 
 import Foundation
 
+protocol ServiceProviderType {
+    var userCase: UserServiceType { get }
+    var authCase: AuthServiceType { get }
+    var imageCase: UserProfileImageServiceType { get }
+    var postCase: PostServiceType { get }
+    var notificationCase: NotificationServiceType { get }
+    var commentCase: CommentServiceType { get }
+}
 
-class ServiceProvider {
+class ServiceProvider: ServiceProviderType {
+    
     let userCase: UserServiceType
     let authCase: AuthServiceType
     let imageCase: UserProfileImageServiceType

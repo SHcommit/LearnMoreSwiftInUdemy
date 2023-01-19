@@ -88,30 +88,30 @@ protocol UserServiceType: UserServiceDefaultType, UserServiceAboutSearchType, Us
 
 protocol UserServiceDefaultType {
     
-    static func updateCurrentUserInfo(CodableType info: UserInfoModel) async throws
+    func updateCurrentUserInfo(CodableType info: UserInfoModel) async throws
     
-    static func fetchUserInfo<T: Codable>(type: T.Type, withUid uid: String) async throws -> T?
+    func fetchUserInfo<T: Codable>(type: T.Type, withUid uid: String) async throws -> T?
     
-    static func fetchCurrentUserInfo<T: Codable>(type: T.Type) async throws -> T?
+    func fetchCurrentUserInfo<T: Codable>(type: T.Type) async throws -> T?
     
-    static func currentUserLogindUID() throws -> String
+    func currentUserLogindUID() throws -> String
     
 }
 
 protocol UserServiceAboutSearchType {
     
-    static func fetchUserList<T: Codable>(type: T.Type) async throws -> [T]?
+    func fetchUserList<T: Codable>(type: T.Type) async throws -> [T]?
     
 }
 
 protocol UserServiceAboutProfileType {
     
-    static func follow(someone uid: String) async throws
+    func follow(someone uid: String) async throws
     
-    static func unfollow(someone uid: String) async throws
+    func unfollow(someone uid: String) async throws
     
-    static func checkIfUserIsFollowd(uid: String) async throws -> Bool
+    func checkIfUserIsFollowd(uid: String) async throws -> Bool
     
-    static func fetchUserStats(uid: String) async throws -> Userstats
+    func fetchUserStats(uid: String) async throws -> Userstats
     
 }

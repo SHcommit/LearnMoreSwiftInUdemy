@@ -11,7 +11,7 @@ import Firebase
 
 struct CommentService: CommentServiceType {
     
-    static func uploadComment(inputModel info: UploadCommentInputModel) throws {
+    func uploadComment(inputModel info: UploadCommentInputModel) throws {
         let commentModel = createCommentModel(withUploadCommentInput: info)
         guard let _ = try? FSConstants.ref(.posts)
             .document(info.postID)
@@ -21,7 +21,7 @@ struct CommentService: CommentServiceType {
         }
     }
     
-    static func fetchComment(postID: String, completion: @escaping([CommentModel])->Void) {
+    func fetchComment(postID: String, completion: @escaping([CommentModel])->Void) {
         let query = FSConstants.ref(.posts)
             .document(postID)
             .collection("comments")
