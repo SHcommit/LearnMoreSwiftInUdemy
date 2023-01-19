@@ -18,8 +18,8 @@ class NotificationsViewModel {
     
     //MARK: - Lifecycels
     init(apiClient: ServiceProviderType) {
-        configure()
         self.apiClient = apiClient
+        configure()
     }
     
 }

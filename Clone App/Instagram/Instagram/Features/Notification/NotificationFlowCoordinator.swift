@@ -10,23 +10,32 @@ import UIKit
 class NotificationFlowCoordinator: FlowCoordinator {
     
     //MARK: - Properties
+    var parentCoordinator: FlowCoordinator?
     var childCoordinators = [FlowCoordinator]()
     var presenter: UINavigationController
-    var vm: NotificationCellViewModelType
+    var vm: NotificationViewModelType
+    var notificationController: NotificationController!
+    fileprivate let apiClient: ServiceProviderType
     
     //MARK: - Lifecycles
-    init(presenter: UINavigationController, vm: NotificationCellViewModelType) {
-        self.presenter = presenter
-        self.vm = vm
+    init(apiClient: ServiceProviderType) {
+        self.apiClient = apiClient
+        vm = NotificationsViewModel(apiClient: apiClient)
+        notificationController = NotificationController(vm: vm, apiClient: apiClient)
+        presenter = Utils.templateNavigationController(
+            unselectedImage: .imageLiteral(name: "like_unselected"),
+            selectedImage: .imageLiteral(name: "like_selected"),
+            rootVC: notificationController)
     }
     
     //MARK: - Action
     func start() {
-        <#code#>
+        notificationController.coordinator = self
     }
     
     func finish() {
-        <#code#>
+        parentCoordinator?.removeChild(target: self)
+        removeAllChild()
     }
     
 }

@@ -16,15 +16,7 @@ class MainHomeTabController: UITabBarController {
     var vm: MainHomeTabViewModelType
     var appear = PassthroughSubject<Void,Never>()
     var subscriptions = Set<AnyCancellable>()
-    
-//    private var isLogin: Bool? {
-//        didSet {
-//            Task() {
-//                await isLoginConfigure()
-//            }
-//        }
-//    }
-    
+    weak var coordinator: MainFlowCoordinator?
     
     //MARK: - Lifecycle
     init(vm: MainHomeTabViewModelType) {
@@ -39,12 +31,12 @@ class MainHomeTabController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupBindings()
+        configure()
         view.backgroundColor = .white
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        configure()
         
     }
     
@@ -71,7 +63,6 @@ extension MainHomeTabController {
         case .none:
             break
         case .fetchUserInfoIsCompleted:
-            configureViewControllers()
             break
         }
     }
@@ -82,42 +73,30 @@ extension MainHomeTabController {
     
     func configure() {
         customTabBarUI()
-        //isLogin = isUserLogined()
         delegate = self
     }
     
-    // 유저 로그인 기능은 메인 코디네이터에서 담당할거
-//    func isLoginConfigure() async {
-//        guard let isLogin = isLogin else { return }
-//        if !isLogin {
-//            DispatchQueue.main.async {
-//                self.presentLoginScene()
-//            }
-//        }else {
-//            guard let _ = userVM else {
-//                await fetchCurrentUserInfo()
-//                return
-//            }
-//        }
-//    }
-    
-    func configureViewControllers() {
+//    func configureViewControllers() {
+//
+//        let layout = UICollectionViewFlowLayout()
+//
+//        let feed = templateNavigationController(unselectedImage: .imageLiteral(name: "home_unselected"), selectedImage: .imageLiteral(name: "home_selected"), rootVC: FeedController(collectionViewLayout: layout))
         
-        let layout = UICollectionViewFlowLayout()
         
-        let feed = templateNavigationController(unselectedImage: .imageLiteral(name: "home_unselected"), selectedImage: .imageLiteral(name: "home_selected"), rootVC: FeedController(collectionViewLayout: layout))
-        let searchVC = SearchController(viewModel: SearchViewModel())
-        let search = templateNavigationController(unselectedImage: .imageLiteral(name: "search_unselected"), selectedImage: .imageLiteral(name: "search_selected"), rootVC: searchVC)
+//        let searchVC = SearchController(viewModel: SearchViewModel())
+//        let search = templateNavigationController(unselectedImage: .imageLiteral(name: "search_unselected"), selectedImage: .imageLiteral(name: "search_selected"), rootVC: searchVC)
+//
+//        let imageSelector = templateNavigationController(unselectedImage: .imageLiteral(name: "plus_unselected"), selectedImage: .imageLiteral(name: "plus_unselected"), rootVC: ImageSelectorController())
         
-        let imageSelector = templateNavigationController(unselectedImage: .imageLiteral(name: "plus_unselected"), selectedImage: .imageLiteral(name: "plus_unselected"), rootVC: ImageSelectorController())
-        let notifications = templateNavigationController(unselectedImage: .imageLiteral(name: "like_unselected"), selectedImage: .imageLiteral(name: "like_selected"), rootVC: NotificationController())
         
-        let profileVC = ProfileController(viewModel: ProfileViewModel(user: vm.user))
-        
-        let profile = templateNavigationController(unselectedImage: .imageLiteral(name: "profile_unselected"), selectedImage: .imageLiteral(name: "profile_selected"), rootVC: profileVC)
-        
-        viewControllers = [feed,search,imageSelector,notifications,profile]
-    }
+//        let notifications = templateNavigationController(unselectedImage: .imageLiteral(name: "like_unselected"), selectedImage: .imageLiteral(name: "like_selected"), rootVC: NotificationController())
+//
+//        let profileVC = ProfileController(viewModel: ProfileViewModel(user: vm.user))
+//
+//        let profile = templateNavigationController(unselectedImage: .imageLiteral(name: "profile_unselected"), selectedImage: .imageLiteral(name: "profile_selected"), rootVC: profileVC)
+//
+//        viewControllers = [feed,search,imageSelector,notifications,profile]
+    //}
     
     
 }
@@ -129,7 +108,7 @@ extension MainHomeTabController {
             picker.dismiss(animated: false) {
                 guard let selectedImage = items.singlePhoto?.image else { return }
                 
-                let vc = UploadPostController()
+                let vc = UploadPostController(apiClient: ServiceProvider.defaultProvider())
                 vc.selectedImage = selectedImage
                 vc.didFinishDelegate = self
                 vc.currentUserInfo = self.vm.user
@@ -167,16 +146,9 @@ extension MainHomeTabController {
 extension MainHomeTabController {
     
     //MARK: - API. check user's membership
-//    func isUserLogined() -> Bool {
-//        let currentUserUid = Utils.pList.string(forKey: CURRENT_USER_UID)
-//        if Auth.auth().currentUser == nil || currentUserUid == nil{
-//            return false
-//        }
-//        return true
-//    }
     
     func presentLoginScene() {
-        let controller = LoginController(viewModel: LoginViewModel())
+        let controller = LoginController(viewModel: LoginViewModel(apiClient: ServiceProvider.defaultProvider()))
         let nav = UINavigationController(rootViewController: controller)
         nav.modalPresentationStyle = .fullScreen
         self.present(nav,animated: false, completion: nil)

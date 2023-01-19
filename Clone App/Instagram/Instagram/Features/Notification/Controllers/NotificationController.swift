@@ -19,17 +19,19 @@ class NotificationController: UITableViewController {
     fileprivate let appear = PassthroughSubject<Void,Never>()
     fileprivate var specificCellInit = PassthroughSubject<(cell: NotificationCell, index: Int),Never>()
     fileprivate var refresh = PassthroughSubject<Void,Never>()
-    fileprivate var vm: NotificationViewModelType = NotificationsViewModel(apiClient: ServiceProvider.defaultProvider())
+    fileprivate var vm: NotificationViewModelType
     fileprivate var subscriptions = Set<AnyCancellable>()
     fileprivate var delegateSubscription = Set<AnyCancellable>()
+    weak var coordinator: NotificationFlowCoordinator?
     
-    fileprivate let userService: UserServiceType
-    fileprivate let postService: PostServiceType
+    //MARK: - Usecase
+    fileprivate let apiClient: ServiceProviderType
     
     //MARK: - Lifecycles
-    init(userService: UserServiceType, postService: PostServiceType) {
-        self.userService = userService
-        self.postService = postService
+    init(vm: NotificationViewModelType ,apiClient: ServiceProviderType) {
+        self.vm = vm
+        self.apiClient = apiClient
+        super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {
@@ -76,7 +78,7 @@ extension NotificationController {
         startIndicator()
         let uid = vm.notifications[indexPath.row].specificUserInfo.uid
         Task(priority: .medium) {
-            guard let user = try? await userService
+            guard let user = try? await apiClient.userCase
                 .fetchUserInfo(type: UserInfoModel.self, withUid: uid) else {
                 print("DEBUG: Failure get user info")
                 endIndicator()
@@ -168,7 +170,7 @@ extension NotificationController {
         startIndicator()
         Task(priority: .high) {
             do{
-                try await userService.unfollow(someone: element.uid)
+                try await apiClient.userCase.unfollow(someone: element.uid)
                 DispatchQueue.main.async {
                     element.cell.vm?.userIsFollowed = false
                     element.cell.updateFollowButtonUI()
@@ -185,7 +187,7 @@ extension NotificationController {
         startIndicator()
         Task(priority: .high) {
             do {
-                try await userService.follow(someone: element.uid)
+                try await apiClient.userCase.follow(someone: element.uid)
                 DispatchQueue.main.async {
                     element.cell.vm?.userIsFollowed = true
                     element.cell.updateFollowButtonUI()
@@ -202,7 +204,7 @@ extension NotificationController {
         Task(priority: .high) {
             startIndicator()
             do {
-                let post = try await postService.fetchPost(withPostId: element.uid)
+                let post = try await apiClient.postCase.fetchPost(withPostId: element.uid)
                 DispatchQueue.main.async {
                     let controller = FeedController(collectionViewLayout: UICollectionViewFlowLayout())
                     controller.post = post

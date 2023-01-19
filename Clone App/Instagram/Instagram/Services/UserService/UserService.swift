@@ -12,7 +12,7 @@ import FirebaseFirestore
 struct UserService: ServiceExtensionType, UserServiceType {
     
     func updateCurrentUserInfo(CodableType info: UserInfoModel) async throws {
-        let encodedUserModel = encodeToNSDictionary(info: info)
+        let encodedUserModel = UserService().encodeToNSDictionary(info: info)
         let userDocument = FSConstants.ref(.users).document(info.uid)
         try await userDocument.updateData(encodedUserModel)
     }

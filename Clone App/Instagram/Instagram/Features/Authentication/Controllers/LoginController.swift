@@ -20,6 +20,8 @@ class LoginController: UIViewController {
     private lazy var forgotHelpLineStackView: UIStackView = initialForgotStackView()
     private lazy var signUpLineStackView: UIStackView = initialSignUpLineStackView()
     
+    weak var coordinator: LoginFlowCoordinator?
+    
     //MARK: - Combine Properties
     var viewModel: LoginViewModelType
     private var login = PassthroughSubject<LoginVMInputLoginOutputType, LoginViewModelErrorType>()

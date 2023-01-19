@@ -146,9 +146,9 @@ struct Utils {
 
 
 //MARK: - RootNavigationController+
-extension MainHomeTabController {
+extension Utils {
     
-    func templateNavigationController(unselectedImage: UIImage, selectedImage: UIImage, rootVC: UIViewController) -> UINavigationController {
+    static func templateNavigationController(unselectedImage: UIImage, selectedImage: UIImage, rootVC: UIViewController) -> UINavigationController {
         let nav = UINavigationController(rootViewController: rootVC)
         nav.tabBarItem.image = unselectedImage
         nav.tabBarItem.selectedImage = selectedImage
@@ -157,7 +157,7 @@ extension MainHomeTabController {
         return nav
     }
     
-    func setupNavigationAppearance(nav: UINavigationController) {
+    static func setupNavigationAppearance(nav: UINavigationController) {
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = .white

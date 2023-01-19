@@ -10,23 +10,33 @@ import UIKit
 class ProfileFlowCoordinator: FlowCoordinator {
 
     //MARK: - Properties
+    var parentCoordinator: FlowCoordinator?
     var childCoordinators = [FlowCoordinator]()
     var presenter: UINavigationController
     var vm: ProfileViewModelType
+    var profileController: ProfileController!
+    fileprivate let apiClient: ServiceProviderType
+    
     
     //MARK: - Lifecycles
-    init(presenter: UINavigationController, vm: ProfileViewModelType) {
-        self.presenter = presenter
-        self.vm = vm
+    init(apiClient: ServiceProviderType, login user: UserInfoModel) {
+        self.apiClient = apiClient
+        vm = ProfileViewModel(user: user, apiClient: apiClient)
+        profileController = ProfileController(viewModel: vm)
+        presenter = Utils.templateNavigationController(
+            unselectedImage: .imageLiteral(name: "profile_unselected")
+            , selectedImage: .imageLiteral(name: "profile_selected"),
+            rootVC: profileController)
     }
     
     //MARK: - Action
     func start() {
-        <#code#>
+        profileController.coordinator = self
     }
     
     func finish() {
-        <#code#>
+        parentCoordinator?.removeChild(target: self)
+        removeAllChild()
     }
     
 }

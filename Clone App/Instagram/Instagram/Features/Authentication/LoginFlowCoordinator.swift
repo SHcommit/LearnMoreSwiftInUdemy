@@ -10,23 +10,31 @@ import UIKit
 class LoginFlowCoordinator: FlowCoordinator {
     
     //MARK: - Properties
+    var parentCoordinator: FlowCoordinator?
     var childCoordinators = [FlowCoordinator]()
     var presenter: UINavigationController
+    var loginController: LoginController!
     var vm: LoginViewModelType
     
+    fileprivate let apiClient: ServiceProviderType
     //MARK: - Lifecycles
-    init(presenter: UINavigationController, vm: LoginViewModelType) {
-        self.presenter = presenter
-        self.vm = vm
+    init(apiClient: ServiceProviderType) {
+        presenter = UINavigationController()
+        self.apiClient = apiClient
+        vm = LoginViewModel(apiClient: apiClient)
+        loginController = LoginController(viewModel: vm)
     }
     
     //MARK: - Action
     func start() {
-        <#code#>
+        loginController.coordinator = self
+        presenter.viewControllers = [loginController]
+        presenter.pushViewController(loginController, animated: false)
     }
     
     func finish() {
-        <#code#>
+        parentCoordinator?.removeChild(target: self)
+        removeAllChild()
     }
     
 }

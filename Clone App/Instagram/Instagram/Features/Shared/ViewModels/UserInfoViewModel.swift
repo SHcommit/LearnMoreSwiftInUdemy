@@ -13,13 +13,14 @@ class UserInfoViewModel {
     private var user: UserInfoModel
     private var userStats: Userstats?
     private var profileImage : UIImage?
-    
+    private let apiClient: ServiceProviderType
     
     //MARK: - LifeCycle
-    init(user: UserInfoModel, profileImage image: UIImage? = nil, stats: Userstats? = nil) {
+    init(user: UserInfoModel, profileImage image: UIImage? = nil, stats: Userstats? = nil, apiClient: ServiceProviderType) {
         self.user = user
         profileImage = image
         userStats = stats
+        self.apiClient = apiClient
     }
     
 }
@@ -97,7 +98,7 @@ extension UserInfoViewModel {
     }
     
     func fetchProfileFromImageService() async throws {
-        let image = try await UserProfileImageService.fetchUserProfile(userProfile: profileURL())
+        let image = try await apiClient.imageCase.fetchUserProfile(userProfile: profileURL())
         DispatchQueue.main.async {
             self.profileImage = image
         }
@@ -116,7 +117,7 @@ extension UserInfoViewModel {
 
     func fetchUserStats() {
         Task() {
-            let userStats = try await UserService.fetchUserStats(uid: user.uid)
+            let userStats = try await apiClient.userCase.fetchUserStats(uid: user.uid)
             DispatchQueue.main.async {
                 self.userStats = userStats
             }

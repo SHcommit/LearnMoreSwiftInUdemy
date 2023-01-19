@@ -10,23 +10,32 @@ import UIKit
 class SearchFlowCoordinator: FlowCoordinator {
     
     //MARK: - Properties
+    var parentCoordinator: FlowCoordinator?
     var childCoordinators = [FlowCoordinator]()
     var presenter: UINavigationController
     var vm: SearchViewModelType
+    var searchController: SearchController!
+    fileprivate var apiClient: ServiceProviderType
     
     //MARK: - Lifecycles
-    init(presenter: UINavigationController, vm: SearchViewModelType) {
-        self.presenter = presenter
-        self.vm = vm
+    init(apiClient: ServiceProviderType) {
+        self.apiClient = apiClient
+        vm = SearchViewModel(apiClient: apiClient)
+        searchController = SearchController(viewModel: vm)
+        presenter = Utils.templateNavigationController(
+            unselectedImage: .imageLiteral(name: "search_unselected"),
+            selectedImage: .imageLiteral(name: "search_selected"),
+            rootVC: searchController)
+    
     }
     
     //MARK: - Action
     func start() {
-        <#code#>
+        searchController.coordinator = self
     }
     
     func finish() {
-        <#code#>
+        print("DEBUG: finish logic need!")
     }
     
     

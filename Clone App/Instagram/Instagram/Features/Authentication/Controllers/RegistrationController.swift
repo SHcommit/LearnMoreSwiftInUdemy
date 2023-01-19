@@ -20,7 +20,7 @@ class RegistrationController: UIViewController, UINavigationControllerDelegate {
     private lazy var signUpButton: LoginButton = initialSignUpButton()
     private var readyLogInLineStackView: UIStackView = initialReadyLogInLineStackView()
     private var indicator: UIActivityIndicatorView = UIActivityIndicatorView(style: .medium)
-    private var viewModel = RegistrationViewModel()
+    private var viewModel = RegistrationViewModel(apiClient: ServiceProvider.defaultProvider())
     private var subscriptions: Set<AnyCancellable> = Set<AnyCancellable>()
     private var appear = PassthroughSubject<Void,Never>()
     private var signUpTap = PassthroughSubject<UINavigationController?,Never>()

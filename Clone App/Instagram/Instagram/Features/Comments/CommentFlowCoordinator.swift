@@ -10,6 +10,7 @@ import UIKit
 class CommentFlowCoordinator: FlowCoordinator {
     
     //MARK: - Properties
+    var parentCoordinator: FlowCoordinator?
     var childCoordinators = [FlowCoordinator]()
     var presenter: UINavigationController
     var vm: CommentViewModelType
@@ -22,11 +23,12 @@ class CommentFlowCoordinator: FlowCoordinator {
     
     //MARK: - Action
     func start() {
-        <#code#>
+        print("DEBUG: start logic need!")
     }
     
     func finish() {
-        <#code#>
+        parentCoordinator?.removeChild(target: self)
+        removeAllChild()
     }
     
 }

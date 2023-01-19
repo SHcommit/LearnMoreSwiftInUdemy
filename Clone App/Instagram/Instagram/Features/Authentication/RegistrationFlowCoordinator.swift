@@ -10,6 +10,7 @@ import UIKit
 class RegisterFlowCoordinator: FlowCoordinator {
     
     //MARK: - Properties
+    var parentCoordinator: FlowCoordinator?
     var childCoordinators = [FlowCoordinator]()
     var presenter: UINavigationController
     var vm: RegistrationViewModelType
@@ -22,11 +23,12 @@ class RegisterFlowCoordinator: FlowCoordinator {
     
     //MARK: - Action
     func start() {
-        <#code#>
+        print("DEBUG: start logic need!2")
     }
     
     func finish() {
-        <#code#>
+        parentCoordinator?.removeChild(target: self)
+        removeAllChild()
     }
     
 }

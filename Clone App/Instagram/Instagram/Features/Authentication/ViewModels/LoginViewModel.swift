@@ -19,7 +19,7 @@ final class LoginViewModel {
     
     //MARK: - Lifecycles
     init(apiClient: ServiceProviderType) {
-        self.apiClient: apiClient
+        self.apiClient = apiClient
     }
 }
 

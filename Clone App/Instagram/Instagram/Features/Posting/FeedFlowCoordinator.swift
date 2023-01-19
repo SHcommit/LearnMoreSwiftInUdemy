@@ -9,25 +9,31 @@ import UIKit
 
 
 class FeedFlowCoordinator: FlowCoordinator {
-    
+    typealias flowLayout = UICollectionViewFlowLayout
     //MARK: - Properties
+    var parentCoordinator: FlowCoordinator?
     var childCoordinators = [FlowCoordinator]()
     var presenter: UINavigationController
-    var vm: FeedCellViewModelType
+    var feedController: FeedController!
     
     //MARK: - Lifecycles
-    init(presenter: UINavigationController, vm: FeedCellViewModelType) {
-        self.presenter = presenter
-        self.vm = vm
+    init() {
+        feedController = FeedController(collectionViewLayout: flowLayout())
+        presenter = Utils.templateNavigationController(
+            unselectedImage: .imageLiteral(name: "home_unselected"),
+            selectedImage: .imageLiteral(name: "home_selected"),
+            rootVC: feedController)
     }
     
     //MARK: - Action
     func start() {
-        <#code#>
+        feedController.coordinator = self
+        
     }
     
     func finish() {
-        <#code#>
+        parentCoordinator?.removeChild(target: self)
+        removeAllChild()
     }
     
 }

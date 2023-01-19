@@ -10,6 +10,7 @@ import UIKit
 class UploadFlowCoordinator: FlowCoordinator {
     
     //MARK: - Properties
+    var parentCoordinator: FlowCoordinator?
     var childCoordinators = [FlowCoordinator]()
     var presenter: UINavigationController
     
@@ -20,11 +21,12 @@ class UploadFlowCoordinator: FlowCoordinator {
     
     //MARK: - Action
     func start() {
-        <#code#>
+        
     }
     
     func finish() {
-        <#code#>
+        parentCoordinator?.removeChild(target: self)
+        removeAllChild()
     }
     
 }

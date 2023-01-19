@@ -10,6 +10,11 @@ import Combine
 
 class MainHomeTabViewModel {
     @Published var _user: UserInfoModel!
+    fileprivate let apiClient: ServiceProviderType
+    
+    init(apiClient: ServiceProviderType) {
+        self.apiClient = apiClient
+    }
 }
 
 extension MainHomeTabViewModel: MainHomeTabViewModelComputedProperty {
@@ -82,7 +87,7 @@ extension MainHomeTabViewModel {
     }
     /// 어차피 여기서 영구저장소에서 꺼내오네
     func fetchUserInfoFromUserService() async throws {
-        guard let user = try await UserService.fetchCurrentUserInfo(type: UserInfoModel.self) else { throw FetchUserError.invalidUserInfo }
+        guard let user = try await apiClient.userCase.fetchCurrentUserInfo(type: UserInfoModel.self) else { throw FetchUserError.invalidUserInfo }
         self.user = user
     }
     func fetchCurrentUserInfoErrorHandling(withError error: Error) {

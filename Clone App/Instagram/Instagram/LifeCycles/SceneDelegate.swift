@@ -9,13 +9,13 @@ import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
-    private var applicationCoordinator: InstagramFlowCoordinator?
+    private var applicationCoordinator: ApplicationFlowCoordinator?
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         
         guard let scene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: scene)
-        applicationCoordinator = InstagramFlowCoordinator(window: window)
+        applicationCoordinator = ApplicationFlowCoordinator(window: window)
         applicationCoordinator?.start()
         window.makeKeyAndVisible()
     }

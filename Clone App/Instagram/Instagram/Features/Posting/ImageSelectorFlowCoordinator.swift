@@ -10,21 +10,29 @@ import UIKit
 class ImageSelectorFlowCoordinator: FlowCoordinator{
     
     //MARK: - Properties
+    var parentCoordinator: FlowCoordinator?
     var childCoordinators = [FlowCoordinator]()
     var presenter: UINavigationController
+    var imageSelectorController: ImageSelectorController!
     
     //MARK: - Lifecycles
-    init(presenter: UINavigationController) {
-        self.presenter = presenter
+    init() {
+        imageSelectorController = ImageSelectorController()
+        presenter = Utils.templateNavigationController(
+            unselectedImage: .imageLiteral(name: "plus_unselected")
+            , selectedImage: .imageLiteral(name: "plus_unselected"),
+            rootVC: imageSelectorController)
+
     }
     
     //MARK: - Action
     func start() {
-        <#code#>
+        imageSelectorController.coordinator = self
     }
     
     func finish() {
-        <#code#>
+        parentCoordinator?.removeChild(target: self)
+        removeAllChild()
     }
     
 }
