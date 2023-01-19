@@ -18,6 +18,11 @@ class RegistrationViewModel {
     @Published var profileImage: UIImage? = UIImage()
     var subscriptions: Set<AnyCancellable> = Set<AnyCancellable>()
     
+    fileprivate let apiClient: ServiceProviderType
+    init(apiClient: ServiceProviderType) {
+        self.apiClient = apiClient
+    }
+    
 }
 
 //MARK: - RegistrationViewModelType
@@ -98,7 +103,7 @@ extension RegistrationViewModel: RegistrationViewModelNetworkServiceType {
     
     
     func registerUserFromSignUp() async throws {
-        try await AuthService.registerUser(with: self)
+        try await apiClient.authCase.registerUser(with: self)
     }
     
     func registerUserFromSignUpErrorHandling(error: Error) {

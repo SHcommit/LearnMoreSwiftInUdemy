@@ -10,6 +10,7 @@ import UIKit
 ///UIView type's default configure
 protocol ConfigureSubviewsCase {
     
+    
     /// Combine setupview's all configuration
     func configureSubviews()
 

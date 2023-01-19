@@ -15,6 +15,12 @@ final class LoginViewModel {
     @Published var passwd: String = ""
     var subscriptions: Set<AnyCancellable> = Set<AnyCancellable>()
     
+    private let apiClient: ServiceProviderType
+    
+    //MARK: - Lifecycles
+    init(apiClient: ServiceProviderType) {
+        self.apiClient = apiClient
+    }
 }
 
 //MARK: - LoginViewModelType
@@ -48,14 +54,14 @@ extension LoginViewModel: LoginViewModelInputCase {
             .receive(on: RunLoop.main)
             .tryMap { [unowned self] viewType -> LoginControllerState in
                 guard
-                    let presentingVC = viewType.presentingVC as? MainHomeTabController,
-                    let currentVC = viewType.currentVC as? LoginController
+                    let presentingVC = viewType.presentingVC as? MainHomeTabController
+                    //let currentVC = viewType.currentVC as? LoginController
                 else {
                     throw LoginViewModelErrorType.loginPublishedOutputStreamNil
                 }
                 presentingVC.view.isHidden = false
-                loginInputAccount(currentVC: currentVC)
-                return .endIndicator
+                loginInputAccount()
+                return .loginSuccess
             }.mapError{ error -> LoginViewModelErrorType in
                 return error as? LoginViewModelErrorType ?? .failed
             }.eraseToAnyPublisher()
@@ -124,11 +130,15 @@ extension LoginViewModel: LoginViewModelInputCase {
 //MARK: - LoginViewModelAPIType
 extension LoginViewModel: LoginViewModelNetworkServiceType {
     
-    func loginInputAccount(currentVC: LoginController) {
+    func loginInputAccount() {
         Task() {
             do {
-                guard let authDataResult = try await AuthService.handleIsLoginAccount(email: email, pw: passwd) else { throw FetchUserError.invalidUserInfo }
-                await currentVC.authDelegate?.authenticationCompletion(uid: authDataResult.user.uid)
+                guard let authDataResult = try await apiClient.authCase.handleIsLoginAccount(email: email, pw: passwd) else { throw FetchUserError.invalidUserInfo }
+                DispatchQueue.main.async {
+                    let ud = UserDefaults.standard
+                    ud.synchronize()
+                    ud.set(authDataResult.user.uid, forKey: CURRENT_USER_UID)
+                }
             }catch FetchUserError.invalidUserInfo {
                 print("DEBUG: Fail to bind userInfo")
             }catch {

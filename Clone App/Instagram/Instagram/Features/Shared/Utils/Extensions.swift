@@ -118,13 +118,13 @@ class Dynamic<T> {
 //MARK: - Network service extension
 protocol ServiceExtensionType {
     
-    static func encodeToNSDictionary(info: Codable) -> [String:Any]
+    func encodeToNSDictionary(info: Codable) -> [String:Any]
     
 }
 
 extension ServiceExtensionType {
     
-    static func encodeToNSDictionary(info: Codable) -> [String : Any] {
+    func encodeToNSDictionary(info: Codable) -> [String : Any] {
         guard let dataDictionary = info.encodeToDictionary else { fatalError() }
         return dataDictionary
     }
@@ -133,6 +133,7 @@ extension ServiceExtensionType {
 
 //MARK: - Utils
 struct Utils {
+    
     static var pList: UserDefaults {
         get {
             let pList = UserDefaults.standard
@@ -140,4 +141,28 @@ struct Utils {
             return pList
         }
     }
+
+}
+
+
+//MARK: - RootNavigationController+
+extension Utils {
+    
+    static func templateNavigationController(unselectedImage: UIImage, selectedImage: UIImage, rootVC: UIViewController) -> UINavigationController {
+        let nav = UINavigationController(rootViewController: rootVC)
+        nav.tabBarItem.image = unselectedImage
+        nav.tabBarItem.selectedImage = selectedImage
+        nav.navigationBar.tintColor = .black
+        setupNavigationAppearance(nav: nav)
+        return nav
+    }
+    
+    static func setupNavigationAppearance(nav: UINavigationController) {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .white
+        nav.navigationBar.standardAppearance = appearance
+        nav.navigationBar.scrollEdgeAppearance = appearance
+    }
+    
 }

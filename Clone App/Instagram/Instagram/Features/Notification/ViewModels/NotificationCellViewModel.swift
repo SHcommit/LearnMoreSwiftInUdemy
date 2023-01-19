@@ -15,9 +15,13 @@ class NotificationCellViewModel {
     var subscriptions = Set<AnyCancellable>()
     private var isUpdatedFollow = PassthroughSubject<Void,Never>()
     
+    //MARK: - Usecase
+    fileprivate let apiClient: ServiceProviderType
+    
     //MARK: - Lifecycles
-    init(notification: NotificationModel) {
+    init(notification: NotificationModel, apiClient: ServiceProviderType) {
         self._notification = notification
+        self.apiClient = apiClient
     }
     
 }
@@ -168,7 +172,7 @@ extension NotificationCellViewModel {
     private func checkIfUserIsFollowed() {
         Task(priority: .high) {
             do {
-                let isFollowed = try await UserService.checkIfUserIsFollowd(uid: _notification.specificUserInfo.uid)
+                let isFollowed = try await apiClient.userCase.checkIfUserIsFollowd(uid: _notification.specificUserInfo.uid)
                 DispatchQueue.main.async {
                     self._notification
                         .specificUserInfo
