@@ -144,9 +144,7 @@ extension CommentController: CommentInputAccessoryViewDelegate {
         guard let vc = tabBarController as? MainHomeTabController else {
             return
         }
-        guard let user = vc.getUserVM?.userInfoModel() else {
-            return
-        }
+        let user = vc.vm.user
         guard let postId = viewModel.post.postId else { return }
         let input = UploadCommentInputModel(comment: comment,
                                             postID: postId,

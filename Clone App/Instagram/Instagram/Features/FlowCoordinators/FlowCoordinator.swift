@@ -9,7 +9,7 @@ import UIKit
 
 protocol FlowCoordinator: AnyObject {
     //MARK: - Computed Properties
-    var children: [FlowCoordinator] { get set }
+    var childCoordinators: [FlowCoordinator] { get set }
     var presenter: UINavigationController { get set }
     
     //MARK: - Action
@@ -22,19 +22,19 @@ protocol FlowCoordinator: AnyObject {
 extension FlowCoordinator {
     
     func addChild(target coordinator: FlowCoordinator) {
-        children.append(coordinator)
+        childCoordinators.append(coordinator)
     }
     
     func removeChild(target coordinator: FlowCoordinator) {
-        guard let idx = children.firstIndex(where: {$0===coordinator}) else {
+        guard let idx = childCoordinators.firstIndex(where: {$0===coordinator}) else {
             print("DEBUG: Couldn't find target: \(coordinator) in childCoordinators")
             return
         }
-        children.remove(at: idx)
+        childCoordinators.remove(at: idx)
     }
     
     func removeAllChild() {
-        children.removeAll()
+        childCoordinators.removeAll()
     }
     
 }
