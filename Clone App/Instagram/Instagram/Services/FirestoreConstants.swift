@@ -39,4 +39,11 @@ struct FSConstants {
         return db.collection(info.description)
     }
     
+    static var auth: Auth {
+        return Auth.auth()
+    }
+    
+    static var user: User? {
+        return auth.currentUser
+    }
 }
