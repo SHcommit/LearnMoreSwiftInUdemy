@@ -19,11 +19,23 @@ class NotificationController: UITableViewController {
     fileprivate let appear = PassthroughSubject<Void,Never>()
     fileprivate var specificCellInit = PassthroughSubject<(cell: NotificationCell, index: Int),Never>()
     fileprivate var refresh = PassthroughSubject<Void,Never>()
-    fileprivate var vm: NotificationsViewModelType = NotificationsViewModel()
+    fileprivate var vm: NotificationViewModelType = NotificationsViewModel(apiClient: ServiceProvider.defaultProvider())
     fileprivate var subscriptions = Set<AnyCancellable>()
     fileprivate var delegateSubscription = Set<AnyCancellable>()
     
+    fileprivate let userService: UserServiceType
+    fileprivate let postService: PostServiceType
+    
     //MARK: - Lifecycles
+    init(userService: UserServiceType, postService: PostServiceType) {
+        self.userService = userService
+        self.postService = postService
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureTableView()
@@ -64,13 +76,13 @@ extension NotificationController {
         startIndicator()
         let uid = vm.notifications[indexPath.row].specificUserInfo.uid
         Task(priority: .medium) {
-            guard let user = try? await UserService
+            guard let user = try? await userService
                 .fetchUserInfo(type: UserInfoModel.self, withUid: uid) else {
                 print("DEBUG: Failure get user info")
                 endIndicator()
                 return
             }
-            let controller = ProfileController(viewModel: ProfileViewModel(user: user))
+            let controller = ProfileController(viewModel: ProfileViewModel(user: user, apiClient: ServiceProvider.defaultProvider()))
             DispatchQueue.main.async {
                 self.navigationController?.pushViewController(controller, animated: true)
                 self.endIndicator()
@@ -156,7 +168,7 @@ extension NotificationController {
         startIndicator()
         Task(priority: .high) {
             do{
-                try await UserService.unfollow(someone: element.uid)
+                try await userService.unfollow(someone: element.uid)
                 DispatchQueue.main.async {
                     element.cell.vm?.userIsFollowed = false
                     element.cell.updateFollowButtonUI()
@@ -173,7 +185,7 @@ extension NotificationController {
         startIndicator()
         Task(priority: .high) {
             do {
-                try await UserService.follow(someone: element.uid)
+                try await userService.follow(someone: element.uid)
                 DispatchQueue.main.async {
                     element.cell.vm?.userIsFollowed = true
                     element.cell.updateFollowButtonUI()
@@ -190,7 +202,7 @@ extension NotificationController {
         Task(priority: .high) {
             startIndicator()
             do {
-                let post = try await PostService.fetchPost(withPostId: element.uid)
+                let post = try await postService.fetchPost(withPostId: element.uid)
                 DispatchQueue.main.async {
                     let controller = FeedController(collectionViewLayout: UICollectionViewFlowLayout())
                     controller.post = post
