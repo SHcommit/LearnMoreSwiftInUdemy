@@ -18,6 +18,7 @@
 		153171FE29632DDB005390B0 /* FeedCellViewModelProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 153171FD29632DDB005390B0 /* FeedCellViewModelProtocols.swift */; };
 		15486DC4291D1745008B98E6 /* UploadPostController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15486DC3291D1745008B98E6 /* UploadPostController.swift */; };
 		15486DC6291D1B74008B98E6 /* InputTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15486DC5291D1B74008B98E6 /* InputTextView.swift */; };
+		15566869297A6A06006DEB53 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 15566868297A6A06006DEB53 /* README.md */; };
 		155E1D6F296DA8080036653F /* NotificationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 155E1D6E296DA8080036653F /* NotificationCell.swift */; };
 		155E1D71296DA87F0036653F /* NotificationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 155E1D70296DA87F0036653F /* NotificationModel.swift */; };
 		155E1D74296DCA220036653F /* NotificationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 155E1D73296DCA220036653F /* NotificationViewModel.swift */; };
@@ -78,7 +79,7 @@
 		15E5A736294250A300183B71 /* SearchViewModelProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E5A735294250A300183B71 /* SearchViewModelProtocols.swift */; };
 		15E8A77F29787E510025A740 /* ServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E8A77E29787E510025A740 /* ServiceProvider.swift */; };
 		15E8A782297887380025A740 /* FlowCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E8A781297887380025A740 /* FlowCoordinator.swift */; };
-		15E8A784297888CF0025A740 /* FlowCoordinatorUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E8A783297888CF0025A740 /* FlowCoordinatorUtils.swift */; };
+		15E8A784297888CF0025A740 /* FlowCoordinator+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E8A783297888CF0025A740 /* FlowCoordinator+Utils.swift */; };
 		15E8A786297889330025A740 /* ApplicationFlowCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E8A785297889330025A740 /* ApplicationFlowCoordinator.swift */; };
 		15E8A7882979091B0025A740 /* MainHomeTabViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E8A7872979091B0025A740 /* MainHomeTabViewModel.swift */; };
 		15E8A78A29790AA20025A740 /* MainHomeTabViewModelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E8A78929790AA20025A740 /* MainHomeTabViewModelType.swift */; };
@@ -108,6 +109,7 @@
 		153171FD29632DDB005390B0 /* FeedCellViewModelProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedCellViewModelProtocols.swift; sourceTree = "<group>"; };
 		15486DC3291D1745008B98E6 /* UploadPostController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadPostController.swift; sourceTree = "<group>"; };
 		15486DC5291D1B74008B98E6 /* InputTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputTextView.swift; sourceTree = "<group>"; };
+		15566868297A6A06006DEB53 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		155E1D6E296DA8080036653F /* NotificationCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NotificationCell.swift; path = Instagram/Features/Notification/Views/NotificationCell.swift; sourceTree = SOURCE_ROOT; };
 		155E1D70296DA87F0036653F /* NotificationModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NotificationModel.swift; path = Instagram/Features/Notification/Models/NotificationModel.swift; sourceTree = SOURCE_ROOT; };
 		155E1D73296DCA220036653F /* NotificationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationViewModel.swift; sourceTree = "<group>"; };
@@ -170,7 +172,7 @@
 		15E5A735294250A300183B71 /* SearchViewModelProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModelProtocols.swift; sourceTree = "<group>"; };
 		15E8A77E29787E510025A740 /* ServiceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceProvider.swift; sourceTree = "<group>"; };
 		15E8A781297887380025A740 /* FlowCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowCoordinator.swift; sourceTree = "<group>"; };
-		15E8A783297888CF0025A740 /* FlowCoordinatorUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowCoordinatorUtils.swift; sourceTree = "<group>"; };
+		15E8A783297888CF0025A740 /* FlowCoordinator+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FlowCoordinator+Utils.swift"; sourceTree = "<group>"; };
 		15E8A785297889330025A740 /* ApplicationFlowCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationFlowCoordinator.swift; sourceTree = "<group>"; };
 		15E8A7872979091B0025A740 /* MainHomeTabViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainHomeTabViewModel.swift; sourceTree = "<group>"; };
 		15E8A78929790AA20025A740 /* MainHomeTabViewModelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainHomeTabViewModelType.swift; sourceTree = "<group>"; };
@@ -270,6 +272,7 @@
 		1552C58C296D9395001D8E48 /* Posting */ = {
 			isa = PBXGroup;
 			children = (
+				15566868297A6A06006DEB53 /* README.md */,
 				15E8A78B297936F70025A740 /* FeedFlowCoordinator.swift */,
 				15E8A78D297937100025A740 /* UploadFlowCoordinator.swift */,
 				15E8A78F297937240025A740 /* ImageSelectorFlowCoordinator.swift */,
@@ -747,7 +750,7 @@
 			isa = PBXGroup;
 			children = (
 				15E8A781297887380025A740 /* FlowCoordinator.swift */,
-				15E8A783297888CF0025A740 /* FlowCoordinatorUtils.swift */,
+				15E8A783297888CF0025A740 /* FlowCoordinator+Utils.swift */,
 				156B52AF2979AAED0000B75D /* MainFlowCoordinator.swift */,
 				15E8A785297889330025A740 /* ApplicationFlowCoordinator.swift */,
 			);
@@ -833,6 +836,7 @@
 			files = (
 				156E22F5290D6EBE0026B0C3 /* LaunchScreen.storyboard in Resources */,
 				15ACA739290D7EDF0011E665 /* GoogleService-Info.plist in Resources */,
+				15566869297A6A06006DEB53 /* README.md in Resources */,
 				156E22F2290D6EBE0026B0C3 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -918,7 +922,7 @@
 				15E8A78C297936F70025A740 /* FeedFlowCoordinator.swift in Sources */,
 				15ACA72E290D796F0011E665 /* ProfileHeader.swift in Sources */,
 				15ACA720290D793D0011E665 /* AuthService.swift in Sources */,
-				15E8A784297888CF0025A740 /* FlowCoordinatorUtils.swift in Sources */,
+				15E8A784297888CF0025A740 /* FlowCoordinator+Utils.swift in Sources */,
 				15FDED99291FA8CE00DDAF2E /* FeedViewModel.swift in Sources */,
 				15E4E90E2940F2C30080A4FF /* LoginViewModelProtocols.swift in Sources */,
 				15ACA713290D77960011E665 /* NotificationController.swift in Sources */,
