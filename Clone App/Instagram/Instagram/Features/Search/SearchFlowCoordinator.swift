@@ -7,7 +7,7 @@
 
 import UIKit
 
-class SearchFlowCoordinator: FlowCoordinator {
+class SearchFlowCoordinator: NSObject, FlowCoordinator {
     
     typealias SearchFC = SearchFlowCoordinator
     
@@ -50,5 +50,51 @@ class SearchFlowCoordinator: FlowCoordinator {
         removeAllChild()
     }
     
+}
+
+//MARK: - Setup child coordinator and holding :)
+extension SearchFlowCoordinator {
+    
+    //이때도 cell의 특정 유저 정보를 받아와야함.
+    internal func gotoProfilePage(specific user: UserInfoModel) {
+        let child = ProfileFlowCoordinator(apiClient: apiClient, target: user, presenter: presenter)
+        holdChildByAdding(coordinator: child)
+    }
+    
+}
+
+//MARK: - Manage childCoordinators :]
+extension SearchFlowCoordinator: UINavigationControllerDelegate {
+    
+    func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
+        guard let notifiedVC = navigationController.transitionCoordinator?.viewController(forKey: .from) else {
+            return
+        }
+        if navigationController.viewControllers.contains(notifiedVC) {
+            return
+        }
+        feedFlowChildCoordinatorManager(target: notifiedVC)
+    }
+    
+    //MARK: - UINavigationControllerDelegate Manager
+    fileprivate func feedFlowChildCoordinatorManager(target vc: UIViewController) {
+        switch vc {
+        case is ProfileController:
+            popProfileChildCoordinator(vc)
+            break
+        default:
+            print("DEBUG: Unknown ViewController occured transition event in Feed Flow Coordinator's NavigaitonController")
+            break
+        }
+    }
+    
+    fileprivate func popProfileChildCoordinator(_ vc : UIViewController) {
+        guard let profileVC = vc as? ProfileController,
+              let child = profileVC.coordinator else {
+            return
+        }
+        child.finish()
+        vc.dismiss(animated: true)
+    }
     
 }

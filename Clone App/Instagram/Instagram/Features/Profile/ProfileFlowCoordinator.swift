@@ -58,10 +58,16 @@ class ProfileFlowCoordinator: NSObject, FlowCoordinator {
     
 }
 
+// 프로필에선 피드로 갈 수 있다.
+
 //MARK: - Setup child coordinator and holding :)
 extension ProfileFlowCoordinator {
     
-    
+    // 이땐 특정 postModel?만 아마 파싱할 때 그 특정 post그게 필요함.
+    internal func gotoSpecificUserDetailFeedPage() {
+        let child = FeedFlowCoordinator(apiClient: apiClient, login: user)
+        holdChildByAdding(coordinator: child)
+    }
 }
 
 //MARK: - Manage childCoordinators :]
@@ -80,35 +86,22 @@ extension ProfileFlowCoordinator: UINavigationControllerDelegate {
     
     //MARK: - UINavigationControllerDelegate Manager
     func profileFlowChildCoordinatorManager(target vc: UIViewController) {
-//        switch vc {
-//        case is ProfileController:
-//            popProfileChildCoordinator(vc)
-//            break
-//        case is CommentController:
-//            popCommentChildCoordinator(vc)
-//            break
-//        default:
-//            print("DEBUG: Unknown ViewController occured transition event in Feed Flow Coordinator's NavigaitonController")
-//            break
-//        }
+        switch vc {
+        case is FeedController:
+            popFeedChildCoordinator(vc)
+            break
+        default:
+            print("DEBUG: Unknown ViewController occured transition event in Feed Flow Coordinator's NavigaitonController")
+            break
+        }
     }
-//
-//    func popProfileChildCoordinator(_ vc : UIViewController) {
-//        guard let profileVC = vc as? ProfileController,
-//              let child = profileVC.coordinator else {
-//            return
-//        }
-//        child.finish()
-//        vc.dismiss(animated: true)
-//    }
-//
-//
-//    func popCommentChildCoordinator(_ vc: UIViewController) {
-//        guard let commentVC = vc as? CommentController,
-//              let child = commentVC.coordinator else {
-//            return
-//        }
-//        child.finish()
-//        vc.dismiss(animated: true)
-//    }
+
+    func popFeedChildCoordinator(_ vc : UIViewController) {
+        guard let profileVC = vc as? ProfileController,
+              let child = profileVC.coordinator else {
+            return
+        }
+        child.finish()
+        vc.dismiss(animated: true)
+    }
 }

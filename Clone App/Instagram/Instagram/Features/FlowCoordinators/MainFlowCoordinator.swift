@@ -70,7 +70,7 @@ extension MainFlowCoordinator {
     }
     
     fileprivate func notificationCoordinatorSubscription() {
-        let child = NotificationFlowCoordinator(apiClient: apiClient)
+        let child = NotificationFlowCoordinator(apiClient: apiClient, user: me)
         holdChildByAdding(coordinator: child)
     }
     
