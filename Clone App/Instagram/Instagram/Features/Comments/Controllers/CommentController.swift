@@ -16,6 +16,7 @@ class CommentController: UICollectionViewController {
     private var commentInputView: CommentInputAccessoryView!
     private var viewModel: CommentViewModelType
     private let apiClient: ServiceProviderType
+    weak var coordinator: CommentFlowCoordinator?
     
     private let appear = PassthroughSubject<Void,Never>()
     private let reloadData = PassthroughSubject<Void,Never>()

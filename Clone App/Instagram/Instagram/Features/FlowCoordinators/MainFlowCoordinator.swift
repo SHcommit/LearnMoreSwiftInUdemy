@@ -29,6 +29,7 @@ class MainFlowCoordinator: FlowCoordinator {
     //MARK: - Action
     func start() {
         rootViewController.coordinator = self
+        parentCoordinator = self
         feedCoordinatorSubscription()
         searchCoordinatorSubscription()
         imageSelectorCoordinatorSubscription()
@@ -49,8 +50,12 @@ class MainFlowCoordinator: FlowCoordinator {
 extension MainFlowCoordinator {
     typealias flowLayout = UICollectionViewFlowLayout
     
+    ///초기 tamplete로 네비 설정할 때 각 FlowCoordinator init시점에 navi를 추가해버리면 이게 내비 추가할 때 mainFlow에 의한 것이면
+    /// 템플릿 네비init를 사용하는 건데 그게 아닌 subCoordinator에서 호출 할 경우 parent의 navi를 받아야한다.
+    /// init시점에 하면 presenter가 mainFlow인지검사하는 구간이 init 다음에 있어서 parentCoordinator 무조건 nil 뜬다
     fileprivate func feedCoordinatorSubscription() {
-        let child = FeedFlowCoordinator()
+        
+        let child = FeedFlowCoordinator(apiClient: apiClient, login: me)
         holdChildByAdding(coordinator: child)
     }
     
@@ -70,18 +75,8 @@ extension MainFlowCoordinator {
     }
     
     fileprivate func profileCoordinatorSubscription() {
-        let child = ProfileFlowCoordinator(apiClient: apiClient, login: me)
+        let child = ProfileFlowCoordinator(apiClient: apiClient, target: me)
         holdChildByAdding(coordinator: child)
     }
 }
 
-//MARK: - Utils
-extension MainFlowCoordinator {
-    func holdChildByAdding<Element>(coordinator: Element) where Element: FlowCoordinator {
-        ConfigCoordinator.setupChild(detail: coordinator) {
-            self.addChild(target: $0)
-            $0.parentCoordinator = self
-            $0.start()
-        }
-    }
-}
