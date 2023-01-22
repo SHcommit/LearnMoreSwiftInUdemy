@@ -34,14 +34,13 @@ class ProfileFlowCoordinator: NSObject, FlowCoordinator {
     
     //MARK: - Action
     func start() {
-        testCheckCoordinatorState()
         profileController.coordinator = self
-        //mainFlow냐?! 아니면 다른 sub Coordinator에서 호출한거야?!
         if ProfileFC.isMainFlowCoordiantorChild(parent: parentCoordinator) {
             self.presenter = Utils.templateNavigationController(
                 unselectedImage: .imageLiteral(name: "profile_unselected")
                 , selectedImage: .imageLiteral(name: "profile_selected"),
                 rootVC: profileController)
+            presenter.delegate = self
             return
         }
         
@@ -57,52 +56,50 @@ class ProfileFlowCoordinator: NSObject, FlowCoordinator {
         removeAllChild()
     }
     
+    deinit {
+        print("DEBUG: parentCoordinator: \(parentCoordinator.debugDescription)'s child profileFlowCoordinator deallocate.")
+    }
+    
 }
-
-// 프로필에선 피드로 갈 수 있다.
 
 //MARK: - Setup child coordinator and holding :)
 extension ProfileFlowCoordinator {
     
-    // 이땐 특정 postModel?만 아마 파싱할 때 그 특정 post그게 필요함.
-    internal func gotoSpecificUserDetailFeedPage() {
-        let child = FeedFlowCoordinator(apiClient: apiClient, login: user)
+    internal func gotoSpecificUserDetailFeedPage(postOwner: PostModel) {
+        let child = FeedFlowCoordinator(apiClient: apiClient, login: user,specificPostOwner: postOwner,presenter: presenter)
         holdChildByAdding(coordinator: child)
     }
+    
 }
 
-//MARK: - Manage childCoordinators :]
+//MARK: - UINavigationControllerDelegate :]
 extension ProfileFlowCoordinator: UINavigationControllerDelegate {
     
-    func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
-        guard let notifiedVC = navigationController.transitionCoordinator?.viewController(forKey: .from) else {
-            return
-        }
-        if navigationController.viewControllers.contains(notifiedVC) {
-            return
-        }
-        profileFlowChildCoordinatorManager(target: notifiedVC)
-    }
-    
-    
-    //MARK: - UINavigationControllerDelegate Manager
-    func profileFlowChildCoordinatorManager(target vc: UIViewController) {
-        switch vc {
-        case is FeedController:
-            popFeedChildCoordinator(vc)
-            break
-        default:
-            print("DEBUG: Unknown ViewController occured transition event in Feed Flow Coordinator's NavigaitonController")
-            break
-        }
+    func navigationController(_ navi: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
+        updateDismissedViewControllerChildCoordinatorFromNaviController(
+            navi, didShow: viewController) { vc in
+                profileFlowChildCoordinatorManager(target: vc)
+            }
     }
 
-    func popFeedChildCoordinator(_ vc : UIViewController) {
-        guard let profileVC = vc as? ProfileController,
-              let child = profileVC.coordinator else {
-            return
+}
+
+//MARK: - UINavigationControllerDelegate Manager
+extension ProfileFlowCoordinator {
+    fileprivate func profileFlowChildCoordinatorManager(target vc: UIViewController) {
+        switch vc {
+        case is ProfileController:
+            UtilChildState.poppedChildFlow(coordinator: .profile(vc))
+            break
+        case is CommentController:
+            UtilChildState.poppedChildFlow(coordinator: .comment(vc))
+            break
+        case is FeedController:
+            UtilChildState.poppedChildFlow(coordinator: .feed(vc))
+            break
+        default:
+            print("DEBUG: Unknown ViewController occured transition event in profile Flow Coordinator's NavigaitonController")
+            break
         }
-        child.finish()
-        vc.dismiss(animated: true)
     }
 }

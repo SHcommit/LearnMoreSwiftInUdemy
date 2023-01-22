@@ -88,7 +88,7 @@ typealias ProfileViewModelOutput = AnyPublisher<ProfileControllerState, ProfileE
 enum ProfileControllerState {
     
     case reloadData,
-         showSpecificUser(feed: FeedController),
+         showSpecificUser(postOwner: PostModel),
          startIndicator,
          endIndicator,
          none

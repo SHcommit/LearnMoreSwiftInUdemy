@@ -15,9 +15,9 @@ class ProfileViewModel {
     @Published var profileImage: UIImage?
     @Published var postsInfo = [PostModel]()
     @Published var posts = [UIImage]()
-    private var indicatorSubject = PassthroughSubject<IndicatorState,Never>()
-    var subscriptions = Set<AnyCancellable>()
-    private var tab: UITabBarController?
+    fileprivate var indicatorSubject = PassthroughSubject<IndicatorState,Never>()
+    fileprivate var subscriptions = Set<AnyCancellable>()
+    fileprivate var tab: UITabBarController?
     
     //MARK: - Usecase
     fileprivate let apiClient: ServiceProviderType
@@ -125,9 +125,8 @@ extension ProfileViewModel: ProfileViewModelInputChainCase {
         return input.didTapCell
             .receive(on: RunLoop.main)
             .tryMap { index in
-                let vm = FeedViewModel(post: self.postsInfo[index],apiClient: self.apiClient)
-                let feed = FeedController(user: self.user, apiClient: self.apiClient, vm: vm, UICollectionViewFlowLayout())
-                return .showSpecificUser(feed: feed)
+                let postOwner = self.postsInfo[index]
+                return .showSpecificUser(postOwner: postOwner)
             }.mapError { error -> ProfileErrorType in
                 return error as? ProfileErrorType ?? .failed
             }.eraseToAnyPublisher()
