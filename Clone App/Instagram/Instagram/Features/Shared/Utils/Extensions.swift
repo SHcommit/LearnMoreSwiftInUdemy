@@ -24,13 +24,14 @@ fileprivate var _indicator = {
 
 extension UIViewController {
     fileprivate var indicator: UIActivityIndicatorView {
-        get {
+        if view.subviews.contains(where: {$0==_indicator}) {
             return _indicator
         }
+        view.addSubview(_indicator)
+        return _indicator
     }
 
     func startIndicator() {
-        view.addSubview(indicator)
         setupIndicatorConstraints()
         self.view.isUserInteractionEnabled = false
         DispatchQueue.main.async {

@@ -94,6 +94,7 @@ extension ProfileController {
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         didTapCell.send(indexPath.row)
     }
+    
 }
 
 //MARK: - Helpers
@@ -133,9 +134,8 @@ extension ProfileController {
         case .reloadData:
             collectionView.reloadData()
             break
-        case .showSpecificUser(feed: let feed):
-            feed.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: feed, action: #selector(feed.cancel))
-            navigationController?.pushViewController(feed, animated: true)
+        case .showSpecificUser(let postOwner):
+            coordinator?.gotoSpecificUserDetailFeedPage(postOwner: postOwner)
             break
         case .startIndicator:
             startIndicator()

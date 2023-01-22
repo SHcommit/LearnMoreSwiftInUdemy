@@ -11,9 +11,9 @@ import Combine
 class NotificationCellViewModel {
     
     //MARK: - Properties
-    private var _notification: NotificationModel
+    fileprivate var _notification: NotificationModel
     var subscriptions = Set<AnyCancellable>()
-    private var isUpdatedFollow = PassthroughSubject<Void,Never>()
+    fileprivate var isUpdatedFollow = PassthroughSubject<Void,Never>()
     
     //MARK: - Usecase
     fileprivate let apiClient: ServiceProviderType
@@ -91,7 +91,7 @@ extension NotificationCellViewModel: NotificationCellVMComputedProperties {
 //MARK: - NotificationCellViewModelType
 extension NotificationCellViewModel: NotificationCellViewModelType {
     
-    func transform(with input: NotificationCellViewModelInput) -> NotificationCellViewModelOutput {
+    func transform(with input: Input) -> Output {
         let initializaiton = initializationChains(with: input)
         
         let updatedFollow = isUpdatedFollowChains()
@@ -104,12 +104,12 @@ extension NotificationCellViewModel: NotificationCellViewModelType {
 }
 
 //MARK: NotificationCellViewModelType subscription chains
-extension NotificationCellViewModel {
+extension NotificationCellViewModel: NotificationCellViewModelConvenience {
     
-    fileprivate func initializationChains(with input: NotificationCellViewModelInput) -> NotificationCellViewModelOutput {
+    fileprivate func initializationChains(with input: Input) -> Output {
         return input.initialization
             .first()
-            .map {[unowned self] ivs -> NotificationCellState in
+            .map {[unowned self] ivs -> State in
                 _=[(ivs.profile, profileImageUrl!),
                    (ivs.post, postImageUrl)]
                     .map{ updateImageView($0.0, withUrl: $0.1)}
@@ -121,9 +121,9 @@ extension NotificationCellViewModel {
             .eraseToAnyPublisher()
     }
     
-    fileprivate func isUpdatedFollowChains() -> NotificationCellViewModelOutput {
+    fileprivate func isUpdatedFollowChains() -> Output {
         return isUpdatedFollow
-            .map{ _ -> NotificationCellState in
+            .map{ _ -> State in
                 return .updatedFollow
             }.eraseToAnyPublisher()
     }

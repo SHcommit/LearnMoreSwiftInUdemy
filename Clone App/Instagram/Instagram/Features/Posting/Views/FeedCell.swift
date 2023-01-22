@@ -9,9 +9,17 @@ import UIKit
 import Firebase
 import Combine
 
+protocol FeedCellDelegate: AnyObject {
+    //코디네이터에 속한거로 인디케이터 표시할라했는데 안먹혀서 델리게이트만듬..
+    func wantsToShowIndicator()
+    func wantsToHideIndicator()
+}
+
 class FeedCell: UICollectionViewCell {
     
     //MARK: - Properties
+    weak var coordinator: FeedFlowCoordinator?
+    weak var delegate: FeedCellDelegate?
     fileprivate var profileImageView: UIImageView!
     fileprivate var postImageView: UIImageView!
     fileprivate var likeLabel: UILabel!
@@ -22,10 +30,9 @@ class FeedCell: UICollectionViewCell {
     fileprivate var commentButton: UIButton!
     fileprivate var shareButton: UIButton!
     fileprivate var didTapUserProfile = PassthroughSubject<String,Never>()
-    fileprivate var didTapCommentPublisher = PassthroughSubject<UINavigationController?,Never>()
-    fileprivate var didTapLikePublisher = PassthroughSubject<UIButton,Never>()
+    fileprivate var didTapCommentPublisher = PassthroughSubject<Void,Never>()
+    fileprivate var didTapLikePublisher = PassthroughSubject<(UIButton,FeedCellDelegate?),Never>()
     fileprivate var subscriptions = Set<AnyCancellable>()
-    var feedControllerNavigationController: UINavigationController?
     
     var viewModel: FeedCellViewModelType?
     //MARK: - Lifecycle
@@ -59,8 +66,7 @@ extension FeedCell {
         configureSubviews()
     }
     
-    func setupBinding(with navigationController: UINavigationController?) {
-        feedControllerNavigationController = navigationController
+    func setupBinding() {
         
         let input = FeedCellViewModelInput(
             didTapProfile: didTapUserProfile.eraseToAnyPublisher(),
@@ -68,7 +74,9 @@ extension FeedCell {
             didTapLike: didTapLikePublisher.eraseToAnyPublisher())
         
         let output = viewModel?.transform(input: input)
-        output? .sink { state in
+        output?
+            .receive(on: RunLoop.main)
+            .sink { state in
             self.render(state)
         }.store(in: &subscriptions)
     }
@@ -83,11 +91,12 @@ extension FeedCell {
     }
     
     @objc func didTapLikeButton(_ sender: Any) {
-        didTapLikePublisher.send(likeButton)
+        delegate?.wantsToShowIndicator()
+        didTapLikePublisher.send((likeButton,delegate))
     }
     
     @objc func didTapComment(_ sender: Any) {
-        didTapCommentPublisher.send(feedControllerNavigationController)
+        didTapCommentPublisher.send()
     }
     
 }
@@ -100,28 +109,26 @@ extension FeedCell {
         switch state {
         case .none:
             break
-        case .present(let navigationController):
-            guard let post = self.viewModel?.post else { return }
-            let controller = CommentController(viewModel: CommentViewModel(post: post, apiClient: ServiceProvider.defaultProvider()), apiClient: ServiceProvider.defaultProvider())
-            navigationController?.pushViewController(controller, animated: true)
+        case .deleteIndicator:
+            delegate?.wantsToHideIndicator()
             break
+        case .showComment:
+            guard let post = self.viewModel?.post else { return }
+            coordinator?.gotoCommentPage(with: post)
         case .updateLikeLabel:
             self.likeLabel.text = self.viewModel?.postLikes
             break
-        case .fetchUserInfo(let uid):
-            Task() {
-                let userInfo = try await ServiceProvider.defaultProvider().userCase.fetchUserInfo(type: UserInfoModel.self, withUid: uid)
-                guard let userInfo = userInfo else { return }
-                DispatchQueue.main.async {
-                    let controller = ProfileController(viewModel: ProfileViewModel(user: userInfo, apiClient: ServiceProvider.defaultProvider()))
-                    self.feedControllerNavigationController?.pushViewController(controller, animated: true)
-                }
-            }
+        case .showProfile(let selectedUser):
+            coordinator?.gotoProfilePage(with: selectedUser)
+            break
+        case .fail(let result):
+            print("DEBUG: \(result)")
             break
         }
     }
     
     func configure() {
+        let apiClient = ServiceProvider.defaultProvider()
         guard var viewModel = viewModel else { return }
         captionLabel.text = viewModel.caption
         usernameButton.setTitle(viewModel.username, for: .normal)
@@ -131,7 +138,7 @@ extension FeedCell {
         viewModel.didLike = false
         
         Task(priority: .high) {
-            let didLike = await ServiceProvider.defaultProvider().postCase.checkIfUserLikedPost(post: viewModel.post)
+            let didLike = await apiClient.postCase.checkIfUserLikedPost(post: viewModel.post)
             viewModel.didLike = didLike
             DispatchQueue.main.async {
                 if didLike {

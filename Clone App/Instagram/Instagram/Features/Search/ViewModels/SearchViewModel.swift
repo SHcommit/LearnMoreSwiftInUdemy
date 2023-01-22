@@ -11,8 +11,8 @@ import Combine
 class SearchViewModel {
     
     //MARK: - Properties
-    @Published var users: [UserInfoModel] = [UserInfoModel]()
-    @Published var filteredUsers: [UserInfoModel] = [UserInfoModel]()
+    @Published var users: [UserModel] = [UserModel]()
+    @Published var filteredUsers: [UserModel] = [UserModel]()
     internal var subscriptions: Set<AnyCancellable> = Set<AnyCancellable>()
     
     //MARK: - Usecase
@@ -37,8 +37,8 @@ extension SearchViewModel: SearchViewModelComputedPropertyCase {
         return section == 0 ? users.count : 0
     }
     
-    func cellForRowAt(_ index: Int) -> UserInfoViewModel {
-        let userVM = UserInfoViewModel(user: users[index], profileImage: nil, apiClient: apiClient)
+    func cellForRowAt(_ index: Int) -> UserViewModel {
+        let userVM = UserViewModel(user: users[index], profileImage: nil, apiClient: apiClient)
         return userVM
     }
     
@@ -46,7 +46,7 @@ extension SearchViewModel: SearchViewModelComputedPropertyCase {
         return filteredUsers.count
     }
     
-    func getUsers() -> [UserInfoModel] {
+    func getUsers() -> [UserModel] {
         users
     }
     
@@ -56,7 +56,7 @@ extension SearchViewModel: SearchViewModelComputedPropertyCase {
 extension SearchViewModel: SearchViewModelType {
     
     //MARK: - Input/Output
-    func transform(input: SearchViewModelInput) -> SearchViewModelOutput {
+    func transform(input: Input) -> Output {
         
         subscriptions.forEach { $0.cancel() }
         subscriptions.removeAll()
@@ -65,8 +65,8 @@ extension SearchViewModel: SearchViewModelType {
         let didSelectRowAt = setupDidSelectRowAtInputBind(with: input)
         let appear = setupAppearInputBind(with: input)
         let searched = setupSearchResultInputBind(with: input)
-        let success: SearchViewModelOutput = Publishers.Merge(searched, didSelectRowAt).eraseToAnyPublisher()
-        let tableViewReload: SearchViewModelOutput = Publishers.Merge(success, appear).eraseToAnyPublisher()
+        let success: Output = Publishers.Merge(searched, didSelectRowAt).eraseToAnyPublisher()
+        let tableViewReload: Output = Publishers.Merge(success, appear).eraseToAnyPublisher()
         
         return Publishers.Merge(cellForRowAt, tableViewReload).eraseToAnyPublisher()
     }
@@ -77,7 +77,7 @@ extension SearchViewModel: SearchViewModelType {
 extension SearchViewModel: SearchViewModelInputCase {
         
     //MARK: - CellForRowAt case
-    func setupCellForRowAtInputBind(with input: SearchViewModelInput) -> SearchViewModelOutput {
+    func setupCellForRowAtInputBind(with input: Input) -> Output {
         return input
             .cellForRowAt
             .receive(on: RunLoop.main)
@@ -90,7 +90,7 @@ extension SearchViewModel: SearchViewModelInputCase {
     }
     
     func setupUserViewModelInCell(with tableInfo: tableInfo, _ searchController: UISearchController) {
-        tableInfo.cell.userVM = isSearchMode(withSearch: searchController) ? UserInfoViewModel(user: filteredUsers[tableInfo.indexPath.row], apiClient: apiClient) : cellForRowAt(tableInfo.indexPath.row)
+        tableInfo.cell.userVM = isSearchMode(withSearch: searchController) ? UserViewModel(user: filteredUsers[tableInfo.indexPath.row], apiClient: apiClient) : cellForRowAt(tableInfo.indexPath.row)
     }
     
     func fetchUserStats(in cell: SearchedUserCell) {
@@ -107,34 +107,32 @@ extension SearchViewModel: SearchViewModelInputCase {
     }
     
     //MARK: - DidselectRowAt case
-    func setupDidSelectRowAtInputBind(with input: SearchViewModelInput) -> SearchViewModelOutput {
+    func setupDidSelectRowAtInputBind(with input: Input) -> Output {
         return input
             .didSelectRowAt
             .receive(on: RunLoop.main)
-            .map { tableInfo -> SearchControllerState in
-                guard let  user = tableInfo.cell.userVM else { return .failure }
-                let vc = ProfileController(viewModel: ProfileViewModel(user: user.userInfoModel(), apiClient: self.apiClient))
-                //let vc = ProfileController(user: user.userInfoModel())
-                return .success(vc)
+            .map { tableInfo -> State in
+                guard let  user = tableInfo.cell.userVM?.getUser else { return .failure }
+                return .showProfile(user)
             }.eraseToAnyPublisher()
     }
     
     //MARK: - SearchResult case
-    func setupSearchResultInputBind(with input: SearchViewModelInput) -> SearchViewModelOutput {
+    func setupSearchResultInputBind(with input: Input) -> Output {
         let delayedText = delayTextfieldTyping(with: input)
         return filterTypingFormFromUsers(with: delayedText)
     }
     
-    func delayTextfieldTyping(with input: SearchViewModelInput) -> AnyPublisher<String, Never> {
+    func delayTextfieldTyping(with input: Input) -> AnyPublisher<String, Never> {
         return input
             .searchResult
             .debounce(for: .seconds(0.4), scheduler: RunLoop.main)
             .eraseToAnyPublisher()
     }
     
-    func filterTypingFormFromUsers(with delayedText: AnyPublisher<String,Never>) -> SearchViewModelOutput {
+    func filterTypingFormFromUsers(with delayedText: AnyPublisher<String,Never>) -> Output {
         delayedText
-            .map { [unowned self] text -> SearchControllerState in
+            .map { [unowned self] text -> State in
             let res = users.filter({
                 $0.fullname.lowercased().contains(text) ||
                 $0.username.lowercased().contains(text)
@@ -146,11 +144,11 @@ extension SearchViewModel: SearchViewModelInputCase {
     }
     
     //MARK: - Appear case
-    func setupAppearInputBind(with input: SearchViewModelInput) -> SearchViewModelOutput {
+    func setupAppearInputBind(with input: Input) -> Output {
         return input
             .appear
             .receive(on: RunLoop.main)
-            .map { _ -> SearchControllerState in
+            .map { _ -> State in
                 return .tableViewReload
             }.eraseToAnyPublisher()
     }
@@ -168,7 +166,7 @@ extension SearchViewModel: SearchViewModelNetworkServiceType {
     }
     
     func fetchAllUserDefaultInfo() async throws {
-        guard let users = try await apiClient.userCase.fetchUserList(type: UserInfoModel.self) else { throw FetchUserError.invalidUsers }
+        guard let users = try await apiClient.userCase.fetchUserList(type: UserModel.self) else { throw FetchUserError.invalidUsers }
         DispatchQueue.main.async {
             self.users = users
         }

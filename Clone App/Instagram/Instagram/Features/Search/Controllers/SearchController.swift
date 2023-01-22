@@ -62,8 +62,8 @@ extension SearchController {
         case .tableViewReload:
             tableView.reloadData()
             break
-        case .success(let vc):
-            navigationController?.pushViewController(vc, animated: true)
+        case .showProfile(let selectedUser):
+            coordinator?.gotoProfilePage(specific: selectedUser)
             break
         case .failure:
             break
@@ -125,6 +125,7 @@ extension SearchController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let cell = tableView.cellForRow(at: indexPath) as? SearchedUserCell else {fatalError("DEBUG: Fail to fild reusableCell in SearchController")}
+        tableView.deselectRow(at: indexPath, animated: true)
         didSelectRowAt.send((cell,indexPath))
     }
     

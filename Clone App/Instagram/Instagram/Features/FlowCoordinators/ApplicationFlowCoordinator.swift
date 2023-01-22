@@ -16,7 +16,7 @@ class ApplicationFlowCoordinator: FlowCoordinator{
     internal var childCoordinators: [FlowCoordinator] = []
     
     ///로그인 한 유저
-    @Published var me: UserInfoModel!
+    @Published var me: UserModel!
     fileprivate var cancellable: AnyCancellable?
     fileprivate let window: UIWindow
     fileprivate let apiClient: ServiceProvider = ServiceProvider.defaultProvider()
@@ -76,7 +76,7 @@ extension ApplicationFlowCoordinator {
 //MARK: - Setup child coordinator and holding :]
 extension ApplicationFlowCoordinator {
     
-    fileprivate func mainCoordinatorSubscription(with me: UserInfoModel) {
+    fileprivate func mainCoordinatorSubscription(with me: UserModel) {
         let child = MainFlowCoordinator(me: me, apiClient: apiClient)
         ConfigCoordinator.setupChild(detail: child) {
             $0.parentCoordinator = self
@@ -107,7 +107,7 @@ extension ApplicationFlowCoordinator {
 extension ApplicationFlowCoordinator {
     fileprivate func setupUserInfo() {
         Task(priority: .high) {
-            guard let user = try? await apiClient.userCase.fetchCurrentUserInfo(type: UserInfoModel.self) else {
+            guard let user = try? await apiClient.userCase.fetchCurrentUserInfo(type: UserModel.self) else {
                 return
             }
             self.me = user

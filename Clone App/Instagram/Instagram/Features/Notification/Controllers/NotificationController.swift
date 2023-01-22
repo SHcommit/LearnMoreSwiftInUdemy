@@ -11,26 +11,35 @@ import Combine
 class NotificationController: UITableViewController {
     
     //MARK: - Constants
+    typealias CellElement = (cell: NotificationCell, index: Int)
     fileprivate let NotificationCellReusableId = "NotificationCell"
     fileprivate let cellHeight = CGFloat(80)
     
     //MARK: - Properties
     fileprivate let refresher = UIRefreshControl()
+    
     fileprivate let appear = PassthroughSubject<Void,Never>()
-    fileprivate var specificCellInit = PassthroughSubject<(cell: NotificationCell, index: Int),Never>()
-    fileprivate var refresh = PassthroughSubject<Void,Never>()
-    fileprivate var vm: NotificationViewModelType
+    fileprivate let specificCellInit = PassthroughSubject<CellElement,Never>()
+    fileprivate let refresh = PassthroughSubject<Void,Never>()
+    fileprivate let didSelectedCell = PassthroughSubject<String,Never>()
+    fileprivate let didSelectedPost = PassthroughSubject<String,Never>()
+    
     fileprivate var subscriptions = Set<AnyCancellable>()
     fileprivate var delegateSubscription = Set<AnyCancellable>()
+    
+    fileprivate var vm: NotificationViewModelType
+    fileprivate var user: UserModel
+    
     weak var coordinator: NotificationFlowCoordinator?
     
     //MARK: - Usecase
     fileprivate let apiClient: ServiceProviderType
     
     //MARK: - Lifecycles
-    init(vm: NotificationViewModelType ,apiClient: ServiceProviderType) {
+    init(vm: NotificationViewModelType ,user: UserModel,apiClient: ServiceProviderType) {
         self.vm = vm
         self.apiClient = apiClient
+        self.user = user
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -76,20 +85,10 @@ extension NotificationController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         startIndicator()
+        
+        //테이블 뷰 클릭시엔 uid 받고 uid에 해당되는 특정 유저 받은 후에 프로필 컨트롤러 통해서 이동!
         let uid = vm.notifications[indexPath.row].specificUserInfo.uid
-        Task(priority: .medium) {
-            guard let user = try? await apiClient.userCase
-                .fetchUserInfo(type: UserInfoModel.self, withUid: uid) else {
-                print("DEBUG: Failure get user info")
-                endIndicator()
-                return
-            }
-            let controller = ProfileController(viewModel: ProfileViewModel(user: user, apiClient: ServiceProvider.defaultProvider()))
-            DispatchQueue.main.async {
-                self.navigationController?.pushViewController(controller, animated: true)
-                self.endIndicator()
-            }
-        }
+        didSelectedCell.send(uid)
     }
     
 }
@@ -107,7 +106,9 @@ extension NotificationController {
     
     func setupBindings() {
         let input = NotificationViewModelInput(appear: appear.eraseToAnyPublisher(), specificCellInit: specificCellInit.eraseToAnyPublisher(),
-            refresh: refresh.eraseToAnyPublisher())
+            refresh: refresh.eraseToAnyPublisher(),
+            didSelectCell: didSelectedCell.eraseToAnyPublisher(),
+            didSelectedPost: didSelectedPost.eraseToAnyPublisher())
         
         let output = vm.transform(with: input)
         output.sink { completion in
@@ -121,7 +122,7 @@ extension NotificationController {
         }.store(in: &subscriptions)
     }
     
-    fileprivate func render(_ state: NotificationControllerState) {
+    private func render(_ state: NotificationControllerState) {
         switch state {
         case .none:
             break
@@ -133,10 +134,20 @@ extension NotificationController {
         case .refresh :
             setupDefaultNotificationControllerBindings()
             refresher.endRefreshing()
+        case .showProfile(let notifiedSender):
+            endIndicator()
+            coordinator?.gotoProfilePage(with: notifiedSender)
+            break
+        case .showPost(let post):
+            endIndicator()
+            coordinator?.gotoDetailPostFeedPage(with: post)
+        case .endIndicator:
+            endIndicator()
+            break
         }
     }
     
-    func setupDefaultNotificationControllerBindings() {
+    private func setupDefaultNotificationControllerBindings() {
         _=delegateSubscription.map{$0.cancel()}
         _=subscriptions.map{$0.cancel()}
         setupBindings()
@@ -201,29 +212,14 @@ extension NotificationController {
     }
     
     private func wantsToViewPost(with element: NotificationCellDelegate.Element) {
-        Task(priority: .high) {
-            startIndicator()
-            do {
-                let post = try await apiClient.postCase.fetchPost(withPostId: element.uid)
-                DispatchQueue.main.async {
-                    let controller = FeedController(collectionViewLayout: UICollectionViewFlowLayout())
-                    controller.post = post
-                    controller.post?.postId = element.uid
-                    controller.setupPrevBarButton()
-                    self.endIndicator()
-                    self.navigationController?.pushViewController(controller, animated: true)
-                }
-            } catch {
-                print("DEBUG: \(error.localizedDescription)")
-                endIndicator()
-            }
-        }
+        startIndicator()
+        didSelectedPost.send(element.uid)
     }
 }
 
 //MARK: - Config
 extension NotificationController {
-    fileprivate func configureTableView() {
+    private func configureTableView() {
         view.backgroundColor = .white
         navigationItem.title = "Notificaitons"
         
@@ -231,7 +227,7 @@ extension NotificationController {
         tableView.separatorStyle = .none
     }
     
-    fileprivate func configureRefresher() {
+    private func configureRefresher() {
         refresher.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
         tableView.refreshControl = refresher
     }

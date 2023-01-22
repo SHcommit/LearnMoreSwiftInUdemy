@@ -16,6 +16,7 @@ class CommentViewModel {
     
     //MARK: - CombineProperties
     let newComment = PassthroughSubject<Void,Never>()
+    var specificUser = PassthroughSubject<UserModel,Never>()
     
     //MARK: - Service
     fileprivate let apiClient: ServiceProviderType
@@ -59,7 +60,7 @@ extension CommentViewModel: CommentViewModelComputedPropery {
 //MARK: - CommentViewModelType
 extension CommentViewModel: CommentViewModelType {
     
-    func transform(input: CommentViewModelInput) -> CommentViewModelOutput {
+    func transform(input: Input) -> Output {
         let newComment = newCommentChains()
         
         let appear = appearChains(with: input)
@@ -70,12 +71,15 @@ extension CommentViewModel: CommentViewModelType {
         
         let didSelected = didSelectedChains(with: input)
         
+        let specificUser = fetchedSepcifigUserInfoFromDidTapProfile()
+        
         return Publishers
-            .Merge5(appear.eraseToAnyPublisher(),
+            .Merge6(appear.eraseToAnyPublisher(),
                     reloadData.eraseToAnyPublisher(),
                     cell.eraseToAnyPublisher(),
                     newComment.eraseToAnyPublisher(),
-                    didSelected.eraseToAnyPublisher())
+                    didSelected.eraseToAnyPublisher(),
+                    specificUser.eraseToAnyPublisher())
             .eraseToAnyPublisher()
     }
     
@@ -93,36 +97,36 @@ extension CommentViewModel: CommentViewModelType {
 //MARK: - CommentViewModelInputCase
 extension CommentViewModel: CommentViewModelInputCase {
     
-    func newCommentChains() -> CommentViewModelOutput {
+    func newCommentChains() -> Output {
         return newComment
             .receive(on: RunLoop.main)
-            .map{ _ -> CommentControllerState in return .updateUI }
+            .map{ _ -> State in return .updateUI }
             .eraseToAnyPublisher()
     }
     
-    func appearChains(with input: CommentViewModelInput) -> CommentViewModelOutput {
+    func appearChains(with input: Input) -> Output {
         return input
             .appear
             .receive(on: RunLoop.main)
-            .map{ _ -> CommentControllerState in return .updateUI }
+            .map{ _ -> State in return .updateUI }
             .eraseToAnyPublisher()
             
     }
     
-    func reloadDataChains(with input: CommentViewModelInput) -> CommentViewModelOutput {
+    func reloadDataChains(with input: Input) -> Output {
         return input
             .reloadData
             .receive(on: RunLoop.main)
-            .map { _ -> CommentControllerState in
+            .map { _ -> State in
                 return .updateUI
             }.eraseToAnyPublisher()
     }
     
-    func cellForItemChains(with input: CommentViewModelInput) -> CommentViewModelOutput {
+    func cellForItemChains(with input: Input) -> Output {
         return input
             .cellForItem
             .receive(on: RunLoop.main)
-            .map { [unowned self] info -> CommentControllerState in
+            .map { [unowned self] info -> State in
                 let attributedString = NSMutableAttributedString(string: "\(_comments[info.index].username) ", attributes: [.font: UIFont.boldSystemFont(ofSize: 14)])
                 attributedString.append(
                     NSAttributedString(string: _comments[info.index].comment,
@@ -134,24 +138,21 @@ extension CommentViewModel: CommentViewModelInputCase {
             }.eraseToAnyPublisher()
     }
     
-    func didSelectedChains(with input: CommentViewModelInput) -> CommentViewModelOutput {
+    func didSelectedChains(with input: Input) -> Output {
         return input
             .didSelected
             .receive(on: RunLoop.main)
-            .map { [unowned self] cellInfo -> CommentControllerState in
-                
+            .map { [unowned self] cellInfo -> State in
                 let uid = _comments[cellInfo.index].uid
-                
-                Task(priority: .high) {
-                    do {
-                        guard let user = try await apiClient.userCase.fetchUserInfo(type: UserInfoModel.self, withUid: uid) else { return }
-                        DispatchQueue.main.async {
-                            cellInfo.nav?.pushViewController(ProfileController(viewModel: ProfileViewModel(user: user, apiClient: apiClient)), animated: true)
-                        }
-                    } catch {}
-                }
+                fetchUserInfo(with: uid)
                 return .none
             }.eraseToAnyPublisher()
+    }
+    
+    func fetchedSepcifigUserInfoFromDidTapProfile() -> Output {
+        specificUser.map { specialUser -> State in
+            return .showProfile(specialUser)
+        }.eraseToAnyPublisher()
     }
     
     
@@ -159,6 +160,17 @@ extension CommentViewModel: CommentViewModelInputCase {
 
 //MARK: - CommentViewModelNetworkServiceType
 extension CommentViewModel: CommentViewModelNetworkServiceType {
+    
+    func fetchUserInfo(with uid: String) {
+        Task(priority: .high) {
+            guard let userInfo = try await apiClient.userCase.fetchUserInfo(type: UserModel.self, withUid: uid) else {
+                return
+            }
+            DispatchQueue.main.async {
+                self.specificUser.send(userInfo)
+            }
+        }
+    }
     
     func uploadComment(withInputModel input: UploadCommentInputModel) {
         do {

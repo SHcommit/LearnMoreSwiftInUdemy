@@ -32,6 +32,119 @@ extension FlowCoordinator {
     
 }
 
+
+//MARK: - Test
+extension FlowCoordinator {
+    
+    typealias TestUINaviC = UINavigationController
+    
+    func testCheckCoordinatorState() {
+        print("DEBUG: Test! check subCoordinator state ---")
+        print("DEBUG: target's subcoordinator list:\(childCoordinators)")
+        print("DEBUG: target's parentCoordinator's subcoordinator list: \(parentCoordinator?.childCoordinators.debugDescription ?? "[ ]")")
+
+    }
+    
+    /// Test UINavigationControllerDelegate didShow func
+    /// castingLogic을 통해 특정 case에 캐스팅되는 VC일때 성공적으로 child.finish()실행하고 결과 나오는지 확인.
+    func testNavigationController(_ navi: TestUINaviC, didShow vc: UIViewController, animated: Bool, castingLogic: (UIViewController)->Void) {
+        print("DEBUG: Start navi's didShow event")
+        guard let targetVC = navi.transitionCoordinator?.viewController(forKey: .from) else {
+            print("DEBUG: Fail to completion child coordinator from navi's didShow func")
+            return
+        }
+        if navi.viewControllers.contains(targetVC) {
+            print("DEBUG: Fail to completion child coordinator from navi's didShow func. targetVC is Running.")
+            return
+        }
+        print("DEBUG: Check targetVC. pop from navi stack. From now on downcast targetVC and update specific type's coordinator state. ")
+        castingLogic(targetVC)
+        ///만약 castingLogic에서 default DEBUG가 안뜨면 success.
+        print("DEBUG: Success deinitialize child's coordinator.")
+    }
+    
+}
+
+
+//MARK: - Update child coordinator from popped view controller by executed presenter.
+
+typealias UtilChildState = UpdateChildCoordinatorState<UIViewController>
+
+enum UpdateChildCoordinatorState<T> where T: UIViewController {
+    
+    case profile(T)
+    case comment(T)
+    case feed(T)
+    case search(T)
+    
+    //추후 구현해야함.
+    //case uploadPost(T)
+    //case login(T)
+    //case register(T)
+    //case notification(T)
+    //case imageSelector(T)
+    
+    var updateState: Void {
+        switch self {
+        case .comment(let targetVC):
+            updateChildCommentCoordinatorFromPoppedVC(targetVC)
+            return
+        case .feed(let targetVC):
+            updateChildFeedCoordinatorFromPoppedVC(targetVC)
+            return
+        case .profile(let targetVC):
+            updateChildProfileFlowFromPoppedVC(targetVC)
+            return
+        case .search(let targetVC):
+            updateChildSearchCoordinatorFromPoppedVC(targetVC)
+            return
+        }
+    }
+    
+    static func poppedChildFlow(coordinator type: UpdateChildCoordinatorState) {
+        type.updateState
+    }
+    
+}
+
+//MARK: - UpdateChildCoordinatorState Helpers
+extension UpdateChildCoordinatorState {
+    
+    fileprivate func updateChildProfileFlowFromPoppedVC(_ vc: UIViewController) {
+        guard let profileVC = vc as? ProfileController,
+              let child = profileVC.coordinator else {
+            return
+        }
+        child.finish()
+    }
+    
+    fileprivate func updateChildCommentCoordinatorFromPoppedVC(_ vc: UIViewController) {
+        guard let commentVC = vc as? CommentController,
+              let child = commentVC.coordinator else {
+            return
+        }
+        child.finish()
+    }
+    
+    fileprivate func updateChildFeedCoordinatorFromPoppedVC(_ vc: UIViewController) {
+        guard let feedVC = vc as? FeedController,
+              let child = feedVC.coordinator else {
+            return
+        }
+        child.finish()
+    }
+    
+    fileprivate func updateChildSearchCoordinatorFromPoppedVC(_ vc: UIViewController) {
+        guard let feedVC = vc as? SearchController,
+              let child = feedVC.coordinator else {
+            return
+        }
+        child.finish()
+    }
+    
+}
+
+
 struct ConfigCoordinator {
     
     static func setupChild<T>(detail target : T, apply: @escaping (T)->Void) where T: FlowCoordinator {
@@ -43,3 +156,4 @@ struct ConfigCoordinator {
     }
     
 }
+

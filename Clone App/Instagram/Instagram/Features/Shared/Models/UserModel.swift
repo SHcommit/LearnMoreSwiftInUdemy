@@ -7,7 +7,7 @@
 
 import UIKit
 
-struct UserInfoModel: Codable, Equatable {
+struct UserModel: Codable, Equatable {
     var email: String
     var fullname: String
     var profileURL: String
@@ -39,7 +39,7 @@ struct UserInfoModel: Codable, Equatable {
 }
 
 //MARK: - Decodable
-extension UserInfoModel {
+extension UserModel {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         email = try container.decode(String.self, forKey: .email)
@@ -52,7 +52,7 @@ extension UserInfoModel {
 }
 
 //MARK: - Encodable
-extension UserInfoModel {
+extension UserModel {
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(email, forKey: .email)
