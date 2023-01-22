@@ -37,7 +37,9 @@ class FeedFlowCoordinator: NSObject, FlowCoordinator {
         // MainFlow일 경우에만 nil. 나머지 subCoord는 무저건 init에 대입0.
         //이건 임시적으로 걸어두는거 start 시점에 체크 후 초기화.
         self.presenter = presenter ?? UINavigationController()
-        self.feedController = FeedController(collectionViewLayout: flowLayout())
+        self.feedController = FeedController(
+            user: user, apiClient: apiClient,
+            vm: FeedViewModel(apiClient: apiClient), UICollectionViewFlowLayout())
     }
     
     //MARK: - Action
