@@ -8,6 +8,12 @@
 import UIKit
 import Combine
 
+protocol NotificationViewModelConvenience {
+    typealias Input = NotificationViewModelInput
+    typealias Output = NotificationViewModelOutput
+    typealias State = NotificationControllerState
+}
+
 struct NotificationViewModelInput {
     var appear: AnyPublisher<Void,Never>
     var specificCellInit: AnyPublisher<(cell: NotificationCell, index: Int),Never>
@@ -29,7 +35,7 @@ protocol NotificationVMComputedProperties {
     var notifications: [NotificationModel] { get set }
 }
 
-protocol NotificationViewModelType: NotificationVMComputedProperties {
-    func transform(with input: NotificationViewModelInput) -> NotificationViewModelOutput
+protocol NotificationViewModelType: NotificationVMComputedProperties, NotificationViewModelConvenience {
+    func transform(with input: Input) -> Output
 }
 

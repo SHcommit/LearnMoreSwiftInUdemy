@@ -8,8 +8,13 @@
 import UIKit
 import Combine
 
-//MARK: - NotificationCell delegate
+protocol NotificationCellViewModelConvenience {
+    typealias Input = NotificationCellViewModelInput
+    typealias Output = NotificationCellViewModelOutput
+    typealias State = NotificationCellState
+}
 
+//MARK: - NotificationCell delegate
 enum NotificationCellDelegateType {
     case wantsToViewPost
     case wantsToUnfollow
@@ -71,6 +76,6 @@ protocol NotificationCellVMComputedProperties {
     var userIsFollowed: Bool { get set }
 }
 
-protocol NotificationCellViewModelType: NotificationCellVMComputedProperties {
-    func transform(with input: NotificationCellViewModelInput) -> NotificationCellViewModelOutput
+protocol NotificationCellViewModelType: NotificationCellVMComputedProperties, NotificationCellViewModelConvenience {
+    func transform(with input: Input) -> Output
 }

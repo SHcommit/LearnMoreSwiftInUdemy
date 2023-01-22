@@ -36,7 +36,7 @@ extension  NotificationsViewModel {
 //MARK: - NotificationViewModelType
 extension NotificationsViewModel: NotificationViewModelType {
     
-    func transform(with input: NotificationViewModelInput) -> NotificationViewModelOutput {
+    func transform(with input: Input) -> Output {
         let appear = appearChains(with: input)
         let noti = notificationsChains(with: input)
         let specificCellInit = specificCellInit(with: input)
@@ -68,30 +68,30 @@ extension NotificationsViewModel: NotificationVMComputedProperties {
 }
 
 //MARK: - NotificationViewModelType subscription chains
-extension NotificationsViewModel {
+extension NotificationsViewModel: NotificationViewModelConvenience {
     
-    private func appearChains(with input: NotificationViewModelInput) -> NotificationViewModelOutput {
+    private func appearChains(with input: Input) -> Output {
         return input
             .appear
             .subscribe(on: DispatchQueue.main)
-            .map{ _ -> NotificationControllerState in
+            .map{ _ -> State in
             return .appear
             }.eraseToAnyPublisher()
     }
     
-    private func notificationsChains(with input: NotificationViewModelInput) -> NotificationViewModelOutput {
+    private func notificationsChains(with input: Input) -> Output {
         return _notifications
             .subscribe(on: DispatchQueue.main)
-            .map { _ -> NotificationControllerState in
+            .map { _ -> State in
             return .updateTableView
         }.eraseToAnyPublisher()
     }
     
-    private func specificCellInit(with input: NotificationViewModelInput) -> NotificationViewModelOutput {
+    private func specificCellInit(with input: Input) -> Output {
         return input
             .specificCellInit
             .subscribe(on: DispatchQueue.main)
-            .map { [unowned self] (cell, index) -> NotificationControllerState in
+            .map { [unowned self] (cell, index) -> State in
                 cell.vm = NotificationCellViewModel(notification: _notifications.value[index], apiClient: apiClient)
                 cell.setupBindings()
                 cell.didTapFollowButton()
@@ -99,11 +99,11 @@ extension NotificationsViewModel {
             }.eraseToAnyPublisher()
     }
     
-    private func refreshChains(with input: NotificationViewModelInput) -> NotificationViewModelOutput {
+    private func refreshChains(with input: Input) -> Output {
         return input
             .refresh
             .subscribe(on: DispatchQueue.main)
-            .map { [unowned self] _ -> NotificationControllerState in
+            .map { [unowned self] _ -> State in
                 notifications.removeAll()
                 configure()
                 return .refresh

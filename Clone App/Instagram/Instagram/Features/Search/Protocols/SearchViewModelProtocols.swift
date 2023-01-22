@@ -32,10 +32,10 @@ protocol SearchViewModelComputedPropertyCase {
     
 }
 
-protocol SearchViewModelType: SearchViewModelComputedPropertyCase {
+protocol SearchViewModelType: SearchViewModelComputedPropertyCase, SearchViewModelConvenience {
     //MARK: - Input/Output
     /// SearchController's input -> viewModel's output
-    func transform(input: SearchViewModelInput) -> SearchViewModelOutput
+    func transform(input: Input) -> Output
     
 }
 
@@ -81,12 +81,12 @@ struct SearchViewModelInput {
     
 }
 
-protocol SearchViewModelInputCase {
+protocol SearchViewModelInputCase: SearchViewModelConvenience {
     
     typealias tableInfo = (cell: SearchedUserCell, indexPath: IndexPath)
     //MARK: - CellForRowAt case
     /// Update cell's data with SearchViewModelInputTableInfo, UISearchController
-    func setupCellForRowAtInputBind(with input: SearchViewModelInput) -> SearchViewModelOutput
+    func setupCellForRowAtInputBind(with input: Input) -> Output
 
     func setupUserViewModelInCell(with tableInfo: tableInfo, _ searchController: UISearchController)
     
@@ -98,17 +98,17 @@ protocol SearchViewModelInputCase {
     
     //MARK: - didselectRowAt case
     /// Show special cell's info with didSelectRowAt's SearchViewModelInputTableInfo.
-    func setupDidSelectRowAtInputBind(with input: SearchViewModelInput) -> SearchViewModelOutput
+    func setupDidSelectRowAtInputBind(with input: Input) -> Output
     
     //MARK: - SearchResult case
     /// Update viewModel.filteredUser with searchResult's String
-    func setupSearchResultInputBind(with input: SearchViewModelInput) -> SearchViewModelOutput
-    func delayTextfieldTyping(with input: SearchViewModelInput) -> AnyPublisher<String,Never>
-    func filterTypingFormFromUsers(with delayedText: AnyPublisher<String,Never>) -> SearchViewModelOutput
+    func setupSearchResultInputBind(with input: Input) -> Output
+    func delayTextfieldTyping(with input: Input) -> AnyPublisher<String,Never>
+    func filterTypingFormFromUsers(with delayedText: AnyPublisher<String,Never>) -> Output
     
     //MARK: - Appear case
     /// Update tableView. ReloadData
-    func setupAppearInputBind(with input: SearchViewModelInput) -> SearchViewModelOutput
+    func setupAppearInputBind(with input: Input) -> Output
     
 }
 

@@ -8,6 +8,12 @@
 import UIKit
 import Combine
 
+
+protocol ProfileHeaderViewModelConvenience {
+    typealias Output = ProfileHeaderViewModelOutput
+    typealias State = ProfileHeaderState
+}
+
 /**
     Summary :  Input은 없다.
      ProfileController에서 viewModel에서 사용자의 정보, 프로필, 팔로우 개수를 받아오면
@@ -18,18 +24,18 @@ import Combine
     흐름으로 바꾼 후 transform()함수를 통해 ProfileHeader의 render에서 UI를 업데이트 하도록 했다.
  */
 
-protocol ProfileHeaderDelegate: class {
+protocol ProfileHeaderDelegate: AnyObject {
     func header(_ profileHeader: ProfileHeader)
 }
 
 ///VM 각각의 properties에 대해서, 값이 바뀌면 publisher의 input stream을 ProfileHeaderState로, Never에서 커스텀 에러타입으로 변경하도록 chaining구성.
-protocol ProfileHeaderVMInnerPublisherChainType {
+protocol ProfileHeaderVMInnerPublisherChainType: ProfileHeaderViewModelConvenience {
     
-    func userChains() -> ProfileHeaderViewModelOutput
+    func userChains() -> Output
 
-    func profileImageChains() -> ProfileHeaderViewModelOutput
+    func profileImageChains() -> Output
 
-    func userStatsChains() -> ProfileHeaderViewModelOutput
+    func userStatsChains() -> Output
     
 }
 
@@ -54,9 +60,9 @@ enum ProfileHeaderErrorType: Error {
 
 }
 
-protocol ProfileHeaderViewModelType: ProfileHeaderViewModelComputedProperty, ProfileHeaderViewModelHelperType {
+protocol ProfileHeaderViewModelType: ProfileHeaderViewModelComputedProperty, ProfileHeaderViewModelHelperType, ProfileHeaderViewModelConvenience {
     
-    func transform() -> ProfileHeaderViewModelOutput
+    func transform() -> Output
     
 }
 

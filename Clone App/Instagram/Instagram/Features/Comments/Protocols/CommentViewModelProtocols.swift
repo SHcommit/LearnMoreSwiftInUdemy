@@ -8,6 +8,12 @@
 import UIKit
 import Combine
 
+protocol CommentViewModelConvenience {
+    typealias Input = CommentViewModelInput
+    typealias Output = CommentViewModelOutput
+    typealias State = CommentControllerState
+}
+
 typealias CommentCellInfo = (cell: CommentCell, index: Int)
 typealias CommentCellSelectInfo = (nav: UINavigationController?, index: Int)
 
@@ -37,25 +43,25 @@ protocol CommentViewModelComputedPropery {
     
 }
 
-protocol CommentViewModelType: CommentViewModelComputedPropery {
+protocol CommentViewModelType: CommentViewModelComputedPropery, CommentViewModelConvenience {
     
-    func transform(input: CommentViewModelInput) -> CommentViewModelOutput
+    func transform(input: Input) -> Output
     
     func size(forWidth width: CGFloat, index: Int) -> CGSize
     
 }
 
-protocol CommentViewModelInputCase {
+protocol CommentViewModelInputCase: CommentViewModelConvenience {
     
-    func newCommentChains() -> CommentViewModelOutput
+    func newCommentChains() -> Output
     
-    func appearChains(with input: CommentViewModelInput) -> CommentViewModelOutput
+    func appearChains(with input: Input) -> Output
     
-    func reloadDataChains(with input: CommentViewModelInput) -> CommentViewModelOutput
+    func reloadDataChains(with input: Input) -> Output
     
-    func cellForItemChains(with input: CommentViewModelInput) -> CommentViewModelOutput
+    func cellForItemChains(with input: Input) -> Output
     
-    func didSelectedChains(with input: CommentViewModelInput) -> CommentViewModelOutput
+    func didSelectedChains(with input: Input) -> Output
     
 }
 

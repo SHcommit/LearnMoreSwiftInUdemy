@@ -33,7 +33,7 @@ class ProfileViewModel {
 //MARK: - ProfileViewModelType
 extension ProfileViewModel: ProfileViewModelType {
             
-    func transform(input: ProfileViewModelInput) -> ProfileViewModelOutput {
+    func transform(input: Input) -> Output {
         let indicatorSubscription = indicatorSubjectChains()
         
         let appear = appearChains(with: input)
@@ -87,7 +87,7 @@ extension ProfileViewModel: ProfileViewModelComputedProperty {
 //MARK: - ProfileViewModelInputChainCase
 extension ProfileViewModel: ProfileViewModelInputChainCase {
     
-    func appearChains(with input: ProfileViewModelInput) -> ProfileViewModelOutput {
+    func appearChains(with input: Input) -> Output {
         return input.appear
             .receive(on: RunLoop.main)
             .tryMap { _ -> ProfileControllerState in
@@ -98,7 +98,7 @@ extension ProfileViewModel: ProfileViewModelInputChainCase {
             }.eraseToAnyPublisher()
     }
     
-    func headerConfigureChains(with input: ProfileViewModelInput) -> ProfileViewModelOutput {
+    func headerConfigureChains(with input: Input) -> Output {
         return input.headerConfigure
             .receive(on: RunLoop.main)
             .tryMap { [unowned self] headerView -> ProfileControllerState in
@@ -110,7 +110,7 @@ extension ProfileViewModel: ProfileViewModelInputChainCase {
             }.eraseToAnyPublisher()
     }
     
-    func cellConfigureChains(with input: ProfileViewModelInput) -> ProfileViewModelOutput {
+    func cellConfigureChains(with input: Input) -> Output {
         return input.cellConfigure
             .receive(on: RunLoop.main)
             .tryMap { [unowned self] (cell, index) -> ProfileControllerState in
@@ -121,7 +121,7 @@ extension ProfileViewModel: ProfileViewModelInputChainCase {
             }.eraseToAnyPublisher()
     }
     
-    func didTapCellChains(with input: ProfileViewModelInput) -> ProfileViewModelOutput {
+    func didTapCellChains(with input: Input) -> Output {
         return input.didTapCell
             .receive(on: RunLoop.main)
             .tryMap { index in
@@ -133,7 +133,7 @@ extension ProfileViewModel: ProfileViewModelInputChainCase {
             }.eraseToAnyPublisher()
     }
     
-    func indicatorSubjectChains() -> ProfileViewModelOutput {
+    func indicatorSubjectChains() -> Output {
         indicatorSubject
             .subscribe(on: DispatchQueue.main)
             .setFailureType(to: ProfileErrorType.self)
@@ -151,13 +151,13 @@ extension ProfileViewModel: ProfileViewModelInputChainCase {
 //MARK: - ProfileVMInnerPropertiesPublisherChainType
 extension ProfileViewModel: ProfileVMInnerPropertiesPublisherChainType {
     
-    func viewModelPropertiesPublisherValueChanged() -> ProfileViewModelOutput {
+    func viewModelPropertiesPublisherValueChanged() -> Output {
         return Publishers.Merge3(userChains(),
                                  profileImageChains(),
                                  userStatsChains()).eraseToAnyPublisher()
     }
     
-    func userChains() -> ProfileViewModelOutput {
+    func userChains() -> Output {
         return $user
             .setFailureType(to: ProfileErrorType.self)
             .tryMap { _ -> ProfileControllerState in return .reloadData }
@@ -166,7 +166,7 @@ extension ProfileViewModel: ProfileVMInnerPropertiesPublisherChainType {
             }.eraseToAnyPublisher()
     }
     
-    func profileImageChains() -> ProfileViewModelOutput {
+    func profileImageChains() -> Output {
         return $profileImage
             .compactMap{ $0 }
             .setFailureType(to: ProfileErrorType.self)
@@ -176,7 +176,7 @@ extension ProfileViewModel: ProfileVMInnerPropertiesPublisherChainType {
             }.eraseToAnyPublisher()
     }
     
-    func userStatsChains() -> ProfileViewModelOutput {
+    func userStatsChains() -> Output {
         return $userStats
             .compactMap { $0 }
             .setFailureType(to: ProfileErrorType.self)
@@ -186,7 +186,7 @@ extension ProfileViewModel: ProfileVMInnerPropertiesPublisherChainType {
             }.eraseToAnyPublisher()
     }
     
-    func bindPostsToPostsImage() -> ProfileViewModelOutput {
+    func bindPostsToPostsImage() -> Output {
         $postsInfo
             .sink { users in
                 self.fetchPostsConcurrencyConfigure()

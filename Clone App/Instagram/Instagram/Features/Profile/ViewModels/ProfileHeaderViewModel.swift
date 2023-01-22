@@ -28,7 +28,7 @@ final class ProfileHeaderViewModel {
 //MARK: - ProfileHeaderViewModelType
 extension ProfileHeaderViewModel: ProfileHeaderViewModelType {
     
-    func transform() -> ProfileHeaderViewModelOutput {
+    func transform() -> Output {
         let user = userChains()
         let userStats = userStatsChains()
         let profileImage = profileImageChains()
@@ -45,22 +45,22 @@ extension ProfileHeaderViewModel: ProfileHeaderViewModelType {
 //MARK: - ProfileHeaderViewModelInnerPublisherChainType
 extension ProfileHeaderViewModel: ProfileHeaderVMInnerPublisherChainType {
     
-    func userChains() -> ProfileHeaderViewModelOutput {
+    func userChains() -> Output {
         return $_user
             .receive(on: RunLoop.main)
             .setFailureType(to: ProfileHeaderErrorType.self)
-            .tryMap { _ -> ProfileHeaderState in
+            .tryMap { _ -> State in
                 return .configureUserInfoUI
             }.mapError { error -> ProfileHeaderErrorType in
                 return error as? ProfileHeaderErrorType ?? .fail
             }.eraseToAnyPublisher()
     }
     
-    func profileImageChains() -> ProfileHeaderViewModelOutput {
+    func profileImageChains() -> Output {
         return $_userStats
             .receive(on: RunLoop.main)
             .setFailureType(to: ProfileHeaderErrorType.self)
-            .tryMap { _ -> ProfileHeaderState in
+            .tryMap { _ -> State in
                 return .configureFollowUI
             }.mapError { error in
                 return error as? ProfileHeaderErrorType ?? .fail
@@ -68,11 +68,11 @@ extension ProfileHeaderViewModel: ProfileHeaderVMInnerPublisherChainType {
 
     }
     
-    func userStatsChains() -> ProfileHeaderViewModelOutput {
+    func userStatsChains() -> Output {
         return $_profileImage
             .receive(on: RunLoop.main)
             .setFailureType(to: ProfileHeaderErrorType.self)
-            .tryMap { _ -> ProfileHeaderState in
+            .tryMap { _ -> State in
                 return .configureProfile
             }.mapError { error -> ProfileHeaderErrorType in
                 return error as? ProfileHeaderErrorType ?? .fail

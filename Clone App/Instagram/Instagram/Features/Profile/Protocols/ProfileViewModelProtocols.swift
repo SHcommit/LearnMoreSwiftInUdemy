@@ -8,6 +8,12 @@
 import UIKit
 import Combine
 
+protocol ProfileViewModelConvenience {
+    typealias Input = ProfileViewModelInput
+    typealias Output = ProfileViewModelOutput
+    typealias State = ProfileControllerState
+}
+
 protocol ProfileViewModelComputedProperty {
     
     var getUser: UserModel { get set }
@@ -18,7 +24,7 @@ protocol ProfileViewModelComputedProperty {
     
 }
 
-protocol ProfileViewModelType: ProfileViewModelComputedProperty {
+protocol ProfileViewModelType: ProfileViewModelComputedProperty, ProfileViewModelConvenience {
     
     /**
      Summary : ProfileViewController, view의 이벤트 Input에 대한 로직 처리후 output로 반환
@@ -36,7 +42,7 @@ protocol ProfileViewModelType: ProfileViewModelComputedProperty {
      # Notes: #
      1.  기존의 Input 타입 이외에도 Output을 하는 publisher가 추가됨.
      */
-    func transform(input: ProfileViewModelInput) -> ProfileViewModelOutput
+    func transform(input: Input) -> Output
     
 }
 
@@ -88,34 +94,34 @@ enum ProfileControllerState {
          none
 }
 
-protocol ProfileViewModelInputChainCase {
+protocol ProfileViewModelInputChainCase: ProfileViewModelConvenience {
     
     /// appear Input publisher's stream chains
-    func appearChains(with input: ProfileViewModelInput) -> ProfileViewModelOutput
+    func appearChains(with input: Input) -> Output
     
     /// headerConfigure Input publisher's stream chains
-    func headerConfigureChains(with input: ProfileViewModelInput) -> ProfileViewModelOutput
+    func headerConfigureChains(with input: Input) -> Output
     
     /// cellConfigure Input publisher's stream chains
-    func cellConfigureChains(with input: ProfileViewModelInput) -> ProfileViewModelOutput
+    func cellConfigureChains(with input: Input) -> Output
     
     /// present specific user's detail profileController
-    func didTapCellChains(with input: ProfileViewModelInput) -> ProfileViewModelOutput
+    func didTapCellChains(with input: Input) -> Output
 }
 
 //MARK: - ViewModel 's inner publisher's upstream chaining funcs
-protocol ProfileVMInnerPropertiesPublisherChainType {
+protocol ProfileVMInnerPropertiesPublisherChainType: ProfileViewModelConvenience {
     
-    func viewModelPropertiesPublisherValueChanged() -> ProfileViewModelOutput
+    func viewModelPropertiesPublisherValueChanged() -> Output
     
-    func userChains() -> ProfileViewModelOutput
+    func userChains() -> Output
     
-    func profileImageChains() -> ProfileViewModelOutput
+    func profileImageChains() -> Output
     
-    func userStatsChains() -> ProfileViewModelOutput
+    func userStatsChains() -> Output
     
     //각각 동시에 받은 이미지 cell에 갱신.
-    func bindPostsToPostsImage() -> ProfileViewModelOutput
+    func bindPostsToPostsImage() -> Output
     
 }
 
