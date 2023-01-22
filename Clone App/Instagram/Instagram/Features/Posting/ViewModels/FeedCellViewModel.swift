@@ -73,7 +73,7 @@ extension FeedCellViewModel: FeedCellViewModelComputedProperty {
         return post.ownerUsername
     }
     
-    var postTime: Timestamp {
+    var postTime: TimeStamp {
         return post.timestamp
     }
     
@@ -142,7 +142,7 @@ extension FeedCellViewModel: FeedCellViewModelAPIs {
 
 //MARK: - FeedCellViewModelType
 extension FeedCellViewModel: FeedCellViewModelType {
-    func transform(input: FeedCellViewModelInput) -> FeedCellViewModelOutput {
+    func transform(input: Input) -> Output {
         let didTapUserProfile = didTapUserProfileChains(with: input)
         let didTapComment = didTapCommentChains(with: input)
         let didTapLike = didTapLikeChains(with: input)
@@ -158,7 +158,7 @@ extension FeedCellViewModel: FeedCellViewModelType {
 //MARK: - FeedCellViewModelSubscriptionChains
 extension FeedCellViewModel: FeedCellViewModelSubscriptionChains {
     
-    func didTapUserProfileChains(with input: FeedCellViewModelInput) -> FeedCellViewModelOutput {
+    func didTapUserProfileChains(with input: Input) -> Output {
         return input.didTapProfile
             .subscribe(on: RunLoop.main)
             .map{ uid -> FeedCellState in
@@ -167,7 +167,7 @@ extension FeedCellViewModel: FeedCellViewModelSubscriptionChains {
             }.eraseToAnyPublisher()
     }
     
-    func didTapCommentChains(with input: FeedCellViewModelInput) -> FeedCellViewModelOutput {
+    func didTapCommentChains(with input: Input) -> Output {
         return input.didTapComment
             .map { _ -> FeedCellState in
                 return .showComment
@@ -175,7 +175,7 @@ extension FeedCellViewModel: FeedCellViewModelSubscriptionChains {
 
     }
     
-    func didTapLikeChains(with input: FeedCellViewModelInput) -> FeedCellViewModelOutput {
+    func didTapLikeChains(with input: Input) -> Output {
         
         return input.didTapLike
             .subscribe(on: RunLoop.main)
@@ -206,15 +206,15 @@ extension FeedCellViewModel: FeedCellViewModelSubscriptionChains {
 
     }
     
-    func likeSubscriptionChains() -> FeedCellViewModelOutput {
-        likeChanged.map { _ -> FeedCellState in
+    func likeSubscriptionChains() -> Output {
+        likeChanged.map { _ -> State in
             return .updateLikeLabel
         }.eraseToAnyPublisher()
 
     }
     
-    func fetchedSepcifigUserInfoFromDidTapProfile() -> FeedCellViewModelOutput {
-        specificUser.map { speUser -> FeedCellState in
+    func fetchedSepcifigUserInfoFromDidTapProfile() -> Output {
+        specificUser.map { speUser -> State in
             return .showProfile(speUser)
         }.eraseToAnyPublisher()
     }

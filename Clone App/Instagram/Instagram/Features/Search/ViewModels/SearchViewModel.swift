@@ -37,8 +37,8 @@ extension SearchViewModel: SearchViewModelComputedPropertyCase {
         return section == 0 ? users.count : 0
     }
     
-    func cellForRowAt(_ index: Int) -> UserInfoViewModel {
-        let userVM = UserInfoViewModel(user: users[index], profileImage: nil, apiClient: apiClient)
+    func cellForRowAt(_ index: Int) -> UserViewModel {
+        let userVM = UserViewModel(user: users[index], profileImage: nil, apiClient: apiClient)
         return userVM
     }
     
@@ -90,7 +90,7 @@ extension SearchViewModel: SearchViewModelInputCase {
     }
     
     func setupUserViewModelInCell(with tableInfo: tableInfo, _ searchController: UISearchController) {
-        tableInfo.cell.userVM = isSearchMode(withSearch: searchController) ? UserInfoViewModel(user: filteredUsers[tableInfo.indexPath.row], apiClient: apiClient) : cellForRowAt(tableInfo.indexPath.row)
+        tableInfo.cell.userVM = isSearchMode(withSearch: searchController) ? UserViewModel(user: filteredUsers[tableInfo.indexPath.row], apiClient: apiClient) : cellForRowAt(tableInfo.indexPath.row)
     }
     
     func fetchUserStats(in cell: SearchedUserCell) {

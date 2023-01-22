@@ -8,6 +8,12 @@
 import UIKit
 import Combine
 
+protocol SearchViewModelConvenience {
+    typealias Input = SearchViewModelInput
+    typealias Output = SearchViewModelOutput
+    typealias State = SearchControllerState
+}
+
 protocol SearchViewModelComputedPropertyCase {
     
     /// Is searchController activated?
@@ -17,7 +23,7 @@ protocol SearchViewModelComputedPropertyCase {
     func numberOfRowsInSection(_ section: Int) -> Int
     
     /// TableView's each cell
-    func cellForRowAt(_ index: Int) -> UserInfoViewModel
+    func cellForRowAt(_ index: Int) -> UserViewModel
     
     /// filteredUser's count
     func filteredCount() -> Int

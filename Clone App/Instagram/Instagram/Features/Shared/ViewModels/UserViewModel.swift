@@ -7,7 +7,7 @@
 
 import UIKit
 
-class UserInfoViewModel {
+class UserViewModel {
     
     //MARK: - Properties
     private var user: UserModel
@@ -25,7 +25,7 @@ class UserInfoViewModel {
     
 }
 
-extension UserInfoViewModel {
+extension UserViewModel {
     
     var getUser: UserModel {
         return user
@@ -75,7 +75,7 @@ extension UserInfoViewModel {
 }
 
 //MARK: - Helpers
-extension UserInfoViewModel {
+extension UserViewModel {
     
     func isValidImage() -> Bool {
         if profileImage == nil {
@@ -86,7 +86,7 @@ extension UserInfoViewModel {
 }
 
 //MARK: - API
-extension UserInfoViewModel {
+extension UserViewModel {
     
     func fetchImage() async {
         if isValidImage() { return }

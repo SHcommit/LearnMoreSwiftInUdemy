@@ -15,7 +15,7 @@ class SearchedUserCell: UITableViewCell {
     fileprivate var usernameLabel: UILabel!
     fileprivate var fullnameLabel: UILabel!
     fileprivate var nameStackView: UIStackView!
-    internal var userVM: UserInfoViewModel? {
+    internal var userVM: UserViewModel? {
         didSet {
             configureText()
             configureImage()
