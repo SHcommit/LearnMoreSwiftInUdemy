@@ -44,6 +44,7 @@ class FeedFlowCoordinator: NSObject, FlowCoordinator {
     
     //MARK: - Action
     func start() {
+        testCheckCoordinatorState()
         feedController.coordinator = self
         if FeedFC.isMainFlowCoordiantorChild(parent: parentCoordinator) {
             self.presenter = Utils.templateNavigationController(
@@ -64,6 +65,7 @@ class FeedFlowCoordinator: NSObject, FlowCoordinator {
         }
         parentCoordinator?.removeChild(target: self)
         removeAllChild()
+        presenter.popViewController(animated: true)
     }
     
 }
@@ -72,13 +74,16 @@ class FeedFlowCoordinator: NSObject, FlowCoordinator {
 extension FeedFlowCoordinator {
     
     internal func gotoProfilePage() {
-        let child = ProfileFlowCoordinator(apiClient: apiClient, target: user, presenter: presenter)
+        let child = ProfileFlowCoordinator(
+            apiClient: apiClient, target: user, presenter: presenter)
         holdChildByAdding(coordinator: child)
     }
     
     //이건 feedCell에서 화면 이벤트 전송될 때 post model도 같이 전달해줘야함.
     internal func gotoCommentPage(with post: PostModel) {
-        let child = CommentFlowCoordinator(presenter: presenter, vm: CommentViewModel(post: post, apiClient: apiClient))
+        let vm = CommentViewModel(post: post, apiClient: apiClient)
+        let child = CommentFlowCoordinator(
+            presenter: presenter, vm: vm, apiClient: apiClient)
         holdChildByAdding(coordinator: child)
     }
     

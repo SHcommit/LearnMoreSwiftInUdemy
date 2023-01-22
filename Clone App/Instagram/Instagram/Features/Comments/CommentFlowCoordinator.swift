@@ -14,16 +14,23 @@ class CommentFlowCoordinator: FlowCoordinator {
     var childCoordinators = [FlowCoordinator]()
     var presenter: UINavigationController
     var vm: CommentViewModelType
+    var commentController: CommentController!
+    let apiClient: ServiceProviderType
     
     //MARK: - Lifecycles
-    init(presenter: UINavigationController, vm: CommentViewModelType) {
+    init(presenter: UINavigationController, vm: CommentViewModelType, apiClient: ServiceProviderType) {
         self.presenter = presenter
         self.vm = vm
+        self.apiClient = apiClient
+        self.commentController = CommentController(viewModel: vm, apiClient: apiClient)
+        
     }
     
     //MARK: - Action
     func start() {
-        print("DEBUG: start logic need!")
+        testCheckCoordinatorState()
+        commentController.coordinator = self
+        presenter.pushViewController(commentController, animated: true)
     }
     
     func finish() {

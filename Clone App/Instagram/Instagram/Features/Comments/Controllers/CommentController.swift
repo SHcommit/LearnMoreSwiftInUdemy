@@ -12,6 +12,7 @@ class CommentController: UICollectionViewController {
     
     //MARK: - Constants
     private let reuseIdentifier = "CommentCellID"
+    
     //MARK: - Properties
     private var commentInputView: CommentInputAccessoryView!
     private var viewModel: CommentViewModelType
@@ -51,6 +52,7 @@ class CommentController: UICollectionViewController {
     override func viewWillDisappear(_ aniamted: Bool) {
         super.viewWillDisappear(aniamted)
         self.tabBarController?.tabBar.isHidden = false
+        coordinator?.finish()
     }
     
     override var inputAccessoryView: UIView? {

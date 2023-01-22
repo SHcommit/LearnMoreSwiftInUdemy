@@ -162,7 +162,7 @@ extension FeedCellViewModel: FeedCellViewModelSubscriptionChains {
     func didTapCommentChains(with input: FeedCellViewModelInput) -> FeedCellViewModelOutput {
         input.didTapComment
             .map { navigationController -> FeedCellState in
-                return .present(navigationController)
+                return .showComment(navigationController)
             }.eraseToAnyPublisher()
 
     }

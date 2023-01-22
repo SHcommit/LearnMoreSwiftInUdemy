@@ -12,6 +12,7 @@ import Combine
 class FeedCell: UICollectionViewCell {
     
     //MARK: - Properties
+    weak var coordinator: FeedFlowCoordinator?
     fileprivate var profileImageView: UIImageView!
     fileprivate var postImageView: UIImageView!
     fileprivate var likeLabel: UILabel!
@@ -100,10 +101,12 @@ extension FeedCell {
         switch state {
         case .none:
             break
-        case .present(let navigationController):
+        case .showComment(let navigationController):
             guard let post = self.viewModel?.post else { return }
-            let controller = CommentController(viewModel: CommentViewModel(post: post, apiClient: ServiceProvider.defaultProvider()), apiClient: ServiceProvider.defaultProvider())
-            navigationController?.pushViewController(controller, animated: true)
+            coordinator?.gotoCommentPage(with: post)
+//            let vm = CommentViewModel(post: post, apiClient: ServiceProvider.defaultProvider())
+//            let controller = CommentController(viewModel: vm, apiClient: ServiceProvider.defaultProvider())
+//            navigationController?.pushViewController(controller, animated: true)
             break
         case .updateLikeLabel:
             self.likeLabel.text = self.viewModel?.postLikes

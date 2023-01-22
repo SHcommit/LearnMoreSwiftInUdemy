@@ -37,7 +37,7 @@ struct FeedCellViewModelInput {
 typealias FeedCellViewModelOutput = AnyPublisher<FeedCellState,Never>
 enum FeedCellState {
     case none
-    case present(UINavigationController?)
+    case showComment(UINavigationController?)
     case updateLikeLabel
     case fetchUserInfo(String)
 }

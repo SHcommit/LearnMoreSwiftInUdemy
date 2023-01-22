@@ -46,6 +46,7 @@ class FeedController: UICollectionViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         appear.send()
+        coordinator?.testCheckCoordinatorState()
     }
     
 }
@@ -81,7 +82,8 @@ extension FeedController {
             break
         case .callParentCoordinator:
             //이거도 백 코디네이터 ㄱㄱ
-            navigationController?.popViewController(animated: false)
+            //navigationController?.popViewController(animated: false)
+            coordinator?.finish()
             break
         case .callLoginCoordinator:
             do {
@@ -135,6 +137,7 @@ extension FeedController {
         } else {
             cell.viewModel = FeedCellViewModel(post: post!, user: user, apiClient: apiClient)
         }
+        cell.coordinator = coordinator
         cell.configure()
         cell.setupBinding(with: navigationController)
     }
