@@ -27,7 +27,7 @@ class NotificationFlowCoordinator: NSObject, FlowCoordinator {
         self.user = user
         self.vm = NotificationsViewModel(apiClient: apiClient)
         self.presenter = presenter ?? UINavigationController()
-        notificationController = NotificationController(vm: vm, apiClient: apiClient)
+        notificationController = NotificationController(vm: vm, user: user, apiClient: apiClient)
     }
     
     //MARK: - Action

@@ -125,8 +125,8 @@ extension ProfileViewModel: ProfileViewModelInputChainCase {
         return input.didTapCell
             .receive(on: RunLoop.main)
             .tryMap { index in
-                let feed = FeedController(collectionViewLayout: UICollectionViewFlowLayout())
-                feed.post = self.postsInfo[index]
+                let vm = FeedViewModel(post: self.postsInfo[index],apiClient: self.apiClient)
+                let feed = FeedController(user: self.user, apiClient: self.apiClient, vm: vm, UICollectionViewFlowLayout())
                 return .showSpecificUser(feed: feed)
             }.mapError { error -> ProfileErrorType in
                 return error as? ProfileErrorType ?? .failed

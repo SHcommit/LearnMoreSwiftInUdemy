@@ -22,15 +22,17 @@ class NotificationController: UITableViewController {
     fileprivate var vm: NotificationViewModelType
     fileprivate var subscriptions = Set<AnyCancellable>()
     fileprivate var delegateSubscription = Set<AnyCancellable>()
+    fileprivate var user: UserInfoModel
     weak var coordinator: NotificationFlowCoordinator?
     
     //MARK: - Usecase
     fileprivate let apiClient: ServiceProviderType
     
     //MARK: - Lifecycles
-    init(vm: NotificationViewModelType ,apiClient: ServiceProviderType) {
+    init(vm: NotificationViewModelType ,user: UserInfoModel,apiClient: ServiceProviderType) {
         self.vm = vm
         self.apiClient = apiClient
+        self.user = user
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -205,10 +207,12 @@ extension NotificationController {
             startIndicator()
             do {
                 let post = try await apiClient.postCase.fetchPost(withPostId: element.uid)
-                DispatchQueue.main.async {
-                    let controller = FeedController(collectionViewLayout: UICollectionViewFlowLayout())
-                    controller.post = post
-                    controller.post?.postId = element.uid
+                DispatchQueue.main.async { [self] in
+                    let vm = FeedViewModel(post: post,apiClient: apiClient)
+                    let controller = FeedController(
+                        user: user, apiClient: apiClient,
+                        vm: vm, UICollectionViewFlowLayout())
+                    vm.post?.postId = element.uid
                     controller.setupPrevBarButton()
                     self.endIndicator()
                     self.navigationController?.pushViewController(controller, animated: true)
