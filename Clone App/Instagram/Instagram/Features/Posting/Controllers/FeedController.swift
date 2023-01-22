@@ -46,12 +46,6 @@ class FeedController: UICollectionViewController, FeedViewModelConvenience {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         appear.send()
-        coordinator?.testCheckCoordinatorState()
-    }
-    
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        coordinator?.finish()
     }
     
 }
@@ -64,7 +58,6 @@ extension FeedController {
             appear: appear.eraseToAnyPublisher(),
             refresh: refresh.eraseToAnyPublisher(),
             logout: logout.eraseToAnyPublisher(),
-            cancel: cancelAndPopVC.eraseToAnyPublisher(),
             initCell: initCell.eraseToAnyPublisher())
         let output = vm.transform(with: input).receive(on: RunLoop.main)
         output
@@ -86,11 +79,6 @@ extension FeedController {
             break
         case .endIndicator:
             endIndicator()
-            break
-        case .callParentCoordinator:
-            //이거도 백 코디네이터 ㄱㄱ
-            //navigationController?.popViewController(animated: false)
-            coordinator?.finish()
             break
         case .callLoginCoordinator:
             do {
@@ -121,7 +109,10 @@ extension FeedController {
     }
     
     func setupNavigationUI() {
-        setupLogoutBarButton()
+        if coordinator?.parentCoordinator is MainFlowCoordinator {
+            // 탭의 근본 피드는 로그아웃, 이후 subcoordinator navi에 의해 push된 경우 back bar button.
+            setupLogoutBarButton()
+        }
         navigationItem.title = "Feed"
     }
     
@@ -147,7 +138,7 @@ extension FeedController {
         cell.coordinator = coordinator
         cell.delegate = self
         cell.configure()
-        cell.setupBinding(with: navigationController)
+        cell.setupBinding()
     }
 }
 

@@ -54,14 +54,10 @@ extension FeedViewModel: FeedViewModelType {
             return .reloadData
         }.eraseToAnyPublisher()
         
-        let cancel = input.cancel.map{_ -> State in
-            return .callParentCoordinator
-        }.eraseToAnyPublisher()
-        
-        return Publishers.Merge7(
+        return Publishers.Merge6(
             initData,loadPost,
             loadPosts,appear,logout,
-            refresh,cancel).eraseToAnyPublisher()
+            refresh).eraseToAnyPublisher()
     }
     
 }

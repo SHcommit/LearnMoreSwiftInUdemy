@@ -128,7 +128,7 @@ protocol SearchViewModelInputCase: SearchViewModelConvenience {
 typealias SearchViewModelOutput = AnyPublisher<SearchControllerState, Never>
 enum SearchControllerState: Equatable {
     case none
-    case success(ProfileController)
+    case showProfile(UserModel)
     case tableViewReload
     case failure
     
@@ -136,7 +136,7 @@ enum SearchControllerState: Equatable {
         switch (lhs, rhs) {
         case
             (.none, .none),
-            (.success(_), .success(_)),
+            (.showProfile(_), .showProfile(_)),
             (.tableViewReload, .tableViewReload),
             (.failure, .failure):
             return true

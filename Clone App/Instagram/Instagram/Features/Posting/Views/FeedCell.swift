@@ -33,8 +33,6 @@ class FeedCell: UICollectionViewCell {
     fileprivate var didTapCommentPublisher = PassthroughSubject<Void,Never>()
     fileprivate var didTapLikePublisher = PassthroughSubject<(UIButton,FeedCellDelegate?),Never>()
     fileprivate var subscriptions = Set<AnyCancellable>()
-    //얘도 의미 없어질것임 코디네이터로 화면 전환 관리하면
-    var feedControllerNavigationController: UINavigationController?
     
     var viewModel: FeedCellViewModelType?
     //MARK: - Lifecycle
@@ -68,8 +66,7 @@ extension FeedCell {
         configureSubviews()
     }
     
-    func setupBinding(with navigationController: UINavigationController?) {
-        feedControllerNavigationController = navigationController
+    func setupBinding() {
         
         let input = FeedCellViewModelInput(
             didTapProfile: didTapUserProfile.eraseToAnyPublisher(),
@@ -131,6 +128,7 @@ extension FeedCell {
     }
     
     func configure() {
+        let apiClient = ServiceProvider.defaultProvider()
         guard var viewModel = viewModel else { return }
         captionLabel.text = viewModel.caption
         usernameButton.setTitle(viewModel.username, for: .normal)
@@ -140,7 +138,7 @@ extension FeedCell {
         viewModel.didLike = false
         
         Task(priority: .high) {
-            let didLike = await ServiceProvider.defaultProvider().postCase.checkIfUserLikedPost(post: viewModel.post)
+            let didLike = await apiClient.postCase.checkIfUserLikedPost(post: viewModel.post)
             viewModel.didLike = didLike
             DispatchQueue.main.async {
                 if didLike {

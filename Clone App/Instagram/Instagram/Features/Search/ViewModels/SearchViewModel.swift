@@ -112,10 +112,8 @@ extension SearchViewModel: SearchViewModelInputCase {
             .didSelectRowAt
             .receive(on: RunLoop.main)
             .map { tableInfo -> State in
-                guard let  user = tableInfo.cell.userVM else { return .failure }
-                let vc = ProfileController(viewModel: ProfileViewModel(user: user.userInfoModel(), apiClient: self.apiClient))
-                //let vc = ProfileController(user: user.userInfoModel())
-                return .success(vc)
+                guard let  user = tableInfo.cell.userVM?.getUser else { return .failure }
+                return .showProfile(user)
             }.eraseToAnyPublisher()
     }
     
