@@ -9,34 +9,92 @@ import UIKit
 import Combine
 import Firebase
 
-class FeedController: UICollectionViewController {
+class FeedController: UICollectionViewController, FeedViewModelConvenience {
     
     //MARK: - Properties
-    var posts = [PostModel]() {
-        didSet {
-            collectionView.reloadData()
-        }
-    }
-    var subscriptions = Set<AnyCancellable>()
     weak var coordinator: FeedFlowCoordinator?
-    // specific user's specific CollectionViewcell post info
-    var post: PostModel? {
-        didSet {
-            collectionView.reloadData()
-        }
-    }
+    internal var subscriptions = Set<AnyCancellable>()
+    fileprivate var initData = PassthroughSubject<Void,Never>()
+    fileprivate var appear = PassthroughSubject<Void,Never>()
+    fileprivate var refresh = PassthroughSubject<Void,Never>()
+    fileprivate var logout = PassthroughSubject<Void,Never>()
+    fileprivate var cancelAndPopVC = PassthroughSubject<Void,Never>()
+    fileprivate var initCell = PassthroughSubject<Int,Never>()
+    fileprivate var loginUser: UserModel
+    internal var vm: FeedViewModelType
+    fileprivate let apiClient: ServiceProviderType
     
     //MARK: - LifeCycle
+    init(user: UserModel, apiClient: ServiceProviderType, vm: FeedViewModelType,_ collectionViewLayout: UICollectionViewFlowLayout) {
+        self.vm = vm
+        self.apiClient = apiClient
+        self.loginUser = user
+        super.init(collectionViewLayout: collectionViewLayout)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        collectionView.register(FeedCell.self, forCellWithReuseIdentifier: FEEDCELLRESUIDENTIFIER  )
-        fetchPosts()
-        checkIfUserLikePosts()
+        collectionView.register(FeedCell.self, forCellWithReuseIdentifier: FEEDCELLRESUIDENTIFIER)
+        setupBindings()
+        initData.send()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setupUI()
+        appear.send()
+    }
+    
+}
+
+extension FeedController {
+    
+    fileprivate func setupBindings() {
+        let input = FeedViewModelInput(
+            initData: initData.eraseToAnyPublisher(),
+            appear: appear.eraseToAnyPublisher(),
+            refresh: refresh.eraseToAnyPublisher(),
+            logout: logout.eraseToAnyPublisher(),
+            initCell: initCell.eraseToAnyPublisher())
+        let output = vm.transform(with: input).receive(on: RunLoop.main)
+        output
+            .receive(on: RunLoop.main)
+            .sink { _ in
+            print("DEBUG: FeedController binding deallocated.")
+        } receiveValue: {
+            self.render($0)
+        }.store(in: &subscriptions)
+    }
+    
+    fileprivate func render(_ state: State) {
+        switch state {
+        case .appear:
+            setupUI()
+            break
+        case .reloadData:
+            collectionView.reloadData()
+            break
+        case .endIndicator:
+            endIndicator()
+            break
+        case .callLoginCoordinator:
+            do {
+                try Auth.auth().signOut()
+                DispatchQueue.main.async {
+                    //
+                    // 여기선 인제 로그인 커디네이터 불러야함.
+                    self.presentLoginScene()
+                }
+            } catch {
+                print("Failed to sign out")
+            }
+            break
+        case .none:
+            break
+        }
     }
     
 }
@@ -51,7 +109,10 @@ extension FeedController {
     }
     
     func setupNavigationUI() {
-        setupLogoutBarButton()
+        if coordinator?.parentCoordinator is MainFlowCoordinator {
+            // 탭의 근본 피드는 로그아웃, 이후 subcoordinator navi에 의해 push된 경우 back bar button.
+            setupLogoutBarButton()
+        }
         navigationItem.title = "Feed"
     }
     
@@ -67,42 +128,17 @@ extension FeedController {
         nav.modalPresentationStyle = .fullScreen
         self.present(nav,animated: false, completion: nil)
     }
-    func checkIfUserLikePosts() {
-        self.posts.forEach { post in
-            Task() {
-                let didLike = await ServiceProvider.defaultProvider().postCase.checkIfUserLikedPost(post: post)
-                if let index = self.posts.firstIndex(where: {$0.postId == post.postId}) {
-                    self.posts[index].didLike = didLike
-                }
-            }
-        }
-    }
     
-}
-
-//MARK: - API
-extension FeedController {
-    func fetchPosts() {
-        guard post == nil else { return }
-        Task() {
-            do {
-                var posts = try await ServiceProvider.defaultProvider().postCase.fetchPosts()
-                posts.sort() {
-                    $0.timestamp.seconds > $1.timestamp.seconds
-                }
-                DispatchQueue.main.async {
-                    self.posts = posts
-                    print("DEBUG: Did refresh feed posts")
-                    self.collectionView.reloadData()
-                    self.collectionView.refreshControl?.endRefreshing()
-                }
-            } catch {
-                switch error {
-                default:
-                    print("DEBUG: Unexpected error occured: \(error.localizedDescription)")
-                }
-            }
+    func setupCell(_ cell: FeedCell, index: Int, post: PostModel?) {
+        if vm.isEmptyPost {
+            cell.viewModel = FeedCellViewModel(post: vm.posts[index], loginUser: loginUser, apiClient: apiClient)
+        } else {
+            cell.viewModel = FeedCellViewModel(post: post!, loginUser: loginUser, apiClient: apiClient)
         }
+        cell.coordinator = coordinator
+        cell.delegate = self
+        cell.configure()
+        cell.setupBinding()
     }
 }
 
@@ -110,24 +146,15 @@ extension FeedController {
 extension FeedController {
     
     @objc func handleLogout() {
-        do {
-            try Auth.auth().signOut()
-            DispatchQueue.main.async {
-                self.presentLoginScene()
-            }
-        } catch {
-            print("Failed to sign out")
-        }
+        logout.send()
     }
     
     @objc func handleRefresh() {
-        posts.removeAll()
-        collectionView.reloadData()
-        fetchPosts()
+        refresh.send()
     }
     
     @objc func cancel() {
-        navigationController?.popViewController(animated: false)
+        cancelAndPopVC.send()
     }
 }
 
@@ -135,23 +162,14 @@ extension FeedController {
 extension FeedController {
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return post != nil ? 1 : posts.count
+        return vm.count
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FEEDCELLRESUIDENTIFIER, for: indexPath) as? FeedCell else {
             fatalError()
         }
-        guard let tab = tabBarController as? MainHomeTabController else { fatalError() }
-        let user = tab.vm.user
-        let apiClient = ServiceProvider.defaultProvider()
-        if let post = post {
-            cell.viewModel = FeedViewModel(post: post, user: user, apiClient: apiClient)
-        }else {
-            cell.viewModel = FeedViewModel(post: posts[indexPath.row], user: user, apiClient: apiClient)
-        }
-        cell.configure()
-        cell.setupBinding(with: navigationController)
+        setupCell(cell,index: indexPath.row, post: vm.getPost)
         return cell
     }
 }
@@ -191,5 +209,17 @@ extension FeedController {
         let back = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(cancel))
         navigationItem.leftBarButtonItem = back
     }
+    
+}
+
+extension FeedController: FeedCellDelegate {
+    func wantsToShowIndicator() {
+        startIndicator()
+    }
+    
+    func wantsToHideIndicator() {
+        endIndicator()
+    }
+    
     
 }

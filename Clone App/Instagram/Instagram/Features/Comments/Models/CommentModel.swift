@@ -12,7 +12,7 @@ import Firebase
 struct UploadCommentInputModel {
     let comment: String
     let postID: String
-    let user: UserInfoModel
+    let user: UserModel
 }
 
 struct CommentModel: Codable {

@@ -38,4 +38,10 @@ extension FlowCoordinator {
         childCoordinators.removeAll()
     }
     
+    func updateDismissedViewControllerChildCoordinatorFromNaviController(_ navi: UINavigationController, didShow vc: UIViewController, castForCheck: (UIViewController) -> Void) {
+        guard let targetVC = navi.transitionCoordinator?.viewController(forKey: .from) else { return }
+        if navi.viewControllers.contains(targetVC) { return }
+        castForCheck(targetVC)
+    }
+    
 }

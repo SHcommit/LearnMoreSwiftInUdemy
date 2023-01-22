@@ -28,8 +28,8 @@ class RegistrationViewModel {
 //MARK: - RegistrationViewModelType
 extension RegistrationViewModel: RegistrationViewModelType {
     
-    func getUserInfoModel(uid: String, url: String) -> UserInfoModel {
-        return UserInfoModel(email: email, fullname: fullname,
+    func getUserInfoModel(uid: String, url: String) -> UserModel {
+        return UserModel(email: email, fullname: fullname,
                              profileURL: url, uid: uid,
                              username: username)
     }
