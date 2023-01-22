@@ -50,6 +50,9 @@
          contextName = "FeedController.handleLogout():FeedController.swift">
       </ContextState>
       <ContextState
+         contextName = "closure #1 in FlowCoordinator.holdChildByAdding&lt;&#x3c4;_0_0&gt;(coordinator:):FlowCoordinator+Utils.swift">
+      </ContextState>
+      <ContextState
          contextName = "closure #1 in static PostService.fetchPosts():PostService.swift">
          <PersistentStrings>
             <PersistentString
@@ -100,6 +103,17 @@
       </ContextState>
       <ContextState
          contextName = "SearchUserViewModel.numberOfRowsInSection(_:):SearchUserViewModel.swift">
+      </ContextState>
+      <ContextState
+         contextName = "FeedController.setupCell(_:index:post:):FeedController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "vm.posts">
+            </PersistentString>
+            <PersistentString
+               value = "vm.isEmptyPost">
+            </PersistentString>
+         </PersistentStrings>
       </ContextState>
       <ContextState
          contextName = "FeedController.collectionView(_:cellForItemAt:):FeedController.swift">

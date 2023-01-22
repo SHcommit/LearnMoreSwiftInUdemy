@@ -19,6 +19,8 @@
 		15486DC4291D1745008B98E6 /* UploadPostController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15486DC3291D1745008B98E6 /* UploadPostController.swift */; };
 		15486DC6291D1B74008B98E6 /* InputTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15486DC5291D1B74008B98E6 /* InputTextView.swift */; };
 		15566869297A6A06006DEB53 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 15566868297A6A06006DEB53 /* README.md */; };
+		1556687E297C0335006DEB53 /* FeedViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1556687D297C0335006DEB53 /* FeedViewModel.swift */; };
+		15566880297C0341006DEB53 /* FeedViewModelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1556687F297C0341006DEB53 /* FeedViewModelType.swift */; };
 		155E1D6F296DA8080036653F /* NotificationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 155E1D6E296DA8080036653F /* NotificationCell.swift */; };
 		155E1D71296DA87F0036653F /* NotificationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 155E1D70296DA87F0036653F /* NotificationModel.swift */; };
 		155E1D74296DCA220036653F /* NotificationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 155E1D73296DCA220036653F /* NotificationViewModel.swift */; };
@@ -93,7 +95,7 @@
 		15E8A79A297937820025A740 /* ProfileFlowCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E8A799297937820025A740 /* ProfileFlowCoordinator.swift */; };
 		15E8A79C297937930025A740 /* SearchFlowCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E8A79B297937930025A740 /* SearchFlowCoordinator.swift */; };
 		15E8DB872917B370000EF639 /* UserStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E8DB862917B370000EF639 /* UserStats.swift */; };
-		15FDED99291FA8CE00DDAF2E /* FeedViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15FDED98291FA8CE00DDAF2E /* FeedViewModel.swift */; };
+		15FDED99291FA8CE00DDAF2E /* FeedCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15FDED98291FA8CE00DDAF2E /* FeedCellViewModel.swift */; };
 		81BBDDEDACB63985F43988AC /* Pods_Instagram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B288DF44C633C67CA7F5E28 /* Pods_Instagram.framework */; };
 /* End PBXBuildFile section */
 
@@ -110,6 +112,8 @@
 		15486DC3291D1745008B98E6 /* UploadPostController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadPostController.swift; sourceTree = "<group>"; };
 		15486DC5291D1B74008B98E6 /* InputTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputTextView.swift; sourceTree = "<group>"; };
 		15566868297A6A06006DEB53 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		1556687D297C0335006DEB53 /* FeedViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedViewModel.swift; sourceTree = "<group>"; };
+		1556687F297C0341006DEB53 /* FeedViewModelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedViewModelType.swift; sourceTree = "<group>"; };
 		155E1D6E296DA8080036653F /* NotificationCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NotificationCell.swift; path = Instagram/Features/Notification/Views/NotificationCell.swift; sourceTree = SOURCE_ROOT; };
 		155E1D70296DA87F0036653F /* NotificationModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NotificationModel.swift; path = Instagram/Features/Notification/Models/NotificationModel.swift; sourceTree = SOURCE_ROOT; };
 		155E1D73296DCA220036653F /* NotificationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationViewModel.swift; sourceTree = "<group>"; };
@@ -186,7 +190,7 @@
 		15E8A799297937820025A740 /* ProfileFlowCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileFlowCoordinator.swift; sourceTree = "<group>"; };
 		15E8A79B297937930025A740 /* SearchFlowCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchFlowCoordinator.swift; sourceTree = "<group>"; };
 		15E8DB862917B370000EF639 /* UserStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStats.swift; sourceTree = "<group>"; };
-		15FDED98291FA8CE00DDAF2E /* FeedViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedViewModel.swift; sourceTree = "<group>"; };
+		15FDED98291FA8CE00DDAF2E /* FeedCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedCellViewModel.swift; sourceTree = "<group>"; };
 		5B288DF44C633C67CA7F5E28 /* Pods_Instagram.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Instagram.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A04279BD0172B03AD23CDDBC /* Pods-Instagram.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Instagram.release.xcconfig"; path = "Target Support Files/Pods-Instagram/Pods-Instagram.release.xcconfig"; sourceTree = "<group>"; };
 		BDAA046A9094EA0B1DC591AA /* Pods-Instagram.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Instagram.debug.xcconfig"; path = "Target Support Files/Pods-Instagram/Pods-Instagram.debug.xcconfig"; sourceTree = "<group>"; };
@@ -319,7 +323,8 @@
 		1552C591296D95D2001D8E48 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
-				15FDED98291FA8CE00DDAF2E /* FeedViewModel.swift */,
+				15FDED98291FA8CE00DDAF2E /* FeedCellViewModel.swift */,
+				1556687D297C0335006DEB53 /* FeedViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -328,6 +333,7 @@
 			isa = PBXGroup;
 			children = (
 				153171FD29632DDB005390B0 /* FeedCellViewModelProtocols.swift */,
+				1556687F297C0341006DEB53 /* FeedViewModelType.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -904,6 +910,7 @@
 				15E8A790297937240025A740 /* ImageSelectorFlowCoordinator.swift in Sources */,
 				15E8A792297937330025A740 /* NotificationFlowCoordinator.swift in Sources */,
 				156E22E9290D6EBD0026B0C3 /* AppDelegate.swift in Sources */,
+				1556687E297C0335006DEB53 /* FeedViewModel.swift in Sources */,
 				155E1D6F296DA8080036653F /* NotificationCell.swift in Sources */,
 				156A4BFA29477C7B002B820B /* ProfileHeaderViewModelProtocols.swift in Sources */,
 				15E8DB872917B370000EF639 /* UserStats.swift in Sources */,
@@ -923,7 +930,7 @@
 				15ACA72E290D796F0011E665 /* ProfileHeader.swift in Sources */,
 				15ACA720290D793D0011E665 /* AuthService.swift in Sources */,
 				15E8A784297888CF0025A740 /* FlowCoordinator+Utils.swift in Sources */,
-				15FDED99291FA8CE00DDAF2E /* FeedViewModel.swift in Sources */,
+				15FDED99291FA8CE00DDAF2E /* FeedCellViewModel.swift in Sources */,
 				15E4E90E2940F2C30080A4FF /* LoginViewModelProtocols.swift in Sources */,
 				15ACA713290D77960011E665 /* NotificationController.swift in Sources */,
 				159B9EB729786FDC00546002 /* FirestoreConstants.swift in Sources */,
@@ -941,6 +948,7 @@
 				15E8A782297887380025A740 /* FlowCoordinator.swift in Sources */,
 				155E1D81296DE41B0036653F /* NotificationServiceModel.swift in Sources */,
 				15ACA727290D795C0011E665 /* LoginButton.swift in Sources */,
+				15566880297C0341006DEB53 /* FeedViewModelType.swift in Sources */,
 				15ACA70C290D77780011E665 /* MainHomeTabController.swift in Sources */,
 				155E1D71296DA87F0036653F /* NotificationModel.swift in Sources */,
 				15E5A736294250A300183B71 /* SearchViewModelProtocols.swift in Sources */,
