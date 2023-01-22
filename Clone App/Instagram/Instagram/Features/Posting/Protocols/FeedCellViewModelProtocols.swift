@@ -30,20 +30,24 @@ protocol FeedCellViewModelAPIs {
 
 struct FeedCellViewModelInput {
     var didTapProfile: AnyPublisher<String,Never>
-    var didTapComment: AnyPublisher<UINavigationController?,Never>
+    var didTapComment: AnyPublisher<Void,Never>
     var didTapLike: AnyPublisher<UIButton,Never>
 }
 
 typealias FeedCellViewModelOutput = AnyPublisher<FeedCellState,Never>
 enum FeedCellState {
     case none
-    case showComment(UINavigationController?)
+    case showComment
+    case showProfile(UserInfoModel)
     case updateLikeLabel
-    case fetchUserInfo(String)
+    case fail(String)
 }
 
 protocol FeedCellViewModelType: FeedCellViewModelComputedProperty, FeedCellViewModelAPIs {
     func transform(input: FeedCellViewModelInput) -> FeedCellViewModelOutput
+    
+    /// Api
+    
 }
 
 protocol FeedCellViewModelSubscriptionChains {

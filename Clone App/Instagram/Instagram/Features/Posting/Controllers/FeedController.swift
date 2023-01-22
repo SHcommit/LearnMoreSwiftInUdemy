@@ -20,7 +20,7 @@ class FeedController: UICollectionViewController {
     fileprivate var logout = PassthroughSubject<Void,Never>()
     fileprivate var cancelAndPopVC = PassthroughSubject<Void,Never>()
     fileprivate var initCell = PassthroughSubject<Int,Never>()
-    fileprivate var user: UserInfoModel
+    fileprivate var loginUser: UserInfoModel
     internal var vm: FeedViewModelType
     fileprivate let apiClient: ServiceProviderType
     
@@ -28,7 +28,7 @@ class FeedController: UICollectionViewController {
     init(user: UserInfoModel, apiClient: ServiceProviderType, vm: FeedViewModelType,_ collectionViewLayout: UICollectionViewFlowLayout) {
         self.vm = vm
         self.apiClient = apiClient
-        self.user = user
+        self.loginUser = user
         super.init(collectionViewLayout: collectionViewLayout)
     }
     
@@ -49,6 +49,11 @@ class FeedController: UICollectionViewController {
         coordinator?.testCheckCoordinatorState()
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        coordinator?.finish()
+    }
+    
 }
 
 extension FeedController {
@@ -62,7 +67,9 @@ extension FeedController {
             cancel: cancelAndPopVC.eraseToAnyPublisher(),
             initCell: initCell.eraseToAnyPublisher())
         let output = vm.transform(with: input).receive(on: RunLoop.main)
-        output.sink { _ in
+        output
+            .receive(on: RunLoop.main)
+            .sink { _ in
             print("DEBUG: FeedController binding deallocated.")
         } receiveValue: {
             self.render($0)
@@ -133,9 +140,9 @@ extension FeedController {
     
     func setupCell(_ cell: FeedCell, index: Int, post: PostModel?) {
         if vm.isEmptyPost {
-            cell.viewModel = FeedCellViewModel(post: vm.posts[index], user: user, apiClient: apiClient)
+            cell.viewModel = FeedCellViewModel(post: vm.posts[index], loginUser: loginUser, apiClient: apiClient)
         } else {
-            cell.viewModel = FeedCellViewModel(post: post!, user: user, apiClient: apiClient)
+            cell.viewModel = FeedCellViewModel(post: post!, loginUser: loginUser, apiClient: apiClient)
         }
         cell.coordinator = coordinator
         cell.configure()

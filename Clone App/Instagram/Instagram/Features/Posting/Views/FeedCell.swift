@@ -23,9 +23,10 @@ class FeedCell: UICollectionViewCell {
     fileprivate var commentButton: UIButton!
     fileprivate var shareButton: UIButton!
     fileprivate var didTapUserProfile = PassthroughSubject<String,Never>()
-    fileprivate var didTapCommentPublisher = PassthroughSubject<UINavigationController?,Never>()
+    fileprivate var didTapCommentPublisher = PassthroughSubject<Void,Never>()
     fileprivate var didTapLikePublisher = PassthroughSubject<UIButton,Never>()
     fileprivate var subscriptions = Set<AnyCancellable>()
+    //얘도 의미 없어질것임 코디네이터로 화면 전환 관리하면
     var feedControllerNavigationController: UINavigationController?
     
     var viewModel: FeedCellViewModelType?
@@ -69,7 +70,9 @@ extension FeedCell {
             didTapLike: didTapLikePublisher.eraseToAnyPublisher())
         
         let output = viewModel?.transform(input: input)
-        output? .sink { state in
+        output?
+            .receive(on: RunLoop.main)
+            .sink { state in
             self.render(state)
         }.store(in: &subscriptions)
     }
@@ -88,7 +91,7 @@ extension FeedCell {
     }
     
     @objc func didTapComment(_ sender: Any) {
-        didTapCommentPublisher.send(feedControllerNavigationController)
+        didTapCommentPublisher.send()
     }
     
 }
@@ -101,25 +104,17 @@ extension FeedCell {
         switch state {
         case .none:
             break
-        case .showComment(let navigationController):
+        case .showComment:
             guard let post = self.viewModel?.post else { return }
             coordinator?.gotoCommentPage(with: post)
-//            let vm = CommentViewModel(post: post, apiClient: ServiceProvider.defaultProvider())
-//            let controller = CommentController(viewModel: vm, apiClient: ServiceProvider.defaultProvider())
-//            navigationController?.pushViewController(controller, animated: true)
-            break
         case .updateLikeLabel:
             self.likeLabel.text = self.viewModel?.postLikes
             break
-        case .fetchUserInfo(let uid):
-            Task() {
-                let userInfo = try await ServiceProvider.defaultProvider().userCase.fetchUserInfo(type: UserInfoModel.self, withUid: uid)
-                guard let userInfo = userInfo else { return }
-                DispatchQueue.main.async {
-                    let controller = ProfileController(viewModel: ProfileViewModel(user: userInfo, apiClient: ServiceProvider.defaultProvider()))
-                    self.feedControllerNavigationController?.pushViewController(controller, animated: true)
-                }
-            }
+        case .showProfile(let selectedUser):
+            coordinator?.gotoProfilePage(with: selectedUser)
+            break
+        case .fail(let result):
+            print("DEBUG: \(result)")
             break
         }
     }

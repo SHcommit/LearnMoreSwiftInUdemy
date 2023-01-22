@@ -16,15 +16,19 @@ class FeedCellViewModel {
     fileprivate var postImage: UIImage?
     fileprivate var userProfile: UIImage?
     var likeChanged = PassthroughSubject<Void,Never>()
-    fileprivate var user: UserInfoModel
+    
+    //login
+    fileprivate var loginUser: UserInfoModel
+    //cell's specific profile user info
+    var specificUser = PassthroughSubject<UserInfoModel,Never>()
     
     //MARK: - Usecase
     fileprivate let apiClient: ServiceProviderType
     
     //MARK: - LifeCycles
-    init(post: PostModel, user: UserInfoModel, apiClient: ServiceProviderType) {
+    init(post: PostModel, loginUser: UserInfoModel, apiClient: ServiceProviderType) {
         self.postModel = post
-        self.user = user
+        self.loginUser = loginUser
         
         self.apiClient = apiClient
     }
@@ -143,8 +147,10 @@ extension FeedCellViewModel: FeedCellViewModelType {
         let didTapComment = didTapCommentChains(with: input)
         let didTapLike = didTapLikeChains(with: input)
         let likeSubscription = likeSubscriptionChains()
+        let specificUser = fetchedSepcifigUserInfoFromDidTapProfile()
         return Publishers
-            .Merge4(didTapLike,didTapComment,likeSubscription,didTapUserProfile)
+            .Merge5(didTapLike,didTapComment,
+                    likeSubscription,didTapUserProfile,specificUser)
             .eraseToAnyPublisher()
     }
 }
@@ -153,33 +159,35 @@ extension FeedCellViewModel: FeedCellViewModelType {
 extension FeedCellViewModel: FeedCellViewModelSubscriptionChains {
     
     func didTapUserProfileChains(with input: FeedCellViewModelInput) -> FeedCellViewModelOutput {
-        input.didTapProfile
+        return input.didTapProfile
+            .subscribe(on: RunLoop.main)
             .map{ uid -> FeedCellState in
-                return .fetchUserInfo(uid)
+                self.fetchUserInfo(with: uid)
+                return .none
             }.eraseToAnyPublisher()
     }
     
     func didTapCommentChains(with input: FeedCellViewModelInput) -> FeedCellViewModelOutput {
-        input.didTapComment
-            .map { navigationController -> FeedCellState in
-                return .showComment(navigationController)
+        return input.didTapComment
+            .map { _ -> FeedCellState in
+                return .showComment
             }.eraseToAnyPublisher()
 
     }
     
     func didTapLikeChains(with input: FeedCellViewModelInput) -> FeedCellViewModelOutput {
         
-        input.didTapLike
+        return input.didTapLike
             .subscribe(on: RunLoop.main)
             .map{ [unowned self] likeButton -> FeedCellState in
                 guard let didLike = post.didLike else { return .none}
                 Task(priority: .high) {
                     if !didLike {
                         let uploadModel = UploadNotificationModel(
-                            uid: user.uid,
-                            profileImageUrl: user.profileURL,
-                            username: user.username,
-                            userIsFollowed: user.isFollowed)
+                            uid: loginUser.uid,
+                            profileImageUrl: loginUser.profileURL,
+                            username: loginUser.username,
+                            userIsFollowed: loginUser.isFollowed)
                         await apiClient.postCase.likePost(post: post)
                         apiClient.notificationCase.uploadNotification(toUid: post.ownerUid, to: uploadModel,
                                                                type: .like,
@@ -205,4 +213,26 @@ extension FeedCellViewModel: FeedCellViewModelSubscriptionChains {
 
     }
     
+    func fetchedSepcifigUserInfoFromDidTapProfile() -> FeedCellViewModelOutput {
+        specificUser.map { speUser -> FeedCellState in
+            return .showProfile(speUser)
+        }.eraseToAnyPublisher()
+    }
+    
+}
+
+
+//MARK: - APIs
+extension FeedCellViewModel {
+    
+    fileprivate func fetchUserInfo(with uid: String) {
+        Task(priority: .high) {
+            guard let userInfo = try await apiClient.userCase.fetchUserInfo(type: UserInfoModel.self, withUid: uid) else {
+                return
+            }
+            DispatchQueue.main.async {
+                self.specificUser.send(userInfo)
+            }
+        }
+    }
 }

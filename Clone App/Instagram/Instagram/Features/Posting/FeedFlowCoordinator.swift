@@ -73,9 +73,9 @@ class FeedFlowCoordinator: NSObject, FlowCoordinator {
 //MARK: - Setup child coordinator and holding :)
 extension FeedFlowCoordinator {
     
-    internal func gotoProfilePage() {
+    internal func gotoProfilePage(with selectedUser: UserInfoModel) {
         let child = ProfileFlowCoordinator(
-            apiClient: apiClient, target: user, presenter: presenter)
+            apiClient: apiClient, target: selectedUser, presenter: presenter)
         holdChildByAdding(coordinator: child)
     }
     
