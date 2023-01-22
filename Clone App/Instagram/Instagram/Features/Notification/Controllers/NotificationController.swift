@@ -122,7 +122,7 @@ extension NotificationController {
         }.store(in: &subscriptions)
     }
     
-    fileprivate func render(_ state: NotificationControllerState) {
+    private func render(_ state: NotificationControllerState) {
         switch state {
         case .none:
             break
@@ -147,7 +147,7 @@ extension NotificationController {
         }
     }
     
-    func setupDefaultNotificationControllerBindings() {
+    private func setupDefaultNotificationControllerBindings() {
         _=delegateSubscription.map{$0.cancel()}
         _=subscriptions.map{$0.cancel()}
         setupBindings()
@@ -219,7 +219,7 @@ extension NotificationController {
 
 //MARK: - Config
 extension NotificationController {
-    fileprivate func configureTableView() {
+    private func configureTableView() {
         view.backgroundColor = .white
         navigationItem.title = "Notificaitons"
         
@@ -227,7 +227,7 @@ extension NotificationController {
         tableView.separatorStyle = .none
     }
     
-    fileprivate func configureRefresher() {
+    private func configureRefresher() {
         refresher.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
         tableView.refreshControl = refresher
     }

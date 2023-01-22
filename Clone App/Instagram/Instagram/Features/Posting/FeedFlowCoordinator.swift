@@ -19,6 +19,7 @@ class FeedFlowCoordinator: NSObject, FlowCoordinator {
     internal var childCoordinators = [FlowCoordinator]()
     internal var presenter: UINavigationController
     internal var feedController: FeedController!
+    
     fileprivate let apiClient: ServiceProviderType
     fileprivate var user: UserModel
     fileprivate var specificPostOwner: PostModel?
@@ -35,7 +36,8 @@ class FeedFlowCoordinator: NSObject, FlowCoordinator {
     init(apiClient: ServiceProviderType, login user: UserModel, specificPostOwner: PostModel? = nil, presenter: UINavigationController? = nil) {
         self.apiClient = apiClient
         self.user = user
-        // MainFlow일 경우에만 nil. 나머지 subCoord는 무저건 init에 대입0.
+        
+        // MainFlow일 경우에만 nil. 나머지 subCoord는 무저건 init에 대입한다.
         //이건 임시적으로 걸어두는거 start 시점에 체크 후 초기화.
         self.presenter = presenter ?? UINavigationController()
         self.specificPostOwner = specificPostOwner
@@ -71,7 +73,7 @@ class FeedFlowCoordinator: NSObject, FlowCoordinator {
     }
     
     deinit {
-        print("DEBUG: parentCoordinator: \(parentCoordinator)'s child feedFlowCoordinator deallocate.")
+        print("DEBUG: parentCoordinator: \(parentCoordinator.debugDescription)'s child feedFlowCoordinator deallocate.")
     }
     
 }

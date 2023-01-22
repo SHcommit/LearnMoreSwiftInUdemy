@@ -14,16 +14,16 @@ class CommentController: UICollectionViewController {
     private let reuseIdentifier = "CommentCellID"
     
     //MARK: - Properties
-    private var commentInputView: CommentInputAccessoryView!
-    private var viewModel: CommentViewModelType
-    private let apiClient: ServiceProviderType
+    fileprivate var commentInputView: CommentInputAccessoryView!
+    fileprivate var viewModel: CommentViewModelType
+    fileprivate let apiClient: ServiceProviderType
     weak var coordinator: CommentFlowCoordinator?
     
-    private let appear = PassthroughSubject<Void,Never>()
-    private let reloadData = PassthroughSubject<Void,Never>()
-    private let cellForItem = PassthroughSubject<CommentCellInfo,Never>()
-    private let didSelect = PassthroughSubject<CommentCellSelectInfo,Never>()
-    private var subscriptions = Set<AnyCancellable>()
+    fileprivate let appear = PassthroughSubject<Void,Never>()
+    fileprivate let reloadData = PassthroughSubject<Void,Never>()
+    fileprivate let cellForItem = PassthroughSubject<CommentCellInfo,Never>()
+    fileprivate let didSelect = PassthroughSubject<CommentCellSelectInfo,Never>()
+    fileprivate var subscriptions = Set<AnyCancellable>()
     
     //MARK: - Lifecycles
     init(viewModel: CommentViewModelType, apiClient: ServiceProviderType) {
@@ -68,7 +68,7 @@ class CommentController: UICollectionViewController {
 //MARK: - Helpers
 extension CommentController {
     
-    func configureCollectionView() {
+    private func configureCollectionView() {
         collectionView.backgroundColor = .white
         collectionView.register(CommentCell.self, forCellWithReuseIdentifier: reuseIdentifier)
         navigationItem.title = "Comments"

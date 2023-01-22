@@ -11,9 +11,9 @@ import Combine
 class NotificationCellViewModel {
     
     //MARK: - Properties
-    private var _notification: NotificationModel
+    fileprivate var _notification: NotificationModel
     var subscriptions = Set<AnyCancellable>()
-    private var isUpdatedFollow = PassthroughSubject<Void,Never>()
+    fileprivate var isUpdatedFollow = PassthroughSubject<Void,Never>()
     
     //MARK: - Usecase
     fileprivate let apiClient: ServiceProviderType

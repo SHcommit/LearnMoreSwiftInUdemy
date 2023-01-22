@@ -50,28 +50,23 @@ extension CommentFlowCoordinator {
         let child = ProfileFlowCoordinator(
             apiClient: apiClient, target: selectedUser, presenter: presenter)
         holdChildByAdding(coordinator: child)
-        print(child)
     }
     
 }
 
+//MARK: - UINavigationControllerDelegate
 extension CommentFlowCoordinator: UINavigationControllerDelegate {
     func navigationController(_ navi: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
-        print("a")
-        guard let targetVC = navi.transitionCoordinator?.viewController(forKey: .from) else {
-            return
-        }
-        print("b")
-        if navi.viewControllers.contains(targetVC) { return }
-        print("c")
-        if targetVC is ProfileController {
-            guard let profileVC = targetVC as? ProfileController,
-                  let child = profileVC.coordinator else {
-                return
+        updateDismissedViewControllerChildCoordinatorFromNaviController(
+            navi, didShow: viewController) { vc in
+                if vc is ProfileController {
+                    guard let profileVC = vc as? ProfileController,
+                          let child = profileVC.coordinator else {
+                        return
+                    }
+                    child.finish()
+                }
             }
-            print("d")
-            child.finish()
-        }
     }
     
 }

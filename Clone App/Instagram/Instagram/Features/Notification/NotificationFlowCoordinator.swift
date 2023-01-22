@@ -53,7 +53,7 @@ class NotificationFlowCoordinator: NSObject, FlowCoordinator {
     }
     
     deinit {
-        print("DEBUG: parentCoordinator: \(parentCoordinator)'s child notificationFlowCoordinator deallocate.")
+        print("DEBUG: parentCoordinator: \(parentCoordinator.debugDescription)'s child notificationFlowCoordinator deallocate.")
     }
     
 }
