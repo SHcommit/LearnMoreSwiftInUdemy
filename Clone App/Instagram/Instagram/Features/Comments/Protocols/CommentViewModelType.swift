@@ -31,6 +31,7 @@ typealias CommentViewModelOutput = AnyPublisher<CommentControllerState,Never>
 enum CommentControllerState {
     
     case none
+    case showProfile(UserModel)
     case updateUI
     
 }
@@ -63,9 +64,13 @@ protocol CommentViewModelInputCase: CommentViewModelConvenience {
     
     func didSelectedChains(with input: Input) -> Output
     
+    func fetchedSepcifigUserInfoFromDidTapProfile() -> Output
+    
 }
 
 protocol CommentViewModelNetworkServiceType {
+    
+    func fetchUserInfo(with uid: String)
     
     func uploadComment(withInputModel input: UploadCommentInputModel )
     

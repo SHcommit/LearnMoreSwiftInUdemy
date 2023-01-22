@@ -18,6 +18,8 @@ struct NotificationViewModelInput {
     var appear: AnyPublisher<Void,Never>
     var specificCellInit: AnyPublisher<(cell: NotificationCell, index: Int),Never>
     var refresh: AnyPublisher<Void,Never>
+    var didSelectCell: AnyPublisher<String,Never>
+    var didSelectedPost: AnyPublisher<String,Never>
 }
 
 typealias NotificationViewModelOutput = AnyPublisher<NotificationControllerState,Never>
@@ -27,6 +29,9 @@ enum NotificationControllerState {
     case appear
     case updateTableView
     case refresh
+    case endIndicator
+    case showProfile(UserModel)
+    case showPost(PostModel)
 }
 
 protocol NotificationVMComputedProperties {

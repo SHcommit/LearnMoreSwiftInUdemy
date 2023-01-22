@@ -52,7 +52,6 @@ class CommentController: UICollectionViewController {
     override func viewWillDisappear(_ aniamted: Bool) {
         super.viewWillDisappear(aniamted)
         self.tabBarController?.tabBar.isHidden = false
-        coordinator?.finish()
     }
     
     override var inputAccessoryView: UIView? {
@@ -93,6 +92,9 @@ extension CommentController {
             break
         case .updateUI:
             collectionView.reloadData()
+            break
+        case .showProfile(let user):
+            coordinator?.gotoProfilePage(with: user)
             break
         }
     }

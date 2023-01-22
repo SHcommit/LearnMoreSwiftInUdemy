@@ -11,18 +11,25 @@ import Combine
 class NotificationController: UITableViewController {
     
     //MARK: - Constants
+    typealias CellElement = (cell: NotificationCell, index: Int)
     fileprivate let NotificationCellReusableId = "NotificationCell"
     fileprivate let cellHeight = CGFloat(80)
     
     //MARK: - Properties
     fileprivate let refresher = UIRefreshControl()
+    
     fileprivate let appear = PassthroughSubject<Void,Never>()
-    fileprivate var specificCellInit = PassthroughSubject<(cell: NotificationCell, index: Int),Never>()
-    fileprivate var refresh = PassthroughSubject<Void,Never>()
-    fileprivate var vm: NotificationViewModelType
+    fileprivate let specificCellInit = PassthroughSubject<CellElement,Never>()
+    fileprivate let refresh = PassthroughSubject<Void,Never>()
+    fileprivate let didSelectedCell = PassthroughSubject<String,Never>()
+    fileprivate let didSelectedPost = PassthroughSubject<String,Never>()
+    
     fileprivate var subscriptions = Set<AnyCancellable>()
     fileprivate var delegateSubscription = Set<AnyCancellable>()
+    
+    fileprivate var vm: NotificationViewModelType
     fileprivate var user: UserModel
+    
     weak var coordinator: NotificationFlowCoordinator?
     
     //MARK: - Usecase
@@ -78,20 +85,10 @@ extension NotificationController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         startIndicator()
+        
+        //테이블 뷰 클릭시엔 uid 받고 uid에 해당되는 특정 유저 받은 후에 프로필 컨트롤러 통해서 이동!
         let uid = vm.notifications[indexPath.row].specificUserInfo.uid
-        Task(priority: .medium) {
-            guard let user = try? await apiClient.userCase
-                .fetchUserInfo(type: UserModel.self, withUid: uid) else {
-                print("DEBUG: Failure get user info")
-                endIndicator()
-                return
-            }
-            let controller = ProfileController(viewModel: ProfileViewModel(user: user, apiClient: ServiceProvider.defaultProvider()))
-            DispatchQueue.main.async {
-                self.navigationController?.pushViewController(controller, animated: true)
-                self.endIndicator()
-            }
-        }
+        didSelectedCell.send(uid)
     }
     
 }
@@ -109,7 +106,9 @@ extension NotificationController {
     
     func setupBindings() {
         let input = NotificationViewModelInput(appear: appear.eraseToAnyPublisher(), specificCellInit: specificCellInit.eraseToAnyPublisher(),
-            refresh: refresh.eraseToAnyPublisher())
+            refresh: refresh.eraseToAnyPublisher(),
+            didSelectCell: didSelectedCell.eraseToAnyPublisher(),
+            didSelectedPost: didSelectedPost.eraseToAnyPublisher())
         
         let output = vm.transform(with: input)
         output.sink { completion in
@@ -135,6 +134,16 @@ extension NotificationController {
         case .refresh :
             setupDefaultNotificationControllerBindings()
             refresher.endRefreshing()
+        case .showProfile(let notifiedSender):
+            endIndicator()
+            coordinator?.gotoProfilePage(with: notifiedSender)
+            break
+        case .showPost(let post):
+            endIndicator()
+            coordinator?.gotoDetailPostFeedPage(with: post)
+        case .endIndicator:
+            endIndicator()
+            break
         }
     }
     
@@ -203,25 +212,8 @@ extension NotificationController {
     }
     
     private func wantsToViewPost(with element: NotificationCellDelegate.Element) {
-        Task(priority: .high) {
-            startIndicator()
-            do {
-                let post = try await apiClient.postCase.fetchPost(withPostId: element.uid)
-                DispatchQueue.main.async { [self] in
-                    let vm = FeedViewModel(post: post,apiClient: apiClient)
-                    let controller = FeedController(
-                        user: user, apiClient: apiClient,
-                        vm: vm, UICollectionViewFlowLayout())
-                    vm.post?.postId = element.uid
-                    controller.setupPrevBarButton()
-                    self.endIndicator()
-                    self.navigationController?.pushViewController(controller, animated: true)
-                }
-            } catch {
-                print("DEBUG: \(error.localizedDescription)")
-                endIndicator()
-            }
-        }
+        startIndicator()
+        didSelectedPost.send(element.uid)
     }
 }
 

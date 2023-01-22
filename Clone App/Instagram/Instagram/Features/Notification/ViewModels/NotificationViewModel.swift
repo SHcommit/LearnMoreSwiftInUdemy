@@ -15,6 +15,9 @@ class NotificationsViewModel {
     
     //MARK: - Usecase
     fileprivate let apiClient: ServiceProviderType
+    fileprivate let fetchedNotifiedUserInfo = PassthroughSubject<UserModel,Never>()
+    fileprivate let failedFetchedNotifiedUserInfo = PassthroughSubject<Void,Never>()
+    fileprivate let fetchNotifiedPostInfo = PassthroughSubject<PostModel,Never>()
     
     //MARK: - Lifecycels
     init(apiClient: ServiceProviderType) {
@@ -37,12 +40,22 @@ extension  NotificationsViewModel {
 extension NotificationsViewModel: NotificationViewModelType {
     
     func transform(with input: Input) -> Output {
+        
         let appear = appearChains(with: input)
         let noti = notificationsChains(with: input)
         let specificCellInit = specificCellInit(with: input)
         let refresh = refreshChains(with: input)
+        let didSelectedCell = didSelectCellChains(with: input)
+        let didSelectedPost = didSelectPostChains(with: input)
+        let fetchedNotifiedUserUpstream = fetchNotifiedUserUpstreamChains()
+        let failedNotifiedUpstream = failNotifiedUpstreamChains()
+        let fetchedNotifiedPostUpstream = fetchNotifiedPostUpstreamChains()
+        let didSelectedSubscription = didSelectedCell.merge(with: didSelectedPost).eraseToAnyPublisher()
+        
         return Publishers
-            .Merge4(appear, noti, specificCellInit,refresh)
+            .Merge8(appear, noti, specificCellInit, refresh,
+                    didSelectedSubscription , fetchedNotifiedUserUpstream,
+                    fetchedNotifiedPostUpstream, failedNotifiedUpstream)
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
@@ -109,10 +122,83 @@ extension NotificationsViewModel: NotificationViewModelConvenience {
                 return .refresh
             }.eraseToAnyPublisher()
     }
+    
+    private func didSelectCellChains(with input: Input) -> Output {
+        return input
+            .didSelectCell
+            .map{ [unowned self] uid -> State in
+                self.fetchNotifiedUserInfo(with: uid)
+                return .none
+            }.eraseToAnyPublisher()
+    }
+    
+    private func fetchNotifiedUserUpstreamChains() -> Output {
+        return fetchedNotifiedUserInfo
+            .map{ notifiedSender -> State in
+            return .showProfile(notifiedSender)
+        }.eraseToAnyPublisher()
+    }
+    
+    private func failNotifiedUpstreamChains() -> Output {
+        return failedFetchedNotifiedUserInfo
+            .map{ _ -> State in
+            return .endIndicator
+        }.eraseToAnyPublisher()
+    }
+    
+    private func fetchNotifiedPostUpstreamChains() -> Output {
+        return fetchNotifiedPostInfo
+            .map{ post -> State in
+                return .showPost(post)
+            }.eraseToAnyPublisher()
+    }
+    
+    private func didSelectPostChains(with input: Input) -> Output {
+        return input.didSelectedPost
+            .subscribe(on: DispatchQueue.main)
+            .map { uid -> State in
+            self.fetchNotifiedPost(uid)
+            return .none
+        }.eraseToAnyPublisher()
+    }
 }
 
 //MARK: - APIs
 extension NotificationsViewModel {
+    
+    private func fetchNotifiedPost(_ uid: String) {
+        Task(priority: .high) {
+            do {
+                var fetchedPost = try await apiClient.postCase.fetchPost(withPostId: uid)
+                //애매한데.. 단일 포스트 fetch할 때 안 받아지는 건지 다시 한번 살펴봐야겠음.
+                fetchedPost.postId = uid
+                let updatedPost = fetchedPost
+                DispatchQueue.main.async {
+                    self.fetchNotifiedPostInfo.send(updatedPost)
+                }
+            }catch {
+                DispatchQueue.main.async {
+                    self.failedFetchedNotifiedUserInfo.send()
+                }
+            }
+        }
+    }
+    
+    private func fetchNotifiedUserInfo(with uid: String) {
+        Task(priority: .high) {
+            guard let user = try? await apiClient
+                .userCase
+                .fetchUserInfo(type: UserModel.self, withUid: uid) else {
+                DispatchQueue.main.async {
+                    self.failedFetchedNotifiedUserInfo.send()
+                }
+                return
+            }
+            DispatchQueue.main.async {
+                self.fetchedNotifiedUserInfo.send(user)
+            }
+        }
+    }
     
     private func fetchNotifications() {
         Task(priority: .high) {
@@ -146,6 +232,10 @@ extension NotificationsViewModel {
         }
     }
     
+}
+
+//MARK: - APIs Error Handling
+extension NotificationsViewModel {
     private func fetchNotificationsErrorHandling(with error: Swift.Error) {
         guard let error = error as? NotificationServiceError else { return }
         switch error {

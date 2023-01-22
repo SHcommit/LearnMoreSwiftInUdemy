@@ -38,9 +38,9 @@ class NotificationFlowCoordinator: NSObject, FlowCoordinator {
                 unselectedImage: .imageLiteral(name: "like_unselected"),
                 selectedImage: .imageLiteral(name: "like_selected"),
                 rootVC: notificationController)
+            presenter.delegate = self
             return
         }
-        //Main Flow가 아닌 타 coordinator에서 호출된 경우
         presenter.pushViewController(notificationController, animated: true)
     }
     
@@ -52,19 +52,25 @@ class NotificationFlowCoordinator: NSObject, FlowCoordinator {
         parentCoordinator?.removeChild(target: self)
     }
     
+    deinit {
+        print("DEBUG: parentCoordinator: \(parentCoordinator)'s child notificationFlowCoordinator deallocate.")
+    }
+    
 }
+
 
 //MARK: - Setup child coordinator and holding :)
 extension NotificationFlowCoordinator {
     
-    internal func gotoSpecificUserProfilePage() {
-        let child = ProfileFlowCoordinator(apiClient: apiClient, target: user, presenter: presenter)
+    internal func gotoProfilePage(with specificUser: UserModel) {
+        let child = ProfileFlowCoordinator(apiClient: apiClient, target: specificUser, presenter: presenter)
         holdChildByAdding(coordinator: child)
     }
     
-    //이건 feedCell에서 화면 이벤트 전송될 때 post model도 같이 전달해줘야함.
     internal func gotoDetailPostFeedPage(with post: PostModel) {
-        let child = CommentFlowCoordinator(presenter: presenter, vm: CommentViewModel(post: post, apiClient: apiClient), apiClient: apiClient)
+        //이경우 로그인이 아니라 특정 사용자.
+        let child = FeedFlowCoordinator(
+            apiClient: apiClient, login: user,specificPostOwner: post, presenter: presenter)
         holdChildByAdding(coordinator: child)
     }
     
@@ -73,52 +79,33 @@ extension NotificationFlowCoordinator {
 //MARK: - Manage childCoordinators :]
 extension NotificationFlowCoordinator: UINavigationControllerDelegate {
     
-    func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
-        guard let notifiedVC = navigationController.transitionCoordinator?.viewController(forKey: .from) else {
-            return
-        }
-        if navigationController.viewControllers.contains(notifiedVC) {
-            return
-        }
-        NotificationFlowChildCoordinatorManager(target: notifiedVC)
-    }
-    
-    //MARK: - UINavigationControllerDelegate Manager
-    fileprivate func NotificationFlowChildCoordinatorManager(target vc: UIViewController) {
-        switch vc {
-        case is ProfileController:
-            popProfileChildCoordinator(vc)
-            break
-        case is FeedController:
-            popFeedChildCoordinator(vc)
-            break
-        default:
-            print("DEBUG: Unknown ViewController occured transition event in Feed Flow Coordinator's NavigaitonController")
-            break
-        }
-    }
-    
-    fileprivate func popProfileChildCoordinator(_ vc : UIViewController) {
-        guard let profileVC = vc as? ProfileController,
-              let child = profileVC.coordinator else {
-            return
-        }
-        child.finish()
-        vc.dismiss(animated: true)
-    }
-    
-    fileprivate func popFeedChildCoordinator(_ vc: UIViewController) {
-        guard let feedVC = vc as? FeedController,
-              let child = feedVC.coordinator else {
-            return
-        }
-        child.finish()
-        vc.dismiss(animated: true)
+    func navigationController(_ nav: UINavigationController, didShow viewC: UIViewController, animated: Bool) {
+        updateDismissedViewControllerChildCoordinatorFromNaviController(
+            nav, didShow: viewC) { vc in
+                notificationFlowChildCoordinatorManager(target: vc)
+            }
     }
     
 }
-extension FeedFlowCoordinator {
-    func popChildCoordinator<T>(with vc: UIViewController, type: T.Type) where T: UIViewController {
-        
+
+//MARK: - UINavigationControllerDelegate Manager
+extension NotificationFlowCoordinator {
+    
+    fileprivate func notificationFlowChildCoordinatorManager(target vc: UIViewController) {
+        switch vc {
+        case is ProfileController:
+            UtilChildState.poppedChildFlow(coordinator: .profile(vc))
+            break
+        case is FeedController:
+            UtilChildState.poppedChildFlow(coordinator: .feed(vc))
+            break
+        case is CommentController:
+            UtilChildState.poppedChildFlow(coordinator: .comment(vc))
+            break
+        default:
+            print("DEBUG: Unknown ViewController occured transition event in notification Flow Coordinator's NavigaitonController")
+            break
+        }
     }
+    
 }

@@ -18,9 +18,11 @@ class NotificationCell: UITableViewCell {
     fileprivate var infoLabel: UILabel!
     fileprivate var postImageView: UIImageView!
     fileprivate var followButton: UIButton!
+    
     @Published var vm: NotificationCellViewModelType?
     internal var initalization = PassthroughSubject<InitElement,Never>()
     fileprivate var subscriptions = Set<AnyCancellable>()
+    
     internal var delegate = NotificationCellDelegate()
     
     //MARK: - Lifecycles
