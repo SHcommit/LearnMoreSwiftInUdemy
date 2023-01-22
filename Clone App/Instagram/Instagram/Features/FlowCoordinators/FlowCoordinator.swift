@@ -39,3 +39,15 @@ extension FlowCoordinator {
     }
     
 }
+
+
+/// Test
+extension FlowCoordinator {
+    func testCheckCoordinatorState() {
+        print("DEBUG: Test! check subCoordinator state ---")
+        print("DEBUG: target's subcoordinator list:\(childCoordinators)")
+        print("DEBUG: target's parentCoordinator's subcoordinator list: \(parentCoordinator?.childCoordinators)")
+
+    }
+}
+

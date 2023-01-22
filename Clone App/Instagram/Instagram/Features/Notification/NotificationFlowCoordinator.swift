@@ -64,7 +64,7 @@ extension NotificationFlowCoordinator {
     
     //이건 feedCell에서 화면 이벤트 전송될 때 post model도 같이 전달해줘야함.
     internal func gotoDetailPostFeedPage(with post: PostModel) {
-        let child = CommentFlowCoordinator(presenter: presenter, vm: CommentViewModel(post: post, apiClient: apiClient))
+        let child = CommentFlowCoordinator(presenter: presenter, vm: CommentViewModel(post: post, apiClient: apiClient), apiClient: apiClient)
         holdChildByAdding(coordinator: child)
     }
     

@@ -34,6 +34,7 @@ class ProfileFlowCoordinator: NSObject, FlowCoordinator {
     
     //MARK: - Action
     func start() {
+        testCheckCoordinatorState()
         profileController.coordinator = self
         //mainFlow냐?! 아니면 다른 sub Coordinator에서 호출한거야?!
         if ProfileFC.isMainFlowCoordiantorChild(parent: parentCoordinator) {
