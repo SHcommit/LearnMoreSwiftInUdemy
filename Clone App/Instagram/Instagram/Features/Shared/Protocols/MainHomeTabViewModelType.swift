@@ -27,5 +27,5 @@ protocol MainHomeTabViewModelType: MainHomeTabViewModelComputedProperty {
 }
 
 protocol MainHomeTabViewModelComputedProperty {
-    var user: UserInfoModel { get set }
+    var user: UserModel { get set }
 }

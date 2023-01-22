@@ -9,7 +9,7 @@ import UIKit
 import Combine
 import Firebase
 
-class FeedController: UICollectionViewController {
+class FeedController: UICollectionViewController, FeedViewModelConvenience {
     
     //MARK: - Properties
     weak var coordinator: FeedFlowCoordinator?
@@ -20,12 +20,12 @@ class FeedController: UICollectionViewController {
     fileprivate var logout = PassthroughSubject<Void,Never>()
     fileprivate var cancelAndPopVC = PassthroughSubject<Void,Never>()
     fileprivate var initCell = PassthroughSubject<Int,Never>()
-    fileprivate var loginUser: UserInfoModel
+    fileprivate var loginUser: UserModel
     internal var vm: FeedViewModelType
     fileprivate let apiClient: ServiceProviderType
     
     //MARK: - LifeCycle
-    init(user: UserInfoModel, apiClient: ServiceProviderType, vm: FeedViewModelType,_ collectionViewLayout: UICollectionViewFlowLayout) {
+    init(user: UserModel, apiClient: ServiceProviderType, vm: FeedViewModelType,_ collectionViewLayout: UICollectionViewFlowLayout) {
         self.vm = vm
         self.apiClient = apiClient
         self.loginUser = user
@@ -76,7 +76,7 @@ extension FeedController {
         }.store(in: &subscriptions)
     }
     
-    fileprivate func render(_ state: FeedControllerState) {
+    fileprivate func render(_ state: State) {
         switch state {
         case .appear:
             setupUI()

@@ -7,6 +7,12 @@
 
 import Combine
 
+protocol FeedViewModelConvenience {
+    typealias Input = FeedViewModelInput
+    typealias Output = FeedViewModelOutput
+    typealias State = FeedControllerState
+}
+
 struct FeedViewModelInput {
     
     var initData: AnyPublisher<Void,Never>
@@ -30,10 +36,7 @@ enum FeedControllerState {
     case callParentCoordinator
 }
 
-protocol FeedViewModelType: FeedViewModelComputedProperty {
-    typealias Input = FeedViewModelInput
-    typealias Output = FeedViewModelOutput
-    typealias State = FeedControllerState
+protocol FeedViewModelType: FeedViewModelComputedProperty, FeedViewModelConvenience {
     
     func transform(with input: Input) -> Output
 }

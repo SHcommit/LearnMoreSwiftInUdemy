@@ -11,8 +11,8 @@ import Combine
 class SearchViewModel {
     
     //MARK: - Properties
-    @Published var users: [UserInfoModel] = [UserInfoModel]()
-    @Published var filteredUsers: [UserInfoModel] = [UserInfoModel]()
+    @Published var users: [UserModel] = [UserModel]()
+    @Published var filteredUsers: [UserModel] = [UserModel]()
     internal var subscriptions: Set<AnyCancellable> = Set<AnyCancellable>()
     
     //MARK: - Usecase
@@ -46,7 +46,7 @@ extension SearchViewModel: SearchViewModelComputedPropertyCase {
         return filteredUsers.count
     }
     
-    func getUsers() -> [UserInfoModel] {
+    func getUsers() -> [UserModel] {
         users
     }
     
@@ -168,7 +168,7 @@ extension SearchViewModel: SearchViewModelNetworkServiceType {
     }
     
     func fetchAllUserDefaultInfo() async throws {
-        guard let users = try await apiClient.userCase.fetchUserList(type: UserInfoModel.self) else { throw FetchUserError.invalidUsers }
+        guard let users = try await apiClient.userCase.fetchUserList(type: UserModel.self) else { throw FetchUserError.invalidUsers }
         DispatchQueue.main.async {
             self.users = users
         }

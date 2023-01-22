@@ -56,7 +56,7 @@ class SearchFlowCoordinator: NSObject, FlowCoordinator {
 extension SearchFlowCoordinator {
     
     //이때도 cell의 특정 유저 정보를 받아와야함.
-    internal func gotoProfilePage(specific user: UserInfoModel) {
+    internal func gotoProfilePage(specific user: UserModel) {
         let child = ProfileFlowCoordinator(apiClient: apiClient, target: user, presenter: presenter)
         holdChildByAdding(coordinator: child)
     }

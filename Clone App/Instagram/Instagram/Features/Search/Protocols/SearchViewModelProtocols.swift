@@ -22,7 +22,7 @@ protocol SearchViewModelComputedPropertyCase {
     /// filteredUser's count
     func filteredCount() -> Int
     
-    func getUsers() -> [UserInfoModel]
+    func getUsers() -> [UserModel]
     
 }
 

@@ -11,7 +11,7 @@ import FirebaseFirestore
 //MARK: - Firestore user default info
 struct UserService: ServiceExtensionType, UserServiceType {
     
-    func updateCurrentUserInfo(CodableType info: UserInfoModel) async throws {
+    func updateCurrentUserInfo(CodableType info: UserModel) async throws {
         let encodedUserModel = UserService().encodeToNSDictionary(info: info)
         let userDocument = FSConstants.ref(.users).document(info.uid)
         try await userDocument.updateData(encodedUserModel)

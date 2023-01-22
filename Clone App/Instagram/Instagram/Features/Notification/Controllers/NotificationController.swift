@@ -22,14 +22,14 @@ class NotificationController: UITableViewController {
     fileprivate var vm: NotificationViewModelType
     fileprivate var subscriptions = Set<AnyCancellable>()
     fileprivate var delegateSubscription = Set<AnyCancellable>()
-    fileprivate var user: UserInfoModel
+    fileprivate var user: UserModel
     weak var coordinator: NotificationFlowCoordinator?
     
     //MARK: - Usecase
     fileprivate let apiClient: ServiceProviderType
     
     //MARK: - Lifecycles
-    init(vm: NotificationViewModelType ,user: UserInfoModel,apiClient: ServiceProviderType) {
+    init(vm: NotificationViewModelType ,user: UserModel,apiClient: ServiceProviderType) {
         self.vm = vm
         self.apiClient = apiClient
         self.user = user
@@ -81,7 +81,7 @@ extension NotificationController {
         let uid = vm.notifications[indexPath.row].specificUserInfo.uid
         Task(priority: .medium) {
             guard let user = try? await apiClient.userCase
-                .fetchUserInfo(type: UserInfoModel.self, withUid: uid) else {
+                .fetchUserInfo(type: UserModel.self, withUid: uid) else {
                 print("DEBUG: Failure get user info")
                 endIndicator()
                 return

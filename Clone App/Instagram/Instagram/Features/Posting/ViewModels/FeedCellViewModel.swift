@@ -18,15 +18,15 @@ class FeedCellViewModel {
     var likeChanged = PassthroughSubject<Void,Never>()
     
     //login
-    fileprivate var loginUser: UserInfoModel
+    fileprivate var loginUser: UserModel
     //cell's specific profile user info
-    var specificUser = PassthroughSubject<UserInfoModel,Never>()
+    var specificUser = PassthroughSubject<UserModel,Never>()
     
     //MARK: - Usecase
     fileprivate let apiClient: ServiceProviderType
     
     //MARK: - LifeCycles
-    init(post: PostModel, loginUser: UserInfoModel, apiClient: ServiceProviderType) {
+    init(post: PostModel, loginUser: UserModel, apiClient: ServiceProviderType) {
         self.postModel = post
         self.loginUser = loginUser
         
@@ -227,7 +227,7 @@ extension FeedCellViewModel {
     
     fileprivate func fetchUserInfo(with uid: String) {
         Task(priority: .high) {
-            guard let userInfo = try await apiClient.userCase.fetchUserInfo(type: UserInfoModel.self, withUid: uid) else {
+            guard let userInfo = try await apiClient.userCase.fetchUserInfo(type: UserModel.self, withUid: uid) else {
                 return
             }
             DispatchQueue.main.async {

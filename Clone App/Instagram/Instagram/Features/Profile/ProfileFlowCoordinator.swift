@@ -20,11 +20,11 @@ class ProfileFlowCoordinator: NSObject, FlowCoordinator {
     var profileController: ProfileController!
     
     fileprivate let apiClient: ServiceProviderType
-    fileprivate var user: UserInfoModel
+    fileprivate var user: UserModel
     
     
     //MARK: - Lifecycles
-    init(apiClient: ServiceProviderType, target user: UserInfoModel, presenter: UINavigationController? = nil) {
+    init(apiClient: ServiceProviderType, target user: UserModel, presenter: UINavigationController? = nil) {
         self.apiClient = apiClient
         self.user = user
         self.presenter = presenter ?? UINavigationController()

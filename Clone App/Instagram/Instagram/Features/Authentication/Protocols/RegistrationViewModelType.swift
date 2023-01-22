@@ -11,7 +11,7 @@ import Combine
 protocol RegistrationViewModelGetSetType {
     
     /// Return UserInfoModel
-    func getUserInfoModel(uid: String, url: String) -> UserInfoModel
+    func getUserInfoModel(uid: String, url: String) -> UserModel
     
 }
 

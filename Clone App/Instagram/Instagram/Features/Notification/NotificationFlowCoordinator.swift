@@ -16,13 +16,13 @@ class NotificationFlowCoordinator: NSObject, FlowCoordinator {
     internal var childCoordinators = [FlowCoordinator]()
     internal var presenter: UINavigationController
     internal var notificationController: NotificationController!
-    internal var user: UserInfoModel
+    internal var user: UserModel
     internal var vm: NotificationViewModelType
     fileprivate let apiClient: ServiceProviderType
     
     
     //MARK: - Lifecycles
-    init(apiClient: ServiceProviderType, user: UserInfoModel, presenter: UINavigationController? = nil) {
+    init(apiClient: ServiceProviderType, user: UserModel, presenter: UINavigationController? = nil) {
         self.apiClient = apiClient
         self.user = user
         self.vm = NotificationsViewModel(apiClient: apiClient)

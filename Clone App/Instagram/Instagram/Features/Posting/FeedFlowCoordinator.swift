@@ -20,7 +20,7 @@ class FeedFlowCoordinator: NSObject, FlowCoordinator {
     internal var presenter: UINavigationController
     internal var feedController: FeedController!
     fileprivate let apiClient: ServiceProviderType
-    fileprivate var user: UserInfoModel
+    fileprivate var user: UserModel
     
     //MARK: - Lifecycles
     /// presenter의 경우 MainFlow에 의한 subCoordinator인 경우에만 nil이다.
@@ -31,7 +31,7 @@ class FeedFlowCoordinator: NSObject, FlowCoordinator {
     /// holdChildByAdding(coordinator:) 여기서 parent's coordinator == nil이 뜨게 된다.
     /// 그래서 Start에서 초기화를 하는데 무조건 isMainFlowCoordinator's Child 인 경우에만! 네비를 초기화하고 이후엔 이 네비를
     ///     주입받으면서 네비게이션 스택 관리를 하게된다. with parent,child's array
-    init(apiClient: ServiceProviderType, login user: UserInfoModel, presenter: UINavigationController? = nil) {
+    init(apiClient: ServiceProviderType, login user: UserModel, presenter: UINavigationController? = nil) {
         self.apiClient = apiClient
         self.user = user
         // MainFlow일 경우에만 nil. 나머지 subCoord는 무저건 init에 대입0.
@@ -73,7 +73,7 @@ class FeedFlowCoordinator: NSObject, FlowCoordinator {
 //MARK: - Setup child coordinator and holding :)
 extension FeedFlowCoordinator {
     
-    internal func gotoProfilePage(with selectedUser: UserInfoModel) {
+    internal func gotoProfilePage(with selectedUser: UserModel) {
         let child = ProfileFlowCoordinator(
             apiClient: apiClient, target: selectedUser, presenter: presenter)
         holdChildByAdding(coordinator: child)

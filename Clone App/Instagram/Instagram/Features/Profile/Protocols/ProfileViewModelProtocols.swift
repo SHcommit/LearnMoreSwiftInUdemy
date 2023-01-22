@@ -10,7 +10,7 @@ import Combine
 
 protocol ProfileViewModelComputedProperty {
     
-    var getUser: UserInfoModel { get set }
+    var getUser: UserModel { get set }
     
     var getPostsCount: Int { get }
     

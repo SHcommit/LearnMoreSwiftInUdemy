@@ -144,7 +144,7 @@ extension CommentViewModel: CommentViewModelInputCase {
                 
                 Task(priority: .high) {
                     do {
-                        guard let user = try await apiClient.userCase.fetchUserInfo(type: UserInfoModel.self, withUid: uid) else { return }
+                        guard let user = try await apiClient.userCase.fetchUserInfo(type: UserModel.self, withUid: uid) else { return }
                         DispatchQueue.main.async {
                             cellInfo.nav?.pushViewController(ProfileController(viewModel: ProfileViewModel(user: user, apiClient: apiClient)), animated: true)
                         }

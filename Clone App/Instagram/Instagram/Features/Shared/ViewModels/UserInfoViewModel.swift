@@ -10,13 +10,13 @@ import UIKit
 class UserInfoViewModel {
     
     //MARK: - Properties
-    private var user: UserInfoModel
+    private var user: UserModel
     private var userStats: Userstats?
     private var profileImage : UIImage?
     private let apiClient: ServiceProviderType
     
     //MARK: - LifeCycle
-    init(user: UserInfoModel, profileImage image: UIImage? = nil, stats: Userstats? = nil, apiClient: ServiceProviderType) {
+    init(user: UserModel, profileImage image: UIImage? = nil, stats: Userstats? = nil, apiClient: ServiceProviderType) {
         self.user = user
         profileImage = image
         userStats = stats
@@ -27,7 +27,7 @@ class UserInfoViewModel {
 
 extension UserInfoViewModel {
     
-    var getUser: UserInfoModel {
+    var getUser: UserModel {
         return user
     }
     
@@ -55,7 +55,7 @@ extension UserInfoViewModel {
         return user.profileURL
     }
     
-    func userInfoModel() -> UserInfoModel {
+    func userInfoModel() -> UserModel {
         return user
     }
     

@@ -9,6 +9,12 @@ import UIKit
 import Firebase
 import Combine
 
+protocol FeedCellViewModelConvenience {
+    typealias Input = FeedCellViewModelInput
+    typealias Output = FeedCellViewModelOutput
+    typealias State = FeedCellState
+}
+
 protocol FeedCellViewModelComputedProperty {
     var image: UIImage? { get }
     var postedUserProfile: UIImage? { get }
@@ -38,21 +44,21 @@ typealias FeedCellViewModelOutput = AnyPublisher<FeedCellState,Never>
 enum FeedCellState {
     case none
     case showComment
-    case showProfile(UserInfoModel)
+    case showProfile(UserModel)
     case updateLikeLabel
     case fail(String)
 }
 
-protocol FeedCellViewModelType: FeedCellViewModelComputedProperty, FeedCellViewModelAPIs {
-    func transform(input: FeedCellViewModelInput) -> FeedCellViewModelOutput
+protocol FeedCellViewModelType: FeedCellViewModelComputedProperty, FeedCellViewModelAPIs, FeedCellViewModelConvenience {
+    func transform(input: Input) -> Output
     
     /// Api
     
 }
 
-protocol FeedCellViewModelSubscriptionChains {
-    func didTapCommentChains(with input: FeedCellViewModelInput) -> FeedCellViewModelOutput
-    func didTapLikeChains(with input: FeedCellViewModelInput) -> FeedCellViewModelOutput
-    func likeSubscriptionChains() -> FeedCellViewModelOutput
-    func didTapUserProfileChains(with input: FeedCellViewModelInput) -> FeedCellViewModelOutput
+protocol FeedCellViewModelSubscriptionChains: FeedCellViewModelConvenience {
+    func didTapCommentChains(with input: Input) -> Output
+    func didTapLikeChains(with input: Input) -> Output
+    func likeSubscriptionChains() -> Output
+    func didTapUserProfileChains(with input: Input) -> Output
 }

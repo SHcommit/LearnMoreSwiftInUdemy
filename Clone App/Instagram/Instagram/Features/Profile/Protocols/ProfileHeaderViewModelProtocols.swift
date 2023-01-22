@@ -74,7 +74,7 @@ protocol ProfileHeaderViewModelHelperType {
 
 protocol ProfileHeaderViewModelComputedProperty {
     
-    var user: UserInfoModel { get set }
+    var user: UserModel { get set }
     
     var profileImage: UIImage? { get set }
     

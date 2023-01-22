@@ -10,7 +10,7 @@ import Combine
 
 class ProfileViewModel {
     //MARK: - Properties
-    @Published var user: UserInfoModel
+    @Published var user: UserModel
     @Published var userStats: Userstats?
     @Published var profileImage: UIImage?
     @Published var postsInfo = [PostModel]()
@@ -23,7 +23,7 @@ class ProfileViewModel {
     fileprivate let apiClient: ServiceProviderType
     
     //MARK: - Lifecycles
-    init(user: UserInfoModel, apiClient: ServiceProviderType) {
+    init(user: UserModel, apiClient: ServiceProviderType) {
         self.user = user
         self.apiClient = apiClient
     }
@@ -60,7 +60,7 @@ extension ProfileViewModel: ProfileViewModelType {
 //MARK: - ProfileViewModelComputedProperty
 extension ProfileViewModel: ProfileViewModelComputedProperty {
     
-    var getUser: UserInfoModel {
+    var getUser: UserModel {
         get {
             return user
         }

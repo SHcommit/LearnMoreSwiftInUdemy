@@ -15,10 +15,10 @@ class MainFlowCoordinator: FlowCoordinator {
     var presenter: UINavigationController
     var rootViewController: MainHomeTabController
     fileprivate var apiClient: ServiceProviderType
-    fileprivate var me: UserInfoModel
+    fileprivate var me: UserModel
     
     //MARK: - LifeCycles
-    init(me: UserInfoModel, apiClient: ServiceProviderType) {
+    init(me: UserModel, apiClient: ServiceProviderType) {
         self.apiClient = apiClient
         self.me = me
         presenter = UINavigationController()

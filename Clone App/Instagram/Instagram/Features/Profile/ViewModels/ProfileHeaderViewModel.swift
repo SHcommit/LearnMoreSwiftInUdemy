@@ -12,12 +12,12 @@ import FirebaseFirestore
 final class ProfileHeaderViewModel {
     
     //MARK: - Properties
-    @Published private var _user: UserInfoModel
+    @Published private var _user: UserModel
     @Published private var _profileImage : UIImage?
     @Published private var _userStats: Userstats?
     
     //MARK: - LifeCycle
-    init(user: UserInfoModel, profileImage: UIImage? = nil, userStats: Userstats? = nil) {
+    init(user: UserModel, profileImage: UIImage? = nil, userStats: Userstats? = nil) {
         _user = user
         _userStats = userStats
         _profileImage = profileImage
@@ -84,7 +84,7 @@ extension ProfileHeaderViewModel: ProfileHeaderVMInnerPublisherChainType {
 //MARK: - ProfileHeaderViweModelComputedProperty
 extension ProfileHeaderViewModel: ProfileHeaderViewModelComputedProperty {
     
-    var user: UserInfoModel {
+    var user: UserModel {
         get {
             return _user
         }

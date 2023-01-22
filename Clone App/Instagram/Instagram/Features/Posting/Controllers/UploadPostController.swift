@@ -21,7 +21,7 @@ class UploadPostController: UIViewController {
         didSet { photoImageView.image = selectedImage }
     }
     weak var didFinishDelegate: UploadPostControllerDelegate?
-    var currentUserInfo: UserInfoModel?
+    var currentUserInfo: UserModel?
     
     //MARK: - Usecase
     fileprivate let apiClient: ServiceProviderType

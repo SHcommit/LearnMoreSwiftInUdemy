@@ -88,7 +88,7 @@ protocol UserServiceType: UserServiceDefaultType, UserServiceAboutSearchType, Us
 
 protocol UserServiceDefaultType {
     
-    func updateCurrentUserInfo(CodableType info: UserInfoModel) async throws
+    func updateCurrentUserInfo(CodableType info: UserModel) async throws
     
     func fetchUserInfo<T: Codable>(type: T.Type, withUid uid: String) async throws -> T?
     
