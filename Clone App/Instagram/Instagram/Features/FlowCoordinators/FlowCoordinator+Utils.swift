@@ -32,6 +32,85 @@ extension FlowCoordinator {
     
 }
 
+//MARK: - Update child coordinator from popped view controller by executed presenter.
+
+typealias UtilChildState = UpdateChildCoordinatorState<UIViewController>
+
+enum UpdateChildCoordinatorState<T> where T: UIViewController {
+    
+    case profile(T)
+    case comment(T)
+    case feed(T)
+    case search(T)
+    
+    //추후 구현해야함.
+    //case uploadPost(T)
+    //case login(T)
+    //case register(T)
+    //case notification(T)
+    //case imageSelector(T)
+    
+    var updateState: Void {
+        switch self {
+        case .comment(let targetVC):
+            updateChildCommentCoordinatorFromPoppedVC(targetVC)
+            return
+        case .feed(let targetVC):
+            updateChildFeedCoordinatorFromPoppedVC(targetVC)
+            return
+        case .profile(let targetVC):
+            updateChildProfileFlowFromPoppedVC(targetVC)
+            return
+        case .search(let targetVC):
+            updateChildSearchCoordinatorFromPoppedVC(targetVC)
+            return
+        }
+    }
+    
+    static func poppedChildFlow(coordinator type: UpdateChildCoordinatorState) {
+        type.updateState
+    }
+    
+}
+
+//MARK: - UpdateChildCoordinatorState Helpers
+extension UpdateChildCoordinatorState {
+    
+    fileprivate func updateChildProfileFlowFromPoppedVC(_ vc: UIViewController) {
+        guard let profileVC = vc as? ProfileController,
+              let child = profileVC.coordinator else {
+            return
+        }
+        child.finish()
+    }
+    
+    fileprivate func updateChildCommentCoordinatorFromPoppedVC(_ vc: UIViewController) {
+        guard let commentVC = vc as? CommentController,
+              let child = commentVC.coordinator else {
+            return
+        }
+        child.finish()
+    }
+    
+    fileprivate func updateChildFeedCoordinatorFromPoppedVC(_ vc: UIViewController) {
+        guard let feedVC = vc as? FeedController,
+              let child = feedVC.coordinator else {
+            return
+        }
+        child.finish()
+    }
+    
+    fileprivate func updateChildSearchCoordinatorFromPoppedVC(_ vc: UIViewController) {
+        guard let feedVC = vc as? SearchController,
+              let child = feedVC.coordinator else {
+            return
+        }
+        child.finish()
+    }
+    
+}
+
+
 struct ConfigCoordinator {
     
     static func setupChild<T>(detail target : T, apply: @escaping (T)->Void) where T: FlowCoordinator {
@@ -43,3 +122,4 @@ struct ConfigCoordinator {
     }
     
 }
+

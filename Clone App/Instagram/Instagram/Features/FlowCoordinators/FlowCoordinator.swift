@@ -38,16 +38,43 @@ extension FlowCoordinator {
         childCoordinators.removeAll()
     }
     
+    func updateDismissedViewControllerChildCoordinatorFromNaviController(_ navi: UINavigationController, didShow vc: UIViewController, castForCheck: (UIViewController) -> Void) {
+        guard let targetVC = navi.transitionCoordinator?.viewController(forKey: .from) else { return }
+        if navi.viewControllers.contains(targetVC) { return }
+        castForCheck(targetVC)
+    }
+    
 }
 
 
 /// Test
 extension FlowCoordinator {
+    
+    typealias TestUINaviC = UINavigationController
+    
     func testCheckCoordinatorState() {
         print("DEBUG: Test! check subCoordinator state ---")
         print("DEBUG: target's subcoordinator list:\(childCoordinators)")
         print("DEBUG: target's parentCoordinator's subcoordinator list: \(parentCoordinator?.childCoordinators)")
 
     }
+    
+    /// Test UINavigationControllerDelegate didShow func
+    /// castingLogic을 통해 특정 case에 캐스팅되는 VC일때 성공적으로 child.finish()실행하고 결과 나오는지 확인.
+    func testNavigationController(_ navi: TestUINaviC, didShow vc: UIViewController, animated: Bool, castingLogic: (UIViewController)->Void) {
+        print("DEBUG: Start navi's didShow event")
+        guard let targetVC = navi.transitionCoordinator?.viewController(forKey: .from) else {
+            print("DEBUG: Fail to completion child coordinator from navi's didShow func")
+            return
+        }
+        if navi.viewControllers.contains(targetVC) {
+            print("DEBUG: Fail to completion child coordinator from navi's didShow func. targetVC is Running.")
+            return
+        }
+        print("DEBUG: Check targetVC. pop from navi stack. From now on downcast targetVC and update specific type's coordinator state. ")
+        castingLogic(targetVC)
+        print("DEBUG: Success deinitialize child's coordinator.")
+    }
+    
 }
 
