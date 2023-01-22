@@ -37,7 +37,7 @@ protocol FeedCellViewModelAPIs {
 struct FeedCellViewModelInput {
     var didTapProfile: AnyPublisher<String,Never>
     var didTapComment: AnyPublisher<Void,Never>
-    var didTapLike: AnyPublisher<UIButton,Never>
+    var didTapLike: AnyPublisher<(UIButton, FeedCellDelegate?),Never>
 }
 
 typealias FeedCellViewModelOutput = AnyPublisher<FeedCellState,Never>
@@ -46,6 +46,7 @@ enum FeedCellState {
     case showComment
     case showProfile(UserModel)
     case updateLikeLabel
+    case deleteIndicator
     case fail(String)
 }
 

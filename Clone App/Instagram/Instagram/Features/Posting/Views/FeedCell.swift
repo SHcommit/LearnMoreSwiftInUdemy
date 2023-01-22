@@ -9,10 +9,17 @@ import UIKit
 import Firebase
 import Combine
 
+protocol FeedCellDelegate: AnyObject {
+    //코디네이터에 속한거로 인디케이터 표시할라했는데 안먹혀서 델리게이트만듬..
+    func wantsToShowIndicator()
+    func wantsToHideIndicator()
+}
+
 class FeedCell: UICollectionViewCell {
     
     //MARK: - Properties
     weak var coordinator: FeedFlowCoordinator?
+    weak var delegate: FeedCellDelegate?
     fileprivate var profileImageView: UIImageView!
     fileprivate var postImageView: UIImageView!
     fileprivate var likeLabel: UILabel!
@@ -24,7 +31,7 @@ class FeedCell: UICollectionViewCell {
     fileprivate var shareButton: UIButton!
     fileprivate var didTapUserProfile = PassthroughSubject<String,Never>()
     fileprivate var didTapCommentPublisher = PassthroughSubject<Void,Never>()
-    fileprivate var didTapLikePublisher = PassthroughSubject<UIButton,Never>()
+    fileprivate var didTapLikePublisher = PassthroughSubject<(UIButton,FeedCellDelegate?),Never>()
     fileprivate var subscriptions = Set<AnyCancellable>()
     //얘도 의미 없어질것임 코디네이터로 화면 전환 관리하면
     var feedControllerNavigationController: UINavigationController?
@@ -87,7 +94,8 @@ extension FeedCell {
     }
     
     @objc func didTapLikeButton(_ sender: Any) {
-        didTapLikePublisher.send(likeButton)
+        delegate?.wantsToShowIndicator()
+        didTapLikePublisher.send((likeButton,delegate))
     }
     
     @objc func didTapComment(_ sender: Any) {
@@ -103,6 +111,9 @@ extension FeedCell {
     func render(_ state: FeedCellState) {
         switch state {
         case .none:
+            break
+        case .deleteIndicator:
+            delegate?.wantsToHideIndicator()
             break
         case .showComment:
             guard let post = self.viewModel?.post else { return }

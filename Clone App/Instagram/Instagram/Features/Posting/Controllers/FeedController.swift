@@ -145,6 +145,7 @@ extension FeedController {
             cell.viewModel = FeedCellViewModel(post: post!, loginUser: loginUser, apiClient: apiClient)
         }
         cell.coordinator = coordinator
+        cell.delegate = self
         cell.configure()
         cell.setupBinding(with: navigationController)
     }
@@ -217,5 +218,17 @@ extension FeedController {
         let back = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(cancel))
         navigationItem.leftBarButtonItem = back
     }
+    
+}
+
+extension FeedController: FeedCellDelegate {
+    func wantsToShowIndicator() {
+        startIndicator()
+    }
+    
+    func wantsToHideIndicator() {
+        endIndicator()
+    }
+    
     
 }

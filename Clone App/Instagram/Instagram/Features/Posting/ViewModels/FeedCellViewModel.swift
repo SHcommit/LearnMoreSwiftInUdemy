@@ -7,6 +7,7 @@
 
 import UIKit
 import Firebase
+import Firebase
 import Combine
 
 class FeedCellViewModel {
@@ -73,7 +74,7 @@ extension FeedCellViewModel: FeedCellViewModelComputedProperty {
         return post.ownerUsername
     }
     
-    var postTime: TimeStamp {
+    var postTime: Timestamp {
         return post.timestamp
     }
     
@@ -161,7 +162,7 @@ extension FeedCellViewModel: FeedCellViewModelSubscriptionChains {
     func didTapUserProfileChains(with input: Input) -> Output {
         return input.didTapProfile
             .subscribe(on: RunLoop.main)
-            .map{ uid -> FeedCellState in
+            .map{ uid -> State in
                 self.fetchUserInfo(with: uid)
                 return .none
             }.eraseToAnyPublisher()
@@ -169,7 +170,7 @@ extension FeedCellViewModel: FeedCellViewModelSubscriptionChains {
     
     func didTapCommentChains(with input: Input) -> Output {
         return input.didTapComment
-            .map { _ -> FeedCellState in
+            .map { _ -> State in
                 return .showComment
             }.eraseToAnyPublisher()
 
@@ -179,8 +180,8 @@ extension FeedCellViewModel: FeedCellViewModelSubscriptionChains {
         
         return input.didTapLike
             .subscribe(on: RunLoop.main)
-            .map{ [unowned self] likeButton -> FeedCellState in
-                guard let didLike = post.didLike else { return .none}
+            .map{ [unowned self] (likeButton,cellDelegate) -> State in
+                guard let didLike = post.didLike else { return .deleteIndicator}
                 Task(priority: .high) {
                     if !didLike {
                         let uploadModel = UploadNotificationModel(
@@ -199,6 +200,7 @@ extension FeedCellViewModel: FeedCellViewModelSubscriptionChains {
                         setupLike(button: likeButton)
                         post.didLike?.toggle()
                         likeChanged.send()
+                        cellDelegate?.wantsToHideIndicator()
                     }
                 }
                 return .none
