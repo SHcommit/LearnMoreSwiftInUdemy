@@ -76,29 +76,6 @@ extension MainHomeTabController {
         delegate = self
     }
     
-//    func configureViewControllers() {
-//
-//        let layout = UICollectionViewFlowLayout()
-//
-//        let feed = templateNavigationController(unselectedImage: .imageLiteral(name: "home_unselected"), selectedImage: .imageLiteral(name: "home_selected"), rootVC: FeedController(collectionViewLayout: layout))
-        
-        
-//        let searchVC = SearchController(viewModel: SearchViewModel())
-//        let search = templateNavigationController(unselectedImage: .imageLiteral(name: "search_unselected"), selectedImage: .imageLiteral(name: "search_selected"), rootVC: searchVC)
-//
-//        let imageSelector = templateNavigationController(unselectedImage: .imageLiteral(name: "plus_unselected"), selectedImage: .imageLiteral(name: "plus_unselected"), rootVC: ImageSelectorController())
-        
-        
-//        let notifications = templateNavigationController(unselectedImage: .imageLiteral(name: "like_unselected"), selectedImage: .imageLiteral(name: "like_selected"), rootVC: NotificationController())
-//
-//        let profileVC = ProfileController(viewModel: ProfileViewModel(user: vm.user))
-//
-//        let profile = templateNavigationController(unselectedImage: .imageLiteral(name: "profile_unselected"), selectedImage: .imageLiteral(name: "profile_selected"), rootVC: profileVC)
-//
-//        viewControllers = [feed,search,imageSelector,notifications,profile]
-    //}
-    
-    
 }
 
 //MARK: - Event Handler
@@ -142,59 +119,6 @@ extension MainHomeTabController {
     
 }
 
-//MARK: - API.
-extension MainHomeTabController {
-    
-    //MARK: - API. check user's membership
-    
-    func presentLoginScene() {
-        let controller = LoginController(viewModel: LoginViewModel(apiClient: ServiceProvider.defaultProvider()))
-        let nav = UINavigationController(rootViewController: controller)
-        nav.modalPresentationStyle = .fullScreen
-        self.present(nav,animated: false, completion: nil)
-    }
-        
-}
-
-//MARK: - Implement AuthentificationDelegate
-//extension MainHomeTabController {
-    
-//    /// 엥 여기서 영구저장소를 업데이트한다고?!
-//    func authenticationCompletion(uid: String) async {
-//        let ud = UserDefaults.standard
-//        ud.synchronize()
-//        ud.set(uid, forKey: CURRENT_USER_UID)
-//        do{
-//            try await fetchCurrentUserInfo(withUID: uid)
-//            endIndicator()
-//        }catch {
-//            authenticationCompletionErrorHandling(error: error)
-//        }
-//        self.dismiss(animated: false)
-//    }
-//    ///얘는 uid있을 때 근데 이거도 로그인 버튼누르고 로그인 성공시에 영구저장소에 저장하면 매개변수 없앨 수 있어.
-//    /// 근데 fetchCurrentUserInfo에서 어차피 영구저장소에서 가져와서 이거 없애도 될듯
-//    func fetchCurrentUserInfo(withUID id: String) async throws {
-//        let userInfo = try await UserService.fetchUserInfo(type: UserInfoModel.self, withUid: id)
-//        guard let userInfo = userInfo else { throw FetchUserError.invalidUserInfo }
-//        self.userVM = UserInfoViewModel(user: userInfo, profileImage: nil)
-//    }
-//
-//    func authenticationCompletionErrorHandling(error: Error) {
-//        switch error {
-//        case FetchUserError.invalidGetDocumentUserUID:
-//            print("DEBUG: Fail to get user document with UID 이경우 로그인됬는데 uid를 찾을 수 없음 -> 파이어베이스 사용자 UID 잘못 등록됨.")
-//            DispatchQueue.main.async {
-//                self.presentLoginScene()
-//            }
-//        case FetchUserError.invalidUserInfo:
-//            print("DEBUG: Fail to bind userInfo")
-//        default:
-//            print("DEBUG: Unexpected error occured: \(error.localizedDescription)")
-//        }
-//    }
-//}
-
 //MAKR: -  UITabBarControllerDelegate
 extension MainHomeTabController: UITabBarControllerDelegate {
     func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
@@ -218,7 +142,6 @@ extension MainHomeTabController: UITabBarControllerDelegate {
     }
 }
 
-
 //MARK: - UploadPostControllerDelegate
 extension MainHomeTabController: UploadPostControllerDelegate {
     func controllerDidFinishUploadingPost(_ controller: UploadPostController) {
@@ -227,8 +150,7 @@ extension MainHomeTabController: UploadPostControllerDelegate {
         guard let feedNavi = viewControllers?.first as? UINavigationController else { return }
         guard let feedVC = feedNavi.viewControllers.first as? FeedController else { return }
         feedVC.handleRefresh()
-        
+
     }
-    
     
 }

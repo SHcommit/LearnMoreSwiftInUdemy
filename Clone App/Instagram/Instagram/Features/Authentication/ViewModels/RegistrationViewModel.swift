@@ -17,7 +17,7 @@ class RegistrationViewModel {
     @Published var username: String = ""
     @Published var profileImage: UIImage? = UIImage()
     var subscriptions: Set<AnyCancellable> = Set<AnyCancellable>()
-    
+    fileprivate let successRegistration = PassthroughSubject<Void,Never>()
     fileprivate let apiClient: ServiceProviderType
     init(apiClient: ServiceProviderType) {
         self.apiClient = apiClient
@@ -34,25 +34,30 @@ extension RegistrationViewModel: RegistrationViewModelType {
                              username: username)
     }
     
-    func bind(with input: RegistrationViewModelInput) {
+    func transform(with input: Input) -> Output {
         
-        input.signUpTap
-            .receive(on: RunLoop.main)
-            .sink { [unowned self] navigationController in
-                navigationController?.startIndicator()
-                registerUser()
-                navigationController?.endIndicator()
-                navigationController?.popViewController(animated: true)
-            }.store(in: &subscriptions)
+        let successRegistrationSubscription = successRegistration
+            .map { _ -> State in
+                return .showLogin
+            }.eraseToAnyPublisher()
+        
+        let signUpTapSubscription = input.signUpTap
+            .map { _ -> State in
+                self.registerUser()
+                return .none
+            }.eraseToAnyPublisher()
 
-        input.photoPickerTap
-            .receive(on: RunLoop.main)
-            .sink { viewController in
-                let picker = UIImagePickerController()
-                picker.delegate = viewController
-                picker.allowsEditing = true
-                viewController.present(picker, animated: true)
-            }.store(in: &subscriptions)
+        let photoPickerTapSubscription = input.photoPickerTap
+            .map { _ -> State in
+                return .showPicker
+            }.eraseToAnyPublisher()
+        
+        return Publishers
+            .Merge3(
+                successRegistrationSubscription,
+                signUpTapSubscription,
+                photoPickerTapSubscription)
+            .eraseToAnyPublisher()
             
     }
     
@@ -95,6 +100,7 @@ extension RegistrationViewModel: RegistrationViewModelNetworkServiceType {
         Task() { [weak self] in
             do {
                 try await self?.registerUserFromSignUp()
+                successRegistration.send()
             } catch {
                 self?.registerUserFromSignUpErrorHandling(error: error)
             }

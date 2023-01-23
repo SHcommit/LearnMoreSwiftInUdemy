@@ -85,15 +85,24 @@ extension FeedFlowCoordinator {
         let child = ProfileFlowCoordinator(
             apiClient: apiClient, target: selectedUser, presenter: presenter)
         holdChildByAdding(coordinator: child)
-        print(child)
     }
     
-    //이건 feedCell에서 화면 이벤트 전송될 때 post model도 같이 전달해줘야함.
     internal func gotoCommentPage(with post: PostModel) {
         let vm = CommentViewModel(post: post, apiClient: apiClient)
         let child = CommentFlowCoordinator(
             presenter: presenter, vm: vm, apiClient: apiClient)
         holdChildByAdding(coordinator: child)
+    }
+    
+    internal func gotoLoginPage() {
+        if parentCoordinator is MainFlowCoordinator {
+            guard let mainFlow = parentCoordinator as? MainFlowCoordinator,
+                  let appFlow = mainFlow.rootCoordinator else {
+                return
+            }
+            self.finish()
+            appFlow.gotoLoginPage(withDelete: mainFlow)
+        }
     }
     
 }

@@ -76,11 +76,11 @@ enum UpdateChildCoordinatorState<T> where T: UIViewController {
     case comment(T)
     case feed(T)
     case search(T)
+    case register(T)
     
     //추후 구현해야함.
     //case uploadPost(T)
     //case login(T)
-    //case register(T)
     //case notification(T)
     //case imageSelector(T)
     
@@ -98,6 +98,8 @@ enum UpdateChildCoordinatorState<T> where T: UIViewController {
         case .search(let targetVC):
             updateChildSearchCoordinatorFromPoppedVC(targetVC)
             return
+        case .register(let targetVC):
+            updateChildRegistrationFlowFromPoppedVC(targetVC)
         }
     }
     
@@ -137,6 +139,14 @@ extension UpdateChildCoordinatorState {
     fileprivate func updateChildSearchCoordinatorFromPoppedVC(_ vc: UIViewController) {
         guard let feedVC = vc as? SearchController,
               let child = feedVC.coordinator else {
+            return
+        }
+        child.finish()
+    }
+    
+    fileprivate func updateChildRegistrationFlowFromPoppedVC(_ vc: UIViewController) {
+        guard let registrationVC = vc as? RegistrationController,
+              let child = registrationVC.coordinator else {
             return
         }
         child.finish()

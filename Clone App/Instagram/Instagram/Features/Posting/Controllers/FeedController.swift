@@ -80,14 +80,15 @@ extension FeedController {
         case .endIndicator:
             endIndicator()
             break
-        case .callLoginCoordinator:
+        case .showLogin:
             do {
                 try Auth.auth().signOut()
+                Utils.pList.removeObject(forKey: CURRENT_USER_UID)
                 DispatchQueue.main.async {
-                    //
-                    // 여기선 인제 로그인 커디네이터 불러야함.
-                    self.presentLoginScene()
+                    self.coordinator?.gotoLoginPage()
                 }
+                //self.presentLoginScene()
+                
             } catch {
                 print("Failed to sign out")
             }
@@ -122,12 +123,12 @@ extension FeedController {
         collectionView.refreshControl = refresh
     }
     
-    func presentLoginScene() {
-        let controller = LoginController(viewModel: LoginViewModel(apiClient: ServiceProvider.defaultProvider()))
-        let nav = UINavigationController(rootViewController: controller)
-        nav.modalPresentationStyle = .fullScreen
-        self.present(nav,animated: false, completion: nil)
-    }
+//    func presentLoginScene() {
+//        let controller = LoginController(viewModel: LoginViewModel(apiClient: ServiceProvider.defaultProvider()))
+//        let nav = UINavigationController(rootViewController: controller)
+//        nav.modalPresentationStyle = .fullScreen
+//        self.present(nav,animated: false, completion: nil)
+//    }
     
     func setupCell(_ cell: FeedCell, index: Int, post: PostModel?) {
         if vm.isEmptyPost {

@@ -23,8 +23,9 @@ class RegistrationController: UIViewController, UINavigationControllerDelegate {
     private var viewModel = RegistrationViewModel(apiClient: ServiceProvider.defaultProvider())
     private var subscriptions: Set<AnyCancellable> = Set<AnyCancellable>()
     private var appear = PassthroughSubject<Void,Never>()
-    private var signUpTap = PassthroughSubject<UINavigationController?,Never>()
-    private var photoPickerTap = PassthroughSubject<RegistrationController, Never>()
+    private var signUpTap = PassthroughSubject<Void,Never>()
+    private var photoPickerTap = PassthroughSubject<Void, Never>()
+    weak var coordinator: RegisterFlowCoordinator?
 
     //MARK: - Lifecycle
     override func viewDidLoad() {
@@ -61,9 +62,16 @@ extension RegistrationController {
     
     func setupBinding() {
         
-        let input = RegistrationViewModelInput(appear: appear.eraseToAnyPublisher(), signUpTap: signUpTap.eraseToAnyPublisher(), photoPickerTap: photoPickerTap.eraseToAnyPublisher())
+        let input = RegistrationViewModelInput(
+            appear: appear.eraseToAnyPublisher(),
+            signUpTap: signUpTap.eraseToAnyPublisher(),
+            photoPickerTap: photoPickerTap.eraseToAnyPublisher())
         
-        viewModel.bind(with: input)
+        let output = viewModel.transform(with: input)
+        output
+            .receive(on: RunLoop.main)
+            .sink{self.render($0)}
+            .store(in: &subscriptions)
         
         CombineUtils.textfieldNotificationPublisher(withTF: emailTextField)
             .receive(on: DispatchQueue.main)
@@ -101,6 +109,24 @@ extension RegistrationController {
         photoButton.clipsToBounds = true
         dismiss(animated: true)
     }
+    
+    fileprivate func render(_ state: RegistrationControllerState) {
+        switch state {
+        case .none:
+            break
+        case .endIndicator:
+            endIndicator()
+            break
+        case .showLogin:
+            endIndicator()
+            coordinator?.gotoLoginPage()
+            break
+        case .showPicker:
+            endIndicator()
+            coordinator?.gotoPicker()
+            break
+        }
+    }
 
 }
 
@@ -108,15 +134,16 @@ extension RegistrationController {
 extension RegistrationController {
 
     @objc func didTapLoginButton(_ sender: Any) {
-        navigationController?.popViewController(animated: true)
+        coordinator?.gotoLoginPage()
     }
     
     @objc func didTapSignUpButton(_ sender: Any) {
-        signUpTap.send(navigationController)
+        signUpTap.send()
     }
     
     @objc func didTapPhotoButton(_ sender: Any) {
-        photoPickerTap.send(self)
+        startIndicator()
+        photoPickerTap.send()
         
     }
 }
