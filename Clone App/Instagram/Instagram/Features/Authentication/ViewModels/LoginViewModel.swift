@@ -13,6 +13,7 @@ final class LoginViewModel {
     //MARK: - Properties
     @Published var email: String = ""
     @Published var passwd: String = ""
+    let succeedLogin = PassthroughSubject<Bool,Never>()
     var subscriptions: Set<AnyCancellable> = Set<AnyCancellable>()
     
     private let apiClient: ServiceProviderType
@@ -30,18 +31,21 @@ extension LoginViewModel: LoginViewModelType {
         subscriptions.removeAll()
         
         //MARK: - Publiser's operator chains
-        let login = loginChains(with: input)
+        let loginEvent = loginChains(with: input)
         let signUp = signUpChains(with: input)
         let emailNotification = emailNotificationChains(with: input)
         let passwdNotification = passwdNotificationChains(with: input)
         let isValidForm = isValidFormChains(with: input)
+        let succeedLoginSubscription = succeedLoginSubscriptionChains()
         
-        //MARK: - Merge publishers
-        let sceneOutput: LoginViewModelOutput = Publishers.Merge(login,signUp).eraseToAnyPublisher()
-        let textNotificationOutput: LoginViewModelOutput = Publishers.Merge(emailNotification,passwdNotification).eraseToAnyPublisher()
-        let outputPublishers = Publishers.Merge(sceneOutput, textNotificationOutput).eraseToAnyPublisher()
-        
-        return Publishers.Merge(outputPublishers, isValidForm).eraseToAnyPublisher()
+        return Publishers
+            .Merge6(
+                loginEvent,
+                signUp,
+                emailNotification,
+                passwdNotification,
+                isValidForm,
+                succeedLoginSubscription).eraseToAnyPublisher()
     }
 
 }
@@ -53,15 +57,8 @@ extension LoginViewModel: LoginViewModelInputCase {
         return input.login
             .receive(on: RunLoop.main)
             .tryMap { [unowned self] viewType -> State in
-                guard
-                    let presentingVC = viewType.presentingVC as? MainHomeTabController
-                    //let currentVC = viewType.currentVC as? LoginController
-                else {
-                    throw ErrorCase.loginPublishedOutputStreamNil
-                }
-                presentingVC.view.isHidden = false
-                loginInputAccount()
-                return .loginSuccess
+                loginAndOwnerUidStoreInUserDefaults()
+                return .none
             }.mapError{ error -> ErrorCase in
                 return error as? ErrorCase ?? .failed
             }.eraseToAnyPublisher()
@@ -71,6 +68,11 @@ extension LoginViewModel: LoginViewModelInputCase {
         return input.signUp
             .receive(on: RunLoop.main)
             .tryMap { navigationController -> State in
+                //
+                //
+                //
+                //
+                //여기선 레지스터 이동
                 let registrationVC = RegistrationController()
                 guard let navigationController = navigationController else {
                     throw ErrorCase.signUpPublisedOutputStreamNil
@@ -124,24 +126,44 @@ extension LoginViewModel: LoginViewModelInputCase {
             }.eraseToAnyPublisher()
     }
     
+    private func succeedLoginSubscriptionChains() -> Output {
+        return succeedLogin
+            .subscribe(on: RunLoop.main)
+            .setFailureType(to: ErrorCase.self)
+            .tryMap{ isSucceed -> State in
+                if isSucceed {
+                    return .showFeed
+                }
+                return .endIndicator
+            }
+            .mapError{$0 as! ErrorCase}
+            .eraseToAnyPublisher()
+    }
+    
 }
 
 
 //MARK: - LoginViewModelAPIType
 extension LoginViewModel: LoginViewModelNetworkServiceType {
     
-    func loginInputAccount() {
-        Task() {
+    func loginAndOwnerUidStoreInUserDefaults() {
+        Task(priority: .high) {
             do {
-                guard let authDataResult = try await apiClient.authCase.handleIsLoginAccount(email: email, pw: passwd) else { throw FetchUserError.invalidUserInfo }
+                guard let authDataResult = try await apiClient
+                    .authCase
+                    .handleIsLoginAccount(email: email, pw: passwd) else { throw FetchUserError.invalidUserInfo
+                }
                 DispatchQueue.main.async {
                     let ud = UserDefaults.standard
                     ud.synchronize()
                     ud.set(authDataResult.user.uid, forKey: CURRENT_USER_UID)
                 }
+                succeedLogin.send(true)
             }catch FetchUserError.invalidUserInfo {
+                succeedLogin.send(false)
                 print("DEBUG: Fail to bind userInfo")
             }catch {
+                succeedLogin.send(false)
                 print("DEBUG: Failure an occured error: \(error.localizedDescription) ")
             }
         }

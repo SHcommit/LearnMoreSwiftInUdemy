@@ -10,6 +10,7 @@ import UIKit
 class LoginFlowCoordinator: FlowCoordinator {
     
     //MARK: - Properties
+    var rootCoordinator: ApplicationFlowCoordinator?
     var parentCoordinator: FlowCoordinator?
     var childCoordinators = [FlowCoordinator]()
     var presenter: UINavigationController
@@ -27,9 +28,10 @@ class LoginFlowCoordinator: FlowCoordinator {
     
     //MARK: - Action
     func start() {
+        //로그인의 경우 이 coordinator가 중첩 실행 할 경우 x. 그래서 다이렉트로 AppCoord Instance를 얻기로 했다.
+        rootCoordinator = (parentCoordinator as! ApplicationFlowCoordinator)
         loginController.coordinator = self
         presenter.viewControllers = [loginController]
-        presenter.pushViewController(loginController, animated: false)
     }
     
     func finish() {

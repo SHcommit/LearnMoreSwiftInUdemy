@@ -106,7 +106,9 @@ extension LoginController {
                                         passwdNotification: passwdNotification.eraseToAnyPublisher())
         
         let output = viewModel.transform(with: input)
-        output.sink { [unowned self] result in
+        output
+            .receive(on:DispatchQueue.main)
+            .sink { [unowned self] result in
             switch result {
             case.finished:
                 break
@@ -131,10 +133,13 @@ extension LoginController {
             endIndicator()
             loginButtonSwitchHandler(with: isValid)
             break
-        case .loginSuccess:
+        case .showFeed:
+            if let appFlow = coordinator?.rootCoordinator,
+               let coordinator = coordinator {
+                endIndicator()
+                appFlow.gotoFeedPage(withDelete: coordinator)
+            }
             endIndicator()
-            startIndicator()
-            self.dismiss(animated: true)
         }
     }
     

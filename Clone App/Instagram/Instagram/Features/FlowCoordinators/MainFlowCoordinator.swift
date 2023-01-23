@@ -10,6 +10,7 @@ import UIKit
 class MainFlowCoordinator: FlowCoordinator {
     
     //MARK: - Properties
+    internal var rootCoordinator: ApplicationFlowCoordinator?
     internal var parentCoordinator: FlowCoordinator?
     internal var childCoordinators: [FlowCoordinator] = []
     var presenter: UINavigationController
@@ -29,6 +30,9 @@ class MainFlowCoordinator: FlowCoordinator {
     //MARK: - Action
     func start() {
         rootViewController.coordinator = self
+        rootCoordinator = (parentCoordinator as! ApplicationFlowCoordinator)
+        //음? 왜 이렇게 했을까,, 일단 원래 parent는 Application인데 아마 MainFlow 인스턴스를 얻어야 하기 위해
+        //parent를 자기자신으로 한 것 같다. 그래서 일단 상위 coordinator가 필요해서 rootCoordinator로 값ㅇ르 대입했다..
         parentCoordinator = self
         feedCoordinatorSubscription()
         searchCoordinatorSubscription()

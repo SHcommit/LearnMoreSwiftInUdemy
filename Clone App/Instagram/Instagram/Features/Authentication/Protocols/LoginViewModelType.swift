@@ -103,7 +103,7 @@ enum LoginControllerState {
     case checkIsValid(Bool),
          none,
          endIndicator,
-         loginSuccess
+         showFeed
 }
 
 protocol LoginViewModelType: LoginViewModelConvenience {
@@ -115,6 +115,6 @@ protocol LoginViewModelType: LoginViewModelConvenience {
 protocol LoginViewModelNetworkServiceType {
     
     /// Async, Await을 통해 회원 여부 판단을 request하는 server api관련 wrapper func.
-    func loginInputAccount( )
+    func loginAndOwnerUidStoreInUserDefaults()
     
 }

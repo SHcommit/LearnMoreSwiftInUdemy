@@ -45,7 +45,7 @@ extension FeedViewModel: FeedViewModelType {
         }.eraseToAnyPublisher()
         
         let logout = input.logout.map{_ -> State in
-            return .callLoginCoordinator
+            return .showLogin
         }.eraseToAnyPublisher()
         
         let refresh = input.refresh.map { _ -> State in

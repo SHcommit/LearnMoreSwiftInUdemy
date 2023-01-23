@@ -76,7 +76,7 @@
 		15C6F35B293F9A14006A3587 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15C6F35A293F9A14006A3587 /* LoginViewModel.swift */; };
 		15D0DCB3291F4C9700ACF1ED /* PostService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D0DCB2291F4C9700ACF1ED /* PostService.swift */; };
 		15D0DCB5291F523600ACF1ED /* PostModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D0DCB4291F523600ACF1ED /* PostModel.swift */; };
-		15E4E90E2940F2C30080A4FF /* LoginViewModelProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E4E90D2940F2C30080A4FF /* LoginViewModelProtocols.swift */; };
+		15E4E90E2940F2C30080A4FF /* LoginViewModelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E4E90D2940F2C30080A4FF /* LoginViewModelType.swift */; };
 		15E4E912294181360080A4FF /* ProfileViewModelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E4E911294181360080A4FF /* ProfileViewModelType.swift */; };
 		15E5A736294250A300183B71 /* SearchViewModelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E5A735294250A300183B71 /* SearchViewModelType.swift */; };
 		15E8A77F29787E510025A740 /* ServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E8A77E29787E510025A740 /* ServiceProvider.swift */; };
@@ -171,7 +171,7 @@
 		15C6F35A293F9A14006A3587 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		15D0DCB2291F4C9700ACF1ED /* PostService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostService.swift; sourceTree = "<group>"; };
 		15D0DCB4291F523600ACF1ED /* PostModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostModel.swift; sourceTree = "<group>"; };
-		15E4E90D2940F2C30080A4FF /* LoginViewModelProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModelProtocols.swift; sourceTree = "<group>"; };
+		15E4E90D2940F2C30080A4FF /* LoginViewModelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModelType.swift; sourceTree = "<group>"; };
 		15E4E911294181360080A4FF /* ProfileViewModelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModelType.swift; sourceTree = "<group>"; };
 		15E5A735294250A300183B71 /* SearchViewModelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModelType.swift; sourceTree = "<group>"; };
 		15E8A77E29787E510025A740 /* ServiceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceProvider.swift; sourceTree = "<group>"; };
@@ -268,7 +268,7 @@
 			isa = PBXGroup;
 			children = (
 				156B304A294198DE003BC4EE /* RegistrationViewModelType.swift */,
-				15E4E90D2940F2C30080A4FF /* LoginViewModelProtocols.swift */,
+				15E4E90D2940F2C30080A4FF /* LoginViewModelType.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -931,7 +931,7 @@
 				15ACA720290D793D0011E665 /* AuthService.swift in Sources */,
 				15E8A784297888CF0025A740 /* FlowCoordinator+Utils.swift in Sources */,
 				15FDED99291FA8CE00DDAF2E /* FeedCellViewModel.swift in Sources */,
-				15E4E90E2940F2C30080A4FF /* LoginViewModelProtocols.swift in Sources */,
+				15E4E90E2940F2C30080A4FF /* LoginViewModelType.swift in Sources */,
 				15ACA713290D77960011E665 /* NotificationController.swift in Sources */,
 				159B9EB729786FDC00546002 /* FirestoreConstants.swift in Sources */,
 				15D0DCB3291F4C9700ACF1ED /* PostService.swift in Sources */,
