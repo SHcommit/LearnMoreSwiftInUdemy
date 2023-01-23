@@ -25,7 +25,7 @@ class LoginController: UIViewController, LoginViewModelConvenience {
     //MARK: - Combine Properties
     var viewModel: LoginViewModelType
     private var login = PassthroughSubject<LoginElement, ErrorCase>()
-    private var signUp = PassthroughSubject<UINavigationController?, ErrorCase>()
+    private var signUp = PassthroughSubject<Void, ErrorCase>()
     private var emailNotification = PassthroughSubject<String, ErrorCase>()
     private var passwdNotification = PassthroughSubject<String, ErrorCase>()
     
@@ -84,7 +84,7 @@ extension LoginController {
     }
     
     @objc func didTapSignUpButton(_ sender: Any) {
-        signUp.send(navigationController)
+        signUp.send()
     }
 
 }
@@ -140,6 +140,9 @@ extension LoginController {
                 appFlow.gotoFeedPage(withDelete: coordinator)
             }
             endIndicator()
+        case .showRegister:
+            endIndicator()
+            coordinator?.gotoRegisterPage()
         }
     }
     

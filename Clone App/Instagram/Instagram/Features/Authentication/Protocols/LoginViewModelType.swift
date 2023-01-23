@@ -61,7 +61,7 @@ struct LoginViewModelInput: LoginViewModelConvenience {
     //MARK: - InputEvent
     var login: AnyPublisher<LoginElement,ErrorCase>
     
-    var signUp: AnyPublisher<UINavigationController?,ErrorCase>
+    var signUp: AnyPublisher<Void,ErrorCase>
     
     var emailNotification: AnyPublisher<String, ErrorCase>
     
@@ -103,6 +103,7 @@ enum LoginControllerState {
     case checkIsValid(Bool),
          none,
          endIndicator,
+         showRegister,
          showFeed
 }
 

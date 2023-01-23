@@ -119,20 +119,6 @@ extension MainHomeTabController {
     
 }
 
-//MARK: - API.
-extension MainHomeTabController {
-    
-    //MARK: - API. check user's membership
-    
-//    func presentLoginScene() {
-//        let controller = LoginController(viewModel: LoginViewModel(apiClient: ServiceProvider.defaultProvider()))
-//        let nav = UINavigationController(rootViewController: controller)
-//        nav.modalPresentationStyle = .fullScreen
-//        self.present(nav,animated: false, completion: nil)
-//    }
-        
-}
-
 //MAKR: -  UITabBarControllerDelegate
 extension MainHomeTabController: UITabBarControllerDelegate {
     func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {

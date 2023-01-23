@@ -67,18 +67,8 @@ extension LoginViewModel: LoginViewModelInputCase {
     func signUpChains(with input: Input) -> Output {
         return input.signUp
             .receive(on: RunLoop.main)
-            .tryMap { navigationController -> State in
-                //
-                //
-                //
-                //
-                //여기선 레지스터 이동
-                let registrationVC = RegistrationController()
-                guard let navigationController = navigationController else {
-                    throw ErrorCase.signUpPublisedOutputStreamNil
-                }
-                navigationController.pushViewController(registrationVC, animated: true)
-                return .endIndicator
+            .tryMap { _ -> State in
+                return .showRegister
             }.mapError{ error -> ErrorCase in
                 return error as? ErrorCase ?? .failed
             }.eraseToAnyPublisher()

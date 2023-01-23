@@ -25,6 +25,7 @@ class RegistrationController: UIViewController, UINavigationControllerDelegate {
     private var appear = PassthroughSubject<Void,Never>()
     private var signUpTap = PassthroughSubject<UINavigationController?,Never>()
     private var photoPickerTap = PassthroughSubject<RegistrationController, Never>()
+    weak var coordinator: RegisterFlowCoordinator?
 
     //MARK: - Lifecycle
     override func viewDidLoad() {
@@ -108,7 +109,7 @@ extension RegistrationController {
 extension RegistrationController {
 
     @objc func didTapLoginButton(_ sender: Any) {
-        navigationController?.popViewController(animated: true)
+        coordinator?.gotoLoginPage()
     }
     
     @objc func didTapSignUpButton(_ sender: Any) {
