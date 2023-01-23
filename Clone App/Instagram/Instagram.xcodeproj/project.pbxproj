@@ -227,7 +227,6 @@
 				15E8A795297937620025A740 /* LoginFlowCoordinator.swift */,
 				15E8A797297937700025A740 /* RegistrationFlowCoordinator.swift */,
 				1552C588296D92F7001D8E48 /* Controllers */,
-				1552C597296D96E8001D8E48 /* Models */,
 				1552C58B296D9375001D8E48 /* Protocols */,
 				1552C58A296D9347001D8E48 /* ViewModels */,
 				1552C589296D9321001D8E48 /* Views */,
@@ -371,13 +370,6 @@
 				15486DC5291D1B74008B98E6 /* InputTextView.swift */,
 			);
 			path = "Views+";
-			sourceTree = "<group>";
-		};
-		1552C597296D96E8001D8E48 /* Models */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Models;
 			sourceTree = "<group>";
 		};
 		1552C598296D9703001D8E48 /* Models */ = {
