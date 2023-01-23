@@ -13,9 +13,9 @@ class UploadFlowCoordinator: FlowCoordinator {
     var parentCoordinator: FlowCoordinator?
     var childCoordinators = [FlowCoordinator]()
     var presenter: UINavigationController
-    let selectedImg: UIImage?
-    let loginOwner: UserModel
-    let apiClient: ServiceProviderType
+    fileprivate let selectedImg: UIImage?
+    fileprivate let loginOwner: UserModel
+    fileprivate let apiClient: ServiceProviderType
     
     //MARK: - Lifecycles
     init(presenter: UINavigationController, loginOwner: UserModel, selectedImg: UIImage?, apiClient: ServiceProviderType) {
@@ -27,15 +27,20 @@ class UploadFlowCoordinator: FlowCoordinator {
     
     //MARK: - Action
     func start() {
+        
         let vc = UploadPostController(apiClient: apiClient)
-        guard let mainFlow = parentCoordinator?.parentCoordinator as? MainFlowCoordinator else {
-            print("DEBUG: Not initialized parentCoordinator")
-            return
+        UtilsCoordinator.setupVC(detail: vc) {
+            guard let mainFlow = self
+                .parentCoordinator?
+                .parentCoordinator as? MainFlowCoordinator else {
+                print("DEBUG: Not initialized parentCoordinator")
+                return
+            }
+            $0.didFinishDelegate = mainFlow
+            $0.coordinator = self
+            $0.selectedImage = self.selectedImg
+            $0.currentUserInfo = self.loginOwner
         }
-        vc.didFinishDelegate = mainFlow
-        vc.coordinator = self
-        vc.selectedImage = selectedImg
-        vc.currentUserInfo = loginOwner
         presenter.pushViewController(vc, animated: true)
     }
     

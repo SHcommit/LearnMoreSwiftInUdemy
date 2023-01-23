@@ -150,7 +150,7 @@ extension UploadPostController: SetupSubviewsLayouts {
     func setupSubviewsLayouts() {
         
         ///Setup photoImageView layout
-        UIConfig.setupLayout(detail: photoImageView) {
+        UtilsUI.setupLayout(detail: photoImageView) {
             $0.translatesAutoresizingMaskIntoConstraints = false
             $0.contentMode = .scaleAspectFill
             $0.layer.cornerRadius = 10
@@ -158,7 +158,7 @@ extension UploadPostController: SetupSubviewsLayouts {
         }
         
         ///Setup contentsTextView layout
-        UIConfig.setupLayout(detail: contentsTextView) {
+        UtilsUI.setupLayout(detail: contentsTextView) {
             $0.translatesAutoresizingMaskIntoConstraints = false
             $0.placeholderText = "Enter caption.."
             $0.font = UIFont.systemFont(ofSize: 16)
@@ -167,7 +167,7 @@ extension UploadPostController: SetupSubviewsLayouts {
         }
         
         ///Setup charCount layout
-        UIConfig.setupLayout(detail: charCountLabel) {
+        UtilsUI.setupLayout(detail: charCountLabel) {
             $0.translatesAutoresizingMaskIntoConstraints = false
             $0.textColor = .lightGray
             $0.font = UIFont.systemFont(ofSize: 14)
@@ -182,7 +182,7 @@ extension UploadPostController: SetupSubviewsConstraints {
     func setupSubviewsConstraints() {
         
         ///Setup photoImageView constraints
-        UIConfig.setupConstraints(with: photoImageView) {
+        UtilsUI.setupConstraints(with: photoImageView) {
             return [$0.height.constraint(equalToConstant: UPLOAD_POST_PHOTO_IMAGE_VIEW_SIZE),
                     $0.width.constraint(equalToConstant: UPLOAD_POST_PHOTO_IMAGE_VIEW_SIZE),
                     $0.top.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
@@ -190,7 +190,7 @@ extension UploadPostController: SetupSubviewsConstraints {
         }
         
         ///Setup contentsTextView constraints
-        UIConfig.setupConstraints(with: contentsTextView) {
+        UtilsUI.setupConstraints(with: contentsTextView) {
             return [$0.top.constraint(equalTo: photoImageView.bottom,
                                       constant: UPLOAD_POST_CONTENT_TOP_MARGIN),
                     $0.leading.constraint(equalTo: view.leading,
@@ -201,7 +201,7 @@ extension UploadPostController: SetupSubviewsConstraints {
         }
         
         ///Setup charCountLabel constraints
-        UIConfig.setupConstraints(with: charCountLabel) {
+        UtilsUI.setupConstraints(with: charCountLabel) {
             return [$0.top.constraint(equalTo: contentsTextView.bottom,
                                       constant: UPLOAD_POST_CONTENT_SIDE_MARGIN),
                     $0.trailing.constraint(equalTo: view.trailing,

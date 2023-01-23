@@ -211,7 +211,7 @@ extension FeedCell: SetupSubviewsLayouts {
     func setupSubviewsLayouts() {
         
         ///Setup profileImageView layout
-        UIConfig.setupLayout(detail: profileImageView) {
+        UtilsUI.setupLayout(detail: profileImageView) {
             $0.translatesAutoresizingMaskIntoConstraints = false
             $0.contentMode = .scaleAspectFill
             $0.clipsToBounds = true
@@ -226,7 +226,7 @@ extension FeedCell: SetupSubviewsLayouts {
         }
         
         /// Setup usernameButton layout
-        UIConfig.setupLayout(detail: usernameButton) {
+        UtilsUI.setupLayout(detail: usernameButton) {
             $0.translatesAutoresizingMaskIntoConstraints = false
             $0.setTitleColor(.black, for: .normal)
             $0.titleLabel?.font = UIFont.boldSystemFont(ofSize: 13)
@@ -236,7 +236,7 @@ extension FeedCell: SetupSubviewsLayouts {
         }
 
         /// Setup postImageView layout
-        UIConfig.setupLayout(detail: postImageView) {
+        UtilsUI.setupLayout(detail: postImageView) {
             $0.translatesAutoresizingMaskIntoConstraints = false
             $0.contentMode = .scaleAspectFill
             $0.clipsToBounds = true
@@ -246,7 +246,7 @@ extension FeedCell: SetupSubviewsLayouts {
         }
 
         /// Setup likeButton layout
-        UIConfig.setupLayout(detail: likeButton) {
+        UtilsUI.setupLayout(detail: likeButton) {
             $0.translatesAutoresizingMaskIntoConstraints = false
             $0.setImage(.imageLiteral(name: "like_unselected"), for: .normal)
             $0.addTarget(self, action: #selector(self.didTapLikeButton(_:)), for: .touchUpInside)
@@ -256,7 +256,7 @@ extension FeedCell: SetupSubviewsLayouts {
         }
 
         /// Setup commentButton layout
-        UIConfig.setupLayout(detail: commentButton) {
+        UtilsUI.setupLayout(detail: commentButton) {
             $0.translatesAutoresizingMaskIntoConstraints = false
             $0.setImage(.imageLiteral(name: "comment"), for: .normal)
             $0.addTarget(self, action: #selector(self.didTapComment(_:)), for: .touchUpInside)
@@ -266,7 +266,7 @@ extension FeedCell: SetupSubviewsLayouts {
         }
         
         /// Setup commentButton layout
-        UIConfig.setupLayout(detail: shareButton) {
+        UtilsUI.setupLayout(detail: shareButton) {
             $0.translatesAutoresizingMaskIntoConstraints = false
             $0.setImage(.imageLiteral(name: "send2"), for: .normal)
             $0.addTarget(self, action: #selector(self.didTapLikeButton(_:)), for: .touchUpInside)
@@ -276,7 +276,7 @@ extension FeedCell: SetupSubviewsLayouts {
         }
         
         /// Setup likeLabel layout
-        UIConfig.setupLayout(detail: likeLabel) {
+        UtilsUI.setupLayout(detail: likeLabel) {
             $0.translatesAutoresizingMaskIntoConstraints = false
             $0.font = UIFont.boldSystemFont(ofSize: 12)
             $0.setContentCompressionResistancePriority(UILayoutPriority(999), for: .vertical)
@@ -284,14 +284,14 @@ extension FeedCell: SetupSubviewsLayouts {
         }
         
         /// Setup captionLabel layout
-        UIConfig.setupLayout(detail: captionLabel) {
+        UtilsUI.setupLayout(detail: captionLabel) {
             $0.translatesAutoresizingMaskIntoConstraints = false
             $0.font = UIFont.boldSystemFont(ofSize: 12)
             $0.setContentCompressionResistancePriority(UILayoutPriority(999), for: .vertical)
         }
         
         /// Setup postTimeLabel layout
-        UIConfig.setupLayout(detail: postTimeLabel) {
+        UtilsUI.setupLayout(detail: postTimeLabel) {
             $0.translatesAutoresizingMaskIntoConstraints = false
             $0.font = UIFont.boldSystemFont(ofSize: 12)
             $0.textColor = .lightGray
@@ -308,7 +308,7 @@ extension FeedCell: SetupSubviewsConstraints {
     func setupSubviewsConstraints() {
         
         ///Setup profileImageView constraints
-        UIConfig.setupConstraints(with: profileImageView) {
+        UtilsUI.setupConstraints(with: profileImageView) {
             return [$0.top.constraint(equalTo: top, constant: 12),
                     $0.leading.constraint(equalTo: leading, constant: 12),
                     $0.width.constraint(equalToConstant: 40),
@@ -316,55 +316,55 @@ extension FeedCell: SetupSubviewsConstraints {
         }
         
         ///Setup usernameButton constraints
-        UIConfig.setupConstraints(with: usernameButton) {
+        UtilsUI.setupConstraints(with: usernameButton) {
             return [$0.centerY.constraint(equalTo: profileImageView.centerY),
                     $0.leading.constraint(equalTo: profileImageView.trailing, constant: 8)]
         }
         
         ///Setup postImageView constraints
-        UIConfig.setupConstraints(with: postImageView) {
+        UtilsUI.setupConstraints(with: postImageView) {
             return [$0.leading.constraint(equalTo: leading),
                     $0.top.constraint(equalTo: profileImageView.bottom, constant: 12),
                     $0.trailing.constraint(equalTo: trailing)]
         }
         
         ///Setup likeButton constraints
-        UIConfig.setupConstraints(with: likeButton) {
+        UtilsUI.setupConstraints(with: likeButton) {
             return [$0.top.constraint(equalTo: postImageView.bottom,
                                       constant: 12),
                 $0.leading.constraint(equalTo: leading, constant: 12)]
         }
         
         ///Setup commentButton constraints
-        UIConfig.setupConstraints(with: commentButton) {
+        UtilsUI.setupConstraints(with: commentButton) {
             return [$0.centerY.constraint(equalTo: likeButton.centerY),
                     $0.leading.constraint(equalTo: likeButton.trailing,
                                           constant: 12)]
         }
         
         ///Setup shareButton constraints
-        UIConfig.setupConstraints(with: shareButton) {
+        UtilsUI.setupConstraints(with: shareButton) {
             return [$0.centerY.constraint(equalTo: commentButton.centerY),
                     $0.leading.constraint(equalTo: commentButton.trailing,
                                           constant: 12)]
         }
         
         ///Setup likeLabel constraints
-        UIConfig.setupConstraints(with: likeLabel) {
+        UtilsUI.setupConstraints(with: likeLabel) {
             return [$0.top.constraint(equalTo: likeButton.bottom,
                                       constant: 12),
                     $0.leading.constraint(equalTo: leading, constant: 12)]
         }
         
         ///Setup captionLabel constraints
-        UIConfig.setupConstraints(with: captionLabel) {
+        UtilsUI.setupConstraints(with: captionLabel) {
             return [$0.top.constraint(equalTo: likeLabel.bottom,
                                       constant: 12),
                     $0.leading.constraint(equalTo: leading, constant: 12)]
         }
         
         ///Setup postTimeLabel constraints
-        UIConfig.setupConstraints(with: postTimeLabel) {
+        UtilsUI.setupConstraints(with: postTimeLabel) {
             return [$0.top.constraint(equalTo: captionLabel.bottom,
                                       constant: 12),
                     $0.leading.constraint(equalTo: leading, constant: 12),

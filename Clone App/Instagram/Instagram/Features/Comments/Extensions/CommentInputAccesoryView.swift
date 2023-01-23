@@ -54,7 +54,7 @@ extension CommentInputAccessoryView {
         divider.translatesAutoresizingMaskIntoConstraints = false
         divider.backgroundColor = .lightGray
         addSubview(divider)
-        UIConfig.setupConstraints(with: divider) {
+        UtilsUI.setupConstraints(with: divider) {
             [$0.top.constraint(equalTo: top),
              $0.leading.constraint(equalTo: leading),
              $0.trailing.constraint(equalTo: trailing),
@@ -104,7 +104,7 @@ extension CommentInputAccessoryView: SetupSubviewsLayouts {
     func setupSubviewsLayouts() {
         
         /// Setup commentTextView layout
-        UIConfig.setupLayout(detail: commentTextView) {
+        UtilsUI.setupLayout(detail: commentTextView) {
             $0.placeholderText = "Enter comment.."
             $0.translatesAutoresizingMaskIntoConstraints = false
             $0.font = UIFont.systemFont(ofSize: 15)
@@ -113,7 +113,7 @@ extension CommentInputAccessoryView: SetupSubviewsLayouts {
         }
         
         /// Setup postButton layout
-        UIConfig.setupLayout(detail: postButton) {
+        UtilsUI.setupLayout(detail: postButton) {
             $0.translatesAutoresizingMaskIntoConstraints = false
             $0.setTitle("Post", for: .normal)
             $0.setTitleColor(.black, for: .normal)
@@ -131,7 +131,7 @@ extension CommentInputAccessoryView: SetupSubviewsConstraints {
     func setupSubviewsConstraints() {
         
         ///Setup textView constraints
-        UIConfig.setupConstraints(with: commentTextView) {
+        UtilsUI.setupConstraints(with: commentTextView) {
             [$0.leading.constraint(equalTo: leading, constant: 8),
              $0.top.constraint(equalTo: top, constant: 8),
              $0.trailing.constraint(equalTo: postButton.leading, constant: -8),
@@ -139,7 +139,7 @@ extension CommentInputAccessoryView: SetupSubviewsConstraints {
         }
     
         ///Setup postButton constraints
-        UIConfig.setupConstraints(with: postButton) {
+        UtilsUI.setupConstraints(with: postButton) {
             [$0.trailing.constraint(equalTo: trailing, constant: -8),
              $0.top.constraint(equalTo: top),
              $0.width.constraint(equalToConstant: 50),

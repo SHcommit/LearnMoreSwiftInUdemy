@@ -12,19 +12,19 @@ class RegistrationController: UIViewController, UINavigationControllerDelegate {
     
     //MARK: - Properties
     fileprivate lazy var photoButton: UIButton = initialPhotoButton()
-    private lazy var userInputStackView: UIStackView = initialUserInputStackView()
-    private var emailTextField: UITextField = initialEmailTextField()
-    private var passwordTextField: UITextField = initialPasswordTextField()
-    private var fullnameTextField: UITextField = initialFullnameTextField()
-    private var usernameTextField: UITextField = initialUsernameTextField()
-    private lazy var signUpButton: LoginButton = initialSignUpButton()
-    private var readyLogInLineStackView: UIStackView = initialReadyLogInLineStackView()
-    private var indicator: UIActivityIndicatorView = UIActivityIndicatorView(style: .medium)
-    private var viewModel = RegistrationViewModel(apiClient: ServiceProvider.defaultProvider())
-    private var subscriptions: Set<AnyCancellable> = Set<AnyCancellable>()
-    private var appear = PassthroughSubject<Void,Never>()
-    private var signUpTap = PassthroughSubject<Void,Never>()
-    private var photoPickerTap = PassthroughSubject<Void, Never>()
+    fileprivate lazy var userInputStackView: UIStackView = initialUserInputStackView()
+    fileprivate var emailTextField: UITextField = initialEmailTextField()
+    fileprivate var passwordTextField: UITextField = initialPasswordTextField()
+    fileprivate var fullnameTextField: UITextField = initialFullnameTextField()
+    fileprivate var usernameTextField: UITextField = initialUsernameTextField()
+    fileprivate lazy var signUpButton: LoginButton = initialSignUpButton()
+    fileprivate var readyLogInLineStackView: UIStackView = initialReadyLogInLineStackView()
+    fileprivate var indicator: UIActivityIndicatorView = UIActivityIndicatorView(style: .medium)
+    fileprivate var viewModel = RegistrationViewModel(apiClient: ServiceProvider.defaultProvider())
+    fileprivate var subscriptions: Set<AnyCancellable> = Set<AnyCancellable>()
+    fileprivate var appear = PassthroughSubject<Void,Never>()
+    fileprivate var signUpTap = PassthroughSubject<Void,Never>()
+    fileprivate var photoPickerTap = PassthroughSubject<Void, Never>()
     weak var coordinator: RegisterFlowCoordinator?
 
     //MARK: - Lifecycle
@@ -35,7 +35,6 @@ class RegistrationController: UIViewController, UINavigationControllerDelegate {
     }
     
 }
-
 
 //MARK: - Helpers
 extension RegistrationController {
@@ -73,22 +72,22 @@ extension RegistrationController {
             .sink{self.render($0)}
             .store(in: &subscriptions)
         
-        CombineUtils.textfieldNotificationPublisher(withTF: emailTextField)
+        UtilsCombine.textfieldNotificationPublisher(withTF: emailTextField)
             .receive(on: DispatchQueue.main)
             .sink { [unowned self] text in
                 viewModel.email = text
             }.store(in: &subscriptions)
-        CombineUtils.textfieldNotificationPublisher(withTF: passwordTextField)
+        UtilsCombine.textfieldNotificationPublisher(withTF: passwordTextField)
             .receive(on: RunLoop.main)
             .sink { [unowned self] text in
                 viewModel.password = text
             }.store(in: &subscriptions)
-        CombineUtils.textfieldNotificationPublisher(withTF: fullnameTextField)
+        UtilsCombine.textfieldNotificationPublisher(withTF: fullnameTextField)
             .receive(on: RunLoop.main)
             .sink { [unowned self] text in
                 viewModel.fullname = text
             }.store(in: &subscriptions)
-        CombineUtils.textfieldNotificationPublisher(withTF: usernameTextField)
+        UtilsCombine.textfieldNotificationPublisher(withTF: usernameTextField)
             .receive(on: RunLoop.main)
             .sink { [unowned self] text in
                 viewModel.username = text

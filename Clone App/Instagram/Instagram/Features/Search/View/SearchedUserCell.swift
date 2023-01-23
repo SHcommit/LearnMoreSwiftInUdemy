@@ -94,7 +94,7 @@ extension SearchedUserCell: SetupSubviewsLayouts{
     }
     
     private func setupProfileImageView() {
-        UIConfig.setupLayout(detail: profileImageView) {
+        UtilsUI.setupLayout(detail: profileImageView) {
             $0.translatesAutoresizingMaskIntoConstraints = false
             $0.contentMode = .scaleAspectFill
             $0.clipsToBounds = true
@@ -104,20 +104,20 @@ extension SearchedUserCell: SetupSubviewsLayouts{
     }
     
     private func setupUsernameLabel() {
-        UIConfig.setupLayout(detail: usernameLabel) {
+        UtilsUI.setupLayout(detail: usernameLabel) {
             $0.font = UIFont.boldSystemFont(ofSize: SEARCHED_USER_CELL_FONT_SIZE)
         }
     }
     
     private func setupFullnameLabel() {
-        UIConfig.setupLayout(detail: fullnameLabel) {
+        UtilsUI.setupLayout(detail: fullnameLabel) {
             $0.font = UIFont.systemFont(ofSize: SEARCHED_USER_CELL_FONT_SIZE)
             $0.textColor = .lightGray
         }
     }
     
     private func setupNameStackView() {
-        UIConfig.setupLayout(detail: nameStackView) {
+        UtilsUI.setupLayout(detail: nameStackView) {
             $0.translatesAutoresizingMaskIntoConstraints = false
             $0.axis = .vertical
             $0.spacing = SEARCHED_USER_CELL_STACKVIEW_SPACING
@@ -136,7 +136,7 @@ extension SearchedUserCell: SetupSubviewsConstraints {
     }
     
     func setupProfileImageViewConstriants() {
-        UIConfig.setupConstraints(with: profileImageView) {
+        UtilsUI.setupConstraints(with: profileImageView) {
             [$0.leading.constraint(equalTo: leading,
                                    constant: SEARCHED_USER_CELL_PROFILE_MARGIN),
              $0.top.constraint(equalTo: top, constant: SEARCHED_USER_CELL_PROFILE_MARGIN),
@@ -146,7 +146,7 @@ extension SearchedUserCell: SetupSubviewsConstraints {
     }
     
     func setupNameStackViewConstraints() {
-        UIConfig.setupConstraints(with: nameStackView) {
+        UtilsUI.setupConstraints(with: nameStackView) {
             [$0.leading.constraint(equalTo: profileImageView.trailing,
                                       constant: SEARCHED_USER_CELL_PROFILE_MARGIN),
              $0.centerY.constraint(equalTo: centerY)]

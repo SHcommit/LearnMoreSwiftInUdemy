@@ -60,7 +60,7 @@ extension LoginFlowCoordinator: UINavigationControllerDelegate {
         updateDismissedViewControllerChildCoordinatorFromNaviController(
             nav, didShow: viewC) {
                 if $0 is RegistrationController {
-                    UtilChildState.poppedChildFlow(coordinator: .register($0))
+                    UtilsChildState.poppedChildFlow(coordinator: .register($0))
                 }
             }
     }

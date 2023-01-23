@@ -54,7 +54,7 @@ extension UIViewController {
     }
     
     fileprivate func setupIndicatorConstraints() {
-        UIConfig.setupConstraints(with: indicator) {
+        UtilsUI.setupConstraints(with: indicator) {
             [$0.centerX.constraint(equalTo: view.centerX),
              $0.centerY.constraint(equalTo: view.centerY, constant: -40),
              $0.width.constraint(equalToConstant: 88),

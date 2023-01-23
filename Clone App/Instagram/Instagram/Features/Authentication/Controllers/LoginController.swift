@@ -188,7 +188,7 @@ extension LoginController {
     }
     
     func setupEmailTextFieldPublisherWithTextDidChanged() {
-        CombineUtils.textfieldNotificationPublisher(withTF: emailTextField)
+        UtilsCombine.textfieldNotificationPublisher(withTF: emailTextField)
             .receive(on: RunLoop.main)
             .sink { [unowned self] text in
                 emailNotification.send(text)
@@ -196,7 +196,7 @@ extension LoginController {
     }
     
     func setupPasswdTextFieldPublisherWithTextDidChanged() {
-        CombineUtils.textfieldNotificationPublisher(withTF: passwdTextField)
+        UtilsCombine.textfieldNotificationPublisher(withTF: passwdTextField)
             .receive(on: RunLoop.main)
             .sink{ [unowned self] text in
                 passwdNotification.send(text)

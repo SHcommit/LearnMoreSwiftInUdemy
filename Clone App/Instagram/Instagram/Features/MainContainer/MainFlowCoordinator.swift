@@ -17,7 +17,6 @@ class MainFlowCoordinator: FlowCoordinator {
     internal var rootViewController: MainHomeTabController
     fileprivate var apiClient: ServiceProviderType
     fileprivate var me: UserModel
-    
     fileprivate var isImageSelectorAllocated = false
     
     //MARK: - LifeCycles
@@ -35,7 +34,7 @@ class MainFlowCoordinator: FlowCoordinator {
         rootCoordinator = (parentCoordinator as! ApplicationFlowCoordinator)
         
         //음? 왜 이렇게 했을까,, 일단 원래 parent는 Application인데 아마 MainFlow 인스턴스를 얻어야 하기 위해
-        //parent를 자기자신으로 한 것 같다. 그래서 일단 상위 coordinator가 필요해서 rootCoordinator로 값ㅇ르 대입했다..
+        //parent를 자기자신으로 한 것 같다. 그래서 일단 상위 coordinator가 필요해서 rootCoordinator로 값 대입했다..
         parentCoordinator = self
         feedCoordinatorSubscription()
         searchCoordinatorSubscription()
@@ -61,7 +60,6 @@ extension MainFlowCoordinator {
     /// 템플릿 네비init를 사용하는 건데 그게 아닌 subCoordinator에서 호출 할 경우 parent의 navi를 받아야한다.
     /// init시점에 하면 presenter가 mainFlow인지검사하는 구간이 init 다음에 있어서 parentCoordinator 무조건 nil 뜬다
     fileprivate func feedCoordinatorSubscription() {
-        
         let child = FeedFlowCoordinator(apiClient: apiClient, login: me)
         holdChildByAdding(coordinator: child)
     }
@@ -74,7 +72,6 @@ extension MainFlowCoordinator {
     fileprivate func imageSelectorCoordinatorSubscription() {
         let child = ImageSelectorFlowCoordinator(loginOwner: me, apiClient: apiClient)
         holdChildByAdding(coordinator: child)
-        
     }
     
     fileprivate func notificationCoordinatorSubscription() {
@@ -86,6 +83,7 @@ extension MainFlowCoordinator {
         let child = ProfileFlowCoordinator(apiClient: apiClient, target: me)
         holdChildByAdding(coordinator: child)
     }
+    
 }
 
 //MARK: - Setup sub child coordinator and holding :]

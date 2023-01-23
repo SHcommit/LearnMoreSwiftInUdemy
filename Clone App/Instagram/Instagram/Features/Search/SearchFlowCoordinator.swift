@@ -88,13 +88,13 @@ extension SearchFlowCoordinator {
     fileprivate func searchFlowChildCoordinatorManager(target vc: UIViewController) {
         switch vc {
         case is ProfileController:
-            UtilChildState.poppedChildFlow(coordinator: .profile(vc))
+            UtilsChildState.poppedChildFlow(coordinator: .profile(vc))
             break
         case is CommentController:
-            UtilChildState.poppedChildFlow(coordinator: .comment(vc))
+            UtilsChildState.poppedChildFlow(coordinator: .comment(vc))
             break
         case is FeedController:
-            UtilChildState.poppedChildFlow(coordinator: .feed(vc))
+            UtilsChildState.poppedChildFlow(coordinator: .feed(vc))
             break
         default:
             print("DEBUG: Unknown ViewController occured transition event in Search Flow Coordinator's NavigaitonController")

@@ -86,10 +86,11 @@ extension ApplicationFlowCoordinator {
 
 //MARK: - Setup child coordinator subscription
 extension ApplicationFlowCoordinator {
-    
+
+    //MARK: - MainHomeTabCoordinator
     fileprivate func mainCoordinatorSubscription(with me: UserModel) {
         let child = MainFlowCoordinator(me: me, apiClient: apiClient)
-        ConfigCoordinator.setupChild(detail: child) {
+        UtilsCoordinator.setupChild(detail: child) {
             $0.parentCoordinator = self
             self.addChild(target: $0)
             self.window.rootViewController = nil
@@ -98,14 +99,10 @@ extension ApplicationFlowCoordinator {
         }
     }
     
-    
-    
     //MARK: - AuthenticationCoordinator
     fileprivate func loginCoordinatorSubscription() {
-       
         let child = LoginFlowCoordinator(apiClient: apiClient)
-        
-        ConfigCoordinator.setupChild(detail: child) {
+        UtilsCoordinator.setupChild(detail: child) {
             $0.parentCoordinator = self
             self.addChild(target: $0)
             self.window.rootViewController = child.presenter
