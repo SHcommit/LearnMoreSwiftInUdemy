@@ -8,6 +8,13 @@
 import UIKit
 import Combine
 
+protocol LoginViewModelConvenience {
+    typealias Input = LoginViewModelInput
+    typealias Output = LoginViewModelOutput
+    typealias State = LoginControllerState
+    typealias ErrorCase = LoginViewModelErrorType
+}
+
 /// Firebase  에서 지원하는 Auth.auth().currentUser는 잘 동작하지 않는다.
 /// 초기에는 동작하지만 앱 사용 도중에 사용자가 로그아웃 후 다른 계정으로 로그인 할 경우 currentuser의 캐시가 변경되지 않는다고 한다.
 
@@ -36,7 +43,7 @@ enum LoginViewModelErrorType: Error {
     }
 }
 
-typealias LoginVMInputLoginOutputType = (presentingVC: UIViewController?, currentVC: UIViewController?)
+typealias LoginElement = (presentingVC: UIViewController?, currentVC: UIViewController?)
 
 /**
  TODO : LoginController에서 발생할 수 있는 이벤트.
@@ -49,16 +56,16 @@ typealias LoginVMInputLoginOutputType = (presentingVC: UIViewController?, curren
  # Notes: #
  1. 특별하게 Never란 없다는 마음가짐으로 Never Type를 publisher의 타입으로 사용하지 않았다.
  */
-struct LoginViewModelInput {
+struct LoginViewModelInput: LoginViewModelConvenience {
     
     //MARK: - InputEvent
-    var login: AnyPublisher<LoginVMInputLoginOutputType,LoginViewModelErrorType>
+    var login: AnyPublisher<LoginElement,ErrorCase>
     
-    var signUp: AnyPublisher<UINavigationController?,LoginViewModelErrorType>
+    var signUp: AnyPublisher<UINavigationController?,ErrorCase>
     
-    var emailNotification: AnyPublisher<String, LoginViewModelErrorType>
+    var emailNotification: AnyPublisher<String, ErrorCase>
     
-    var passwdNotification: AnyPublisher<String, LoginViewModelErrorType>
+    var passwdNotification: AnyPublisher<String, ErrorCase>
     
 }
 
@@ -72,21 +79,21 @@ struct LoginViewModelInput {
  - Param isValidFormChains : IsValidForm Input의 publiser stream oeprator chains
  - Param isValidUserForm : 사용자 로그인 ,비번 입력했는지 여부
  */
-protocol LoginViewModelInputCase {
+protocol LoginViewModelInputCase: LoginViewModelConvenience {
     
-    func loginChains(with input: LoginViewModelInput) -> LoginViewModelOutput
+    func loginChains(with input: Input) -> Output
     
-    func signUpChains(with input: LoginViewModelInput) -> LoginViewModelOutput
+    func signUpChains(with input: Input) -> Output
     
-    func emailNotificationChains(with input: LoginViewModelInput) -> LoginViewModelOutput
+    func emailNotificationChains(with input: Input) -> Output
     
-    func passwdNotificationChains(with input: LoginViewModelInput) -> LoginViewModelOutput
+    func passwdNotificationChains(with input: Input) -> Output
     
-    func isValidFormChains(with input: LoginViewModelInput) -> LoginViewModelOutput
+    func isValidFormChains(with input: Input) -> Output
     
     /// 사용자가 로그인, 비밀번호 칸을 두개 다 입력 했는지 체크 여부 반환한다.
     /// 추후 비밀번호 최소 입력 개수를 제한하고 알림창을 띄우는 기능을 추가할 것이다.
-    func isValidUserForm() -> AnyPublisher<Bool,LoginViewModelErrorType>
+    func isValidUserForm() -> AnyPublisher<Bool,ErrorCase>
     
 }
 
@@ -99,9 +106,9 @@ enum LoginControllerState {
          loginSuccess
 }
 
-protocol LoginViewModelType {
+protocol LoginViewModelType: LoginViewModelConvenience {
 
-    func transform(with input: LoginViewModelInput) -> LoginViewModelOutput
+    func transform(with input: Input) -> Output
     
 }
 

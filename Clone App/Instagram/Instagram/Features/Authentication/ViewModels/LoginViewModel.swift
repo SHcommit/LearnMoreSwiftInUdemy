@@ -25,7 +25,7 @@ final class LoginViewModel {
 
 //MARK: - LoginViewModelType
 extension LoginViewModel: LoginViewModelType {
-    func transform(with input: LoginViewModelInput) -> LoginViewModelOutput {
+    func transform(with input: Input) -> Output {
         subscriptions.forEach{ $0.cancel() }
         subscriptions.removeAll()
         
@@ -49,78 +49,78 @@ extension LoginViewModel: LoginViewModelType {
 //MARK: - LoginViweModelInputCase
 extension LoginViewModel: LoginViewModelInputCase {
     
-    func loginChains(with input: LoginViewModelInput) -> LoginViewModelOutput {
+    func loginChains(with input: Input) -> Output {
         return input.login
             .receive(on: RunLoop.main)
-            .tryMap { [unowned self] viewType -> LoginControllerState in
+            .tryMap { [unowned self] viewType -> State in
                 guard
                     let presentingVC = viewType.presentingVC as? MainHomeTabController
                     //let currentVC = viewType.currentVC as? LoginController
                 else {
-                    throw LoginViewModelErrorType.loginPublishedOutputStreamNil
+                    throw ErrorCase.loginPublishedOutputStreamNil
                 }
                 presentingVC.view.isHidden = false
                 loginInputAccount()
                 return .loginSuccess
-            }.mapError{ error -> LoginViewModelErrorType in
-                return error as? LoginViewModelErrorType ?? .failed
+            }.mapError{ error -> ErrorCase in
+                return error as? ErrorCase ?? .failed
             }.eraseToAnyPublisher()
     }
     
-    func signUpChains(with input: LoginViewModelInput) -> LoginViewModelOutput {
+    func signUpChains(with input: Input) -> Output {
         return input.signUp
             .receive(on: RunLoop.main)
-            .tryMap { navigationController -> LoginControllerState in
+            .tryMap { navigationController -> State in
                 let registrationVC = RegistrationController()
                 guard let navigationController = navigationController else {
-                    throw LoginViewModelErrorType.signUpPublisedOutputStreamNil
+                    throw ErrorCase.signUpPublisedOutputStreamNil
                 }
                 navigationController.pushViewController(registrationVC, animated: true)
                 return .endIndicator
-            }.mapError{ error -> LoginViewModelErrorType in
-                return error as? LoginViewModelErrorType ?? .failed
+            }.mapError{ error -> ErrorCase in
+                return error as? ErrorCase ?? .failed
             }.eraseToAnyPublisher()
     }
     
-    func emailNotificationChains(with input: LoginViewModelInput) -> LoginViewModelOutput {
+    func emailNotificationChains(with input: Input) -> Output {
         return input.emailNotification
             .receive(on: RunLoop.main)
-            .map { [unowned self] text -> LoginControllerState in
+            .map { [unowned self] text -> State in
                 email = text
                 return .none
-            }.mapError{ error -> LoginViewModelErrorType in
-                return error as? LoginViewModelErrorType ?? .failed
+            }.mapError{ error -> ErrorCase in
+                return error as? ErrorCase ?? .failed
             }.eraseToAnyPublisher()
     }
     
-    func passwdNotificationChains(with input: LoginViewModelInput) -> LoginViewModelOutput {
+    func passwdNotificationChains(with input: Input) -> Output {
         return input.passwdNotification
             .receive(on: RunLoop.main)
-            .map { [unowned self] text -> LoginControllerState in
+            .map { [unowned self] text -> State in
                 passwd = text
                 return .none
-            }.mapError{ error -> LoginViewModelErrorType in
-                return error as? LoginViewModelErrorType ?? .failed
+            }.mapError{ error -> ErrorCase in
+                return error as? ErrorCase ?? .failed
             }.eraseToAnyPublisher()
     }
     
-    func isValidFormChains(with input: LoginViewModelInput) -> LoginViewModelOutput {
+    func isValidFormChains(with input: Input) -> Output {
         return isValidUserForm()
-            .tryMap { isValid -> LoginControllerState in
+            .tryMap { isValid -> State in
                 return .checkIsValid(isValid)
-            }.mapError{ error -> LoginViewModelErrorType in
-                 return error as? LoginViewModelErrorType ?? .failed
+            }.mapError{ error -> ErrorCase in
+                 return error as? ErrorCase ?? .failed
             }.eraseToAnyPublisher()
     }
     
-    func isValidUserForm() -> AnyPublisher<Bool, LoginViewModelErrorType> {
+    func isValidUserForm() -> AnyPublisher<Bool, ErrorCase> {
         $email
             .receive(on: RunLoop.main)
             .combineLatest($passwd)
             .tryMap { (emailText, passwdText) in
                 return !emailText.isEmpty && !passwdText.isEmpty
-            }.mapError{ error -> LoginViewModelErrorType in
-                return error as? LoginViewModelErrorType ?? .failed
+            }.mapError{ error -> ErrorCase in
+                return error as? ErrorCase ?? .failed
             }.eraseToAnyPublisher()
     }
     

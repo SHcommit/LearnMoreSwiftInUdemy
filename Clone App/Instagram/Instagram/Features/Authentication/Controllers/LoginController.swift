@@ -9,7 +9,7 @@ import UIKit
 import Firebase
 import Combine
 
-class LoginController: UIViewController {
+class LoginController: UIViewController, LoginViewModelConvenience {
     
     //MARK: - Properties
     //weak var authDelegate: AuthentificationDelegate?
@@ -24,10 +24,10 @@ class LoginController: UIViewController {
     
     //MARK: - Combine Properties
     var viewModel: LoginViewModelType
-    private var login = PassthroughSubject<LoginVMInputLoginOutputType, LoginViewModelErrorType>()
-    private var signUp = PassthroughSubject<UINavigationController?, LoginViewModelErrorType>()
-    private var emailNotification = PassthroughSubject<String, LoginViewModelErrorType>()
-    private var passwdNotification = PassthroughSubject<String, LoginViewModelErrorType>()
+    private var login = PassthroughSubject<LoginElement, ErrorCase>()
+    private var signUp = PassthroughSubject<UINavigationController?, ErrorCase>()
+    private var emailNotification = PassthroughSubject<String, ErrorCase>()
+    private var passwdNotification = PassthroughSubject<String, ErrorCase>()
     
     private var subscriptions: Set<AnyCancellable> = Set<AnyCancellable>()
 
@@ -144,16 +144,16 @@ extension LoginController {
 extension LoginController {
     
     //MARK: - otuputErrorHandling
-    func outputErrorHandling(with error: LoginViewModelErrorType) {
+    func outputErrorHandling(with error: ErrorCase) {
         switch error {
         case .failed:
-            print(LoginViewModelErrorType.failed.errorDiscription + " : \(error.localizedDescription)")
+            print(ErrorCase.failed.errorDiscription + " : \(error.localizedDescription)")
             break
         case .loginPublishedOutputStreamNil:
-            print(LoginViewModelErrorType.loginPublishedOutputStreamNil.errorDiscription + " : \(error.localizedDescription)")
+            print(ErrorCase.loginPublishedOutputStreamNil.errorDiscription + " : \(error.localizedDescription)")
             break
         case .signUpPublisedOutputStreamNil:
-            print(LoginViewModelErrorType.signUpPublisedOutputStreamNil.errorDiscription + " : \(error.localizedDescription)")
+            print(ErrorCase.signUpPublisedOutputStreamNil.errorDiscription + " : \(error.localizedDescription)")
             break
         }
     }
