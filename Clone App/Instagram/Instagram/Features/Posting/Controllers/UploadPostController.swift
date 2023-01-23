@@ -20,6 +20,7 @@ class UploadPostController: UIViewController {
     var selectedImage: UIImage? {
         didSet { photoImageView.image = selectedImage }
     }
+    weak var coordinator: UploadFlowCoordinator?
     weak var didFinishDelegate: UploadPostControllerDelegate?
     var currentUserInfo: UserModel?
     
@@ -29,7 +30,7 @@ class UploadPostController: UIViewController {
     //MARK: - Lifecycle
     init(apiClient: ServiceProviderType) {
         self.apiClient = apiClient
-        super.init()
+        super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {
@@ -66,8 +67,16 @@ extension UploadPostController {
 
 //MARK: - Event Hanlder
 extension UploadPostController {
+    
+    func uploadPostCompletionHandler() {
+        DispatchQueue.main.async {
+            self.endIndicator()
+            self.didFinishDelegate?.controllerDidFinishUploadingPost(self)
+        }
+    }
+    
     @objc func didTapCancel() {
-        dismiss(animated: true)
+        coordinator?.finish()
     }
     
     @objc func didTapShare() {
@@ -91,13 +100,6 @@ extension UploadPostController {
         guard let userInfo = currentUserInfo else { throw FetchUserError.invalidUserInfo }
         
         try await apiClient.postCase.uploadPost(caption: caption, image: image, ownerProfileUrl: userInfo.profileURL, ownerUsername: userInfo.username)
-    }
-    
-    func uploadPostCompletionHandler() {
-        DispatchQueue.main.async {
-            self.endIndicator()
-            self.didFinishDelegate?.controllerDidFinishUploadingPost(self)
-        }
     }
     
     func uploadPostErrorHandling(error: Error) {
@@ -181,7 +183,7 @@ extension UploadPostController: SetupSubviewsConstraints {
         UIConfig.setupConstraints(with: photoImageView) {
             return [$0.height.constraint(equalToConstant: UPLOAD_POST_PHOTO_IMAGE_VIEW_SIZE),
                     $0.width.constraint(equalToConstant: UPLOAD_POST_PHOTO_IMAGE_VIEW_SIZE),
-                    $0.top.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+                    $0.top.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
                     $0.centerX.constraint(equalTo: view.centerX)]
         }
         

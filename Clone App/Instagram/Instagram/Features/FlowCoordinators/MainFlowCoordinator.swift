@@ -18,6 +18,8 @@ class MainFlowCoordinator: FlowCoordinator {
     fileprivate var apiClient: ServiceProviderType
     fileprivate var me: UserModel
     
+    fileprivate var isImageSelectorAllocated = false
+    
     //MARK: - LifeCycles
     init(me: UserModel, apiClient: ServiceProviderType) {
         self.apiClient = apiClient
@@ -31,6 +33,7 @@ class MainFlowCoordinator: FlowCoordinator {
     func start() {
         rootViewController.coordinator = self
         rootCoordinator = (parentCoordinator as! ApplicationFlowCoordinator)
+        
         //음? 왜 이렇게 했을까,, 일단 원래 parent는 Application인데 아마 MainFlow 인스턴스를 얻어야 하기 위해
         //parent를 자기자신으로 한 것 같다. 그래서 일단 상위 coordinator가 필요해서 rootCoordinator로 값ㅇ르 대입했다..
         parentCoordinator = self
@@ -69,8 +72,9 @@ extension MainFlowCoordinator {
     }
     
     fileprivate func imageSelectorCoordinatorSubscription() {
-        let child = ImageSelectorFlowCoordinator()
+        let child = ImageSelectorFlowCoordinator(loginOwner: me, apiClient: apiClient)
         holdChildByAdding(coordinator: child)
+        
     }
     
     fileprivate func notificationCoordinatorSubscription() {
@@ -84,3 +88,40 @@ extension MainFlowCoordinator {
     }
 }
 
+//MARK: - UploadPostControllerDelegate
+extension MainFlowCoordinator: UploadPostControllerDelegate {
+    func controllerDidFinishUploadingPost(_ controller: UploadPostController) {
+        controller.dismiss(animated: true)
+        childCoordinators
+            .first(where: {$0 is ImageSelectorFlowCoordinator})?
+            .childCoordinators
+            .removeAll()
+        
+        rootViewController.selectedIndex = 0
+        guard let feedFlow = childCoordinators
+            .first as? FeedFlowCoordinator else {
+            return
+        }
+        feedFlow.feedController.handleRefresh()
+    }
+    
+}
+
+extension MainFlowCoordinator {
+    
+    func gotoUploadPost() {
+        if isImageSelectorAllocated == false {
+            isImageSelectorAllocated = true
+            return
+        }
+        guard let child = childCoordinators
+            .first(where: {$0 is ImageSelectorFlowCoordinator})
+                as? ImageSelectorFlowCoordinator else { return }
+        child.imageSelectorController.showPicker()
+    }
+    
+    func gotoFeedPage() {
+        rootViewController.selectedIndex = 0
+    }
+    
+}

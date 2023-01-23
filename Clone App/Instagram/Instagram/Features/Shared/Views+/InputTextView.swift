@@ -32,8 +32,7 @@ class InputTextView: UITextView {
                 }
             }else {
                 UIConfig.setupConstraints(with: placeholderLabel) {
-                    [$0.top.constraint(equalTo: top, constant: 6),
-                     $0.leading.constraint(equalTo: leading,constant: 8)]
+                    [$0.leading.constraint(equalTo: leading,constant: 8)]
                 }
             }
         }

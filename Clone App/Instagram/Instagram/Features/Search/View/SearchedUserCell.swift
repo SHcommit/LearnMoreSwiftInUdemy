@@ -15,7 +15,7 @@ class SearchedUserCell: UITableViewCell {
     fileprivate var usernameLabel: UILabel!
     fileprivate var fullnameLabel: UILabel!
     fileprivate var nameStackView: UIStackView!
-    internal var userVM: UserViewModel? {
+    internal var vm: SearchedCellViewModel? {
         didSet {
             configureText()
             configureImage()
@@ -43,13 +43,13 @@ class SearchedUserCell: UITableViewCell {
 extension SearchedUserCell {
     
     func configureText() {
-        guard let userVM = userVM else { return }
+        guard let userVM = vm else { return }
         usernameLabel.text = userVM.username()
         fullnameLabel.text = userVM.fullname()
     }
     
     func configureImage() {
-        guard let userVM = userVM else { return }
+        guard let userVM = vm else { return }
         self.profileImageView.image = userVM.image()
     }
 
