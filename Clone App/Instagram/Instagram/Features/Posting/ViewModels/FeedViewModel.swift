@@ -51,7 +51,9 @@ extension FeedViewModel: FeedViewModelType {
         let refresh = input.refresh.map { _ -> State in
             self.posts.removeAll()
             self.fetchPosts()
-            return .reloadData
+            ///Task는 비동기라서 reloadData를 바로하면 cell초기화 때 인덱스가 초과된다.
+            ///나중에 posts에 값이 다 된다면 그 때 알아서 바인딩했기 때문에 리로드된다.
+            return .none
         }.eraseToAnyPublisher()
         
         return Publishers.Merge6(

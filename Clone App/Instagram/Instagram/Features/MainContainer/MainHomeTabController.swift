@@ -8,7 +8,6 @@
 import UIKit
 import Combine
 import Firebase
-import YPImagePicker
 
 class MainHomeTabController: UITabBarController {
     
@@ -78,25 +77,6 @@ extension MainHomeTabController {
     
 }
 
-//MARK: - Event Handler
-extension MainHomeTabController {
-    func didFinishPickingMedia(_ picker: YPImagePicker) {
-        picker.didFinishPicking { items, _ in
-            picker.dismiss(animated: false) {
-                guard let selectedImage = items.singlePhoto?.image else { return }
-                
-                let vc = UploadPostController(apiClient: ServiceProvider.defaultProvider())
-                vc.selectedImage = selectedImage
-                vc.didFinishDelegate = self
-                vc.currentUserInfo = self.vm.user
-                let nav = UINavigationController(rootViewController: vc)
-                nav.modalPresentationStyle = .fullScreen
-                self.present(nav, animated: false)
-            }
-        }
-    }
-}
-
 //MARK: - Setup tabBar UI
 extension MainHomeTabController {
     
@@ -119,38 +99,10 @@ extension MainHomeTabController {
     
 }
 
-//MAKR: -  UITabBarControllerDelegate
 extension MainHomeTabController: UITabBarControllerDelegate {
-    func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
-        let index = viewControllers?.firstIndex(of: viewController)
-        if index == 2 {
-            var config = YPImagePickerConfiguration()
-            config.library.mediaType = .photo
-            config.shouldSaveNewPicturesToAlbum = false
-            config.startOnScreen = .library
-            config.screens = [.library]
-            config.hidesStatusBar = false
-            config.hidesBottomBar = false
-            config.library.maxNumberOfItems = 1
-            
-            let picker = YPImagePicker(configuration: config)
-            picker.modalPresentationStyle = .fullScreen
-            present(picker, animated: true)
-            didFinishPickingMedia(picker)
+    func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
+        if tabBarController.selectedIndex == 2 {
+            coordinator?.gotoUploadPost()
         }
-        return true
     }
-}
-
-//MARK: - UploadPostControllerDelegate
-extension MainHomeTabController: UploadPostControllerDelegate {
-    func controllerDidFinishUploadingPost(_ controller: UploadPostController) {
-        selectedIndex = 0
-        controller.dismiss(animated: true)
-        guard let feedNavi = viewControllers?.first as? UINavigationController else { return }
-        guard let feedVC = feedNavi.viewControllers.first as? FeedController else { return }
-        feedVC.handleRefresh()
-
-    }
-    
 }

@@ -152,7 +152,7 @@ extension NotificationCell: SetupSubviewsLayouts {
     func setupSubviewsLayouts() {
         
         /// Setup profileImageView layout
-        UIConfig.setupLayout(detail: profileImageView) {
+        UtilsUI.setupLayout(detail: profileImageView) {
             $0.translatesAutoresizingMaskIntoConstraints = false
             $0.contentMode = .scaleAspectFill
             $0.clipsToBounds = true
@@ -162,14 +162,14 @@ extension NotificationCell: SetupSubviewsLayouts {
         }
         
         /// Setup infoLable layout
-        UIConfig.setupLayout(detail: infoLabel) {
+        UtilsUI.setupLayout(detail: infoLabel) {
             $0.translatesAutoresizingMaskIntoConstraints = false
             $0.font = UIFont.boldSystemFont(ofSize: 14)
             $0.numberOfLines = 0
         }
         
         /// Setup postImageView layout
-        UIConfig.setupLayout(detail: postImageView) {
+        UtilsUI.setupLayout(detail: postImageView) {
             $0.translatesAutoresizingMaskIntoConstraints = false
             $0.contentMode = .scaleAspectFill
             $0.clipsToBounds = true
@@ -180,7 +180,7 @@ extension NotificationCell: SetupSubviewsLayouts {
         }
         
         /// Setup followButton layout
-        UIConfig.setupLayout(detail: followButton) {
+        UtilsUI.setupLayout(detail: followButton) {
             $0.translatesAutoresizingMaskIntoConstraints = false
             $0.setTitle("Loading", for: .normal)
             $0.layer.cornerRadius = 3
@@ -200,7 +200,7 @@ extension NotificationCell: SetupSubviewsConstraints {
     func setupSubviewsConstraints() {
         
         /// Setup profileImageView constraints
-        UIConfig.setupConstraints(with: profileImageView) {
+        UtilsUI.setupConstraints(with: profileImageView) {
             return [$0.width.constraint(equalToConstant: 48),
                     $0.height.constraint(equalToConstant: 48),
                     $0.centerY.constraint(equalTo: centerY),
@@ -208,7 +208,7 @@ extension NotificationCell: SetupSubviewsConstraints {
         }
         
         /// Setup profileImageView constraints
-        UIConfig.setupConstraints(with: postImageView) {
+        UtilsUI.setupConstraints(with: postImageView) {
             return [$0.centerY.constraint(equalTo: centerY),
                     $0.trailing.constraint(equalTo: trailing,constant: -12),
                     $0.width.constraint(equalToConstant: 64),
@@ -216,7 +216,7 @@ extension NotificationCell: SetupSubviewsConstraints {
         }
         
         /// Setup followButton constraints
-        UIConfig.setupConstraints(with: followButton) {
+        UtilsUI.setupConstraints(with: followButton) {
             return [$0.centerY.constraint(equalTo: centerY),
                     $0.trailing.constraint(equalTo: trailing, constant: -12),
                     $0.width.constraint(equalToConstant: 88),
@@ -224,7 +224,7 @@ extension NotificationCell: SetupSubviewsConstraints {
         }
         
         /// Setup infoLabel constraints
-        UIConfig.setupConstraints(with: infoLabel) {
+        UtilsUI.setupConstraints(with: infoLabel) {
             return [$0.centerY.constraint(equalTo: profileImageView.centerY),
                     $0.leading.constraint(equalTo: profileImageView.trailing,
                                           constant: 8),

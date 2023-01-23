@@ -10,12 +10,12 @@ import UIKit
 class CommentFlowCoordinator:NSObject, FlowCoordinator {
     
     //MARK: - Properties
-    var parentCoordinator: FlowCoordinator?
-    var childCoordinators = [FlowCoordinator]()
-    var presenter: UINavigationController
-    var vm: CommentViewModelType
-    var commentController: CommentController!
-    let apiClient: ServiceProviderType
+    internal var parentCoordinator: FlowCoordinator?
+    internal var childCoordinators = [FlowCoordinator]()
+    internal var presenter: UINavigationController
+    internal var vm: CommentViewModelType
+    internal var commentController: CommentController!
+    fileprivate let apiClient: ServiceProviderType
     
     //MARK: - Lifecycles
     init(presenter: UINavigationController, vm: CommentViewModelType, apiClient: ServiceProviderType) {

@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import YPImagePicker
 
 class ImageSelectorFlowCoordinator: FlowCoordinator{
     
@@ -16,11 +17,16 @@ class ImageSelectorFlowCoordinator: FlowCoordinator{
     var childCoordinators = [FlowCoordinator]()
     var presenter: UINavigationController
     var imageSelectorController: ImageSelectorController!
+    var picker: YPImagePicker!
+    var loginOwner: UserModel
+    var apiClient: ServiceProviderType
     
     //MARK: - Lifecycles
-    init(presenter: UINavigationController? = nil) {
+    init(presenter: UINavigationController? = nil, loginOwner: UserModel, apiClient: ServiceProviderType) {
+        self.apiClient = apiClient
+        self.loginOwner = loginOwner
         self.presenter = presenter ?? UINavigationController()
-        imageSelectorController = ImageSelectorController()
+        imageSelectorController = ImageSelectorController(currentUser: loginOwner)
     }
     
     //MARK: - Action
@@ -38,14 +44,49 @@ class ImageSelectorFlowCoordinator: FlowCoordinator{
     }
     
     func finish() {
-    
-        // 중요 //
-        
-        // 얘도 나중에 sub coordinator 호출하면 parent가 mainFlow인지 반드시 검사 해야한다.
-        // parent일땐 자기자신을 삭제하면 안됨.
-        
         parentCoordinator?.removeChild(target: self)
         removeAllChild()
     }
     
+}
+
+extension ImageSelectorFlowCoordinator {
+    
+    func gotoPicker() {
+        var config = YPImagePickerConfiguration()
+        config.library.mediaType = .photo
+        config.shouldSaveNewPicturesToAlbum = false
+        config.startOnScreen = .library
+        config.screens = [.library]
+        config.hidesStatusBar = false
+        config.hidesBottomBar = false
+        config.library.maxNumberOfItems = 1
+        
+        let picker = YPImagePicker(configuration: config)
+        self.picker = picker
+        imageSelectorController.present(picker, animated: true)
+    }
+    
+    func gotoUploadPost(loginOwner: UserModel, items: [YPMediaItem]) {
+        picker.dismiss(animated: false) {
+            guard let selectedImage = items.singlePhoto?.image else {
+                self.gotoFeedPage()
+                return
+            }
+
+            let child = UploadFlowCoordinator(
+                presenter: self.presenter,
+                loginOwner: loginOwner,
+                selectedImg: selectedImage,
+                apiClient: self.apiClient)
+            self.holdChildByAdding(coordinator: child)
+        }
+    }
+    
+    func gotoFeedPage() {
+        guard let mainFlow = parentCoordinator as? MainFlowCoordinator else {
+            return
+        }
+        mainFlow.gotoFeedPage()
+    }
 }

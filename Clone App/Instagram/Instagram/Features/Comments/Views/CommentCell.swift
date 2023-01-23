@@ -57,7 +57,7 @@ extension CommentCell: SetupSubviewsLayouts {
     func setupSubviewsLayouts() {
         
         /// Setup profileImageView layout
-        UIConfig.setupLayout(detail: profileImageView) {
+        UtilsUI.setupLayout(detail: profileImageView) {
             $0.translatesAutoresizingMaskIntoConstraints = false
             $0.contentMode = .scaleAspectFill
             $0.clipsToBounds = true
@@ -66,7 +66,7 @@ extension CommentCell: SetupSubviewsLayouts {
         }
         
         /// Setup commentLabel layout
-        UIConfig.setupLayout(detail: commentLabel) {
+        UtilsUI.setupLayout(detail: commentLabel) {
             $0.translatesAutoresizingMaskIntoConstraints = false
             let attrStr = NSMutableAttributedString(
                 string: "username ",
@@ -87,7 +87,7 @@ extension CommentCell: SetupSubviewsConstraints {
     func setupSubviewsConstraints() {
         
         /// Setup profileImageView constraints
-        UIConfig.setupConstraints(with: profileImageView) {
+        UtilsUI.setupConstraints(with: profileImageView) {
             [$0.leading.constraint(equalTo: leading, constant: 8),
              $0.top.constraint(equalTo: top, constant: 8),
              $0.width.constraint(equalToConstant: 40),
@@ -95,7 +95,7 @@ extension CommentCell: SetupSubviewsConstraints {
         }
         
         /// Setup commentLabel constraints
-        UIConfig.setupConstraints(with: commentLabel) {
+        UtilsUI.setupConstraints(with: commentLabel) {
             [$0.leading.constraint(equalTo: profileImageView.trailing,
                                    constant: 8),
              $0.trailing.constraint(equalTo: trailing, constant:  -8),

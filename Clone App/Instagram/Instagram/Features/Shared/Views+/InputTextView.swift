@@ -26,14 +26,13 @@ class InputTextView: UITextView {
     var placeholderShouldCenter = true {
         didSet {
             if placeholderShouldCenter {
-                UIConfig.setupConstraints(with: placeholderLabel) {
+                UtilsUI.setupConstraints(with: placeholderLabel) {
                     [$0.leading.constraint(equalTo: leading,constant: 8),
                      $0.centerY.constraint(equalTo: centerY)]
                 }
             }else {
-                UIConfig.setupConstraints(with: placeholderLabel) {
-                    [$0.top.constraint(equalTo: top, constant: 6),
-                     $0.leading.constraint(equalTo: leading,constant: 8)]
+                UtilsUI.setupConstraints(with: placeholderLabel) {
+                    [$0.leading.constraint(equalTo: leading,constant: 8)]
                 }
             }
         }
@@ -95,7 +94,7 @@ extension InputTextView: SetupSubviewsLayouts {
     func setupSubviewsLayouts() {
         
         ///Setup placeholderLabel layout
-        UIConfig.setupLayout(detail: placeholderLabel) {
+        UtilsUI.setupLayout(detail: placeholderLabel) {
             $0.translatesAutoresizingMaskIntoConstraints = false
             $0.textColor = .lightGray
         }
@@ -109,7 +108,7 @@ extension InputTextView: SetupSubviewsConstraints {
     func setupSubviewsConstraints() {
     
         ///Setup placeholderLabel constraints
-        UIConfig.setupConstraints(with: placeholderLabel) {
+        UtilsUI.setupConstraints(with: placeholderLabel) {
             [$0.top.constraint(equalTo: top,
                                constant: INPUT_TEXT_VIEW_DEFAULT_MARGIN*2),
              $0.leading.constraint(equalTo: leading,

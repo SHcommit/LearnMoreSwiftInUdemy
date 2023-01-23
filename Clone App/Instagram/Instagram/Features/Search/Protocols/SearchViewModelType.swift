@@ -23,7 +23,7 @@ protocol SearchViewModelComputedPropertyCase {
     func numberOfRowsInSection(_ section: Int) -> Int
     
     /// TableView's each cell
-    func cellForRowAt(_ index: Int) -> UserViewModel
+    func cellForRowAt(_ index: Int) -> SearchedCellViewModel
     
     /// filteredUser's count
     func filteredCount() -> Int
