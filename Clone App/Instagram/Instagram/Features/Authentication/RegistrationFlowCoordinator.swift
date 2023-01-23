@@ -7,7 +7,7 @@
 
 import UIKit
 
-class RegisterFlowCoordinator: FlowCoordinator {
+class RegisterFlowCoordinator: NSObject, FlowCoordinator {
     
     //MARK: - Properties
     var parentCoordinator: FlowCoordinator?
@@ -43,4 +43,12 @@ extension RegisterFlowCoordinator {
     func gotoLoginPage() {
         presenter.popViewController(animated: true)
     }
+    
+    func gotoPicker() {
+        let picker = UIImagePickerController()
+        picker.delegate = registrationController
+        picker.allowsEditing = true
+        registrationController.present(picker, animated: true)
+    }
 }
+
