@@ -118,6 +118,7 @@ extension UploadPostController {
     }
 }
 
+//MARK: - ConfigureSubviewsCase
 extension UploadPostController: ConfigureSubviewsCase {
     
     func configureSubviews() {
@@ -142,9 +143,9 @@ extension UploadPostController: ConfigureSubviewsCase {
         setupSubviewsConstraints()
     }
     
-    
 }
 
+//MARK: - SetupSubviesLayouts
 extension UploadPostController: SetupSubviewsLayouts {
     func setupSubviewsLayouts() {
         
@@ -176,6 +177,7 @@ extension UploadPostController: SetupSubviewsLayouts {
     
 }
 
+//MARK: - SetupSubveiwsConstraints
 extension UploadPostController: SetupSubviewsConstraints {
     func setupSubviewsConstraints() {
         
@@ -209,6 +211,7 @@ extension UploadPostController: SetupSubviewsConstraints {
     
 }
 
+//MARK: - InputTextCountDelegate
 extension UploadPostController: InputTextCountDelegate {
     func inputTextCount(withCount cnt: Int) {
         DispatchQueue.main.async {

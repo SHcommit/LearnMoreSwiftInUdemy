@@ -40,6 +40,10 @@ extension UIViewController {
             self.indicator.startAnimating()
         }
     }
+     
+    func isRunningIndicator() ->Bool {
+        return indicator.isAnimating
+    }
     
     func endIndicator() {
         self.view.isUserInteractionEnabled = true

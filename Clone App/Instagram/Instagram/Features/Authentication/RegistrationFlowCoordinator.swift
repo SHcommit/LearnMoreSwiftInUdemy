@@ -38,6 +38,7 @@ class RegisterFlowCoordinator: NSObject, FlowCoordinator {
     
 }
 
+//MARK: - Setup child coordinator and holding :]
 extension RegisterFlowCoordinator {
     
     func gotoLoginPage() {

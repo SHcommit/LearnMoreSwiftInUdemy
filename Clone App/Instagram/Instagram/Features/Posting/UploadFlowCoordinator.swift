@@ -28,6 +28,11 @@ class UploadFlowCoordinator: FlowCoordinator {
     //MARK: - Action
     func start() {
         let vc = UploadPostController(apiClient: apiClient)
+        guard let mainFlow = parentCoordinator?.parentCoordinator as? MainFlowCoordinator else {
+            print("DEBUG: Not initialized parentCoordinator")
+            return
+        }
+        vc.didFinishDelegate = mainFlow
         vc.coordinator = self
         vc.selectedImage = selectedImg
         vc.currentUserInfo = loginOwner
@@ -35,14 +40,11 @@ class UploadFlowCoordinator: FlowCoordinator {
     }
     
     func finish() {
-        print("aaaa")
-//        presenter.popViewController(animated: true)
         parentCoordinator?.removeChild(target: self)
         removeAllChild()
         guard let imageFlow = parentCoordinator as? ImageSelectorFlowCoordinator else {
             return
         }
-        print("aaaaa")
         imageFlow.gotoFeedPage()
             
     }

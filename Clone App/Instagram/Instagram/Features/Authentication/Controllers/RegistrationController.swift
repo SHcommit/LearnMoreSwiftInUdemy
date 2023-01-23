@@ -11,7 +11,7 @@ import Combine
 class RegistrationController: UIViewController, UINavigationControllerDelegate {
     
     //MARK: - Properties
-    private lazy var photoButton: UIButton = initialPhotoButton()
+    fileprivate lazy var photoButton: UIButton = initialPhotoButton()
     private lazy var userInputStackView: UIStackView = initialUserInputStackView()
     private var emailTextField: UITextField = initialEmailTextField()
     private var passwordTextField: UITextField = initialPasswordTextField()

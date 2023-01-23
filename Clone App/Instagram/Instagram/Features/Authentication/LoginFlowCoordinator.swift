@@ -16,8 +16,8 @@ class LoginFlowCoordinator: NSObject, FlowCoordinator {
     var presenter: UINavigationController
     var loginController: LoginController!
     var vm: LoginViewModelType
-    
     fileprivate let apiClient: ServiceProviderType
+    
     //MARK: - Lifecycles
     init(apiClient: ServiceProviderType) {
         presenter = UINavigationController()
@@ -54,6 +54,7 @@ extension LoginFlowCoordinator {
     }
 }
 
+//MARK: - UINavigationControllerDelegate
 extension LoginFlowCoordinator: UINavigationControllerDelegate {
     func navigationController(_ nav: UINavigationController, didShow viewC: UIViewController, animated: Bool) {
         updateDismissedViewControllerChildCoordinatorFromNaviController(

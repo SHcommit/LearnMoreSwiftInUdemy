@@ -13,8 +13,8 @@ class MainFlowCoordinator: FlowCoordinator {
     internal var rootCoordinator: ApplicationFlowCoordinator?
     internal var parentCoordinator: FlowCoordinator?
     internal var childCoordinators: [FlowCoordinator] = []
-    var presenter: UINavigationController
-    var rootViewController: MainHomeTabController
+    internal var presenter: UINavigationController
+    internal var rootViewController: MainHomeTabController
     fileprivate var apiClient: ServiceProviderType
     fileprivate var me: UserModel
     
@@ -88,25 +88,7 @@ extension MainFlowCoordinator {
     }
 }
 
-//MARK: - UploadPostControllerDelegate
-extension MainFlowCoordinator: UploadPostControllerDelegate {
-    func controllerDidFinishUploadingPost(_ controller: UploadPostController) {
-        controller.dismiss(animated: true)
-        childCoordinators
-            .first(where: {$0 is ImageSelectorFlowCoordinator})?
-            .childCoordinators
-            .removeAll()
-        
-        rootViewController.selectedIndex = 0
-        guard let feedFlow = childCoordinators
-            .first as? FeedFlowCoordinator else {
-            return
-        }
-        feedFlow.feedController.handleRefresh()
-    }
-    
-}
-
+//MARK: - Setup sub child coordinator and holding :]
 extension MainFlowCoordinator {
     
     func gotoUploadPost() {
@@ -122,6 +104,24 @@ extension MainFlowCoordinator {
     
     func gotoFeedPage() {
         rootViewController.selectedIndex = 0
+    }
+    
+}
+
+//MARK: - UploadPostControllerDelegate
+extension MainFlowCoordinator: UploadPostControllerDelegate {
+    func controllerDidFinishUploadingPost(_ controller: UploadPostController) {
+        controller.dismiss(animated: true)
+        childCoordinators
+            .first(where: {$0 is ImageSelectorFlowCoordinator})?
+            .childCoordinators
+            .removeAll()
+        rootViewController.selectedIndex = 0
+        guard let feedFlow = childCoordinators
+            .first as? FeedFlowCoordinator else {
+            return
+        }
+        feedFlow.feedController.handleRefresh()
     }
     
 }
