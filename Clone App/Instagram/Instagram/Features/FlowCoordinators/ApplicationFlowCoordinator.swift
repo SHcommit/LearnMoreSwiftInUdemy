@@ -17,6 +17,8 @@ class ApplicationFlowCoordinator: FlowCoordinator{
     
     ///로그인 한 유저
     @Published var me: UserModel!
+    fileprivate let fetchLoginOwnerInfoFailed = PassthroughSubject<Void,Never>()
+    fileprivate var fetchFailedLoginOwnerSubscription: AnyCancellable?
     fileprivate var cancellable: AnyCancellable?
     fileprivate let window: UIWindow
     fileprivate let apiClient: ServiceProvider = ServiceProvider.defaultProvider()
@@ -31,9 +33,10 @@ class ApplicationFlowCoordinator: FlowCoordinator{
     }
 
     func start() {
+        setupBindings()
+        checkUserIsLoginAndCallChildCoordinators()
         setupUserInfo()
         parentCoordinator = self
-        checkUserIsLoginAndCallChildCoordinators()
     }
     
     func finish() {
@@ -71,29 +74,35 @@ extension ApplicationFlowCoordinator {
         return true
     }
     
+    fileprivate func setupBindings() {
+        fetchFailedLoginOwnerSubscription = fetchLoginOwnerInfoFailed
+            .subscribe(on: RunLoop.main)
+            .sink {
+                self.setupUserInfo()
+            }
+    }
+    
 }
 
-//MARK: - Setup child coordinator and holding :]
+//MARK: - Setup child coordinator subscription
 extension ApplicationFlowCoordinator {
-    
+
+    //MARK: - MainHomeTabCoordinator
     fileprivate func mainCoordinatorSubscription(with me: UserModel) {
         let child = MainFlowCoordinator(me: me, apiClient: apiClient)
-        ConfigCoordinator.setupChild(detail: child) {
+        UtilsCoordinator.setupChild(detail: child) {
             $0.parentCoordinator = self
             self.addChild(target: $0)
+            self.window.rootViewController = nil
             self.window.rootViewController = $0.rootViewController
             $0.start()
         }
     }
     
-    
-    
     //MARK: - AuthenticationCoordinator
     fileprivate func loginCoordinatorSubscription() {
-       
         let child = LoginFlowCoordinator(apiClient: apiClient)
-        
-        ConfigCoordinator.setupChild(detail: child) {
+        UtilsCoordinator.setupChild(detail: child) {
             $0.parentCoordinator = self
             self.addChild(target: $0)
             self.window.rootViewController = child.presenter
@@ -101,6 +110,32 @@ extension ApplicationFlowCoordinator {
         }
     }
     
+}
+
+//MARK: - Setup child coordinator and holding :]
+extension ApplicationFlowCoordinator {
+    
+    internal func gotoLoginPage(withDelete child: MainFlowCoordinator) {
+        loginCoordinatorSubscription()
+        child.finish()
+    }
+    
+    
+    internal func gotoFeedPage(withDelete child: LoginFlowCoordinator) {
+        me = nil
+        cancellable = nil
+        setupUserInfo()
+        cancellable = $me
+            .receive(on: DispatchQueue.main)
+            .sink { [unowned self] loginOwner in
+                guard let loginOwner = loginOwner else {
+                    self.fetchLoginOwnerInfoFailed.send()
+                    return
+                }
+                child.finish()
+                mainCoordinatorSubscription(with: loginOwner)
+            }
+    }
 }
 
 //MARK: - APIs

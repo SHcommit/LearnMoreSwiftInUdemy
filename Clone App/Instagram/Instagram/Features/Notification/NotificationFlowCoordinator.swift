@@ -9,6 +9,7 @@ import UIKit
 
 class NotificationFlowCoordinator: NSObject, FlowCoordinator {
     
+    //MARK: - Constants
     typealias NotificationFC = NotificationFlowCoordinator
     
     //MARK: - Properties
@@ -19,7 +20,6 @@ class NotificationFlowCoordinator: NSObject, FlowCoordinator {
     internal var user: UserModel
     internal var vm: NotificationViewModelType
     fileprivate let apiClient: ServiceProviderType
-    
     
     //MARK: - Lifecycles
     init(apiClient: ServiceProviderType, user: UserModel, presenter: UINavigationController? = nil) {
@@ -94,13 +94,13 @@ extension NotificationFlowCoordinator {
     fileprivate func notificationFlowChildCoordinatorManager(target vc: UIViewController) {
         switch vc {
         case is ProfileController:
-            UtilChildState.poppedChildFlow(coordinator: .profile(vc))
+            UtilsChildState.poppedChildFlow(coordinator: .profile(vc))
             break
         case is FeedController:
-            UtilChildState.poppedChildFlow(coordinator: .feed(vc))
+            UtilsChildState.poppedChildFlow(coordinator: .feed(vc))
             break
         case is CommentController:
-            UtilChildState.poppedChildFlow(coordinator: .comment(vc))
+            UtilsChildState.poppedChildFlow(coordinator: .comment(vc))
             break
         default:
             print("DEBUG: Unknown ViewController occured transition event in notification Flow Coordinator's NavigaitonController")

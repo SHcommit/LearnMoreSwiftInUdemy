@@ -30,7 +30,7 @@ enum FeedControllerState {
     case reloadData
     case endIndicator
     case appear
-    case callLoginCoordinator
+    case showLogin
 }
 
 protocol FeedViewModelType: FeedViewModelComputedProperty, FeedViewModelConvenience {

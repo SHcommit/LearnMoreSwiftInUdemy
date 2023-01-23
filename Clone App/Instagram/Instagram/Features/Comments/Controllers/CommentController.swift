@@ -11,7 +11,7 @@ import Combine
 class CommentController: UICollectionViewController {
     
     //MARK: - Constants
-    private let reuseIdentifier = "CommentCellID"
+    fileprivate let reuseIdentifier = "CommentCellID"
     
     //MARK: - Properties
     fileprivate var commentInputView: CommentInputAccessoryView!

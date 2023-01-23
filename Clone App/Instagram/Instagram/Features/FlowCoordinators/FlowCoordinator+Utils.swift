@@ -23,7 +23,7 @@ extension FlowCoordinator {
     
     // holding + child's coordinator start
     func holdChildByAdding<Element>(coordinator: Element) where Element: FlowCoordinator {
-        ConfigCoordinator.setupChild(detail: coordinator) {
+        UtilsCoordinator.setupChild(detail: coordinator) {
             self.addChild(target: $0)
             $0.parentCoordinator = self
             $0.start()
@@ -68,7 +68,7 @@ extension FlowCoordinator {
 
 //MARK: - Update child coordinator from popped view controller by executed presenter.
 
-typealias UtilChildState = UpdateChildCoordinatorState<UIViewController>
+typealias UtilsChildState = UpdateChildCoordinatorState<UIViewController>
 
 enum UpdateChildCoordinatorState<T> where T: UIViewController {
     
@@ -76,13 +76,7 @@ enum UpdateChildCoordinatorState<T> where T: UIViewController {
     case comment(T)
     case feed(T)
     case search(T)
-    
-    //추후 구현해야함.
-    //case uploadPost(T)
-    //case login(T)
-    //case register(T)
-    //case notification(T)
-    //case imageSelector(T)
+    case register(T)
     
     var updateState: Void {
         switch self {
@@ -98,6 +92,8 @@ enum UpdateChildCoordinatorState<T> where T: UIViewController {
         case .search(let targetVC):
             updateChildSearchCoordinatorFromPoppedVC(targetVC)
             return
+        case .register(let targetVC):
+            updateChildRegistrationFlowFromPoppedVC(targetVC)
         }
     }
     
@@ -142,10 +138,18 @@ extension UpdateChildCoordinatorState {
         child.finish()
     }
     
+    fileprivate func updateChildRegistrationFlowFromPoppedVC(_ vc: UIViewController) {
+        guard let registrationVC = vc as? RegistrationController,
+              let child = registrationVC.coordinator else {
+            return
+        }
+        child.finish()
+    }
+    
 }
 
 
-struct ConfigCoordinator {
+struct UtilsCoordinator {
     
     static func setupChild<T>(detail target : T, apply: @escaping (T)->Void) where T: FlowCoordinator {
         apply(target)

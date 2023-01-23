@@ -38,7 +38,7 @@ protocol SetupSubviewsConstraints {
     
 }
 
-struct UIConfig {
+struct UtilsUI {
     
     typealias Element = NSLayoutConstraint
     

@@ -20,6 +20,7 @@ class UploadPostController: UIViewController {
     var selectedImage: UIImage? {
         didSet { photoImageView.image = selectedImage }
     }
+    weak var coordinator: UploadFlowCoordinator?
     weak var didFinishDelegate: UploadPostControllerDelegate?
     var currentUserInfo: UserModel?
     
@@ -29,7 +30,7 @@ class UploadPostController: UIViewController {
     //MARK: - Lifecycle
     init(apiClient: ServiceProviderType) {
         self.apiClient = apiClient
-        super.init()
+        super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {
@@ -66,8 +67,16 @@ extension UploadPostController {
 
 //MARK: - Event Hanlder
 extension UploadPostController {
+    
+    func uploadPostCompletionHandler() {
+        DispatchQueue.main.async {
+            self.endIndicator()
+            self.didFinishDelegate?.controllerDidFinishUploadingPost(self)
+        }
+    }
+    
     @objc func didTapCancel() {
-        dismiss(animated: true)
+        coordinator?.finish()
     }
     
     @objc func didTapShare() {
@@ -93,13 +102,6 @@ extension UploadPostController {
         try await apiClient.postCase.uploadPost(caption: caption, image: image, ownerProfileUrl: userInfo.profileURL, ownerUsername: userInfo.username)
     }
     
-    func uploadPostCompletionHandler() {
-        DispatchQueue.main.async {
-            self.endIndicator()
-            self.didFinishDelegate?.controllerDidFinishUploadingPost(self)
-        }
-    }
-    
     func uploadPostErrorHandling(error: Error) {
         switch error {
         case FetchUserError.invalidGetDocumentUserUID:
@@ -116,6 +118,7 @@ extension UploadPostController {
     }
 }
 
+//MARK: - ConfigureSubviewsCase
 extension UploadPostController: ConfigureSubviewsCase {
     
     func configureSubviews() {
@@ -140,14 +143,14 @@ extension UploadPostController: ConfigureSubviewsCase {
         setupSubviewsConstraints()
     }
     
-    
 }
 
+//MARK: - SetupSubviesLayouts
 extension UploadPostController: SetupSubviewsLayouts {
     func setupSubviewsLayouts() {
         
         ///Setup photoImageView layout
-        UIConfig.setupLayout(detail: photoImageView) {
+        UtilsUI.setupLayout(detail: photoImageView) {
             $0.translatesAutoresizingMaskIntoConstraints = false
             $0.contentMode = .scaleAspectFill
             $0.layer.cornerRadius = 10
@@ -155,7 +158,7 @@ extension UploadPostController: SetupSubviewsLayouts {
         }
         
         ///Setup contentsTextView layout
-        UIConfig.setupLayout(detail: contentsTextView) {
+        UtilsUI.setupLayout(detail: contentsTextView) {
             $0.translatesAutoresizingMaskIntoConstraints = false
             $0.placeholderText = "Enter caption.."
             $0.font = UIFont.systemFont(ofSize: 16)
@@ -164,7 +167,7 @@ extension UploadPostController: SetupSubviewsLayouts {
         }
         
         ///Setup charCount layout
-        UIConfig.setupLayout(detail: charCountLabel) {
+        UtilsUI.setupLayout(detail: charCountLabel) {
             $0.translatesAutoresizingMaskIntoConstraints = false
             $0.textColor = .lightGray
             $0.font = UIFont.systemFont(ofSize: 14)
@@ -174,19 +177,20 @@ extension UploadPostController: SetupSubviewsLayouts {
     
 }
 
+//MARK: - SetupSubveiwsConstraints
 extension UploadPostController: SetupSubviewsConstraints {
     func setupSubviewsConstraints() {
         
         ///Setup photoImageView constraints
-        UIConfig.setupConstraints(with: photoImageView) {
+        UtilsUI.setupConstraints(with: photoImageView) {
             return [$0.height.constraint(equalToConstant: UPLOAD_POST_PHOTO_IMAGE_VIEW_SIZE),
                     $0.width.constraint(equalToConstant: UPLOAD_POST_PHOTO_IMAGE_VIEW_SIZE),
-                    $0.top.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+                    $0.top.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
                     $0.centerX.constraint(equalTo: view.centerX)]
         }
         
         ///Setup contentsTextView constraints
-        UIConfig.setupConstraints(with: contentsTextView) {
+        UtilsUI.setupConstraints(with: contentsTextView) {
             return [$0.top.constraint(equalTo: photoImageView.bottom,
                                       constant: UPLOAD_POST_CONTENT_TOP_MARGIN),
                     $0.leading.constraint(equalTo: view.leading,
@@ -197,7 +201,7 @@ extension UploadPostController: SetupSubviewsConstraints {
         }
         
         ///Setup charCountLabel constraints
-        UIConfig.setupConstraints(with: charCountLabel) {
+        UtilsUI.setupConstraints(with: charCountLabel) {
             return [$0.top.constraint(equalTo: contentsTextView.bottom,
                                       constant: UPLOAD_POST_CONTENT_SIDE_MARGIN),
                     $0.trailing.constraint(equalTo: view.trailing,
@@ -207,6 +211,7 @@ extension UploadPostController: SetupSubviewsConstraints {
     
 }
 
+//MARK: - InputTextCountDelegate
 extension UploadPostController: InputTextCountDelegate {
     func inputTextCount(withCount cnt: Int) {
         DispatchQueue.main.async {

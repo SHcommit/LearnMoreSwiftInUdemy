@@ -11,20 +11,21 @@ import Combine
 class RegistrationController: UIViewController, UINavigationControllerDelegate {
     
     //MARK: - Properties
-    private lazy var photoButton: UIButton = initialPhotoButton()
-    private lazy var userInputStackView: UIStackView = initialUserInputStackView()
-    private var emailTextField: UITextField = initialEmailTextField()
-    private var passwordTextField: UITextField = initialPasswordTextField()
-    private var fullnameTextField: UITextField = initialFullnameTextField()
-    private var usernameTextField: UITextField = initialUsernameTextField()
-    private lazy var signUpButton: LoginButton = initialSignUpButton()
-    private var readyLogInLineStackView: UIStackView = initialReadyLogInLineStackView()
-    private var indicator: UIActivityIndicatorView = UIActivityIndicatorView(style: .medium)
-    private var viewModel = RegistrationViewModel(apiClient: ServiceProvider.defaultProvider())
-    private var subscriptions: Set<AnyCancellable> = Set<AnyCancellable>()
-    private var appear = PassthroughSubject<Void,Never>()
-    private var signUpTap = PassthroughSubject<UINavigationController?,Never>()
-    private var photoPickerTap = PassthroughSubject<RegistrationController, Never>()
+    fileprivate lazy var photoButton: UIButton = initialPhotoButton()
+    fileprivate lazy var userInputStackView: UIStackView = initialUserInputStackView()
+    fileprivate var emailTextField: UITextField = initialEmailTextField()
+    fileprivate var passwordTextField: UITextField = initialPasswordTextField()
+    fileprivate var fullnameTextField: UITextField = initialFullnameTextField()
+    fileprivate var usernameTextField: UITextField = initialUsernameTextField()
+    fileprivate lazy var signUpButton: LoginButton = initialSignUpButton()
+    fileprivate var readyLogInLineStackView: UIStackView = initialReadyLogInLineStackView()
+    fileprivate var indicator: UIActivityIndicatorView = UIActivityIndicatorView(style: .medium)
+    fileprivate var viewModel = RegistrationViewModel(apiClient: ServiceProvider.defaultProvider())
+    fileprivate var subscriptions: Set<AnyCancellable> = Set<AnyCancellable>()
+    fileprivate var appear = PassthroughSubject<Void,Never>()
+    fileprivate var signUpTap = PassthroughSubject<Void,Never>()
+    fileprivate var photoPickerTap = PassthroughSubject<Void, Never>()
+    weak var coordinator: RegisterFlowCoordinator?
 
     //MARK: - Lifecycle
     override func viewDidLoad() {
@@ -34,7 +35,6 @@ class RegistrationController: UIViewController, UINavigationControllerDelegate {
     }
     
 }
-
 
 //MARK: - Helpers
 extension RegistrationController {
@@ -61,26 +61,33 @@ extension RegistrationController {
     
     func setupBinding() {
         
-        let input = RegistrationViewModelInput(appear: appear.eraseToAnyPublisher(), signUpTap: signUpTap.eraseToAnyPublisher(), photoPickerTap: photoPickerTap.eraseToAnyPublisher())
+        let input = RegistrationViewModelInput(
+            appear: appear.eraseToAnyPublisher(),
+            signUpTap: signUpTap.eraseToAnyPublisher(),
+            photoPickerTap: photoPickerTap.eraseToAnyPublisher())
         
-        viewModel.bind(with: input)
+        let output = viewModel.transform(with: input)
+        output
+            .receive(on: RunLoop.main)
+            .sink{self.render($0)}
+            .store(in: &subscriptions)
         
-        CombineUtils.textfieldNotificationPublisher(withTF: emailTextField)
+        UtilsCombine.textfieldNotificationPublisher(withTF: emailTextField)
             .receive(on: DispatchQueue.main)
             .sink { [unowned self] text in
                 viewModel.email = text
             }.store(in: &subscriptions)
-        CombineUtils.textfieldNotificationPublisher(withTF: passwordTextField)
+        UtilsCombine.textfieldNotificationPublisher(withTF: passwordTextField)
             .receive(on: RunLoop.main)
             .sink { [unowned self] text in
                 viewModel.password = text
             }.store(in: &subscriptions)
-        CombineUtils.textfieldNotificationPublisher(withTF: fullnameTextField)
+        UtilsCombine.textfieldNotificationPublisher(withTF: fullnameTextField)
             .receive(on: RunLoop.main)
             .sink { [unowned self] text in
                 viewModel.fullname = text
             }.store(in: &subscriptions)
-        CombineUtils.textfieldNotificationPublisher(withTF: usernameTextField)
+        UtilsCombine.textfieldNotificationPublisher(withTF: usernameTextField)
             .receive(on: RunLoop.main)
             .sink { [unowned self] text in
                 viewModel.username = text
@@ -101,6 +108,24 @@ extension RegistrationController {
         photoButton.clipsToBounds = true
         dismiss(animated: true)
     }
+    
+    fileprivate func render(_ state: RegistrationControllerState) {
+        switch state {
+        case .none:
+            break
+        case .endIndicator:
+            endIndicator()
+            break
+        case .showLogin:
+            endIndicator()
+            coordinator?.gotoLoginPage()
+            break
+        case .showPicker:
+            endIndicator()
+            coordinator?.gotoPicker()
+            break
+        }
+    }
 
 }
 
@@ -108,15 +133,16 @@ extension RegistrationController {
 extension RegistrationController {
 
     @objc func didTapLoginButton(_ sender: Any) {
-        navigationController?.popViewController(animated: true)
+        coordinator?.gotoLoginPage()
     }
     
     @objc func didTapSignUpButton(_ sender: Any) {
-        signUpTap.send(navigationController)
+        signUpTap.send()
     }
     
     @objc func didTapPhotoButton(_ sender: Any) {
-        photoPickerTap.send(self)
+        startIndicator()
+        photoPickerTap.send()
         
     }
 }
