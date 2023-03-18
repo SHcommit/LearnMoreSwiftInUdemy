@@ -9,10 +9,10 @@ import UIKit
 import Combine
 
 protocol LoginViewModelConvenience {
-    typealias Input = LoginViewModelInput
-    typealias Output = LoginViewModelOutput
-    typealias State = LoginControllerState
-    typealias ErrorCase = LoginViewModelErrorType
+  typealias Input = LoginViewModelInput
+  typealias Output = LoginViewModelOutput
+  typealias State = LoginControllerState
+  typealias ErrorCase = LoginViewModelErrorType
 }
 
 /// Firebase  에서 지원하는 Auth.auth().currentUser는 잘 동작하지 않는다.
@@ -26,21 +26,21 @@ protocol LoginViewModelConvenience {
  - case failed : etc
  */
 enum LoginViewModelErrorType: Error {
-    
-    case loginPublishedOutputStreamNil,
-         signUpPublisedOutputStreamNil,
-         failed
-    
-    var errorDiscription: String {
-        switch self {
-        case .failed:
-            return "DEBUG: Invalid code"
-        case .signUpPublisedOutputStreamNil:
-            return "DEBUG: SignUp's published output is nil"
-        case .loginPublishedOutputStreamNil:
-            return "DEBUG: Login's published output is nil"
-        }
+  
+  case loginPublishedOutputStreamNil,
+       signUpPublisedOutputStreamNil,
+       failed
+  
+  var errorDiscription: String {
+    switch self {
+    case .failed:
+      return "DEBUG: Invalid code"
+    case .signUpPublisedOutputStreamNil:
+      return "DEBUG: SignUp's published output is nil"
+    case .loginPublishedOutputStreamNil:
+      return "DEBUG: Login's published output is nil"
     }
+  }
 }
 
 typealias LoginElement = (presentingVC: UIViewController?, currentVC: UIViewController?)
@@ -57,16 +57,16 @@ typealias LoginElement = (presentingVC: UIViewController?, currentVC: UIViewCont
  1. 특별하게 Never란 없다는 마음가짐으로 Never Type를 publisher의 타입으로 사용하지 않았다.
  */
 struct LoginViewModelInput: LoginViewModelConvenience {
-    
-    //MARK: - InputEvent
-    var login: AnyPublisher<LoginElement,ErrorCase>
-    
-    var signUp: AnyPublisher<Void,ErrorCase>
-    
-    var emailNotification: AnyPublisher<String, ErrorCase>
-    
-    var passwdNotification: AnyPublisher<String, ErrorCase>
-    
+  
+  //MARK: - InputEvent
+  var login: AnyPublisher<LoginElement,ErrorCase>
+  
+  var signUp: AnyPublisher<Void,ErrorCase>
+  
+  var emailNotification: AnyPublisher<String, ErrorCase>
+  
+  var passwdNotification: AnyPublisher<String, ErrorCase>
+  
 }
 
 /**
@@ -80,42 +80,42 @@ struct LoginViewModelInput: LoginViewModelConvenience {
  - Param isValidUserForm : 사용자 로그인 ,비번 입력했는지 여부
  */
 protocol LoginViewModelInputCase: LoginViewModelConvenience {
-    
-    func loginChains(with input: Input) -> Output
-    
-    func signUpChains(with input: Input) -> Output
-    
-    func emailNotificationChains(with input: Input) -> Output
-    
-    func passwdNotificationChains(with input: Input) -> Output
-    
-    func isValidFormChains(with input: Input) -> Output
-    
-    /// 사용자가 로그인, 비밀번호 칸을 두개 다 입력 했는지 체크 여부 반환한다.
-    /// 추후 비밀번호 최소 입력 개수를 제한하고 알림창을 띄우는 기능을 추가할 것이다.
-    func isValidUserForm() -> AnyPublisher<Bool,ErrorCase>
-    
+  
+  func loginChains(with input: Input) -> Output
+  
+  func signUpChains(with input: Input) -> Output
+  
+  func emailNotificationChains(with input: Input) -> Output
+  
+  func passwdNotificationChains(with input: Input) -> Output
+  
+  func isValidFormChains(with input: Input) -> Output
+  
+  /// 사용자가 로그인, 비밀번호 칸을 두개 다 입력 했는지 체크 여부 반환한다.
+  /// 추후 비밀번호 최소 입력 개수를 제한하고 알림창을 띄우는 기능을 추가할 것이다.
+  func isValidUserForm() -> AnyPublisher<Bool,ErrorCase>
+  
 }
 
 typealias LoginViewModelOutput = AnyPublisher<LoginControllerState,LoginViewModelErrorType>
 
 enum LoginControllerState {
-    case checkIsValid(Bool),
-         none,
-         endIndicator,
-         showRegister,
-         showFeed
+  case checkIsValid(Bool),
+       none,
+       endIndicator,
+       showRegister,
+       showFeed
 }
 
 protocol LoginViewModelType: LoginViewModelConvenience {
-
-    func transform(with input: Input) -> Output
-    
+  
+  func transform(with input: Input) -> Output
+  
 }
 
 protocol LoginViewModelNetworkServiceType {
-    
-    /// Async, Await을 통해 회원 여부 판단을 request하는 server api관련 wrapper func.
-    func loginAndOwnerUidStoreInUserDefaults()
-    
+  
+  /// Async, Await을 통해 회원 여부 판단을 request하는 server api관련 wrapper func.
+  func loginAndOwnerUidStoreInUserDefaults()
+  
 }

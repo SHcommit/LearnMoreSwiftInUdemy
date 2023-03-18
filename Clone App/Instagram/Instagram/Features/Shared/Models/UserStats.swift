@@ -7,7 +7,7 @@
 
 
 struct Userstats {
-    let followers: Int
-    let following: Int
-    //let postst: Int
+  let followers: Int
+  let following: Int
+  //let postst: Int
 }

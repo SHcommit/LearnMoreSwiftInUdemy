@@ -10,15 +10,15 @@ import Firebase
 
 
 struct UploadCommentInputModel {
-    let comment: String
-    let postID: String
-    let user: UserModel
+  let comment: String
+  let postID: String
+  let user: UserModel
 }
 
 struct CommentModel: Codable {
-    let uid: String
-    let comment: String
-    let timestamp: Timestamp
-    let username: String
-    let profileImageUrl: String
+  let uid: String
+  let comment: String
+  let timestamp: Timestamp
+  let username: String
+  let profileImageUrl: String
 }

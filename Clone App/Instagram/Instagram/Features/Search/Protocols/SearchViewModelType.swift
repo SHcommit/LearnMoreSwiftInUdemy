@@ -9,51 +9,51 @@ import UIKit
 import Combine
 
 protocol SearchViewModelConvenience {
-    typealias Input = SearchViewModelInput
-    typealias Output = SearchViewModelOutput
-    typealias State = SearchControllerState
+  typealias Input = SearchViewModelInput
+  typealias Output = SearchViewModelOutput
+  typealias State = SearchControllerState
 }
 
 protocol SearchViewModelComputedPropertyCase {
-    
-    /// Is searchController activated?
-    func isSearchMode(withSearch viewController: UISearchController) -> Bool
-    
-    /// TableView's numberOfRows
-    func numberOfRowsInSection(_ section: Int) -> Int
-    
-    /// TableView's each cell
-    func cellForRowAt(_ index: Int) -> SearchedCellViewModel
-    
-    /// filteredUser's count
-    func filteredCount() -> Int
-    
-    func getUsers() -> [UserModel]
-    
+  
+  /// Is searchController activated?
+  func isSearchMode(withSearch viewController: UISearchController) -> Bool
+  
+  /// TableView's numberOfRows
+  func numberOfRowsInSection(_ section: Int) -> Int
+  
+  /// TableView's each cell
+  func cellForRowAt(_ index: Int) -> SearchedCellViewModel
+  
+  /// filteredUser's count
+  func filteredCount() -> Int
+  
+  func getUsers() -> [UserModel]
+  
 }
 
 protocol SearchViewModelType: SearchViewModelComputedPropertyCase, SearchViewModelConvenience {
-    //MARK: - Input/Output
-    /// SearchController's input -> viewModel's output
-    func transform(input: Input) -> Output
-    
+  //MARK: - Input/Output
+  /// SearchController's input -> viewModel's output
+  func transform(input: Input) -> Output
+  
 }
 
 //MARK: - APIs
 protocol SearchViewModelNetworkServiceType {
-    
-    /// Fetch All User info from firestore. this is SearchController's tableView's each cell data
-    func fetchAllUser() async
-
-    func fetchAllUserDefaultInfo() async throws
-    
+  
+  /// Fetch All User info from firestore. this is SearchController's tableView's each cell data
+  func fetchAllUser() async
+  
+  func fetchAllUserDefaultInfo() async throws
+  
 }
 
 //MARK: - API error handling
 protocol SearchViewModelNetworkErrorHandlingType {
-    
-    func fetchAllUserErrorHandling(withError error: Error)
-    
+  
+  func fetchAllUserErrorHandling(withError error: Error)
+  
 }
 
 //MARK: - SearchController's Input type.
@@ -70,46 +70,46 @@ protocol SearchViewModelNetworkErrorHandlingType {
  */
 typealias SearchViewModelInputTableInfo = (cell: SearchedUserCell, indexPath: IndexPath)
 struct SearchViewModelInput {
-    
-    var cellForRowAt: AnyPublisher<(SearchViewModelInputTableInfo,UISearchController),Never>
-    
-    var didSelectRowAt: AnyPublisher<SearchViewModelInputTableInfo,Never>
-    
-    var searchResult: AnyPublisher<String, Never>
-    
-    var appear: AnyPublisher<Void,Never>
-    
+  
+  var cellForRowAt: AnyPublisher<(SearchViewModelInputTableInfo,UISearchController),Never>
+  
+  var didSelectRowAt: AnyPublisher<SearchViewModelInputTableInfo,Never>
+  
+  var searchResult: AnyPublisher<String, Never>
+  
+  var appear: AnyPublisher<Void,Never>
+  
 }
 
 protocol SearchViewModelInputCase: SearchViewModelConvenience {
-    
-    typealias tableInfo = (cell: SearchedUserCell, indexPath: IndexPath)
-    //MARK: - CellForRowAt case
-    /// Update cell's data with SearchViewModelInputTableInfo, UISearchController
-    func setupCellForRowAtInputBind(with input: Input) -> Output
-
-    func setupUserViewModelInCell(with tableInfo: tableInfo, _ searchController: UISearchController)
-    
-    //이거
-    //이거
-    //요곤 userVM이라고하는 viewModel 거기서 알아서 하라고 바꿔야함
-    func fetchUserStats(in cell: SearchedUserCell)
-    func fetchUserImage(in cell: SearchedUserCell)
-    
-    //MARK: - didselectRowAt case
-    /// Show special cell's info with didSelectRowAt's SearchViewModelInputTableInfo.
-    func setupDidSelectRowAtInputBind(with input: Input) -> Output
-    
-    //MARK: - SearchResult case
-    /// Update viewModel.filteredUser with searchResult's String
-    func setupSearchResultInputBind(with input: Input) -> Output
-    func delayTextfieldTyping(with input: Input) -> AnyPublisher<String,Never>
-    func filterTypingFormFromUsers(with delayedText: AnyPublisher<String,Never>) -> Output
-    
-    //MARK: - Appear case
-    /// Update tableView. ReloadData
-    func setupAppearInputBind(with input: Input) -> Output
-    
+  
+  typealias tableInfo = (cell: SearchedUserCell, indexPath: IndexPath)
+  //MARK: - CellForRowAt case
+  /// Update cell's data with SearchViewModelInputTableInfo, UISearchController
+  func setupCellForRowAtInputBind(with input: Input) -> Output
+  
+  func setupUserViewModelInCell(with tableInfo: tableInfo, _ searchController: UISearchController)
+  
+  //이거
+  //이거
+  //요곤 userVM이라고하는 viewModel 거기서 알아서 하라고 바꿔야함
+  func fetchUserStats(in cell: SearchedUserCell)
+  func fetchUserImage(in cell: SearchedUserCell)
+  
+  //MARK: - didselectRowAt case
+  /// Show special cell's info with didSelectRowAt's SearchViewModelInputTableInfo.
+  func setupDidSelectRowAtInputBind(with input: Input) -> Output
+  
+  //MARK: - SearchResult case
+  /// Update viewModel.filteredUser with searchResult's String
+  func setupSearchResultInputBind(with input: Input) -> Output
+  func delayTextfieldTyping(with input: Input) -> AnyPublisher<String,Never>
+  func filterTypingFormFromUsers(with delayedText: AnyPublisher<String,Never>) -> Output
+  
+  //MARK: - Appear case
+  /// Update tableView. ReloadData
+  func setupAppearInputBind(with input: Input) -> Output
+  
 }
 
 //MARK: - SearchViewModel's outputType
@@ -127,23 +127,23 @@ protocol SearchViewModelInputCase: SearchViewModelConvenience {
  */
 typealias SearchViewModelOutput = AnyPublisher<SearchControllerState, Never>
 enum SearchControllerState: Equatable {
-    case none
-    case showProfile(UserModel)
-    case tableViewReload
-    case failure
-    
-    static func == (lhs: Self,rhs: Self) -> Bool {
-        switch (lhs, rhs) {
-        case
-            (.none, .none),
-            (.showProfile(_), .showProfile(_)),
-            (.tableViewReload, .tableViewReload),
-            (.failure, .failure):
-            return true
-        default:
-            return false
-            
-        }
-        
+  case none
+  case showProfile(UserModel)
+  case tableViewReload
+  case failure
+  
+  static func == (lhs: Self,rhs: Self) -> Bool {
+    switch (lhs, rhs) {
+    case
+      (.none, .none),
+      (.showProfile(_), .showProfile(_)),
+      (.tableViewReload, .tableViewReload),
+      (.failure, .failure):
+      return true
+    default:
+      return false
+      
     }
+    
+  }
 }

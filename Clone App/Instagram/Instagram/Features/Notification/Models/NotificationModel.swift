@@ -9,27 +9,27 @@ import Foundation
 import Firebase
 
 enum NotificationType: Int, Codable {
-    case like
-    case follow
-    case comment
+  case like
+  case follow
+  case comment
 }
 
 extension NotificationType: CustomStringConvertible {
-    var description: String {
-        switch self {
-        case .like: return " liked your post."
-        case .follow: return " started following you"
-        case .comment: return " commented on your post"
-        }
+  var description: String {
+    switch self {
+    case .like: return " liked your post."
+    case .follow: return " started following you"
+    case .comment: return " commented on your post"
     }
-    
+  }
+  
 }
 
 struct NotificationModel: Codable {
-    var postImageUrl: String?
-    var postId: String?
-    let timestamp: Timestamp
-    let type: NotificationType
-    let id: String
-    var specificUserInfo: UploadNotificationModel
+  var postImageUrl: String?
+  var postId: String?
+  let timestamp: Timestamp
+  let type: NotificationType
+  let id: String
+  var specificUserInfo: UploadNotificationModel
 }

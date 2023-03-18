@@ -39,18 +39,18 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "closure #1 in FlowCoordinator.holdChildByAdding&lt;&#x3c4;_0_0&gt;(coordinator:):FlowCoordinator+Utils.swift">
+      </ContextState>
+      <ContextState
+         contextName = "FeedController.handleLogout():FeedController.swift">
+      </ContextState>
+      <ContextState
          contextName = "closure #1 in SearchViewModel.setupUserViewModelInCell(with:_:):SearchViewModel.swift">
          <PersistentStrings>
             <PersistentString
                value = "indexPath.row">
             </PersistentString>
          </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "FeedController.handleLogout():FeedController.swift">
-      </ContextState>
-      <ContextState
-         contextName = "closure #1 in FlowCoordinator.holdChildByAdding&lt;&#x3c4;_0_0&gt;(coordinator:):FlowCoordinator+Utils.swift">
       </ContextState>
       <ContextState
          contextName = "closure #1 in static PostService.fetchPosts():PostService.swift">
@@ -78,6 +78,14 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "FeedController.scrollViewWillEndDragging(_:withVelocity:targetContentOffset:):FeedController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "print(cellHeightIncludingSpacing)">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "FeedController.handleRefresh():FeedController.swift">
          <PersistentStrings>
             <PersistentString
@@ -92,6 +100,9 @@
                value = "">
             </PersistentString>
          </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "FeedController.collectionView(_:layout:sizeForItemAt:):FeedController.swift">
       </ContextState>
       <ContextState
          contextName = "closure #1 in closure #1 in static ProfileHeader.initialProfileIV():ProfileHeader.swift">
