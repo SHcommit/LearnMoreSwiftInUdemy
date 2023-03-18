@@ -200,7 +200,16 @@ extension FeedController: UICollectionViewDelegateFlowLayout {
 //
 //    return CGSize(width: view.frame.width, height: cellHeight)
 //  }
-  
+}
+
+//MARK: - UICollectionViewDeleagte
+extension FeedController {
+  override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+    cell.alpha = 0
+    UIView.animate(withDuration: 0.5) {
+      cell.alpha = 1
+    }
+  }
 }
 
 
