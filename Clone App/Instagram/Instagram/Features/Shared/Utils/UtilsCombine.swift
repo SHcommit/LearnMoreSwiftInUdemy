@@ -9,12 +9,12 @@ import UIKit
 import Combine
 
 class UtilsCombine {
-    
-    static func textfieldNotificationPublisher(withTF textField: UITextField) -> AnyPublisher<String,NotificationCenter.Publisher.Failure> {
-        return NotificationCenter.default
-            .publisher(for: UITextField.textDidChangeNotification,object: textField)
-            .map { return ($0.object as? UITextField)?.text ?? "" }
-            .eraseToAnyPublisher()
-    }
-
+  
+  static func textfieldNotificationPublisher(withTF textField: UITextField) -> AnyPublisher<String,NotificationCenter.Publisher.Failure> {
+    return NotificationCenter.default
+      .publisher(for: UITextField.textDidChangeNotification,object: textField)
+      .map { return ($0.object as? UITextField)?.text ?? "" }
+      .eraseToAnyPublisher()
+  }
+  
 }

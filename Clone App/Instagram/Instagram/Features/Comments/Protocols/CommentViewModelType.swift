@@ -9,77 +9,77 @@ import UIKit
 import Combine
 
 protocol CommentViewModelConvenience {
-    typealias Input = CommentViewModelInput
-    typealias Output = CommentViewModelOutput
-    typealias State = CommentControllerState
+  typealias Input = CommentViewModelInput
+  typealias Output = CommentViewModelOutput
+  typealias State = CommentControllerState
 }
 
 typealias CommentCellInfo = (cell: CommentCell, index: Int)
 typealias CommentCellSelectInfo = (nav: UINavigationController?, index: Int)
 
 struct CommentViewModelInput {
-    
-    let appear: AnyPublisher<Void,Never>
-    let reloadData: AnyPublisher<Void,Never>
-    let cellForItem: AnyPublisher<CommentCellInfo,Never>
-    let didSelected: AnyPublisher<CommentCellSelectInfo,Never>
-    
+  
+  let appear: AnyPublisher<Void,Never>
+  let reloadData: AnyPublisher<Void,Never>
+  let cellForItem: AnyPublisher<CommentCellInfo,Never>
+  let didSelected: AnyPublisher<CommentCellSelectInfo,Never>
+  
 }
 
 typealias CommentViewModelOutput = AnyPublisher<CommentControllerState,Never>
 
 enum CommentControllerState {
-    
-    case none
-    case showProfile(UserModel)
-    case updateUI
-    
+  
+  case none
+  case showProfile(UserModel)
+  case updateUI
+  
 }
 
 protocol CommentViewModelComputedPropery {
-    
-    var post: PostModel { get set }
-    var comments: [CommentModel] { get set }
-    var count: Int { get }
-    
+  
+  var post: PostModel { get set }
+  var comments: [CommentModel] { get set }
+  var count: Int { get }
+  
 }
 
 protocol CommentViewModelType: CommentViewModelComputedPropery, CommentViewModelConvenience {
-    
-    func transform(input: Input) -> Output
-    
-    func size(forWidth width: CGFloat, index: Int) -> CGSize
-    
+  
+  func transform(input: Input) -> Output
+  
+  func size(forWidth width: CGFloat, index: Int) -> CGSize
+  
 }
 
 protocol CommentViewModelInputCase: CommentViewModelConvenience {
-    
-    func newCommentChains() -> Output
-    
-    func appearChains(with input: Input) -> Output
-    
-    func reloadDataChains(with input: Input) -> Output
-    
-    func cellForItemChains(with input: Input) -> Output
-    
-    func didSelectedChains(with input: Input) -> Output
-    
-    func fetchedSepcifigUserInfoFromDidTapProfile() -> Output
-    
+  
+  func newCommentChains() -> Output
+  
+  func appearChains(with input: Input) -> Output
+  
+  func reloadDataChains(with input: Input) -> Output
+  
+  func cellForItemChains(with input: Input) -> Output
+  
+  func didSelectedChains(with input: Input) -> Output
+  
+  func fetchedSepcifigUserInfoFromDidTapProfile() -> Output
+  
 }
 
 protocol CommentViewModelNetworkServiceType {
-    
-    func fetchUserInfo(with uid: String)
-    
-    func uploadComment(withInputModel input: UploadCommentInputModel )
-    
-    func fetchComments()
-    
-    func fetchUserImage(with imageView: UIImageView, index: Int)
-    
-    func fetchProfileFromImageService(index: Int) async throws -> UIImage
-    
-    func fetchImageErrorHandling(error: Error)
-    
+  
+  func fetchUserInfo(with uid: String)
+  
+  func uploadComment(withInputModel input: UploadCommentInputModel )
+  
+  func fetchComments()
+  
+  func fetchUserImage(with imageView: UIImageView, index: Int)
+  
+  func fetchProfileFromImageService(index: Int) async throws -> UIImage
+  
+  func fetchImageErrorHandling(error: Error)
+  
 }

@@ -8,24 +8,24 @@
 import Combine
 
 struct MainHomeTabViewModelInput{
-    var appear: AnyPublisher<Void,Never>
+  var appear: AnyPublisher<Void,Never>
 }
 
 typealias MainHomeTabViewModelOutput = AnyPublisher<MainHomeTabControllerState,Never>
 enum MainHomeTabControllerState {
-    case none
-    case fetchUserInfoIsCompleted
+  case none
+  case fetchUserInfoIsCompleted
 }
 
 protocol MainHomeTabViewModelType: MainHomeTabViewModelComputedProperty {
-    typealias Input = MainHomeTabViewModelInput
-    typealias Output = MainHomeTabViewModelOutput
-    typealias State = MainHomeTabControllerState
-    
-    func transform(with input: Input) -> Output
-    
+  typealias Input = MainHomeTabViewModelInput
+  typealias Output = MainHomeTabViewModelOutput
+  typealias State = MainHomeTabControllerState
+  
+  func transform(with input: Input) -> Output
+  
 }
 
 protocol MainHomeTabViewModelComputedProperty {
-    var user: UserModel { get set }
+  var user: UserModel { get set }
 }

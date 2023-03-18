@@ -8,8 +8,8 @@
 import Foundation
 
 struct UploadNotificationModel: Codable {
-    let uid: String
-    let profileImageUrl: String
-    let username: String
-    var userIsFollowed: Bool
+  let uid: String
+  let profileImageUrl: String
+  let username: String
+  var userIsFollowed: Bool
 }
