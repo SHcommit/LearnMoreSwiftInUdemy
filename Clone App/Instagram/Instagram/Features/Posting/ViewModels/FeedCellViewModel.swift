@@ -14,7 +14,7 @@ class FeedCellViewModel {
   
   //MARK: - Properties
   fileprivate var postModel: PostModel
-  fileprivate var postImage: UIImage?
+  internal var postImage: UIImage?
   fileprivate var userProfile: UIImage?
   var likeChanged = PassthroughSubject<Void,Never>()
   

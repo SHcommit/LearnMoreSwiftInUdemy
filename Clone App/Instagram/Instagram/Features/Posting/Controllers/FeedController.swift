@@ -41,6 +41,16 @@ class FeedController: UICollectionViewController, FeedViewModelConvenience {
     collectionView.register(FeedCell.self, forCellWithReuseIdentifier: FEEDCELLRESUIDENTIFIER)
     setupBindings()
     initData.send()
+    let cellWidth = view.frame.width
+        var cellHeight = cellWidth + 8 + 40 + 8
+    
+        cellHeight += 50
+        cellHeight += 60
+    
+    guard let flowLayout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout else {
+      return
+    }
+    flowLayout.itemSize = CGSize(width: view.frame.width, height: cellHeight)
   }
   
   override func viewWillAppear(_ animated: Bool) {
@@ -180,16 +190,16 @@ extension FeedController {
 //MARK: - UICollectionViewDelegateFlowLayout
 extension FeedController: UICollectionViewDelegateFlowLayout {
   
-  func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-    
-    let cellWidth = view.frame.width
-    var cellHeight = cellWidth + 8 + 40 + 8
-    
-    cellHeight += 50
-    cellHeight += 60
-    
-    return CGSize(width: view.frame.width, height: cellHeight)
-  }
+//  func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+//
+//    let cellWidth = view.frame.width
+//    var cellHeight = cellWidth + 8 + 40 + 8
+//
+//    cellHeight += 50
+//    cellHeight += 60
+//
+//    return CGSize(width: view.frame.width, height: cellHeight)
+//  }
   
 }
 
@@ -215,6 +225,7 @@ extension FeedController {
   
 }
 
+//MARK: - FeedCellDelegate
 extension FeedController: FeedCellDelegate {
   func wantsToShowIndicator() {
     startIndicator()
@@ -224,5 +235,26 @@ extension FeedController: FeedCellDelegate {
     endIndicator()
   }
   
-  
+}
+
+
+//MARK: - UIScrollViewDelegate
+extension FeedController {
+  override func scrollViewWillEndDragging(
+    _ scrollView: UIScrollView,
+    withVelocity velocity: CGPoint,
+    targetContentOffset: UnsafeMutablePointer<CGPoint>
+  ) {
+    guard let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout,
+          let navHeight = navigationController?.navigationBar.frame.height else {
+      return
+    }
+    let profileArea = 8 + 40 + 8
+    let cellHeightPlusLineSpacing = CGFloat(layout.itemSize.height) + layout.minimumLineSpacing
+    var offset = targetContentOffset.pointee
+    let idx = (offset.y + scrollView.contentInset.top)/cellHeightPlusLineSpacing
+    targetContentOffset.pointee = CGPoint(
+      x: 0,
+      y: Int(round(idx) * cellHeightPlusLineSpacing - navHeight) - profileArea)
+  }
 }
